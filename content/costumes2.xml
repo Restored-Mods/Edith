@@ -1,0 +1,8 @@
+<costumes anm2root="gfx/characters/">
+	<!-- Red Hood -->
+	<costume id="8" anm2path="red_hood.anm2" type="passive" />
+	<!-- Edith Hood -->
+	<costume id="150" anm2path="Character_001_Edith_Hood.anm2" type="none" />
+	<!-- Tainted Edith Hair -->
+	<costume id="151" anm2path="Character_001_Edith_b_Hood.anm2" type="none" />
+</costumes>

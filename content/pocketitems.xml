@@ -1,0 +1,5 @@
+<pocketitems>
+    <card type="tarot" achievement="Reverse Prudence" pickup="1" description="See all that lies before you" name="XXII - Prudence" hud="Prudence" mimiccharge="2" />
+    <card type="tarot_reverse" achievement="Soul of Edith" pickup="14" description="May you dwell on your past" name="XXII - Prudence?" hud="Prudence?" mimiccharge="12" />
+    <card type="rune" achievement="Reverse Prudence" pickup="36" description="Salty anvil" hud="Soul of Edith" name="Soul of Edith" mimiccharge="4" />
+</pocketitems>

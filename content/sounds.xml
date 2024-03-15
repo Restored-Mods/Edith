@@ -1,0 +1,66 @@
+<sounds root="sfx/">
+	<!-- Cards -->
+	<sound name="Prudence">
+		<sample weight="1" path="Prudence.wav" />
+	</sound>
+	<sound name="Reverse Prudence">
+		<sample weight="1" path="PrudenceReverse.wav" />
+	</sound>
+	<sound name="Soul Of Edith">
+		<sample weight="1" path="SoulOfEdith.wav" />
+	</sound>
+	<sound name="Salt Shaker">
+		<sample weight="1" path="Salt_Shaker_1.wav" />
+		<sample weight="1" path="Salt_Shaker_2.wav" />
+		<sample weight="1" path="Salt_Shaker_3.wav" />
+	</sound>
+	<sound name="RockSlide">
+		<sample weight="1" path="Rock_Slide_1.wav" />
+		<sample weight="1" path="Rock_Slide_2.wav" />
+		<sample weight="1" path="Rock_Slide_3.wav" />
+		<sample weight="1" path="Rock_Slide_4.wav" />
+		<sample weight="1" path="Rock_Slide_5.wav" />
+		<sample weight="1" path="Rock_Slide_6.wav" />
+		<sample weight="1" path="Rock_Slide_7.wav" />
+		<sample weight="1" path="Rock_Slide_8.wav" />
+	</sound>
+	<sound name="deadseascrolls_pop">
+        <sample weight="1" path="deadseascrolls/pop.wav"/>
+    </sound>
+    <sound name="deadseascrolls_whoosh">
+        <sample weight="1" path="deadseascrolls/whoosh.wav"/>
+    </sound>
+	<sound name="Blasting Boots">
+		<sample weight="1" path="funny/Blasting Boots.wav" />
+	</sound>
+	<sound name="Breath Mints">
+		<sample weight="1" path="funny/Breath Mints.wav" />
+	</sound>
+	<sound name="Gorgon Mask">
+		<sample weight="1" path="funny/Gorgon Mask.wav" />
+	</sound>
+	<sound name="Lithium Salts">
+		<sample weight="1" path="funny/Lithium Salts.wav" />
+	</sound>
+	<sound name="Lot Baby">
+		<sample weight="1" path="funny/Lot Baby.wav" />
+	</sound>
+	<sound name="Pawn Baby">
+		<sample weight="1" path="funny/Pawn Baby.wav" />
+	</sound>
+	<sound name="Red Hood">
+		<sample weight="1" path="funny/Red Hood.wav" />
+	</sound>
+	<sound name="Salt Shaker">
+		<sample weight="1" path="funny/Salt Shaker.wav" />
+	</sound>
+	<sound name="Salty Baby">
+		<sample weight="1" path="funny/Salty Baby.wav" />
+	</sound>
+	<sound name="Sodom">
+		<sample weight="1" path="funny/Sodom.wav" />
+	</sound>
+	<sound name="Thunder Bombs">
+		<sample weight="1" path="funny/Thunder Bombs.wav" />
+	</sound>
+</sounds>

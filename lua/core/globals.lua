@@ -1,0 +1,15 @@
+TC_SaltLady.HiddenItemManager = include("lua.extraLibs.hidden_item_manager")
+TC_SaltLady.HiddenItemManager:Init(TC_SaltLady)
+
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "PlayerData", {}, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "FamiliarData", {}, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "UsedDataMiner", false, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "UsedDataMiner", false, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "HiddenItemMangerSave", TC_SaltLady.HiddenItemManager:GetSaveData(), TSIL.Enums.VariablePersistenceMode.REMOVE_RUN)
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "MoonPhase", 1, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "DSS", {}, TSIL.Enums.VariablePersistenceMode.NONE)
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "OnlyStomps", 1, TSIL.Enums.VariablePersistenceMode.NONE, true)
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "TargetColor", {R = 155, G = 0, B = 0}, TSIL.Enums.VariablePersistenceMode.NONE, true)
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "AllowHolding", 2, TSIL.Enums.VariablePersistenceMode.NONE, true)
+TSIL.SaveManager.AddPersistentVariable(TC_SaltLady, "DisabledItems", {}, TSIL.Enums.VariablePersistenceMode.NONE, true)
