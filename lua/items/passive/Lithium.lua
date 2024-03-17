@@ -14,7 +14,7 @@ local IFRAME_INCREASE_AMOUNT = Lithium.IFRAME_INCREASE_AMOUNT
 ---@param flags UseFlag | integer
 ---@param pillColor PillColor
 function Lithium:OnPillUse(pillEffect, player, flags, pillColor)
-    if player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_LITHIUM) then
+    if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LITHIUM) then
         local data = Helpers.GetEntityData(player)
         data.LithiumUses = data.LithiumUses + 1
         if pillColor & PillColor.PILL_GIANT_FLAG > 0 then
@@ -22,12 +22,12 @@ function Lithium:OnPillUse(pillEffect, player, flags, pillColor)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_USE_PILL, Lithium.OnPillUse)
+EdithCompliance:AddCallback(ModCallbacks.MC_USE_PILL, Lithium.OnPillUse)
 
 ---@param player EntityPlayer
 ---@param cache CacheFlag
 function Lithium:LithiumCache(player, cache)
-    if player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_LITHIUM) and not player:HasCurseMistEffect() then
+    if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LITHIUM) and not player:HasCurseMistEffect() then
         local data = Helpers.GetEntityData(player)
         local lithiumUses = data.LithiumUses
         if cache == CacheFlag.CACHE_FIREDELAY then
@@ -38,15 +38,15 @@ function Lithium:LithiumCache(player, cache)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Lithium.LithiumCache)
+EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Lithium.LithiumCache)
 
 ---@param player EntityPlayer
 function Lithium:LithiumIframe(player)
-    if player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_LITHIUM) then
+    if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LITHIUM) then
         local data = Helpers.GetEntityData(player)
         if data.LithiumUses and (not Helpers.GetData(player).LithiumUses or (Helpers.GetData(player).Lithium ~= data.LithiumUses
         and not player:HasCurseMistEffect()))
-        or TC_SaltLady(player).Lithium > 0 and player:HasCurseMistEffect() then
+        or EdithCompliance(player).Lithium > 0 and player:HasCurseMistEffect() then
             player:AddCacheFlags(CacheFlag.CACHE_FIREDELAY)
             player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
             player:EvaluateItems()
@@ -54,21 +54,21 @@ function Lithium:LithiumIframe(player)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Lithium.LithiumIframe)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Lithium.LithiumIframe)
 
 function Lithium:AddPill(collectible, charge, firstTime, slot, VarData, player)
-    if firstTime and collectible == TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_LITHIUM then
+    if firstTime and collectible == EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LITHIUM then
         local room = Game():GetRoom()
         local spawningPos = room:FindFreePickupSpawnPosition(player.Position, 1, true)
         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, 0, spawningPos, Vector.Zero, player):ToPickup()
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, Lithium.AddPill)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, Lithium.AddPill)
 
 function Lithium:AfterDamage(entity, damage, flags, source, cd)
     if entity and entity:ToPlayer() then
         local player = entity:ToPlayer()
-        if player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_LITHIUM) then
+        if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LITHIUM) then
             local data = Helpers.GetEntityData(player)
             local newDamageCD = cd + IFRAME_INCREASE_AMOUNT * (data.LithiumUses or 0)
             player:ResetDamageCooldown()
@@ -76,4 +76,4 @@ function Lithium:AfterDamage(entity, damage, flags, source, cd)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Lithium.AfterDamage, EntityType.ENTITY_PLAYER)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Lithium.AfterDamage, EntityType.ENTITY_PLAYER)

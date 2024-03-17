@@ -9,7 +9,7 @@ local Helpers = include("lua.helpers.Helpers")
 ---@param customvardata integer
 function SaltShakerLocal:UseShaker(collectible, rng, player, flags, slot, customvardata)
     for i = 0, 359, 20 do
-		local salt = Isaac.Spawn(1000, TC_SaltLady.Enums.Entities.SALT_CREEP.Variant, TC_SaltLady.Enums.Entities.SALT_CREEP.SubType, player.Position + Vector.FromAngle(i) * 60, player.Velocity*0, player):ToEffect()
+		local salt = Isaac.Spawn(1000, EdithCompliance.Enums.Entities.SALT_CREEP.Variant, EdithCompliance.Enums.Entities.SALT_CREEP.SubType, player.Position + Vector.FromAngle(i) * 60, player.Velocity*0, player):ToEffect()
         for j = 1, math.min(2, rng:RandomInt(5)) do
             Isaac.Spawn(1000, EffectVariant.TOOTH_PARTICLE, 0, salt.Position, RandomVector() * rng:RandomFloat() * rng:RandomInt(6), player):ToEffect()
         end
@@ -18,7 +18,7 @@ function SaltShakerLocal:UseShaker(collectible, rng, player, flags, slot, custom
     end
     return true
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_USE_ITEM, SaltShakerLocal.UseShaker, TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER)
+EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, SaltShakerLocal.UseShaker, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER)
 
 ---@param creep EntityEffect
 function SaltShakerLocal:CreepUpdate(creep)
@@ -35,4 +35,4 @@ function SaltShakerLocal:CreepUpdate(creep)
         creep:Remove()
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltShakerLocal.CreepUpdate, TC_SaltLady.Enums.Entities.SALT_CREEP.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltShakerLocal.CreepUpdate, EdithCompliance.Enums.Entities.SALT_CREEP.Variant)

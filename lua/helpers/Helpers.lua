@@ -204,7 +204,7 @@ function Helpers.GetEntityData(entity)
 				player = player:GetOtherTwin()
 			end
 			local index = tostring(Helpers.GetPlayerIndex(player))
-			local data = TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "PlayerData")
+			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "PlayerData")
 			if not data[index] then
 				data[index] = {}
 			end
@@ -223,7 +223,7 @@ function Helpers.GetEntityData(entity)
 			return data[index]
 		elseif entity:ToFamiliar() then
 			local index = tostring(entity:ToFamiliar().InitSeed)
-			local data = TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "FamiliarData")
+			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "FamiliarData")
 			if not data[index] then
 				data[index] = {}
 			end
@@ -242,11 +242,11 @@ function Helpers.RemoveEntityData(entity)
 				player = player:GetOtherTwin()
 			end
 			index = tostring(Helpers.GetPlayerIndex(player))
-			local data = TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "PlayerData")
+			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "PlayerData")
 			data[index] = nil
 		elseif entity:ToFamiliar() then
 			index = tostring(entity:ToFamiliar().InitSeed)
-			local data = TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "FamiliarData")
+			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "FamiliarData")
 			data[index] = nil
 		end
 	end
@@ -290,7 +290,7 @@ end
 function Helpers.IsPlayerEdith(player, includeNormal, includeTainted)
 	if includeNormal == nil then includeNormal = true end
 	if includeTainted == nil then includeTainted = true end
-	if player and ((Helpers.IsPlayerType(player,TC_SaltLady.Enums.PlayerType.EDITH) and includeNormal) or Helpers.IsPlayerType(player,TC_SaltLady.Enums.PlayerType.EDITH_B) and includeTainted) then
+	if player and ((Helpers.IsPlayerType(player,EdithCompliance.Enums.PlayerType.EDITH) and includeNormal) or Helpers.IsPlayerType(player,EdithCompliance.Enums.PlayerType.EDITH_B) and includeTainted) then
 		return true
 	end
 	return false
@@ -405,7 +405,7 @@ function Helpers.ChangeSprite(player, loading)
 				end
 			end
 			local hoodSprite = "gfx/characters/costumes/Character_001_Edith_Hood"..human..".png"
-			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(TC_SaltLady.Enums.Costumes.EDITH_HOOD), hoodSprite, 5)
+			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithCompliance.Enums.Costumes.EDITH_HOOD), hoodSprite, 5)
 			sprite:LoadGraphics()
 		end
 	elseif Helpers.IsPlayerEdith(player, false, true) then
@@ -433,7 +433,7 @@ function Helpers.ChangeSprite(player, loading)
 			end
 			sprite:LoadGraphics()
 			hairSprite = hairSprite..".png"
-			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(TC_SaltLady.Enums.Costumes.EDITH_B_HAIR), hairSprite, 5)
+			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithCompliance.Enums.Costumes.EDITH_B_HAIR), hairSprite, 5)
 			data.PrevPepper = data.Pepper
 		end
 	elseif sprite:GetFilename() == "gfx/edith.anm2" or sprite:GetFilename() == "gfx/edith_b.anm2" then
@@ -548,15 +548,15 @@ function Helpers.TurnEnemyIntoGoldenMachine(enemy, player, rng)
 
     local machinesToUse = {}
 
-    for _, luckySevenSlot in ipairs(TC_SaltLady.LuckySevenSpecialSlots) do
+    for _, luckySevenSlot in ipairs(EdithCompliance.LuckySevenSpecialSlots) do
         if luckySevenSlot:CanSpawn(player) then
             machinesToUse[#machinesToUse+1] = luckySevenSlot
         end
     end
 
-    local chosenMachine = machinesToUse[rng:RandomInt(#machinesToUse)+1] or TC_SaltLady.LuckySevenRegularSlot
+    local chosenMachine = machinesToUse[rng:RandomInt(#machinesToUse)+1] or EdithCompliance.LuckySevenRegularSlot
 
-    local luckySevenSlotEntity = Isaac.Spawn(EntityType.ENTITY_SLOT, TC_SaltLady.Enums.Entities.LUCKY_SEVEN_SLOT.Variant, 0, enemy.Position, Vector.Zero, nil)
+    local luckySevenSlotEntity = Isaac.Spawn(EntityType.ENTITY_SLOT, EdithCompliance.Enums.Entities.LUCKY_SEVEN_SLOT.Variant, 0, enemy.Position, Vector.Zero, nil)
     local data = Helpers.GetData(luckySevenSlotEntity)
     data.LuckySevenSlotObject = chosenMachine
     data.SlotTimeout = data.LuckySevenSlotObject.TIMEOUT
@@ -564,7 +564,7 @@ function Helpers.TurnEnemyIntoGoldenMachine(enemy, player, rng)
     data.LuckySevenSlotObject:__Init(luckySevenSlotEntity)
     luckySevenSlotEntity:AddEntityFlags(EntityFlag.FLAG_NO_QUERY)
 
-    local sparkles = Isaac.Spawn(EntityType.ENTITY_EFFECT, TC_SaltLady.Enums.Entities.LUCKY_SEVEN_MACHINE_SPARKLES.Variant, 0, luckySevenSlotEntity.Position, Vector.Zero, luckySevenSlotEntity)
+    local sparkles = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithCompliance.Enums.Entities.LUCKY_SEVEN_MACHINE_SPARKLES.Variant, 0, luckySevenSlotEntity.Position, Vector.Zero, luckySevenSlotEntity)
     sparkles.DepthOffset = 20
     data.MachineSparkles = sparkles
 
@@ -682,10 +682,10 @@ end
 function Helpers.GetData(entity)
 	if entity and entity.GetData then
 		local data = entity:GetData()
-		if not data.TC_SaltLady then
-			data.TC_SaltLady = {}
+		if not data.EdithCompliance then
+			data.EdithCompliance = {}
 		end
-		return data.TC_SaltLady
+		return data.EdithCompliance
 	end
 	return nil
 end
@@ -867,7 +867,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player) -
 			local creep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_GREEN, 0, player.Position, Vector.Zero, player):ToEffect()
 			creep.Timeout = 60
 		end
-		local callbacks = Isaac.GetCallbacks(TC_SaltLady.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
+		local callbacks = Isaac.GetCallbacks(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
 		for _,callback in ipairs(callbacks) do
 			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
 				callback.Function(callback.Mod, player, bombDamage, radius)
@@ -932,7 +932,7 @@ function Helpers.Stomp(player)
 			local splashpitch = 0.9 + (TSIL.Random.GetRandomFloat(0, 1) / 10)
 			local waterSplash = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BIG_SPLASH, 0, player.Position + Vector(0, 2), Vector.Zero, player):ToEffect()
 			waterSplash.SpriteScale = waterSplash.SpriteScale * 0.65
-			SFXManager():Play(TC_SaltLady.Enums.SFX.Edith.WATER_STOMP, 1, 0, false, splashpitch, 0)
+			SFXManager():Play(EdithCompliance.Enums.SFX.Edith.WATER_STOMP, 1, 0, false, splashpitch, 0)
 		-- end
 	else
 		local poof
@@ -1020,7 +1020,7 @@ function Helpers.scheduleForUpdate(foo, delay, callback)
     callback = callback or ModCallbacks.MC_POST_UPDATE
     if not delayedFuncs[callback] then
         delayedFuncs[callback] = {}
-        TC_SaltLady:AddCallback(callback, function()
+        EdithCompliance:AddCallback(callback, function()
             runUpdates(delayedFuncs[callback])
         end)
     end
@@ -1029,6 +1029,6 @@ function Helpers.scheduleForUpdate(foo, delay, callback)
 end
 --#endregion
 
-TC_SaltLady.Helpers = Helpers
+EdithCompliance.Helpers = Helpers
 
 return Helpers

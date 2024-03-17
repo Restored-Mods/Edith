@@ -9,7 +9,7 @@ local Wiki = require("lua.mod_compat.encyclopedia.wiki")
 Encyclopedia.AddItem({
 	ModName = "Compliance",
 	Class = "Compliance",
-	ID = TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER,
+	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER,
 	WikiDesc = Wiki.SaltShaker,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_TREASURE,
@@ -20,7 +20,7 @@ Encyclopedia.AddItem({
 --[[Encyclopedia.AddItem({
 	ModName = "Compliance",
 	Class = "Compliance",
-	ID = TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL,
+	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL,
 	WikiDesc = Wiki.TheChisel,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_TREASURE,
@@ -34,7 +34,7 @@ Encyclopedia.AddItem({
 Encyclopedia.AddTrinket({
 	ModName = "Compliance",
 	Class = "Compliance",
-	ID = TC_SaltLady.Enums.TrinketType.TRINKET_PEPPER_GRINDER,
+	ID = EdithCompliance.Enums.TrinketType.TRINKET_PEPPER_GRINDER,
 	WikiDesc = Wiki.PepperGrinder,
 })
 
@@ -42,8 +42,8 @@ Encyclopedia.AddTrinket({
 Encyclopedia.AddCharacter({
     ModName = "Compliance",
     Name = "Edith",
-    ID = TC_SaltLady.Enums.PlayerType.EDITH,
-	Sprite = Encyclopedia.RegisterSprite(TC_SaltLady.path .. "content/gfx/characterportraits.anm2", "Edith", 0),
+    ID = EdithCompliance.Enums.PlayerType.EDITH,
+	Sprite = Encyclopedia.RegisterSprite(EdithCompliance.path .. "content/gfx/characterportraits.anm2", "Edith", 0),
 	WikiDesc = Wiki.Edith,
 })
 
@@ -51,9 +51,9 @@ Encyclopedia.AddCharacter({
     ModName = "Compliance",
     Name = "Edith",
     Description = "The Effigy",
-    ID = TC_SaltLady.Enums.PlayerType.EDITH_B,
-	Sprite = Encyclopedia.RegisterSprite(TC_SaltLady.path .. "content/gfx/characterportraitsalt.anm2", "Edith", 0, TC_SaltLady.path .. "content/gfx/charactermenu_edithb.png"),
+    ID = EdithCompliance.Enums.PlayerType.EDITH_B,
+	Sprite = Encyclopedia.RegisterSprite(EdithCompliance.path .. "content/gfx/characterportraitsalt.anm2", "Edith", 0, EdithCompliance.path .. "content/gfx/charactermenu_edithb.png"),
 	WikiDesc = Wiki.TaintedEdith,
 })]]
 
-TC_SaltLady.Enums.Wiki = Wiki
+EdithCompliance.Enums.Wiki = Wiki

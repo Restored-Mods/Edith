@@ -20,12 +20,12 @@ local moonPhaseAnim = {
 }
 
 local function GetCurrentMoonPhase()
-    return TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "MoonPhase")
+    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "MoonPhase")
 end
 
 local function SetMoonPhase(phase)
     phase = type(phase) == "number" and math.ceil(phase) or GetCurrentMoonPhase()
-    TSIL.SaveManager.SetPersistentVariable(TC_SaltLady, "MoonPhase", phase)
+    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "MoonPhase", phase)
 end
 
 local function GetPhaseFromTime(time)
@@ -49,9 +49,9 @@ local function AdvanceMoonPhase(step)
     while newPhase > moonPhases do
         newPhase = newPhase - moonPhases
     end
-    TSIL.SaveManager.SetPersistentVariable(TC_SaltLady, "MoonPhase", newPhase)
-    for _, player in pairs(Helpers.GetPlayersByCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_RED_HOOD + 1)) do
-        local effect = Isaac.Spawn(EntityType.ENTITY_EFFECT, TC_SaltLady.Enums.Entities.MOON_PHASE.Variant, 0, player.Position, Vector.Zero, player):ToEffect()
+    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "MoonPhase", newPhase)
+    for _, player in pairs(Helpers.GetPlayersByCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD + 1)) do
+        local effect = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithCompliance.Enums.Entities.MOON_PHASE.Variant, 0, player.Position, Vector.Zero, player):ToEffect()
         effect.SpriteOffset = Vector(0, -20 * player.SpriteScale.Y)
         effect.DepthOffset = 5
         effect:FollowParent(player)
@@ -60,7 +60,7 @@ end
 
 local function CheckClaws(player)
     local exists = false
-    for _, swipe in ipairs(Isaac.FindByType(TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Type, TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Variant, 0)) do
+    for _, swipe in ipairs(Isaac.FindByType(EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Type, EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Variant, 0)) do
         swipe = swipe:ToEffect()
         local parent = swipe.Parent
         if GetPtrHash(parent) == GetPtrHash(player) then
@@ -69,7 +69,7 @@ local function CheckClaws(player)
         end
     end
     if not exists then
-        local swipe = Isaac.Spawn(TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Type, TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Variant, 0, player.Position, Vector.Zero, player):ToEffect()
+        local swipe = Isaac.Spawn(EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Type, EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Variant, 0, player.Position, Vector.Zero, player):ToEffect()
         swipe:FollowParent(player)
         local sprite = swipe:GetSprite()
         sprite:Play("Swing2", true)
@@ -83,7 +83,7 @@ function RedHoodLocal:TimerInit(isContinue)
         SetMoonPhase(1)
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, RedHoodLocal.TimerInit)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, RedHoodLocal.TimerInit)
 
 function RedHoodLocal:TheTimer()
     if not phaseChecker then phaseChecker = Game().TimeCounter end
@@ -99,13 +99,13 @@ function RedHoodLocal:TheTimer()
         phaseChecker = Game().TimeCounter
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_UPDATE, RedHoodLocal.TheTimer)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_UPDATE, RedHoodLocal.TheTimer)
 
 function RedHoodLocal:MoonPhaseInit(effect)
     local sprite = effect:GetSprite()
     sprite:Play(moonPhaseAnim[GetCurrentMoonPhase()], true)
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, RedHoodLocal.MoonPhaseInit, TC_SaltLady.Enums.Entities.MOON_PHASE.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, RedHoodLocal.MoonPhaseInit, EdithCompliance.Enums.Entities.MOON_PHASE.Variant)
 
 function RedHoodLocal:MoonPhaseUpdate(effect)
     local player = effect.Parent
@@ -114,13 +114,13 @@ function RedHoodLocal:MoonPhaseUpdate(effect)
         effect:Remove()
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, RedHoodLocal.MoonPhaseUpdate, TC_SaltLady.Enums.Entities.MOON_PHASE.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, RedHoodLocal.MoonPhaseUpdate, EdithCompliance.Enums.Entities.MOON_PHASE.Variant)
 
 ---@param player EntityPlayer
 function RedHoodLocal:StompyEffect(player)
     local effects = player:GetEffects()
     local data = Helpers.GetData(player)
-    if player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_RED_HOOD + 1) then
+    if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD + 1) then
         if not data.LunaNullItems then
             data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
         end
@@ -129,43 +129,43 @@ function RedHoodLocal:StompyEffect(player)
         end
         data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
         if GetCurrentMoonPhase() == 5 then
-            if not effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+            if not effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
                 SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
-                effects:AddNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD)
+                effects:AddNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
                 player:TakeDamage(1, DamageFlag.DAMAGE_NOKILL, EntityRef(player), 30)
             end
-        elseif effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
-            effects:RemoveNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD)
+        elseif effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
+            effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
         end
-    elseif effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
-        effects:RemoveNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD)
+    elseif effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
+        effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
     end
-    if effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
-        if not effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_LEO) and effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+    if effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
+        if not effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_LEO) and effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
             effects:AddCollectibleEffect(CollectibleType.COLLECTIBLE_LEO, false)
         end
         CheckClaws(player)
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, RedHoodLocal.StompyEffect, 0)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, RedHoodLocal.StompyEffect, 0)
 
 function RedHoodLocal:DamageReduction(entity, amount, flags, source, cd)
     if entity then
         local player = entity:ToPlayer()
         local effects = player:GetEffects()
-        if effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+        if effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
             return {Damage = 1.0, DamageFlags = flags, DamageCountdown = cd}
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, RedHoodLocal.DamageReduction, EntityType.ENTITY_PLAYER)
+EdithCompliance:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, RedHoodLocal.DamageReduction, EntityType.ENTITY_PLAYER)
 
 function RedHoodLocal:SwipesInit(effect)
     local sprite = effect:GetSprite()
     sprite:Play("Swing2", true)
     sprite:SetLastFrame()
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, RedHoodLocal.SwipesInit, TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, RedHoodLocal.SwipesInit, EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Variant)
 
 function RedHoodLocal:Swipes(effect)
     local player = effect.Parent
@@ -174,7 +174,7 @@ function RedHoodLocal:Swipes(effect)
         return
     end
     player = player:ToPlayer()
-    if not player:GetEffects():HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+    if not player:GetEffects():HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
         effect:Remove()
         return
     end
@@ -219,7 +219,7 @@ function RedHoodLocal:Swipes(effect)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, RedHoodLocal.Swipes, TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, RedHoodLocal.Swipes, EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Variant)
 
 function RedHoodLocal:MoonCounter()
     if Game():GetRoom():GetRenderMode() == RenderMode.RENDER_WATER_REFLECT then return end
@@ -235,7 +235,7 @@ function RedHoodLocal:MoonCounter()
     else
         pressedMapButton = math.max(0, pressedMapButton - 1)
     end
-    if not Helpers.IsMenuing() and not Game():IsPaused() and PlayerManager.AnyoneHasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_RED_HOOD + 1) then
+    if not Helpers.IsMenuing() and not Game():IsPaused() and PlayerManager.AnyoneHasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD + 1) then
         local pos = Vector(Isaac.GetScreenWidth() / 2 - 60, 20)
         moonPhaseSprite.Color = Color(1, 1, 1, pressedMapButton / 15)
         moonPhaseSprite:Play(moonPhaseAnim[GetCurrentMoonPhase()], true)
@@ -244,7 +244,7 @@ function RedHoodLocal:MoonCounter()
     end
 end
 
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_RENDER, RedHoodLocal.MoonCounter)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_RENDER, RedHoodLocal.MoonCounter)
 
 function RedHoodLocal:UseCard(card, player, flag)
     if card == Card.CARD_MOON then
@@ -253,13 +253,13 @@ function RedHoodLocal:UseCard(card, player, flag)
         AdvanceMoonPhase(-1)
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_USE_CARD, RedHoodLocal.UseCard)
+EdithCompliance:AddCallback(ModCallbacks.MC_USE_CARD, RedHoodLocal.UseCard)
 
 ---@param player EntityPlayer
 ---@param cache CacheFlag | integer
 function RedHoodLocal:Cache(player, cache)
     local effects = player:GetEffects()
-    if effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+    if effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
         if cache == CacheFlag.CACHE_DAMAGE then
             player.Damage = player.Damage + 5
         elseif cache == CacheFlag.CACHE_FIREDELAY then
@@ -271,4 +271,4 @@ function RedHoodLocal:Cache(player, cache)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, RedHoodLocal.Cache)
+EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, RedHoodLocal.Cache)

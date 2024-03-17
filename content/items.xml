@@ -8,7 +8,6 @@
 	<familiar id="5" name="Lot Baby" achievement="Lot Baby" description="Loyal companion" gfx="collectibles_006_lot_baby.png" quality="2" tags="baby summonable monstermanual offensive"/>
 	<familiar id="6" name="Salty Baby" achievement="Salty Baby" description="Shaky friend" gfx="collectibles_007_salty_baby.png" quality="0" tags="baby summonable monstermanual offensive"/>
 	<familiar id="7" name="Pawn Baby" achievement="Pawn Baby" description="Search En passant" gfx="collectibles_008_pawn_baby.png" quality="1" tags="baby summonable monstermanual offensive"/>
-	<!--passive id="8" name="Red Hood" achievement="Red Hood" description="Lycanthropy" gfx="collectibles_009_red_hood.png" quality="3" tags="offensive"/ -->
     <passive id="8" name="Red Hood" achievement="Red Hood" description="Lycanthropy" gfx="collectibles_009_red_hood.png" quality="3" tags="offensive"/>
 	
 	<!-- Active Items -->

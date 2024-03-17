@@ -28,11 +28,11 @@ local modMenuName = "Edith (Compliance)"
 local MenuProvider = {}
 
 function MenuProvider.SaveSaveData()
-    --TC_SaltLady.SaveSaveData()
+    --EdithCompliance.SaveSaveData()
 end
 
 local function GetDSSOptions()
-    return TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "DSS")
+    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DSS")
 end
 
 function MenuProvider.GetPaletteSetting()
@@ -107,7 +107,7 @@ local function InitDisableMenu()
 
     local itemConfig = Isaac.GetItemConfig()
     ---@type ItemConfigItem[]
-    for _, collectible in pairs(TC_SaltLady.Enums.CollectibleType) do
+    for _, collectible in pairs(EdithCompliance.Enums.CollectibleType) do
         local collectibleConf = itemConfig:GetCollectible(collectible)
         orderedItems[#orderedItems+1] = collectibleConf
     end
@@ -161,11 +161,11 @@ local function InitDisableMenu()
             -- The "load" function for a button should return what its current setting should be
             -- This generally means looking at your mod's save data, and returning whatever setting you have stored
             load = function()
-                if not TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "DisabledItems") then
-                    TSIL.SaveManager.SetPersistentVariable(TC_SaltLady, "DisableItems", {})
+                if not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems") then
+                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", {})
                 end
 
-                for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "DisabledItems")) do
+                for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")) do
                     if disabledItem == collectible.ID then
                         return 2
                     end
@@ -176,10 +176,10 @@ local function InitDisableMenu()
             -- When the menu is closed, "store" will be called on all settings-buttons
             -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
             store = function(var)
-                if not TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "DisabledItems") then
-                    TSIL.SaveManager.SetPersistentVariable(TC_SaltLady, "DisableItems", {})
+                if not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems") then
+                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", {})
                 end
-                local disabledItem = TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "DisabledItems")
+                local disabledItem = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")
                 for index, disabledItem in ipairs(disabledItem) do
                     if disabledItem == collectible.ID then
                         if var == 1 then
@@ -282,10 +282,10 @@ local edithdirectory = {
                 variable = "TargetColorRed",
 
                 load = function()
-                    return TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "TargetColor").R or 155
+                    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R or 155
                 end,
                 store = function(newOption)
-                    TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "TargetColor").R = newOption
+                    TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R = newOption
                 end,
 
                 tooltip = GenerateTooltip('color red value'),
@@ -306,10 +306,10 @@ local edithdirectory = {
                 variable = "TargetColorGreen",
 
                 load = function()
-                    return TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "TargetColor").G or 0
+                    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G or 0
                 end,
                 store = function(newOption)
-                    TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "TargetColor").G = newOption
+                    TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G = newOption
                 end,
 
                 tooltip = GenerateTooltip('color green value'),
@@ -330,10 +330,10 @@ local edithdirectory = {
                 variable = "TargetColorBlue",
 
                 load = function()
-                    return TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "TargetColor").B or 0
+                    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B or 0
                 end,
                 store = function(newOption)
-                    TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "TargetColor").B = newOption
+                    TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B = newOption
                 end,
 
                 tooltip = GenerateTooltip('color blue value'),
@@ -351,11 +351,11 @@ local edithdirectory = {
                 variable = 'AllowHolding',
 
                 load = function ()
-                    return TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "AllowHolding") or 2
+                    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "AllowHolding") or 2
                 end,
 
                 store = function(newOption)
-                    TSIL.SaveManager.SetPersistentVariable(TC_SaltLady, "AllowHolding", newOption)
+                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AllowHolding", newOption)
                 end,
 
                 tooltip = GenerateTooltip('disable the sliding on holding a movement button')
@@ -372,11 +372,11 @@ local edithdirectory = {
                 variable = 'OnlyStomps',
 
                 load = function ()
-                    return TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "OnlyStomps") or 1
+                    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps") or 1
                 end,
 
                 store = function(newOption)
-                    TSIL.SaveManager.SetPersistentVariable(TC_SaltLady, "OnlyStomps", newOption)
+                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "OnlyStomps", newOption)
                 end,
 
                 tooltip = GenerateTooltip('disable placing bombs when playing as edith')
@@ -446,7 +446,7 @@ local function OverridePause(self, player, hook, action)
 		return true
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_INPUT_ACTION, OverridePause, InputHook.IS_ACTION_PRESSED)
+EdithCompliance:AddCallback(ModCallbacks.MC_INPUT_ACTION, OverridePause, InputHook.IS_ACTION_PRESSED)
 
 local function FreezeGame(unfreeze)
 	if unfreeze then

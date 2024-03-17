@@ -5,8 +5,8 @@ function PepperGrinder:OnKillPG(entity)
 	for i = 0, Game():GetNumPlayers() - 1 do
 		local player = Game():GetPlayer(i)
 		local dataP = Helpers.GetEntityData(player)
-		local goldenbox = player:GetTrinketMultiplier(TC_SaltLady.Enums.TrinketType.TRINKET_PEPPER_GRINDER)
-		if player:HasTrinket(TC_SaltLady.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
+		local goldenbox = player:GetTrinketMultiplier(EdithCompliance.Enums.TrinketType.TRINKET_PEPPER_GRINDER)
+		if player:HasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
 			local rngGrinder = TSIL.Random.GetRandomInt(1,100)
 			if (goldenbox > 2 or goldenbox > 4) and rngGrinder <= 75 		-- Golden Trinket + Mom's Box
 			or goldenbox > 1 and goldenbox < 3 and rngGrinder <= 50			-- Golden Trinket or Mom's Box
@@ -19,11 +19,11 @@ function PepperGrinder:OnKillPG(entity)
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, PepperGrinder.OnKillPG)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, PepperGrinder.OnKillPG)
 
 function PepperGrinder:CreepSpawning(player)
 	local dataP = Helpers.GetEntityData(player)
-	if player:HasTrinket(TC_SaltLady.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
+	if player:HasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
 		if dataP.CreepNum == nil then
 			dataP.CreepNum = 0
 		end
@@ -58,4 +58,4 @@ function PepperGrinder:CreepSpawning(player)
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, PepperGrinder.CreepSpawning)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, PepperGrinder.CreepSpawning)

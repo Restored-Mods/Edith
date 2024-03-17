@@ -2,27 +2,27 @@ local Cards = {}
 local Helpers = include("lua.helpers.Helpers")
 
 function Cards:UsePrudence(prud, player, useflags)
-    TC_SaltLady.HiddenItemManager:AddForRoom(player, CollectibleType.COLLECTIBLE_GUPPYS_EYE, -1, 1, "Prudence")    
+    EdithCompliance.HiddenItemManager:AddForRoom(player, CollectibleType.COLLECTIBLE_GUPPYS_EYE, -1, 1, "Prudence")    
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_USE_CARD, Cards.UsePrudence, TC_SaltLady.Enums.Pickups.Cards.CARD_PRUDENCE)
+EdithCompliance:AddCallback(ModCallbacks.MC_USE_CARD, Cards.UsePrudence, EdithCompliance.Enums.Pickups.Cards.CARD_PRUDENCE)
 
 function Cards:PrudenceHideEye()
-    TC_SaltLady.HiddenItemManager:HideCostumes("Prudence")
+    EdithCompliance.HiddenItemManager:HideCostumes("Prudence")
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_UPDATE, Cards.PrudenceHideEye)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_UPDATE, Cards.PrudenceHideEye)
 
 function Cards:UseReversePrudence(revPrud, player, useflags)
     --ItemOverlay.Show(Isaac.GetGiantBookIdByName("Reverse Prudence"), 0 , player)
-    Helpers.PlaySND(TC_SaltLady.Enums.SFX.Cards.CARD_REVERSE_PRUDENCE)
+    Helpers.PlaySND(EdithCompliance.Enums.SFX.Cards.CARD_REVERSE_PRUDENCE)
     local slot = Isaac.Spawn(EntityType.ENTITY_SLOT,16,0,Game():GetRoom():FindFreePickupSpawnPosition(player.Position,40,true),Vector.Zero,nil)
     Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, 0, slot.Position, Vector.Zero, nil)
     SFXManager():Play(SoundEffect.SOUND_SUMMONSOUND,1,0)
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_USE_CARD, Cards.UseReversePrudence, TC_SaltLady.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE)
+EdithCompliance:AddCallback(ModCallbacks.MC_USE_CARD, Cards.UseReversePrudence, EdithCompliance.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE)
 
 function Cards:UseSoulEdith(soe, player, useflags)
-    local statue = Isaac.Spawn(1000, TC_SaltLady.Enums.Entities.SALT_STATUE.Variant, 0, player.Position, Vector(0, 0), player):ToEffect()
-    Helpers.PlaySND(TC_SaltLady.Enums.SFX.Cards.CARD_SOUL_EDITH)
+    local statue = Isaac.Spawn(1000, EdithCompliance.Enums.Entities.SALT_STATUE.Variant, 0, player.Position, Vector(0, 0), player):ToEffect()
+    Helpers.PlaySND(EdithCompliance.Enums.SFX.Cards.CARD_SOUL_EDITH)
     local data = Helpers.GetData(statue)
     data.firstpos = player.Position
     player.Visible = false
@@ -30,7 +30,7 @@ function Cards:UseSoulEdith(soe, player, useflags)
     SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
     player.ControlsEnabled = false
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_USE_CARD, Cards.UseSoulEdith, TC_SaltLady.Enums.Pickups.Cards.CARD_SOUL_EDITH)
+EdithCompliance:AddCallback(ModCallbacks.MC_USE_CARD, Cards.UseSoulEdith, EdithCompliance.Enums.Pickups.Cards.CARD_SOUL_EDITH)
 
 function Cards:Statue(Statue)
     if Statue.SpawnerType == EntityType.ENTITY_PLAYER then
@@ -117,4 +117,4 @@ function Cards:Statue(Statue)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Cards.Statue, TC_SaltLady.Enums.Entities.SALT_STATUE.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Cards.Statue, EdithCompliance.Enums.Entities.SALT_STATUE.Variant)

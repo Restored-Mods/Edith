@@ -4,7 +4,7 @@ local Helpers = include("lua.helpers.Helpers")
 function Chisel:UseTheChisel(_, _, player)
 	local ChiselSelection
 	local data = Helpers.GetEntityData(player)
-	local rng = player:GetCollectibleRNG(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
+	local rng = player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 	Helpers.ChangePepperValue(player)
 	local entities = Isaac.FindInRadius(player.Position, 99999, EntityPartition.ENEMY)
 	local enemies = {}
@@ -21,7 +21,7 @@ function Chisel:UseTheChisel(_, _, player)
 		ChiselSelection = player
 	end
 	-- falling chisel stuff
-	local chisel = Isaac.Spawn(TC_SaltLady.Enums.Entities.FALLING_CHISEL.Type,TC_SaltLady.Enums.Entities.FALLING_CHISEL.Variant,0,player.Position,Vector.Zero,player)
+	local chisel = Isaac.Spawn(EdithCompliance.Enums.Entities.FALLING_CHISEL.Type,EdithCompliance.Enums.Entities.FALLING_CHISEL.Variant,0,player.Position,Vector.Zero,player)
 	Helpers.GetData(chisel).ChiselSelection = ChiselSelection
 	local sprite = chisel:GetSprite()
 	sprite:Load("gfx/chisel.anm2", true)
@@ -31,7 +31,7 @@ function Chisel:UseTheChisel(_, _, player)
 	Helpers.ChangeSprite(player,false)
 	return true
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_USE_ITEM, Chisel.UseTheChisel, TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
+EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, Chisel.UseTheChisel, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 
 function Chisel:PepperLevel(player)
 	if Helpers.IsPlayerEdith(player,false,true) then
@@ -69,7 +69,7 @@ function Chisel:PepperLevel(player)
 				local sprite = creep:GetSprite()
 				sprite:Load("gfx/1000.092_creep (powder).anm2", true)
 				sprite:ReplaceSpritesheet(0, "gfx/effect_blackpowder.png")
-				local rng = player:GetCollectibleRNG(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
+				local rng = player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 				local rngSprite = rng:RandomInt(6)+1
 					sprite:Play("SmallBlood0"..rngSprite, true)
 				creep.CollisionDamage = 0.4
@@ -77,7 +77,7 @@ function Chisel:PepperLevel(player)
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.PepperLevel)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.PepperLevel)
 
 function Chisel:Chisel_CacheEval(player, cacheFlag)
 	local data = Helpers.GetEntityData(player)
@@ -94,7 +94,7 @@ function Chisel:Chisel_CacheEval(player, cacheFlag)
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Chisel.Chisel_CacheEval)
+EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Chisel.Chisel_CacheEval)
 
 function Chisel:HasBirthright(player)
 	local data = Helpers.GetEntityData(player)
@@ -106,14 +106,14 @@ function Chisel:HasBirthright(player)
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.HasBirthright)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.HasBirthright)
 
 function Chisel:ChiselAnm(chisel)
 	if chisel.SpawnerType == EntityType.ENTITY_PLAYER then
 		local player = chisel.SpawnerEntity:ToPlayer()
 		local data = Helpers.GetData(chisel)
 		local dataP = Helpers.GetEntityData(player)
-		local rng = player:GetCollectibleRNG(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
+		local rng = player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 
 		chisel.Position = data.ChiselSelection.Position
 		local sprite = chisel:GetSprite()
@@ -163,7 +163,7 @@ function Chisel:ChiselAnm(chisel)
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Chisel.ChiselAnm, TC_SaltLady.Enums.Entities.FALLING_CHISEL.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Chisel.ChiselAnm, EdithCompliance.Enums.Entities.FALLING_CHISEL.Variant)
 
 function Chisel:TEdithPepperBlock(player, damage, flags, source, cd)
 	local dataP = Helpers.GetEntityData(player)
@@ -172,7 +172,7 @@ function Chisel:TEdithPepperBlock(player, damage, flags, source, cd)
 		return false
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, Chisel.TEdithPepperBlock, TC_SaltLady.Enums.PlayerType.EDITH_B)
+EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, Chisel.TEdithPepperBlock, EdithCompliance.Enums.PlayerType.EDITH_B)
 
 function Chisel:PreProjectileCollision(projectile, collider, low)
 	if collider and collider:ToPlayer() then
@@ -188,7 +188,7 @@ function Chisel:PreProjectileCollision(projectile, collider, low)
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, Chisel.PreProjectileCollision)
+EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, Chisel.PreProjectileCollision)
 
 function Chisel:TMinidith(familiar)
 	local player = familiar.Parent or familiar.SpawnerEntity
@@ -210,4 +210,4 @@ function Chisel:TMinidith(familiar)
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, Chisel.TMinidith, FamiliarVariant.MINISAAC)
+EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, Chisel.TMinidith, FamiliarVariant.MINISAAC)

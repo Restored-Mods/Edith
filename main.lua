@@ -1,8 +1,8 @@
 
-TC_SaltLady = RegisterMod("Edith", 1)
+EdithCompliance = RegisterMod("Edith", 1)
 
 --Functions that will be called when starting run
-TC_SaltLady.CallOnStart = {}
+EdithCompliance.CallOnStart = {}
 
 local LOCAL_TSIL = require("lua.extraLibs.loi.TSIL")
 LOCAL_TSIL.Init("lua.extraLibs.loi")
@@ -33,6 +33,7 @@ include("lua.items.passive.BlastingBoots")
 include("lua.items.passive.LotBaby")
 include("lua.items.passive.SaltyBaby")
 include("lua.items.passive.PawnBaby")
+include("lua.items.passive.ThunderBombs")
 
 --include("lua.items.passive.RedHood")
 include("lua.items.passive.NewRedHood")
@@ -54,13 +55,13 @@ include("lua.mod_compat.MiniMapiItems.MiniMapiItems")
 include("lua.items.funny")
 
 if StageAPI and StageAPI.Loaded then
-    StageAPI.AddPlayerGraphicsInfo(TC_SaltLady.Enums.PlayerType.EDITH, {
+    StageAPI.AddPlayerGraphicsInfo(EdithCompliance.Enums.PlayerType.EDITH, {
         Name = "gfx/ui/boss/playername_Edith.png",
         Portrait = "gfx/ui/boss/playerportrait_Edith_A.png",
         NoShake = false
     })
 
-    --[[StageAPI.AddPlayerGraphicsInfo(TC_SaltLady.Enums.PlayerType.EDITH_B, {
+    --[[StageAPI.AddPlayerGraphicsInfo(EdithCompliance.Enums.PlayerType.EDITH_B, {
         Name = "gfx/ui/boss/playername_Edith.png",
         Portrait = "gfx/ui/boss/playerportrait_Edith_B.png",
         NoShake = false

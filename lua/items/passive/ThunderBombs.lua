@@ -19,18 +19,30 @@ local function IsThunderBomb(bomb)
 
 	local isRandomNancyThunderBomb = false
 	if player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and not
-	player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) then
+	player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) then
 		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS)
 
 		isRandomNancyThunderBomb = rng:RandomInt(100) < 7
 	end
 
-	if not player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and not isRandomNancyThunderBomb then return false end
+	if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and not isRandomNancyThunderBomb then return false end
 
 	return true
 end
 
-
+function ThunderBombs:BombInit(bomb)
+	local player = Helpers.GetPlayerFromTear(bomb)
+	if player then
+		local data = Helpers.GetData(bomb)
+		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) then
+			data.IsThunderBomb = true
+		elseif player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and
+		player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS):RandomInt(100) < 10 then
+			data.IsThunderBomb = true
+		end
+	end
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_INIT, ThunderBombs.BombInit)
 
 ---@param bomb EntityBomb
 function ThunderBombs:BombUpdate(bomb)
@@ -41,17 +53,13 @@ function ThunderBombs:BombUpdate(bomb)
 	local data = Helpers.GetData(bomb)
 	local sprite = bomb:GetSprite()
 
-	if data.IsBlankBombInstaDetonating then
-		return
-	end
-
 	--put explosion logic here, use the repentogon hit list function to know which enemies to spawn the chain lightning effect on
 	if sprite:IsPlaying("Explode") then
-		-- Game():GetRoom():DoLightningStrike()
+		Game():GetRoom():DoLightningStrike()
 	end
 
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpdate)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpdate)
 
 
 ---@param bomb EntityBomb
@@ -73,7 +81,7 @@ function ThunderBombs:BombRender(bomb)
 	end
 
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_BOMB_RENDER, ThunderBombs.BombRender)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_RENDER, ThunderBombs.BombRender)
 
 ---@param collectible CollectibleType | integer
 ---@param charge integer
@@ -92,7 +100,7 @@ function ThunderBombs:AddCharge(collectible, charge, firstTime, slot, VarData, p
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, ThunderBombs.AddCharge, TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, ThunderBombs.AddCharge, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
 ---@param bomb EntityBomb
 function ThunderBombs:ReplaceCostume(bomb)

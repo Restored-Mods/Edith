@@ -4,7 +4,7 @@ local Helpers = include("lua.helpers.Helpers")
 function BlastBoots:OnBombDamage(e, amount, flags, source, countdown)
 	if e and e:ToPlayer() then
         local player = e:ToPlayer()
-        if not player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS) then
+        if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS) then
             return
         end
         local data = Helpers.GetData(player)
@@ -17,7 +17,7 @@ function BlastBoots:OnBombDamage(e, amount, flags, source, countdown)
         end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, BlastBoots.OnBombDamage, EntityType.ENTITY_PLAYER)
+EdithCompliance:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, BlastBoots.OnBombDamage, EntityType.ENTITY_PLAYER)
 
 ---@param player EntityPlayer
 function BlastBoots:Hop(player)
@@ -85,7 +85,7 @@ function BlastBoots:Hop(player)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, BlastBoots.Hop)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, BlastBoots.Hop)
 
 function BlastBoots:NewRoom()
 	for i = 0, Game():GetNumPlayers() - 1 do
@@ -102,4 +102,4 @@ function BlastBoots:NewRoom()
 		end
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, BlastBoots.NewRoom)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, BlastBoots.NewRoom)

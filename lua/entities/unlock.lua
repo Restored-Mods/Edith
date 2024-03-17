@@ -2,9 +2,9 @@ local Unlock = {}
 local Helpers = include("lua.helpers.Helpers")
 
 function Unlock:DataMinerUse(collectible, rng, player, flags, slot, vardata)
-    local usedDataMiner = TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "UsedDataMiner")
+    local usedDataMiner = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "UsedDataMiner")
     if not usedDataMiner and not Game():AchievementUnlocksDisallowed()
-    and not Isaac.GetPersistentGameData():Unlocked(TC_SaltLady.Enums.Achievements.Characters.EDITH) then
+    and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH) then
         local room = Game():GetRoom()
         local gridTable = {}
         for i = 0, (room:GetGridSize()) do
@@ -16,54 +16,54 @@ function Unlock:DataMinerUse(collectible, rng, player, flags, slot, vardata)
         if #gridTable > 0 and rng:RandomFloat() >= 0.75 then
             local saltGent = gridTable[rng:RandomInt(#gridTable) + 1]
             saltGent:SetVariant(683)
-            TSIL.SaveManager.SetPersistentVariable(TC_SaltLady, "UsedDataMiner", true)
+            TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "UsedDataMiner", true)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_USE_ITEM, Unlock.DataMinerUse, CollectibleType.COLLECTIBLE_DATAMINER)
+EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, Unlock.DataMinerUse, CollectibleType.COLLECTIBLE_DATAMINER)
 
 ---@param grid GridEntity
 ---@param gridType GridEntityType
 ---@param immediate boolean
 function Unlock:OnKillSaltRock(grid, gridType, immediate)
-	if grid:GetVariant() == 683 and not Isaac.GetPersistentGameData():Unlocked(TC_SaltLady.Enums.Achievements.Characters.EDITH) 
-    and Game():GetItemPool():HasTrinket(TC_SaltLady.Enums.TrinketType.TRINKET_SALT_ROCK) then
+	if grid:GetVariant() == 683 and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH) 
+    and Game():GetItemPool():HasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_SALT_ROCK) then
         local rng = grid:GetRNG()
         local vel = EntityPickup.GetRandomPickupVelocity(grid.Position, rng, 0)
-        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, TC_SaltLady.Enums.TrinketType.TRINKET_SALT_ROCK, grid.Position, vel, nil):ToPickup()
-        Game():GetItemPool():RemoveTrinket(TC_SaltLady.Enums.TrinketType.TRINKET_SALT_ROCK)
+        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, EdithCompliance.Enums.TrinketType.TRINKET_SALT_ROCK, grid.Position, vel, nil):ToPickup()
+        Game():GetItemPool():RemoveTrinket(EdithCompliance.Enums.TrinketType.TRINKET_SALT_ROCK)
         SFXManager():Play(SoundEffect.SOUND_MAGGOT_ENTER_GROUND)
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_GRID_ROCK_DESTROY, Unlock.OnKillSaltRock, GridEntityType.GRID_ROCK)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_GRID_ROCK_DESTROY, Unlock.OnKillSaltRock, GridEntityType.GRID_ROCK)
 
 function Unlock:SaltyDeathByFire(entity, damage, flags, source, cd)
     local player = entity:ToPlayer()
     ---@cast player EntityPlayer
     local fire = source.Entity
     if fire and fire.Type == EntityType.ENTITY_FIREPLACE and
-    player:IsDead() and not player:WillPlayerRevive() and player:HasTrinket(TC_SaltLady.Enums.TrinketType.TRINKET_SALT_ROCK)
+    player:IsDead() and not player:WillPlayerRevive() and player:HasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_SALT_ROCK)
     then
-        Helpers.UnlockAchievement(TC_SaltLady.Enums.Achievements.Characters.EDITH)
-        Helpers.UnlockAchievement(TC_SaltLady.Enums.Achievements.Misc.SALT_ROCK)
+        Helpers.UnlockAchievement(EdithCompliance.Enums.Achievements.Characters.EDITH)
+        Helpers.UnlockAchievement(EdithCompliance.Enums.Achievements.Misc.SALT_ROCK)
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Unlock.SaltyDeathByFire, EntityType.ENTITY_PLAYER)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Unlock.SaltyDeathByFire, EntityType.ENTITY_PLAYER)
 
 function Unlock:DoubleCheck()
-    if Isaac.GetPersistentGameData():Unlocked(TC_SaltLady.Enums.Achievements.Characters.EDITH) then
-        Helpers.UnlockAchievement(TC_SaltLady.Enums.Achievements.Misc.SALT_ROCK)
+    if Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH) then
+        Helpers.UnlockAchievement(EdithCompliance.Enums.Achievements.Misc.SALT_ROCK)
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Unlock.DoubleCheck)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Unlock.DoubleCheck)
 
 function Unlock:MoreDaraMiner(collectible, itemPoolType, Decrease, seed)
     if not Game():AchievementUnlocksDisallowed()
-    and not Isaac.GetPersistentGameData():Unlocked(TC_SaltLady.Enums.Achievements.Characters.EDITH)
+    and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH)
     and not PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_DATAMINER)
-    and not TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "UsedDataMiner")
+    and not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "UsedDataMiner")
     and TSIL.Random.GetRandom(seed) >= 0.8 then
         return CollectibleType.COLLECTIBLE_DATAMINER
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_GET_COLLECTIBLE, Unlock.MoreDaraMiner)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_GET_COLLECTIBLE, Unlock.MoreDaraMiner)

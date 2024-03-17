@@ -55,7 +55,7 @@ function Peppermint:RenderPepperMintCharge()
             return
         end
 
-        if not player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT) then
+        if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT) then
             return
         end
 
@@ -103,12 +103,12 @@ function Peppermint:RenderPepperMintCharge()
         -- end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_RENDER, Peppermint.RenderPepperMintCharge)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_RENDER, Peppermint.RenderPepperMintCharge)
 
 function Peppermint:AddPeppermintCharge(player)
     local data = Helpers.GetData(player)
 
-    if not player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT) then
+    if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT) then
         return
     end
 
@@ -132,7 +132,7 @@ function Peppermint:AddPeppermintCharge(player)
             local pepperMintBreath =
                 Isaac.Spawn(
                 EntityType.ENTITY_EFFECT,
-                TC_SaltLady.Enums.Entities.PEPPERMINT.Variant,
+                EdithCompliance.Enums.Entities.PEPPERMINT.Variant,
                 0,
                 player.Position + getAimDirection(player):Resized(20),
                 Vector.Zero + getAimDirection(player):Resized(2),
@@ -143,7 +143,7 @@ function Peppermint:AddPeppermintCharge(player)
         data.PeppermintCharge = 0
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Peppermint.AddPeppermintCharge)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Peppermint.AddPeppermintCharge)
 
 
 ---@param cloud EntityEffect
@@ -170,9 +170,9 @@ function Peppermint:CloudUpdate(cloud)
     end
     
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Peppermint.CloudUpdate, TC_SaltLady.Enums.Entities.PEPPERMINT.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Peppermint.CloudUpdate, EdithCompliance.Enums.Entities.PEPPERMINT.Variant)
 
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, function(_, cloud)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, function(_, cloud)
     cloud.Color = Color(0.14, 0.91, 1, math.min(1, cloud.Timeout / 30), 0, 0, 0)
     cloud:GetSprite().Offset = Vector(0,-10)
-end, TC_SaltLady.Enums.Entities.PEPPERMINT.Variant)
+end, EdithCompliance.Enums.Entities.PEPPERMINT.Variant)

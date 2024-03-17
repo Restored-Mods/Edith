@@ -165,16 +165,16 @@ Enums.Challenges = {
 
 }
 
-TC_SaltLady.Enums = Enums
+EdithCompliance.Enums = Enums
 
 local function InitAchievements()
-	if not TC_SaltLady.Enums.Achievements then
-		TC_SaltLady.Enums.Achievements = {}
-		TC_SaltLady.Enums.Achievements.Characters = {
+	if not EdithCompliance.Enums.Achievements then
+		EdithCompliance.Enums.Achievements = {}
+		EdithCompliance.Enums.Achievements.Characters = {
 			EDITH =  Isaac.GetAchievementIdByName("Edith"),
 			TAINTED =  Isaac.GetAchievementIdByName("Tainted Edith"),
 		}
-		TC_SaltLady.Enums.Achievements.CompletionMarks = {
+		EdithCompliance.Enums.Achievements.CompletionMarks = {
 			-- A-side Unlicks
 			BLASTING_BOOTS =  Isaac.GetAchievementIdByName("Blasting Boots"),
 			SALTY_BABY =  Isaac.GetAchievementIdByName("Salty Baby"),
@@ -192,15 +192,15 @@ local function InitAchievements()
 			SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
 			REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
 		}
-		TC_SaltLady.Enums.Achievements.Misc = {
+		EdithCompliance.Enums.Achievements.Misc = {
 			SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock")
 		}
 		-- Challenges
-		TC_SaltLady.Enums.Achievements.Challenges = {
+		EdithCompliance.Enums.Achievements.Challenges = {
 
 		}
 	end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, function() TC_SaltLady:RemoveCallback(ModCallbacks.MC_MAIN_MENU_RENDER, InitAchievements) InitAchievements() end)
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_RENDER, function()  TC_SaltLady:RemoveCallback(ModCallbacks.MC_POST_RENDER, InitAchievements) InitAchievements() end)
+EdithCompliance:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, function() EdithCompliance:RemoveCallback(ModCallbacks.MC_MAIN_MENU_RENDER, InitAchievements) InitAchievements() end)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_RENDER, function()  EdithCompliance:RemoveCallback(ModCallbacks.MC_POST_RENDER, InitAchievements) InitAchievements() end)
 InitAchievements()

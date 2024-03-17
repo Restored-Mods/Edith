@@ -33,21 +33,21 @@ function SaveManager:OnPlayerInit()
 
     local isContinue = IsContinue()
 
-    if isContinue and TC_SaltLady:HasData() then
-        TC_SaltLady.HiddenItemManager:LoadData(TSIL.SaveManager.GetPersistentVariable(TC_SaltLady, "HiddenItemMangerSave"))
+    if isContinue and EdithCompliance:HasData() then
+        EdithCompliance.HiddenItemManager:LoadData(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "HiddenItemMangerSave"))
     end
-    for _, funct in ipairs(TC_SaltLady.CallOnStart) do
+    for _, funct in ipairs(EdithCompliance.CallOnStart) do
         funct()
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, SaveManager.OnPlayerInit)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, SaveManager.OnPlayerInit)
 
 function SaveManager:SaveData(isSaving)
     if isSaving then
-        TSIL.SaveManager.SetPersistentVariable(TC_SaltLady, "HiddenItemMangerSave", TC_SaltLady.HiddenItemManager:GetSaveData())
+        TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "HiddenItemMangerSave", EdithCompliance.HiddenItemManager:GetSaveData())
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveManager.SaveData)
+EdithCompliance:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveManager.SaveData)
 
 function SaveManager:LoadUpdate(isLoading)
     for _, player in ipairs(Helpers.GetPlayers()) do
@@ -57,11 +57,11 @@ function SaveManager:LoadUpdate(isLoading)
         Helpers.ChangeSprite(player,true)
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, SaveManager.LoadUpdate)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, SaveManager.LoadUpdate)
 
-TC_SaltLady:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
-    if card == TC_SaltLady.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE and not Isaac.GetPersistentGameData():Unlocked(TC_SaltLady.Enums.Achievements.REV_PRUDENCE)
-    or card == TC_SaltLady.Enums.Pickups.Cards.CARD_SOUL_EDITH and not Isaac.GetPersistentGameData():Unlocked(TC_SaltLady.Enums.Achievements.SOUL_EDITH) then
+EdithCompliance:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
+    if card == EdithCompliance.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.REV_PRUDENCE)
+    or card == EdithCompliance.Enums.Pickups.Cards.CARD_SOUL_EDITH and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.SOUL_EDITH) then
         return 0
     end
 end)

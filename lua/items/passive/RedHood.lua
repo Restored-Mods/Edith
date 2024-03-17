@@ -30,14 +30,14 @@ local function GiveRedHoodPower(player, num, shoulProc)
     local numeffects = player:HasCollectible(CollectibleType.COLLECTIBLE_DOG_TOOTH) and 2 or 1
     if shoulProc then
         if data.RedHoodCounter >= moonPhases and not reset then
-            if not effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+            if not effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
                 SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
             end
-            if effects:GetNullEffectNum(TC_SaltLady.Enums.NullItems.RED_HOOD) < numeffects then
-                effects:AddNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD)
+            if effects:GetNullEffectNum(EdithCompliance.Enums.NullItems.RED_HOOD) < numeffects then
+                effects:AddNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
             end
-        elseif effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
-            effects:RemoveNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD, numeffects)
+        elseif effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
+            effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD, numeffects)
         end
     end
 end
@@ -54,7 +54,7 @@ end
 function RedHoodLocal:StompyEffect(player)
     local effects = player:GetEffects()
     local data = Helpers.GetData(player)
-    if player:HasCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then
+    if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then
         if not data.LunaNullItems then
             data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
         end
@@ -63,12 +63,12 @@ function RedHoodLocal:StompyEffect(player)
         end
         data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
     end
-    if effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
-        if not effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_LEO) and effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+    if effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
+        if not effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_LEO) and effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
             effects:AddCollectibleEffect(CollectibleType.COLLECTIBLE_LEO, false)
         end
         local exists = false
-        for _, swipe in ipairs(Isaac.FindByType(TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Type, TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Variant, 0)) do
+        for _, swipe in ipairs(Isaac.FindByType(EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Type, EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Variant, 0)) do
             swipe = swipe:ToEffect()
             local parent = swipe.Parent
             if GetPtrHash(parent) == GetPtrHash(player) then
@@ -77,7 +77,7 @@ function RedHoodLocal:StompyEffect(player)
             end
         end
         if not exists then
-            local swipe = Isaac.Spawn(TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Type, TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Variant, 0, player.Position, Vector.Zero, player):ToEffect()
+            local swipe = Isaac.Spawn(EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Type, EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Variant, 0, player.Position, Vector.Zero, player):ToEffect()
             swipe:FollowParent(player)
             local sprite = swipe:GetSprite()
             sprite:Play("Swing2", true)
@@ -85,14 +85,14 @@ function RedHoodLocal:StompyEffect(player)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, RedHoodLocal.StompyEffect, 0)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, RedHoodLocal.StompyEffect, 0)
 
 function RedHoodLocal:SwipesInit(effect)
     local sprite = effect:GetSprite()
     sprite:Play("Swing2", true)
     sprite:SetLastFrame()
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, RedHoodLocal.SwipesInit, TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, RedHoodLocal.SwipesInit, EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Variant)
 
 function RedHoodLocal:Swipes(effect)
     local player = effect.Parent
@@ -101,7 +101,7 @@ function RedHoodLocal:Swipes(effect)
         return
     end
     player = player:ToPlayer()
-    if not player:GetEffects():HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+    if not player:GetEffects():HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
         effect:Remove()
         return
     end
@@ -146,19 +146,19 @@ function RedHoodLocal:Swipes(effect)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, RedHoodLocal.Swipes, TC_SaltLady.Enums.Entities.WEREWOLF_SWIPE.Variant)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, RedHoodLocal.Swipes, EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Variant)
 
 function RedHoodLocal:NewRoom()
     local level = Game():GetLevel()
     local previousRoomDesc = level:GetRoomByIdx(level:GetPreviousRoomIndex())
     local curentRoomDesc = level:GetCurrentRoomDesc()
-    for _, player in ipairs(Helpers.GetPlayersByCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_RED_HOOD)) do
-        if player:GetEffects():HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+    for _, player in ipairs(Helpers.GetPlayersByCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD)) do
+        if player:GetEffects():HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
             previousRoomDesc.Clear = false
         end
         if not usedCard then        
             local dog = player:HasCollectible(CollectibleType.COLLECTIBLE_DOG_TOOTH) and 1 or 0
-            if player:GetEffects():GetNullEffectNum(TC_SaltLady.Enums.NullItems.RED_HOOD) > dog then
+            if player:GetEffects():GetNullEffectNum(EdithCompliance.Enums.NullItems.RED_HOOD) > dog then
                 GiveRedHoodPower(player, -moonPhases, true)
             elseif lastRoomIdx ~= nil and lastRoomIdx ~= level:GetCurrentRoomIndex() 
             and not Game():GetRoom():IsClear() and curentRoomDesc.VisitedCount < 2 and previousRoomDesc.Clear == true then
@@ -170,7 +170,7 @@ function RedHoodLocal:NewRoom()
     usedCard = false
     lastRoomIdx = level:GetPreviousRoomIndex()
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, RedHoodLocal.NewRoom)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, RedHoodLocal.NewRoom)
 
 function RedHoodLocal:MoonCounter()
     if Game():GetRoom():GetRenderMode() == RenderMode.RENDER_WATER_REFLECT then return end
@@ -187,7 +187,7 @@ function RedHoodLocal:MoonCounter()
         pressedMapButton = math.max(0, pressedMapButton - 1)
     end
     if not Helpers.IsMenuing() then
-        for _, p in ipairs(Helpers.GetPlayersByCollectible(TC_SaltLady.Enums.CollectibleType.COLLECTIBLE_RED_HOOD)) do     
+        for _, p in ipairs(Helpers.GetPlayersByCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD)) do     
             local pData = Helpers.GetEntityData(p)
             if type(pData.RedHoodCounter) == "number" then
                 local pos = Isaac.WorldToScreen(p.Position)
@@ -207,7 +207,7 @@ function RedHoodLocal:MoonCounter()
     end
 end
 
-TC_SaltLady:AddCallback(ModCallbacks.MC_POST_RENDER, RedHoodLocal.MoonCounter)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_RENDER, RedHoodLocal.MoonCounter)
 
 function RedHoodLocal:UseCard(card, player, flag)
     if card == Card.CARD_MOON then
@@ -218,13 +218,13 @@ function RedHoodLocal:UseCard(card, player, flag)
         usedCard = true
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_USE_CARD, RedHoodLocal.UseCard)
+EdithCompliance:AddCallback(ModCallbacks.MC_USE_CARD, RedHoodLocal.UseCard)
 
 ---@param player EntityPlayer
 ---@param cache CacheFlag | integer
 function RedHoodLocal:Cache(player, cache)
     local effects = player:GetEffects()
-    if effects:HasNullEffect(TC_SaltLady.Enums.NullItems.RED_HOOD) then
+    if effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
         if cache == CacheFlag.CACHE_DAMAGE then
             player.Damage = player.Damage + 5
         elseif cache == CacheFlag.CACHE_FIREDELAY then
@@ -236,4 +236,4 @@ function RedHoodLocal:Cache(player, cache)
         end
     end
 end
-TC_SaltLady:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, RedHoodLocal.Cache)
+EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, RedHoodLocal.Cache)
