@@ -30,13 +30,13 @@ local function IsThunderBomb(bomb)
 	return true
 end
 
+---@param bomb EntityBomb
 function ThunderBombs:BombInit(bomb)
 	local player = Helpers.GetPlayerFromTear(bomb)
 	if player then
 		local data = Helpers.GetData(bomb)
-		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) then
-			data.IsThunderBomb = true
-		elseif player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and
+		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) or 
+		player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and
 		player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS):RandomInt(100) < 10 then
 			data.IsThunderBomb = true
 		end
