@@ -60,8 +60,8 @@ end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, SaveManager.LoadUpdate)
 
 EdithCompliance:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
-    if card == EdithCompliance.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.REV_PRUDENCE)
-    or card == EdithCompliance.Enums.Pickups.Cards.CARD_SOUL_EDITH and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.SOUL_EDITH) then
+    if card == EdithCompliance.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.CompletionMarks.REV_PRUDENCE)
+    or card == EdithCompliance.Enums.Pickups.Cards.CARD_SOUL_EDITH and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.CompletionMarks.SOUL_EDITH) then
         return 0
     end
 end)
