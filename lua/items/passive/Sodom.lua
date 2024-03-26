@@ -14,11 +14,12 @@ function Sodom:npcInit(npc)
 
 end
 
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_NPC_INIT, Sodom.npcInit)
+--EdithCompliance:AddCallback(ModCallbacks.MC_POST_NPC_INIT, Sodom.npcInit)
 
 ---@param npc EntityNPC
 function Sodom:npcSaltUpdate(npc)
     local data = Helpers.GetData(npc)
+    if npc.FrameCount < 1 then return end
     if data.SaltedStatusCooldown == nil then
         Sodom:npcInit(npc)
     end
