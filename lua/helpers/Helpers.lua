@@ -103,6 +103,15 @@ function Helpers.CollectCustomPickup(player,pickup)
 	end
 	return nil
 end
+	
+---@param enemy Entity
+---@param allEnemies boolean?
+---@return boolean
+function Helpers.IsEnemy(enemy, allEnemies)
+	allEnemies = allEnemies or false
+	return enemy and (enemy:IsVulnerableEnemy() or allEnemies) and enemy:IsActiveEnemy() and enemy:IsEnemy()
+	and not EntityRef(enemy).IsFriendly
+end
 
 ---@param allEnemies boolean | nil
 ---@param noBosses boolean | nil
@@ -111,8 +120,7 @@ function Helpers.GetEnemies(allEnemies, noBosses)
 	local enemies = {}
 	for _,enemy in ipairs(Isaac.GetRoomEntities()) do
 		enemy = enemy:ToNPC()
-		if enemy and (enemy:IsVulnerableEnemy() or allEnemies) and enemy:IsActiveEnemy() and enemy:IsEnemy() 
-		and not EntityRef(enemy).IsFriendly then
+		if Helpers.IsEnemy(enemy, allEnemies) then
 			if not enemy:IsBoss() or (enemy:IsBoss() and not noBosses) then
 				if enemy.Type == EntityType.ENTITY_ETERNALFLY then
 					enemy:Morph(EntityType.ENTITY_ATTACKFLY,0,0,-1)
@@ -1001,6 +1009,34 @@ end
 ---@return number
 function Helpers.ToMaxFireDelay(tearsPerSecond)
     return (30 / tearsPerSecond) - 1
+end
+
+---@param ... table[]
+---@return table
+function Helpers.MergeTables(...)
+	local tables = {...}
+	local t = tables[1]
+	table.remove(tables, 1)
+	for i, tab in ipairs(tables) do
+		for _,v in pairs(tab) do
+			table.insert(t, v)
+		end
+	end
+	return t
+end
+
+---@param ... table[]
+---@return table
+function Helpers.MergeiTables(...)
+	local tables = table.unpack(...)
+    local t1 = tables[1]
+    table.remove(tables, 1)
+	for _,tab in ipairs(tables) do
+        for _,v in ipairs(tab) do
+            table.insert(t1, v)
+        end
+	end
+	return t1
 end
 
 --#region bless Fiend Folio (you read that right)

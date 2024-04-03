@@ -95,6 +95,7 @@ Enums.CollectibleType =
 						COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("Salt Shaker"),					
 						COLLECTIBLE_GORGON_MASK = Isaac.GetItemIdByName("Gorgon Mask"),
 						COLLECTIBLE_RED_HOOD = Isaac.GetItemIdByName("Red Hood"),
+						COLLECTIBLE_LANDMINE = Isaac.GetItemIdByName("Landmine"),
 						--COLLECTIBLE_THE_CHISEL = Isaac.GetItemIdByName("The Chisel"),
 					}
 
@@ -159,6 +160,10 @@ Enums.Costumes = {
 
 Enums.Callbacks = {
 	ON_EDITH_STOMP_EXPLOSION = "ON_EDITH_STOMP_EXPLOSION",
+}
+
+Enums.BombVariant = {
+	LANDMINE = Isaac.GetEntityVariantByName("Landmine"),
 }
 
 Enums.Challenges = {

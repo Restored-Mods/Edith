@@ -27,7 +27,7 @@ EdithCompliance:AddCallback(ModCallbacks.MC_PRE_COMPLETION_EVENT, function(_, ma
 		local marksA = {
 			[CompletionType.MOMS_HEART] = EdithCompliance.Enums.Achievements.CompletionMarks.SALTY_BABY,
 			[CompletionType.ISAAC] = EdithCompliance.Enums.Achievements.CompletionMarks.SALT_SHAKER,
-			--[CompletionType.SATAN] = EdithCompliance.Enums.Achievements.CompletionMarks.,
+			[CompletionType.SATAN] = EdithCompliance.Enums.Achievements.CompletionMarks.LANDMINE,
 			[CompletionType.BOSS_RUSH] = EdithCompliance.Enums.Achievements.CompletionMarks.RED_HOOD,
 			[CompletionType.BLUE_BABY] = EdithCompliance.Enums.Achievements.CompletionMarks.THUNDER_BOMBS,
 			[CompletionType.LAMB] = EdithCompliance.Enums.Achievements.CompletionMarks.SMELLING_SALTS,

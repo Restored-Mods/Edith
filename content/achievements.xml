@@ -8,7 +8,7 @@
 	<achievement name="Red Hood" text="Edith Boss Rush" gfx="achievement_redhood.png" />
 	<achievement name="Salty Baby" text="Edith Mom's Heart" gfx="achievement_saltybaby.png" />
 	<achievement name="Salt Shaker" text="Edith Isaac" gfx="achievement_saltshaker.png" />
-	<achievement name="" text="Edith Satan" gfx="achievement_.png" />
+	<achievement name="Landmine" text="Edith Satan" gfx="achievement_.png" />
 	<achievement name="Thunder Bombs" text="Edith Blue Baby" gfx="achievement_thunderbombs.png" />
 	<achievement name="Smelling Salts" text="Edith Lamb" gfx="achievement_smellingsalts.png" />
 	<achievement name="Pawn Baby" text="Edith Mega Satan" gfx="achievement_pawnbaby.png" />

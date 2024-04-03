@@ -50,7 +50,7 @@ local function AdvanceMoonPhase(step)
         newPhase = newPhase - moonPhases
     end
     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "MoonPhase", newPhase)
-    for _, player in pairs(Helpers.GetPlayersByCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD + 1)) do
+    for _, player in pairs(Helpers.GetPlayersByCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD)) do
         local effect = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithCompliance.Enums.Entities.MOON_PHASE.Variant, 0, player.Position, Vector.Zero, player):ToEffect()
         effect.SpriteOffset = Vector(0, -20 * player.SpriteScale.Y)
         effect.DepthOffset = 5
@@ -120,7 +120,7 @@ EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, RedHoodLocal.Moo
 function RedHoodLocal:StompyEffect(player)
     local effects = player:GetEffects()
     local data = Helpers.GetData(player)
-    if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD + 1) then
+    if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then
         if not data.LunaNullItems then
             data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
         end
@@ -235,7 +235,7 @@ function RedHoodLocal:MoonCounter()
     else
         pressedMapButton = math.max(0, pressedMapButton - 1)
     end
-    if not Helpers.IsMenuing() and not Game():IsPaused() and PlayerManager.AnyoneHasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD + 1) then
+    if not Helpers.IsMenuing() and not Game():IsPaused() and PlayerManager.AnyoneHasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then
         local pos = Vector(Isaac.GetScreenWidth() / 2 - 60, 20)
         moonPhaseSprite.Color = Color(1, 1, 1, pressedMapButton / 15)
         moonPhaseSprite:Play(moonPhaseAnim[GetCurrentMoonPhase()], true)
