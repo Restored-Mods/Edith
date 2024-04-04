@@ -13,9 +13,9 @@ function Landmine:BombInit(bomb)
 		end
         if bomb.Variant == EdithCompliance.Enums.BombVariant.LANDMINE then
             data.ActivationTimer = 30
+            bomb.Velocity = Vector.Zero
         end
 	end
-    print(bomb:GetExplosionCountdown())
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_INIT, Landmine.BombInit)
 
@@ -24,10 +24,13 @@ function Landmine:BombUpdate(bomb)
 	local data = Helpers.GetData(bomb)
 	
 	data.ActivationTimer = data.ActivationTimer and math.max(data.ActivationTimer - 1, 0) or 30
-	bomb:SetExplosionCountdown(47)
+	bomb:SetExplosionCountdown(52)
     bomb.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
     bomb.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
     if data.ActivationTimer <= 0 then
+        if bomb.Velocity:Length() > 0 then
+            bomb:SetExplosionCountdown(0)
+        end
         local entityTable = Helpers.MergeTables(Helpers.GetEnemies(true), Helpers.GetPlayers(true), Isaac.FindByType(EntityType.ENTITY_TEAR),
         Isaac.FindByType(EntityType.ENTITY_LASER), Isaac.FindByType(EntityType.ENTITY_PROJECTILE), Isaac.FindByType(EntityType.ENTITY_KNIFE))
         for _, entity in ipairs(entityTable) do
