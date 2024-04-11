@@ -146,9 +146,7 @@ end
 local function EdithGridMovement(player, data)
 	local firstFrameOfMovement = false
 
-	if player.ControlsEnabled ~= true or Helpers.IsMenuing() then return end
-	
-	
+	if (player.ControlsEnabled ~= true or Helpers.IsMenuing()) and not data.EdithTargetMovementPosition then return end
 	
 	local effects = player:GetEffects()
 	local hasMarsEffect = effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)

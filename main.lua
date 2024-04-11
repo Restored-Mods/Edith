@@ -17,6 +17,7 @@ include("lua.core.BlockDisabledItems")
 
 --entities
 include("lua.entities.player")
+include("lua.entities.clots")
 include("lua.entities.unlock")
 
 --items
