@@ -149,6 +149,14 @@ function Helpers.IsMenuing()
 	return false
 end
 
+function Helpers.InBoilerMirrorWorld()
+	return FFGRACE and FFGRACE:IsBoilerMirrorWorld()
+end
+
+function Helpers.InMirrorWorld()
+	return Game():GetRoom():IsMirrorWorld() or Helpers.InBoilerMirrorWorld()
+end
+
 ---@param player EntityPlayer
 function Helpers.CanMove(player)
 	local controlsEnabled = player.ControlsEnabled

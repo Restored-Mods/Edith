@@ -197,7 +197,7 @@ local function EdithGridMovement(player, data)
 		local targetMovementDirection
 
 		local mirrorWorldReverser
-		if game:GetRoom():IsMirrorWorld() or (FFGRACE and FFGRACE:IsBoilerMirrorWorld()) then
+		if Helpers.InMirrorWorld() then
 			mirrorWorldReverser = -1
 		else
 			mirrorWorldReverser = 1
