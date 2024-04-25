@@ -96,7 +96,38 @@ local DSSInitializerFunction = include("lua.core.dss.dssmenucore")
 -- This function returns a table that some useful functions and defaults are stored on
 local dssmod = DSSInitializerFunction(DSSModName, DSSCoreVersion, MenuProvider)
 
+if not ImGui.ElementExists("edithCompliance") then
+    ImGui.CreateMenu('edithCompliance', '\u{1f9c2} Edith')
+end
+
+--wrapper by catinsurance
+---@param elementId string
+---@param createFunc function
+---@param removeFunc function
+local function createElement(elementId, createFunc, removeFunc, ...)
+    if ImGui.ElementExists(elementId) then
+        removeFunc(elementId)
+    end
+
+    createFunc(...)
+end
+
 local function InitDisableMenu()
+    if ImGui.ElementExists("edithMenuBlacklistItems") then
+        ImGui.RemoveElement("edithMenuBlacklistItems")
+    end
+
+    ImGui.AddElement("edithCompliance", "edithMenuBlacklistItems", ImGuiElement.MenuItem, "Items Blacklist")
+
+    if ImGui.ElementExists("edithWindowBlacklistItems") then
+        ImGui.RemoveWindow("edithWindowBlacklistItems")
+    end
+
+    ImGui.CreateWindow("edithWindowBlacklistItems", "Items Blacklist")
+
+
+    ImGui.LinkWindowToElement("edithWindowBlacklistItems", "edithMenuBlacklistItems")
+    
     local itemTogglesMenu = {}
     local orderedItems = {}
     itemTogglesMenu = {
@@ -179,19 +210,22 @@ local function InitDisableMenu()
                 if not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems") then
                     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", {})
                 end
-                local disabledItem = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")
-                for index, disabledItem in ipairs(disabledItem) do
+                local disabledItems = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")
+                for index, disabledItem in ipairs(disabledItems) do
                     if disabledItem == collectible.ID then
                         if var == 1 then
-                            table.remove(disabledItem, index)
+                            table.remove(disabledItems, index)
                         end
-                        return
+                        break
                     end
                 end
 
                 if var == 2 then
-                    table.insert(disabledItem, collectible.ID)
+                    table.insert(disabledItems, collectible.ID)
                 end
+                local elemName = string.gsub(collectible.Name, " ", "").."BlackList"
+                ImGui.UpdateData(elemName, ImGuiData.Value, var - 1)
+                TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", disabledItems)
             end,
 
             -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
@@ -212,15 +246,167 @@ local function InitDisableMenu()
             }
         }
 
+        local elemName = string.gsub(collectible.Name, " ", "").."BlackList"
+        if ImGui.ElementExists(elemName) then
+            ImGui.RemoveElement(elemName)
+        end
+        
+        ImGui.AddCombobox("edithWindowBlacklistItems", elemName, collectible.Name, function (index, val)
+                --print("that label changed", index, val)
+                if not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems") then
+                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", {})
+                end
+                local disabledItems = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")
+                for indexItem, disabledItem in ipairs(disabledItems) do
+                    if disabledItem == collectible.ID then
+                        if index == 0 then
+                            table.remove(disabledItems, indexItem)
+                        end
+                        break
+                    end
+                end
+                
+                if index == 1 then
+                    table.insert(disabledItems, collectible.ID)
+                end
+                TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", disabledItems)
+                --print(currentDestination, index)
+                end, {
+                    "Enabled",
+                    "Disabled",
+                },
+                0,
+                true
+            )
+
         itemTogglesMenu[#itemTogglesMenu+1] = collectibleOption
     end
     return itemTogglesMenu
 end
 
--- Creating a menu like any other DSS menu is a simple process.
--- You need a "Directory", which defines all of the pages ("items") that can be accessed on your menu, and a "DirectoryKey", which defines the state of the menu.
-local itemSprite = Sprite()
-itemSprite:Load("gfx/ui/dss_item.anm2", false)
+if ImGui.ElementExists("edithMenuSettings") then
+    ImGui.RemoveElement("edithMenuSettings")
+end
+
+ImGui.AddElement("edithCompliance", "edithMenuSettings", ImGuiElement.MenuItem, "Settings")
+
+if ImGui.ElementExists("edithWindowSettings") then
+    ImGui.RemoveWindow("edithWindowSettings")
+end
+
+ImGui.CreateWindow("edithWindowSettings", "Settings")
+
+
+ImGui.LinkWindowToElement("edithWindowSettings", "edithMenuSettings")
+
+if ImGui.ElementExists("edithPushToSlide") then
+    ImGui.RemoveElement("edithPushToSlide")
+end
+
+ImGui.AddCombobox("edithWindowSettings", "edithPushToSlide", "Slide when holding button", function(index, val)
+        TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AllowHolding", index + 1)
+    end, { 'Enable', 'Disable' }, 0, true)
+
+if ImGui.ElementExists("edithTargetColorRGB") then
+    ImGui.RemoveColor("edithTargetColorRGB", ImGuiColor.Tab)
+end
+
+ImGui.AddInputColor("edithWindowSettings", "edithTargetColorRGB", "Edith's Target Color",
+    function(r, g, b)
+        TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R = math.floor(r * 255)
+        TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G = math.floor(g * 255)
+        TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B = math.floor(b * 255)
+    end,
+    155 / 255,
+    0,
+    0
+)
+
+local function InitTargetColorMenu()
+
+    local targetColorMenu = {
+        {
+            str = 'red',
+
+            -- If "min" and "max" are set without "slider", you've got yourself a number option!
+            -- It will allow you to scroll through the entire range of numbers from "min" to "max", incrementing by "increment"
+            min = 0,
+            max = 255,
+            increment = 1,
+
+            -- You can also specify a prefix or suffix that will be applied to the number, which is especially useful for percentages!
+            --pref = 'hi! ',
+            setting = 155,
+
+            variable = "TargetColorRed",
+
+            load = function()
+                return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R or 155
+            end,
+            store = function(newOption)
+                TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R = newOption
+                local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
+
+                --ImGui.UpdateData("edithWindowTargetColorRGB", ImGuiData.ColorValues, {newOption / 255, rgb.G / 255, rgb.B / 255})
+            end,
+
+            tooltip = GenerateTooltip('color red value'),
+        },
+        {
+            str = 'green',
+
+            -- If "min" and "max" are set without "slider", you've got yourself a number option!
+            -- It will allow you to scroll through the entire range of numbers from "min" to "max", incrementing by "increment"
+            min = 0,
+            max = 255,
+            increment = 1,
+
+            -- You can also specify a prefix or suffix that will be applied to the number, which is especially useful for percentages!
+            --pref = 'hi! ',
+            setting = 155,
+
+            variable = "TargetColorGreen",
+
+            load = function()
+                return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G or 0
+            end,
+            store = function(newOption)
+                TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G = newOption
+                local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
+                --ImGui.UpdateData("edithWindowTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, newOption / 255, rgb.B / 255})
+            end,
+
+            tooltip = GenerateTooltip('color green value'),
+        },
+        {
+            str = 'blue',
+
+            -- If "min" and "max" are set without "slider", you've got yourself a number option!
+            -- It will allow you to scroll through the entire range of numbers from "min" to "max", incrementing by "increment"
+            min = 0,
+            max = 255,
+            increment = 1,
+
+            -- You can also specify a prefix or suffix that will be applied to the number, which is especially useful for percentages!
+            --pref = 'hi! ',
+            setting = 155,
+
+            variable = "TargetColorBlue",
+
+            load = function()
+                return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B or 0
+            end,
+            store = function(newOption)
+                TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B = newOption
+                local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
+                --ImGui.UpdateData("edithWindowTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, rgb.G / 255, newOption / 255})
+            end,
+
+            tooltip = GenerateTooltip('color blue value'),
+        },
+    }
+    return targetColorMenu
+end
 
 -- Creating a menu like any other DSS menu is a simple process.
 -- You need a "Directory", which defines all of the pages ("items") that can be accessed on your menu, and a "DirectoryKey", which defines the state of the menu.
@@ -265,88 +451,15 @@ local edithdirectory = {
     },
     targetcolor = {
         title = 'target color',
-        buttons = {
-            {
-                str = 'red',
-
-                -- If "min" and "max" are set without "slider", you've got yourself a number option!
-                -- It will allow you to scroll through the entire range of numbers from "min" to "max", incrementing by "increment"
-                min = 0,
-                max = 255,
-                increment = 1,
-
-                -- You can also specify a prefix or suffix that will be applied to the number, which is especially useful for percentages!
-                --pref = 'hi! ',
-                setting = 155,
-
-                variable = "TargetColorRed",
-
-                load = function()
-                    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R or 155
-                end,
-                store = function(newOption)
-                    TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R = newOption
-                end,
-
-                tooltip = GenerateTooltip('color red value'),
-            },
-            {
-                str = 'green',
-
-                -- If "min" and "max" are set without "slider", you've got yourself a number option!
-                -- It will allow you to scroll through the entire range of numbers from "min" to "max", incrementing by "increment"
-                min = 0,
-                max = 255,
-                increment = 1,
-
-                -- You can also specify a prefix or suffix that will be applied to the number, which is especially useful for percentages!
-                --pref = 'hi! ',
-                setting = 155,
-
-                variable = "TargetColorGreen",
-
-                load = function()
-                    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G or 0
-                end,
-                store = function(newOption)
-                    TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G = newOption
-                end,
-
-                tooltip = GenerateTooltip('color green value'),
-            },
-            {
-                str = 'blue',
-
-                -- If "min" and "max" are set without "slider", you've got yourself a number option!
-                -- It will allow you to scroll through the entire range of numbers from "min" to "max", incrementing by "increment"
-                min = 0,
-                max = 255,
-                increment = 1,
-
-                -- You can also specify a prefix or suffix that will be applied to the number, which is especially useful for percentages!
-                --pref = 'hi! ',
-                setting = 155,
-
-                variable = "TargetColorBlue",
-
-                load = function()
-                    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B or 0
-                end,
-                store = function(newOption)
-                    TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B = newOption
-                end,
-
-                tooltip = GenerateTooltip('color blue value'),
-            },
-        },
+        buttons = InitTargetColorMenu()
     },
     settings = {
         title = 'settings',
         buttons = {
             {str = '', nosel = true},
             {
-                strset = {'disable slide', 'on hold button'},
-                choices = {'no', 'yes'},
+                strset = {'slide', 'on hold button'},
+                choices = {'enable', 'disable'},
                 setting = 1,
                 variable = 'AllowHolding',
 
@@ -356,9 +469,10 @@ local edithdirectory = {
 
                 store = function(newOption)
                     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AllowHolding", newOption)
+                    ImGui.UpdateData("edithPushToSlide", ImGuiData.Value, newOption - 1)
                 end,
 
-                tooltip = GenerateTooltip('disable the sliding on holding a movement button')
+                tooltip = GenerateTooltip('enable or disable the sliding on holding a movement button')
             },
             {
                 str = '',
@@ -366,8 +480,8 @@ local edithdirectory = {
                 nosel = true
             },
             {
-                strset = {'disable bombs', 'for edith'},
-                choices = {'no', 'yes'},
+                strset = {'bombs', 'for edith'},
+                choices = {'enable', 'disable'},
                 setting = 1,
                 variable = 'OnlyStomps',
 
@@ -379,7 +493,7 @@ local edithdirectory = {
                     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "OnlyStomps", newOption)
                 end,
 
-                tooltip = GenerateTooltip('disable placing bombs when playing as edith')
+                tooltip = GenerateTooltip('enable or disable placing bombs when playing as edith')
             },
             {
                 str = '',
