@@ -40,7 +40,7 @@ EdithCompliance:AddCallback(ModCallbacks.MC_PRE_COMPLETION_EVENT, function(_, ma
 			[CompletionType.BEAST] = EdithCompliance.Enums.Achievements.CompletionMarks.SODOM,
 		}
 		if mark == CompletionType.ULTRA_GREEDIER then -- make damn sure greedier unlocks greed too
-			Helpers.UnlockAchievement(marksA[CompletionType.ULTRA_GREED])
+			--Helpers.UnlockAchievement(marksA[CompletionType.ULTRA_GREED])
 		end
 		if marksA[mark] then
 			Helpers.UnlockAchievement(marksA[mark])

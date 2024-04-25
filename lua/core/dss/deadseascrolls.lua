@@ -97,19 +97,7 @@ local DSSInitializerFunction = include("lua.core.dss.dssmenucore")
 local dssmod = DSSInitializerFunction(DSSModName, DSSCoreVersion, MenuProvider)
 
 if not ImGui.ElementExists("edithCompliance") then
-    ImGui.CreateMenu('edithCompliance', '\u{1f9c2} Edith')
-end
-
---wrapper by catinsurance
----@param elementId string
----@param createFunc function
----@param removeFunc function
-local function createElement(elementId, createFunc, removeFunc, ...)
-    if ImGui.ElementExists(elementId) then
-        removeFunc(elementId)
-    end
-
-    createFunc(...)
+    ImGui.CreateMenu('edithCompliance', 'Edith')
 end
 
 local function InitDisableMenu()
@@ -117,7 +105,7 @@ local function InitDisableMenu()
         ImGui.RemoveElement("edithMenuBlacklistItems")
     end
 
-    ImGui.AddElement("edithCompliance", "edithMenuBlacklistItems", ImGuiElement.MenuItem, "Items Blacklist")
+    ImGui.AddElement("edithCompliance", "edithMenuBlacklistItems", ImGuiElement.MenuItem, "\u{f05e} Items Blacklist")
 
     if ImGui.ElementExists("edithWindowBlacklistItems") then
         ImGui.RemoveWindow("edithWindowBlacklistItems")
@@ -288,7 +276,7 @@ if ImGui.ElementExists("edithMenuSettings") then
     ImGui.RemoveElement("edithMenuSettings")
 end
 
-ImGui.AddElement("edithCompliance", "edithMenuSettings", ImGuiElement.MenuItem, "Settings")
+ImGui.AddElement("edithCompliance", "edithMenuSettings", ImGuiElement.MenuItem, "\u{f013} Settings")
 
 if ImGui.ElementExists("edithWindowSettings") then
     ImGui.RemoveWindow("edithWindowSettings")
@@ -307,11 +295,19 @@ ImGui.AddCombobox("edithWindowSettings", "edithPushToSlide", "Slide when holding
         TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AllowHolding", index + 1)
     end, { 'Enable', 'Disable' }, 0, true)
 
+if ImGui.ElementExists("edithAllowBombs") then
+    ImGui.RemoveElement("edithAllowBombs")
+end
+
+ImGui.AddCombobox("edithWindowSettings", "edithAllowBombs", "Edith can use bombs", function(index, val)
+        TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "OnlyStomps", index + 1)
+    end, { 'Enable', 'Disable' }, 0, true)
+
 if ImGui.ElementExists("edithTargetColorRGB") then
     ImGui.RemoveColor("edithTargetColorRGB", ImGuiColor.Tab)
 end
 
-ImGui.AddInputColor("edithWindowSettings", "edithTargetColorRGB", "Edith's Target Color",
+ImGui.AddInputColor("edithWindowSettings", "edithTargetColorRGB", "\u{f1fc} Edith's Target Color",
     function(r, g, b)
         TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R = math.floor(r * 255)
         TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G = math.floor(g * 255)
@@ -347,7 +343,7 @@ local function InitTargetColorMenu()
                 TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R = newOption
                 local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
 
-                --ImGui.UpdateData("edithWindowTargetColorRGB", ImGuiData.ColorValues, {newOption / 255, rgb.G / 255, rgb.B / 255})
+                ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, {newOption / 255, rgb.G / 255, rgb.B / 255}, {newOption / 255, rgb.G / 255, rgb.B / 255})
             end,
 
             tooltip = GenerateTooltip('color red value'),
@@ -373,7 +369,7 @@ local function InitTargetColorMenu()
             store = function(newOption)
                 TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G = newOption
                 local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
-                --ImGui.UpdateData("edithWindowTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, newOption / 255, rgb.B / 255})
+                --ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, newOption / 255, rgb.B / 255})
             end,
 
             tooltip = GenerateTooltip('color green value'),
@@ -399,7 +395,7 @@ local function InitTargetColorMenu()
             store = function(newOption)
                 TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B = newOption
                 local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
-                --ImGui.UpdateData("edithWindowTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, rgb.G / 255, newOption / 255})
+                --ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, rgb.G / 255, newOption / 255})
             end,
 
             tooltip = GenerateTooltip('color blue value'),
@@ -491,6 +487,7 @@ local edithdirectory = {
 
                 store = function(newOption)
                     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "OnlyStomps", newOption)
+                    ImGui.UpdateData("edithAllowBombs", ImGuiData.Value, newOption - 1)
                 end,
 
                 tooltip = GenerateTooltip('enable or disable placing bombs when playing as edith')
