@@ -14,7 +14,7 @@ EID:addIcon("Player"..EdithCompliance.Enums.PlayerType.EDITH, "Edith", 0, 12, 12
 --EID:addIcon("Player"..EdithCompliance.Enums.PlayerType.EDITH_B, "EdithB", 0, 12, 12, -1, 1, PlayerIconSprite)
 
 -- Edith
-EID:addBirthright(EdithCompliance.Enums.PlayerType.EDITH, "Jump charges faster and not stops charging when moving#Knockback from stomp increased and damages enemies when they collide with wall/obstacle", "Edith", "en_us")
+EID:addBirthright(EdithCompliance.Enums.PlayerType.EDITH, "Jump charges faster and not stops charging when moving#Stomp has increased knockback that damages enemies when they collide with obstacles", "Edith", "en_us")
 EID:addBirthright(EdithCompliance.Enums.PlayerType.EDITH, "Прыжок заряжается быстрее и также заряжатеся при движении#Отбрасывание от презимления увеличено и наносит урон врагам, когда они сталкиваются со стеной/препятствием", "Эдит", "ru")
 EID:addBirthright(EdithCompliance.Enums.PlayerType.EDITH, "La carga del salto será más rápida y no se detendrá al moverse", "Edith", "spa")
 
@@ -34,6 +34,10 @@ EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL,
 EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Todas las píldoras reducirán el daño y las lágrimas, pero aumentarán el tiempo de invencibilidad", "Sales de litio")
 EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "All pills lower damage and tears but increase your amount of invincibility time", "Lithium Salts")
 EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Все пилюли понижают урон и скорострельность, но увеличивают количество времени неуязвимости", "Lithium Salts", "ru")
+
+--Thunder Bombs
+EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Fully recharges active items#{{Battery}} When Isaac has no bombs, one can be placed at the cost of a charge#Bombs make electricity that spreads to nearby enemies#Electricity deals half of the bomb's damage", "Thunder Bombs", "en_us")
+
 
 -- Trinkets
 --Pepper Grinder

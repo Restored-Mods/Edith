@@ -23,6 +23,7 @@ local function IsThunderBomb(bomb)
 		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS)
 
 		isRandomNancyThunderBomb = rng:RandomInt(100) < 7
+		data.IsThunderBomb = true
 	end
 
 	if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and not isRandomNancyThunderBomb then return false end
@@ -30,19 +31,7 @@ local function IsThunderBomb(bomb)
 	return true
 end
 
----@param bomb EntityBomb
-function ThunderBombs:BombInit(bomb)
-	local player = Helpers.GetPlayerFromTear(bomb)
-	if player then
-		local data = Helpers.GetData(bomb)
-		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) or 
-		player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and
-		player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS):RandomInt(100) < 10 then
-			data.IsThunderBomb = true
-		end
-	end
-end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_INIT, ThunderBombs.BombInit)
+
 
 ---@param bomb EntityBomb
 function ThunderBombs:BombUpdate(bomb)
@@ -53,13 +42,54 @@ function ThunderBombs:BombUpdate(bomb)
 	local data = Helpers.GetData(bomb)
 	local sprite = bomb:GetSprite()
 
-	--put explosion logic here, use the repentogon hit list function to know which enemies to spawn the chain lightning effect on
+	if data.IsBlankBombInstaDetonating then
+		return
+	end
+
 	if sprite:IsPlaying("Explode") then
 		Game():GetRoom():DoLightningStrike()
+		Game():MakeShockwave(bomb.Position, .035, .01, 10)
+
+		local ring = Isaac.Spawn(EntityType.ENTITY_LASER, LaserVariant.THIN_RED, LaserSubType.LASER_SUBTYPE_RING_FOLLOW_PARENT, bomb.Position, Vector.Zero, player):ToLaser()
+		ring.Radius = 80 * bomb.RadiusMultiplier
+		ring.CollisionDamage = bomb.ExplosionDamage / 2
+		ring:SetTimeout(10)
+		ring:SetOneHit(false)
+		ring.Parent = bomb
+		ring.Color = Color.LaserNumberOne
+		Helpers.GetData(ring).FromThunderBomb = true
+	end
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpdate)
+
+
+function ThunderBombs:HandleRingDamage(laser) --this exists because it doesnt properly hit everything inside of it
+	local data = Helpers.GetData(laser)
+
+	if data and data.FromThunderBomb == true then
+		for i, enemy in ipairs(Isaac.FindInRadius(laser.Position, laser.Radius, EntityPartition.ENEMY)) do
+			enemy:TakeDamage(0, DamageFlag.DAMAGE_LASER | DamageFlag.DAMAGE_EXPLOSION, EntityRef(laser), 0)
+		end
 	end
 
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpdate)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, ThunderBombs.HandleRingDamage)
+--
+
+
+
+---@param bomb EntityBomb
+function ThunderBombs:EntityHit(entity, dmg, flags, source, countdown)
+	source = source.Entity
+
+	local data = Helpers.GetData(source)
+	if IsThunderBomb(source) or data and data.FromThunderBomb == true then
+		local lightning = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CHAIN_LIGHTNING, 0, entity.Position, Vector.Zero, bomb):ToEffect()
+		lightning:SetDamageSource(EntityType.ENTITY_PLAYER)
+		lightning.CollisionDamage = source.CollisionDamage
+	end
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, ThunderBombs.EntityHit)
 
 
 ---@param bomb EntityBomb
@@ -83,6 +113,7 @@ function ThunderBombs:BombRender(bomb)
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_RENDER, ThunderBombs.BombRender)
 
+
 ---@param collectible CollectibleType | integer
 ---@param charge integer
 ---@param firstTime boolean
@@ -101,6 +132,14 @@ function ThunderBombs:AddCharge(collectible, charge, firstTime, slot, VarData, p
 	end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, ThunderBombs.AddCharge, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+
+
+function ThunderBombs:TryPlaceBomb(player)
+
+	return true
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PLAYER_USE_BOMB, ThunderBombs.TryPlaceBomb)
+
 
 ---@param bomb EntityBomb
 function ThunderBombs:ReplaceCostume(bomb)
