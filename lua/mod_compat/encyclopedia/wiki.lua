@@ -1,9 +1,20 @@
 local Wiki = {
 	-- Items
+	Peppermint = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Spawns a freezing breath cloud for 3 seconds after releasing shoot button with full charge."},
+			{str = "If enemy stays in cloud for too long, it will freeze to death."},
+		},
+		--[[{ -- Notes
+			{str = "Notes", fsize = 2, clr = 3, halign = 0},
+			{str = "Placeholder text"},
+		},]]
+	},
 	SaltShaker = {
 		{ -- Effect
 			{str = "Effect", fsize = 2, clr = 3, halign = 0},
-			{str = "On use spawns a ring of salt creep around player."},
+			{str = "On use spawns a ring of salt creep near Isaac."},
 			{str = "Touching creep enemies get scared."},
 		},
 		--[[{ -- Notes
@@ -13,6 +24,134 @@ local Wiki = {
 		{ -- Trivia
 			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
 			{str = "Salt Shaker was one of the few items not imported into Repentance, alongside Book Of Despair, Bowl of Tears, Donkey Jawbone, Knife Piece 3, Menorah, and Voodoo Pin."},
+		},
+	},
+	GorgonMask = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "On use puts on/off Gorgon mask."},
+			{str = "Looking at enemies when mask is on freezes them."},
+			{str = "Isaac can't shoot while mask is on."},
+		},
+		{ -- Trivia
+			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
+			{str = "Gorgon Mask is based on head of Medusa, Greek mythological character."},
+		},
+	},
+	ThunderBombs = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Fully recharges active items."},
+			{str = "When Isaac has no bombs, one can be placed at the cost of a charge."},
+			{str = "Bombs make electricity that spreads to nearby enemies and does half bomb's damage."},
+		},
+		{ -- Trivia
+			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
+			{str = "Thunder bombs was an unused idea from Antibirth, it only existed in concept art."},
+		},
+	},
+	LithiumSalts = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Using pills lowers damage and tear rate but increases invincibility time on damage taken."},
+		},
+		{ -- Synergies
+			{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
+			{ str = "Horse Pills - effect is doubled." },
+		},
+		--[[{ -- Trivia
+			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
+			{str = ""},
+		},]]
+	},
+	BlastingBoots = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Gives explosion immunity."},
+			{str = "Explosion launches Isaac in the air."},
+		},
+		{ -- Synergies
+			{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
+			{ str = "Edith - on landing procs Edith's stomp effect." },
+		},
+		{ -- Notes
+			{str = "Notes", fsize = 2, clr = 3, halign = 0},
+			{str = "When Isaac launched, he can go over pits and and rocks."},
+			{str = "Falling into pit brings you back to nearest solid ground."},
+			{str = "Falling into pit as Edith makes you land like you would do a stomp jump."},
+		},
+		--[[{ -- Trivia
+			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
+			{str = ""},
+		},]]
+	},
+	LotBaby = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Familiar that mimics Isaac's movement on a 0.66 second delay."},
+			{str = "Shoots only tears with basic damage and tear rate of Isaac."},
+		},
+		{ -- Synergies
+			{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
+			{ str = "BFFS! - damage is doubled." },
+		},
+		{ -- Notes
+			{str = "Notes", fsize = 2, clr = 3, halign = 0},
+			{str = "When playing as Edith, gives +1 damage."},
+		},
+		{ -- Trivia
+			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
+			{str = "Lot Baby is based on Eidth's husband Lot in Bible."},
+			{str = "Originally was supposed to be a co-op baby, but because of modding API limitations and true co-op being in the Repentance, it was made as familiar."},
+		},
+	},
+	PawnBaby = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Familiar like Brother Bobby that has 20% chance to shoot fear tears."},
+			{str = "Nearby enemies has chance to get stomped."},
+		},
+		{ -- Synergies
+			{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
+			{ str = "BFFS! - damage is doubled." },
+		},
+		{ -- Notes
+			{str = "Notes", fsize = 2, clr = 3, halign = 0},
+			{str = "Stomping kills regular enemies and deals 20% maximum boss health damage."},
+		},
+		{ -- Trivia
+			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
+			{str = "Originally was supposed to be a co-op baby, but because of modding API limitations and true co-op being in the Repentance, it was made as familiar."},
+		},
+	},
+	SaltyBaby = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Familiar that shoots salt creep circle."},
+			{str = "Nearby enemies get fear effect near salt creep."},
+		},
+		{ -- Synergies
+			{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
+			{ str = "BFFS! - salt creep size increased by 30%." },
+		},
+		{ -- Notes
+			{str = "Notes", fsize = 2, clr = 3, halign = 0},
+			{str = "Effect is similar to Salt Shaker."},
+		},
+		{ -- Trivia
+			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
+			{str = "Originally was supposed to be a co-op baby, but because of modding API limitations and true co-op being in the Repentance, it was made as familiar."},
+		},
+	},
+	Sodom = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Freezes enemeis in large radius."},
+		},
+		{ -- Trivia
+			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
+			{str = "Sodom is a biblical city alongside Gomorrah that was destroyed by God for their wickedness."},
+			{str = "Item icon references city's destruction by 'sulfur and fire'."},
 		},
 	},
 	--[[TheChisel = {
@@ -30,6 +169,7 @@ local Wiki = {
 	},]]
 
 	-- Trinkets
+	--Pepper Grinder
 	PepperGrinder = {
 		{ -- Effect
 			{str = "Effect", fsize = 2, clr = 3, halign = 0},
@@ -40,6 +180,22 @@ local Wiki = {
 		{ -- Notes
 			{str = "Notes", fsize = 2, clr = 3, halign = 0},
 			{str = "Kills can be stacked and cause even more pepper powder to be produced."},
+		},
+	},
+	--Smelling Salts
+	SmellingSalts = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Ignores fatal damage after whitch trinket is destroyed."},
+		},
+	},
+	--Salt Rock
+	SaltRock = {
+		{ -- Effect
+			{str = "Effect", fsize = 2, clr = 3, halign = 0},
+			{str = "Entering new room has 10% to make rock a salt rock."},
+			{str = "Destroing spawns mini Edith statue."},
+			{str = "Statue jumps on enemies. If no enemy left, on random rock/poop."},
 		},
 	},
 	-- Characters

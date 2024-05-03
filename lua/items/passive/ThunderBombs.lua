@@ -133,7 +133,7 @@ function ThunderBombs:AddCharge(collectible, charge, firstTime, slot, VarData, p
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, ThunderBombs.AddCharge, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
-
+---@param player EntityPlayer
 function ThunderBombs:TryPlaceBomb(player)
 
 	return true
