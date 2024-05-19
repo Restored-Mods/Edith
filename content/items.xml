@@ -18,7 +18,7 @@
 	
 	<!-- Trinkets -->
 	<trinket id="0" name="Pepper Grinder" description="Achoo!" gfx="pepper_grinder.png" />
-	<trinket id="1" name="Salt Rock" achievement="Salt Rock" description="Back to the salt mines" gfx="salt_rock.png" />
+	<trinket id="1" name="Salt Rock" achievement="Salt Rock" description="Back to the salt mines" tags="revive" gfx="salt_rock.png" />
 	<trinket id="2" name="Smelling Salts" description="Regain consciousness" gfx="smelling_salts.png" />
 	
 	<!-- Null Items -->

@@ -2,7 +2,8 @@ local Helpers = include("lua.helpers.Helpers")
 if CustomHealthAPI then
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithCompliance.Enums.PlayerType.EDITH] = true
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithCompliance.Enums.PlayerType.EDITH_B] = true
-
+	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithCompliance.Enums.PlayerType.EDITH] = "SOUL_HEART"
+	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithCompliance.Enums.PlayerType.EDITH_B] = "BLACK_HEART"
 	CustomHealthAPI.Library.AddCallback("EdithTC", CustomHealthAPI.Enums.Callbacks.CAN_PICK_HEALTH, 0, function (player,key)
 		if Helpers.IsPlayerEdith(player, true, true) and key == "RED_HEART" then
 			return false

@@ -37,18 +37,20 @@ function Unlock:OnKillSaltRock(grid, gridType, immediate)
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_GRID_ROCK_DESTROY, Unlock.OnKillSaltRock, GridEntityType.GRID_ROCK)
 
-function Unlock:SaltyDeathByFire(entity, damage, flags, source, cd)
-    local player = entity:ToPlayer()
-    ---@cast player EntityPlayer
-    local fire = source.Entity
-    if fire and fire.Type == EntityType.ENTITY_FIREPLACE and
-    player:IsDead() and not player:WillPlayerRevive() and player:HasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_SALT_ROCK)
-    then
+---@param player EntityPlayer
+---@return boolean
+function Unlock:SaltyRevive(player)
+    if player:HasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_SALT_ROCK) and
+    not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH) then
         Helpers.UnlockAchievement(EdithCompliance.Enums.Achievements.Characters.EDITH)
         Helpers.UnlockAchievement(EdithCompliance.Enums.Achievements.Misc.SALT_ROCK)
+        player:ChangePlayerType(EdithCompliance.Enums.PlayerType.EDITH)
+        player:TryRemoveTrinket(EdithCompliance.Enums.TrinketType.TRINKET_SALT_ROCK)
+        Game():StartRoomTransition(Game():GetLevel():GetPreviousRoomIndex(), Direction.NO_DIRECTION)
+        return false
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Unlock.SaltyDeathByFire, EntityType.ENTITY_PLAYER)
+EdithCompliance:AddCallback(ModCallbacks.MC_TRIGGER_PLAYER_DEATH_POST_CHECK_REVIVES, Unlock.SaltyRevive)
 
 function Unlock:DoubleCheck()
     if Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH) then

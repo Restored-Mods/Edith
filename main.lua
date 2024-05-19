@@ -10,7 +10,7 @@ LOCAL_TSIL.Init("lua.extraLibs.loi")
 --core
 include("lua.core.enums")
 include("lua.core.globals")
-include("lua.core.achievements")
+require("lua.core.achievements")
 include("lua.core.save_manager")
 include("lua.core.dss.deadseascrolls")
 include("lua.core.BlockDisabledItems")

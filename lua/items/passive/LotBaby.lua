@@ -22,6 +22,14 @@ function LotBaby:Init(familiar)
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, LotBaby.Init, EdithCompliance.Enums.Familiars.LOT_BABY.Variant)
 
+function LotBaby:NewRoom()
+    for _, lot in ipairs(Isaac.FindByType(EntityType.ENTITY_FAMILIAR, EdithCompliance.Enums.Familiars.LOT_BABY.Variant)) do
+        lot = lot:ToFamiliar()
+        lot:SetMoveDelayNum(-1)
+    end
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, LotBaby.NewRoom)
+
 ---@param familiar EntityFamiliar
 function LotBaby:Update(familiar)
     local player = familiar.Player

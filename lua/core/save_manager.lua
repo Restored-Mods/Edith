@@ -34,6 +34,10 @@ function SaveManager:OnPlayerInit()
     local isContinue = IsContinue()
 
     if isContinue and EdithCompliance:HasData() then
+        TSIL.SaveManager.LoadFromDisk()
+        if CustomHealthAPI then
+            CustomHealthAPI.Library.LoadHealthFromBackup(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "CustomHealthAPISave"))
+        end
         EdithCompliance.HiddenItemManager:LoadData(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "HiddenItemMangerSave"))
     end
     for _, funct in ipairs(EdithCompliance.CallOnStart) do
@@ -45,6 +49,11 @@ EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, SaveManager.OnPlay
 function SaveManager:SaveData(isSaving)
     if isSaving then
         TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "HiddenItemMangerSave", EdithCompliance.HiddenItemManager:GetSaveData())
+        if CustomHealthAPI then
+            local hp = CustomHealthAPI.Library.GetHealthBackup()
+            TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "CustomHealthAPISave", hp)
+        end
+        TSIL.SaveManager.SaveToDisk()
     end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveManager.SaveData)
