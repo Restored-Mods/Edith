@@ -5,12 +5,10 @@ local Helpers = include("lua.helpers.Helpers")
 ---@return boolean
 local function IsThunderBomb(bomb)
 
-	local data = Helpers.GetData(bomb)
-	if data and data.IsThunderBomb == true then return true end
-
 	if not bomb then return false end
 	if bomb.Type ~= EntityType.ENTITY_BOMB then return false end
 	bomb = bomb:ToBomb()
+	if BombFlagsAPI.HasCustomBombFlag(bomb, "THUNDER_BOMB") then return true end
 	if bomb.Variant ~= BombVariant.BOMB_NORMAL and bomb.Variant ~= BombVariant.BOMB_GIGA and
 	bomb.Variant ~= BombVariant.BOMB_ROCKET then return false end
 
@@ -23,11 +21,10 @@ local function IsThunderBomb(bomb)
 		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS)
 
 		isRandomNancyThunderBomb = rng:RandomInt(100) < 7
-		data.IsThunderBomb = true
 	end
 
 	if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and not isRandomNancyThunderBomb then return false end
-
+	BombFlagsAPI.AddCustomBombFlag(bomb, "THUNDER_BOMB")
 	return true
 end
 
@@ -135,8 +132,38 @@ EdithCompliance:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, ThunderBombs.A
 
 ---@param player EntityPlayer
 function ThunderBombs:TryPlaceBomb(player)
-
-	return true
+	local data = Helpers.GetData(player)
+	local OnlyStomps = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps")
+	if (data.LockBombs or OnlyStomps == 2) and Helpers.IsPlayerEdith(player, true, false) then return end
+	if not player:HasGoldenBomb() and player:GetNumBombs() == 0 and Helpers.CanMove(player) then
+		local chargeRemove = nil
+		local slot = 0
+		for i = 0, 2 do
+			local item = player:GetActiveItem(i)
+			slot = i
+			if item > 0 and ItemConfig.Config.IsValidCollectible(item) then
+				local itemConf = Isaac.GetItemConfig():GetCollectible(item)
+				local chargeType = itemConf.ChargeType
+				if chargeType == 1 then
+					if Helpers.GetCharge(player, i) >= itemConfig.MaxCharges then
+						chargeRemove = itemConfig.MaxCharges
+						break
+					end
+				end
+				if chargeType == 2 then
+					if Helpers.GetCharge(player, i) >= 1 then
+						chargeRemove = 1
+						break
+					end
+				end
+			end
+		end
+		if chargeRemove then
+			player:AddActiveCharge(chargeRemove, slot, true, false, true)
+			local bomb = Isaac.Spawn(EntityType.ENTITY_BOMB, 0, BombFlagsAPI.GetCustomBombFlags(player), player.Position, Vector.Zero, player):ToBomb()
+			bomb.TearFlags = player:GetBombFlags()
+		end
+	end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PLAYER_USE_BOMB, ThunderBombs.TryPlaceBomb)
 
@@ -172,5 +199,5 @@ function ThunderBombs:ReplaceCostume(bomb)
 	overlay.Color = Color(1,1,1,1)
 	data.ThunderBombsOverlay = overlay
 
-	data.IsThunderBomb = true
+	BombFlagsAPI.HasCustomBombFlag(bomb, "THUNDER_BOMB")
 end

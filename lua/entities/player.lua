@@ -909,9 +909,8 @@ function Player:EdithMovement(entity, hook, button)
 	if entity and not entity:IsDead() then
 	
 		local player = entity:ToPlayer()
-
 		if player and Helpers.IsPlayerEdith(player, true, false) then
-			--local OnlyStomps = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps")
+			local OnlyStomps = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps")
 			if player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) or player:HasCurseMistEffect() then return end
 			local data = Helpers.GetData(player)
 			if hook == InputHook.GET_ACTION_VALUE then
@@ -954,25 +953,15 @@ function Player:EdithMovement(entity, hook, button)
 				if IsEdithExtraAnim(player) then
 					return false
 				end
-				--[[if button == ButtonAction.ACTION_BOMB and (data.LockBombs or OnlyStomps == 2) then
+				if button == ButtonAction.ACTION_BOMB and (data.LockBombs or OnlyStomps == 2) then
 					data.LockBombs = nil
 					return false
-				end]]
+				end
 			end
 		end
 	end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_INPUT_ACTION, Player.EdithMovement)
-
-function Player:BombUsage(player)
-	local data = Helpers.GetData(player)
-	local OnlyStomps = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps")
-	if (data.LockBombs or OnlyStomps == 2) and Helpers.IsPlayerEdith(player, true, false) then
-		data.LockBombs = nil
-		return false
-	end
-end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PLAYER_USE_BOMB, Player.BombUsage)
 
 function Player:PreUsePony(item, _, player)
 	if item ~= CollectibleType.COLLECTIBLE_PONY and item ~= CollectibleType.COLLECTIBLE_WHITE_PONY then return end

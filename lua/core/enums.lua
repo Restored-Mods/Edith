@@ -166,6 +166,8 @@ Enums.BombVariant = {
 	LANDMINE = Isaac.GetEntityVariantByName("Landmine"),
 }
 
+BombFlagsAPI.AddNewCustomBombFlag("THUNDER_BOMB", Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+
 Enums.Challenges = {
 
 }

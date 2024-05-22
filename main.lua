@@ -6,6 +6,7 @@ EdithCompliance.CallOnStart = {}
 
 local LOCAL_TSIL = require("lua.extraLibs.loi.TSIL")
 LOCAL_TSIL.Init("lua.extraLibs.loi")
+include("lua.extraLibs.custom_bomb_flags")
 
 --core
 include("lua.core.enums")
