@@ -1,5 +1,9 @@
 local localversion = 1.0
 
+local function TEARFLAG(x)
+    return x >= 64 and BitSet128(0,1<<(x-64)) or BitSet128(1<<x,0)
+end
+
 local function load(enums)
     BombFlagsAPI = RegisterMod("Custom Bomb Flags", 1)
     BombFlagsAPI.Version = localversion
@@ -25,15 +29,15 @@ local function load(enums)
             Isaac.DebugString("Can't add flag "..name..".No valid collectible to bind.")
             return 
         end
-        local i = 0
+        local i = 84
         for _, _ in pairs(Flags) do
             i = i + 1
         end
-        if i == 63 then
+        if i == 104 then
             print("Can't add flag "..name..". Limit exceeded.")
             Isaac.DebugString("Can't add flag "..name..". Limit exceeded.")
         end
-        Flags[name] = {Flag = 1 << i, Collectible = collectible}
+        Flags[name] = {Flag = TEARFLAG(i), Collectible = collectible}
     end
 
     function BombFlagsAPI.GetCustomBombFlags(player)
@@ -56,7 +60,7 @@ local function load(enums)
             Isaac.DebugString("Custom bomb flag "..flag.." doesn't exists.")
             return 
         end
-        bomb.SubType = bomb.SubType | Flags[flag].Flag
+        bomb:AddTearFlags(Flags[flag].Flag)
     end
     
     function BombFlagsAPI.HasCustomBombFlag(bomb, flag)
@@ -65,7 +69,7 @@ local function load(enums)
             Isaac.DebugString("Custom bomb flag "..flag.." doesn't exists.")
             return 
         end
-        return bomb.SubType & Flags[flag].Flag == Flags[flag].Flag
+        return bomb:HasTearFlags(Flags[flag].Flag)
     end
     
     function BombFlagsAPI.RemoveCustomBombFlag(bomb, flag)
@@ -74,7 +78,7 @@ local function load(enums)
             Isaac.DebugString("Custom bomb flag "..flag.." doesn't exists.")
             return 
         end
-        bomb.SubType = bomb.SubType & ~Flags[flag].Flag
+        bomb:ClearTearFlags(Flags[flag].Flag)
     end
     --#endregion
     print("[".. BombFlagsAPI.Name .."]", "is loaded")

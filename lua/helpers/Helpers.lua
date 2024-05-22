@@ -51,7 +51,7 @@ function Helpers.IsTurret(enemy)
 end
 
 function Helpers.IsLost(player)
-    return player:GetHealthType() == HealthType.NO_HEALTH
+    return player:GetHealthType() == HealthType.NO_HEALTH and player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B
 end
 
 function Helpers.IsGhost(player)
@@ -219,6 +219,7 @@ function Helpers.GetEntityData(entity)
 			if player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
 				player = player:GetOtherTwin()
 			end
+			if not player then return {} end
 			local index = tostring(Helpers.GetPlayerIndex(player))
 			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "PlayerData")
 			if not data[index] then
@@ -257,6 +258,7 @@ function Helpers.RemoveEntityData(entity)
 			if player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
 				player = player:GetOtherTwin()
 			end
+			if not player then return end
 			index = tostring(Helpers.GetPlayerIndex(player))
 			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "PlayerData")
 			data[index] = nil

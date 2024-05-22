@@ -1,3 +1,4 @@
+local Helpers = include("lua.helpers.Helpers")
 EdithCompliance.HiddenItemManager = include("lua.extraLibs.hidden_item_manager")
 EdithCompliance.HiddenItemManager:Init(EdithCompliance)
 

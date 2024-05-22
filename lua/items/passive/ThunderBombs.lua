@@ -4,38 +4,39 @@ local Helpers = include("lua.helpers.Helpers")
 ---@param bomb Entity
 ---@return boolean
 local function IsThunderBomb(bomb)
-
 	if not bomb then return false end
 	if bomb.Type ~= EntityType.ENTITY_BOMB then return false end
 	bomb = bomb:ToBomb()
-	if BombFlagsAPI.HasCustomBombFlag(bomb, "THUNDER_BOMB") then return true end
-	if bomb.Variant ~= BombVariant.BOMB_NORMAL and bomb.Variant ~= BombVariant.BOMB_GIGA and
-	bomb.Variant ~= BombVariant.BOMB_ROCKET then return false end
-
-	local player = Helpers.GetPlayerFromTear(bomb)
-	if not player then return false end
-
-	local isRandomNancyThunderBomb = false
-	if player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and not
-	player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) then
-		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS)
-
-		isRandomNancyThunderBomb = rng:RandomInt(100) < 7
-	end
-
-	if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and not isRandomNancyThunderBomb then return false end
-	BombFlagsAPI.AddCustomBombFlag(bomb, "THUNDER_BOMB")
-	return true
+	return BombFlagsAPI.HasCustomBombFlag(bomb, "THUNDER_BOMB")
 end
 
-
+---@param bomb Entitybomb
+local function ThunderBombInit(bomb)
+	if Helpers.GetData(bomb).BombInit then return end
+	local player = Helpers.GetPlayerFromTear(bomb)
+	if bomb.Variant ~= BombVariant.BOMB_NORMAL and bomb.Variant ~= BombVariant.BOMB_GIGA and
+	bomb.Variant ~= BombVariant.BOMB_ROCKET then return false end
+	if player then
+		local rng = bomb:GetDropRNG()
+		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and 
+        (not bomb.IsFetus or bomb.IsFetus and rng:RandomInt(100) < 20) then
+			BombFlagsAPI.AddCustomBombFlag(bomb, "THUNDER_BOMB")
+		elseif player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and
+		player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS):RandomInt(100) < 7 then
+			BombFlagsAPI.AddCustomBombFlag(bomb, "THUNDER_BOMB")
+		end
+	end
+end
 
 ---@param bomb EntityBomb
 function ThunderBombs:BombUpdate(bomb)
+	
+	if bomb.FrameCount == 1 then
+		ThunderBombInit(bomb)
+	end
 
 	if not IsThunderBomb(bomb) then return end
 
-	local player = Helpers.GetPlayerFromTear(bomb)
 	local data = Helpers.GetData(bomb)
 	local sprite = bomb:GetSprite()
 
@@ -160,8 +161,8 @@ function ThunderBombs:TryPlaceBomb(player)
 		end
 		if chargeRemove then
 			player:AddActiveCharge(chargeRemove, slot, true, false, true)
-			local bomb = Isaac.Spawn(EntityType.ENTITY_BOMB, 0, BombFlagsAPI.GetCustomBombFlags(player), player.Position, Vector.Zero, player):ToBomb()
-			bomb.TearFlags = player:GetBombFlags()
+			local bomb = Isaac.Spawn(EntityType.ENTITY_BOMB, 0, 0, player.Position, Vector.Zero, player):ToBomb()
+			bomb:AddTearFlags(player.TearFlags | BombFlagsAPI.GetCustomBombFlags(player))
 		end
 	end
 end
@@ -198,6 +199,4 @@ function ThunderBombs:ReplaceCostume(bomb)
 	overlay:Play("Idle", true)
 	overlay.Color = Color(1,1,1,1)
 	data.ThunderBombsOverlay = overlay
-
-	BombFlagsAPI.HasCustomBombFlag(bomb, "THUNDER_BOMB")
 end
