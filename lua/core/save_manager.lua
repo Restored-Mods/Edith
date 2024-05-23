@@ -45,7 +45,7 @@ EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, SaveManager.OnPlay
 
 function SaveManager:SaveData(isSaving)
     if isSaving then
-        TSIl.SaveManager.LoadFromDisk()
+        TSIL.SaveManager.LoadFromDisk()
         TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "HiddenItemMangerSave", EdithCompliance.HiddenItemManager:GetSaveData())
     end
     TSIL.SaveManager.SaveToDisk()
