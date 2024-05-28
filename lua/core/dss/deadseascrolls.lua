@@ -101,15 +101,16 @@ if not ImGui.ElementExists("edithCompliance") then
 end
 
 local function InitDisableMenu()
+
+    if ImGui.ElementExists("edithWindowBlacklistItems") then
+        ImGui.RemoveWindow("edithWindowBlacklistItems")
+    end
+
     if ImGui.ElementExists("edithMenuBlacklistItems") then
         ImGui.RemoveElement("edithMenuBlacklistItems")
     end
 
     ImGui.AddElement("edithCompliance", "edithMenuBlacklistItems", ImGuiElement.MenuItem, "\u{f05e} Items Blacklist")
-
-    if ImGui.ElementExists("edithWindowBlacklistItems") then
-        ImGui.RemoveWindow("edithWindowBlacklistItems")
-    end
 
     ImGui.CreateWindow("edithWindowBlacklistItems", "Items Blacklist")
 
