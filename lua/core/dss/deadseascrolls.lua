@@ -182,7 +182,7 @@ local function InitDisableMenu()
             -- This generally means looking at your mod's save data, and returning whatever setting you have stored
             load = function()
                 if not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems") then
-                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", {})
+                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", {})
                 end
 
                 for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")) do
@@ -197,7 +197,7 @@ local function InitDisableMenu()
             -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
             store = function(var)
                 if not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems") then
-                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", {})
+                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", {})
                 end
                 local disabledItems = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")
                 for index, disabledItem in ipairs(disabledItems) do
@@ -214,7 +214,7 @@ local function InitDisableMenu()
                 end
                 local elemName = string.gsub(collectible.Name, " ", "").."BlackList"
                 ImGui.UpdateData(elemName, ImGuiData.Value, var - 1)
-                TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", disabledItems)
+                TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", disabledItems)
             end,
 
             -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
@@ -243,7 +243,7 @@ local function InitDisableMenu()
         ImGui.AddCombobox("edithWindowBlacklistItems", elemName, collectible.Name, function (index, val)
                 --print("that label changed", index, val)
                 if not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems") then
-                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", {})
+                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", {})
                 end
                 local disabledItems = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")
                 for indexItem, disabledItem in ipairs(disabledItems) do
@@ -258,7 +258,7 @@ local function InitDisableMenu()
                 if index == 1 then
                     table.insert(disabledItems, collectible.ID)
                 end
-                TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisableItems", disabledItems)
+                TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", disabledItems)
                 --print(currentDestination, index)
                 end, {
                     "Enabled",
