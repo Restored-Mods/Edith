@@ -104,7 +104,9 @@ if ImGui.ElementExists("edithCompliance") then
     ImGui.RemoveMenu("edithCompliance")
 end
 
-ImGui.AddElement("tcMods", "edithCompliance", ImGuiElement.Menu, "Edith")
+if not ImGui.ElementExists("edithCompliance") then
+    ImGui.AddElement("tcMods", "edithCompliance", ImGuiElement.Menu, "Edith")
+end
 
 local function InitDisableMenu()
 
@@ -121,7 +123,7 @@ local function InitDisableMenu()
 
     ImGui.LinkWindowToElement("edithWindowBlacklistItems", "edithMenuBlacklistItems")
 
-    ImGui.SetWindowSize("edithWindowBlacklistItems", 600, 300)
+    ImGui.SetWindowSize("edithWindowBlacklistItems", 600, #EdithCompliance.Enums.CollectibleType * 100)
 
     local itemTogglesMenu = {}
     local orderedItems = {}
@@ -285,14 +287,13 @@ end
 
 ImGui.AddElement("edithCompliance", "edithMenuSettings", ImGuiElement.MenuItem, "\u{f013} Settings")
 
-if ImGui.ElementExists("edithWindowSettings") then
-    ImGui.RemoveWindow("edithWindowSettings")
+if not ImGui.ElementExists("edithWindowSettings") then
+    ImGui.CreateWindow("edithWindowSettings", "Settings")
 end
 
-ImGui.CreateWindow("edithWindowSettings", "Settings")
-
-
 ImGui.LinkWindowToElement("edithWindowSettings", "edithMenuSettings")
+
+ImGui.SetWindowSize("edithWindowSettings", 700, 200)
 
 if ImGui.ElementExists("edithPushToSlide") then
     ImGui.RemoveElement("edithPushToSlide")
@@ -310,20 +311,19 @@ ImGui.AddCombobox("edithWindowSettings", "edithAllowBombs", "Edith can use bombs
         TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "OnlyStomps", index + 1)
     end, { 'Enable', 'Disable' }, 0, true)
 
-if ImGui.ElementExists("edithTargetColorRGB") then
-    ImGui.RemoveColor("edithTargetColorRGB", ImGuiColor.Tab)
+if not ImGui.ElementExists("edithTargetColorRGB") then
+    ImGui.AddInputColor("edithWindowSettings", "edithTargetColorRGB", "\u{f1fc} Edith's Target Color",
+        function(r, g, b)
+            TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R = math.floor(r * 255)
+            TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G = math.floor(g * 255)
+            TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B = math.floor(b * 255)
+        end,
+        155 / 255,
+        0,
+        0
+    )
 end
 
-ImGui.AddInputColor("edithWindowSettings", "edithTargetColorRGB", "\u{f1fc} Edith's Target Color",
-    function(r, g, b)
-        TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R = math.floor(r * 255)
-        TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G = math.floor(g * 255)
-        TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B = math.floor(b * 255)
-    end,
-    155 / 255,
-    0,
-    0
-)
 
 local function InitTargetColorMenu()
 

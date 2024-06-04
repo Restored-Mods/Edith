@@ -1236,7 +1236,7 @@ function Player:TargetCamera()
 			maxy = math.max(maxy, ent.Position.Y)
 		end
 		local camera = Game():GetRoom():GetCamera()
-		camera:SetFocusPosition(Vector(2 * maxx + 2 * minx, 2 * maxy +  2 * miny) / 4)
+		camera:SetFocusPosition(Vector((maxx + minx), (maxy +  miny)) / 2)
 	end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_UPDATE, Player.TargetCamera)
