@@ -96,9 +96,15 @@ local DSSInitializerFunction = include("lua.core.dss.dssmenucore")
 -- This function returns a table that some useful functions and defaults are stored on
 local dssmod = DSSInitializerFunction(DSSModName, DSSCoreVersion, MenuProvider)
 
-if not ImGui.ElementExists("edithCompliance") then
-    ImGui.CreateMenu('edithCompliance', 'Edith')
+if not ImGui.ElementExists("tcMods") then
+    ImGui.CreateMenu("tcMods", "TC Mods")
 end
+
+if ImGui.ElementExists("edithCompliance") then
+    ImGui.RemoveMenu("edithCompliance")
+end
+
+ImGui.AddElement("tcMods", "edithCompliance", ImGuiElement.Menu, "Edith")
 
 local function InitDisableMenu()
 
@@ -114,11 +120,13 @@ local function InitDisableMenu()
 
 
     ImGui.LinkWindowToElement("edithWindowBlacklistItems", "edithMenuBlacklistItems")
-    
+
+    ImGui.SetWindowSize("edithWindowBlacklistItems", 600, 300)
+
     local itemTogglesMenu = {}
     local orderedItems = {}
     itemTogglesMenu = {
-        {str = 'Choose what items', fsize = 2, nosel = true},
+        {str = 'choose what items', fsize = 2, nosel = true},
         {str = 'show up', fsize = 2, nosel = true},
         {str = '', fsize = 2, nosel = true},
     }
