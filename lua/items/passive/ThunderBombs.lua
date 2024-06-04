@@ -10,12 +10,38 @@ local function IsThunderBomb(bomb)
 	return BombFlagsAPI.HasCustomBombFlag(bomb, "THUNDER_BOMB")
 end
 
+local function DoesItemSlotHaveCharge(player, slot)
+	local item = player:GetActiveItem(slot)
+	local itemConf = Isaac.GetItemConfig():GetCollectible(item)
+	if itemConf and itemConf.ChargeType == 0 then
+		if Helpers.GetCharge(player, slot) > 0 then
+			return true
+		end
+	end
+	return false
+end
+
+local function DoesPlayerHaveCharge(player)
+	for i = 0, 2 do
+		if DoesItemSlotHaveCharge(player, i) then
+			return true
+		end
+	end
+	return false
+end
+
+local function CanPlayerPlaceThunderBomb(player)
+	return player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and
+	player:GetNumBombs() == 0 and not player:HasGoldenBomb() and DoesPlayerHaveCharge(player)
+end
+
 ---@param bomb Entitybomb
 local function ThunderBombInit(bomb)
 	if Helpers.GetData(bomb).BombInit then return end
 	local player = Helpers.GetPlayerFromTear(bomb)
 	if bomb.Variant ~= BombVariant.BOMB_NORMAL and bomb.Variant ~= BombVariant.BOMB_GIGA and
-	bomb.Variant ~= BombVariant.BOMB_ROCKET then return false end
+	bomb.Variant ~= BombVariant.BOMB_ROCKET 
+	and bomb.Variant ~= BombVariant.BOMB_TROLL and bomb.Variant ~= BombVariant.BOMB_SUPERTROLL then return false end
 	if player then
 		local rng = bomb:GetDropRNG()
 		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and 
@@ -72,9 +98,6 @@ function ThunderBombs:HandleRingDamage(laser) --this exists because it doesnt pr
 
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, ThunderBombs.HandleRingDamage)
---
-
-
 
 ---@param bomb EntityBomb
 function ThunderBombs:EntityHit(entity, dmg, flags, source, countdown)
@@ -101,8 +124,16 @@ function ThunderBombs:BombRender(bomb)
 		if bomb.FrameCount % 2 == 0 and not Game():IsPaused() then
 			data.ThunderBombsOverlay:Update()
 		end
-
-		data.ThunderBombsOverlay:Render(Isaac.WorldToScreen(bomb.Position + bomb.PositionOffset))
+		if bomb.Variant == BombVariant.BOMB_TROLL or bomb.Variant == BombVariant.BOMB_SUPERTROLL then
+			local sprite = bomb:GetSprite()
+			local frameData = sprite:GetCurrentAnimationData():GetLayer(0):GetFrame(sprite:GetFrame())
+			data.ThunderBombsOverlay.Scale = frameData:GetScale()
+			if sprite:GetFrame() > 4 then
+				data.ThunderBombsOverlay:Render(Isaac.WorldToScreen(bomb.Position + bomb.PositionOffset + frameData:GetPos()))
+			end
+		else
+			data.ThunderBombsOverlay:Render(Isaac.WorldToScreen(bomb.Position + bomb.PositionOffset))
+		end
 
 	else
 		ThunderBombs:ReplaceCostume(bomb)
@@ -110,7 +141,6 @@ function ThunderBombs:BombRender(bomb)
 
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_RENDER, ThunderBombs.BombRender)
-
 
 ---@param collectible CollectibleType | integer
 ---@param charge integer
@@ -133,41 +163,43 @@ EdithCompliance:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, ThunderBombs.A
 
 ---@param player EntityPlayer
 function ThunderBombs:TryPlaceBomb(player)
-	local data = Helpers.GetData(player)
-	local OnlyStomps = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps")
-	if (data.LockBombs or OnlyStomps == 2) and Helpers.IsPlayerEdith(player, true, false) then return end
-	if not player:HasGoldenBomb() and player:GetNumBombs() == 0 and Helpers.CanMove(player) then
-		local chargeRemove = nil
-		local slot = 0
-		for i = 0, 2 do
-			local item = player:GetActiveItem(i)
-			slot = i
-			if item > 0 and ItemConfig.Config.IsValidCollectible(item) then
-				local itemConf = Isaac.GetItemConfig():GetCollectible(item)
-				local chargeType = itemConf.ChargeType
-				if chargeType == 1 then
-					if Helpers.GetCharge(player, i) >= itemConfig.MaxCharges then
-						chargeRemove = itemConfig.MaxCharges
-						break
-					end
-				end
-				if chargeType == 2 then
-					if Helpers.GetCharge(player, i) >= 1 then
-						chargeRemove = 1
+	if Helpers.CanMove(player, true) then
+		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and player:GetBombPlaceDelay() <= 0 and player:GetNumBombs() <= 0 and not player:HasGoldenBomb() then
+			local bombButton = Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
+			if bombButton then
+				for i = 0,2 do
+					if DoesItemSlotHaveCharge(player, i) then
+						player:AddActiveCharge(-1, i)
+						Game():GetHUD():FlashChargeBar(player, i)
+						SFXManager():Play(SoundEffect.SOUND_BATTERYDISCHARGE, 1 , 0)
+						local bomb = Isaac.Spawn(EntityType.ENTITY_BOMB, 0, 0, player.Position, Vector.Zero, player)
+						local delay = player:HasCollectible(CollectibleType.COLLECTIBLE_FAST_BOMBS) and 10 or 30
+						player:SetBombPlaceDelay(delay)
+						if player:IsExtraAnimationFinished() then
+							player:PlayExtraAnimation("Hit")
+						end
+						player:SetMinDamageCooldown(60)
 						break
 					end
 				end
 			end
 		end
-		if chargeRemove then
-			player:AddActiveCharge(chargeRemove, slot, true, false, true)
-			local bomb = Isaac.Spawn(EntityType.ENTITY_BOMB, 0, 0, player.Position, Vector.Zero, player):ToBomb()
-			bomb:AddTearFlags(player.TearFlags | BombFlagsAPI.GetCustomBombFlags(player))
+	end
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, ThunderBombs.TryPlaceBomb)
+
+---@param player EntityPlayer
+function ThunderBombs:TryPlaceBombInput(entity, hook, button)
+	if entity and entity:ToPlayer() and hook ~= InputHook.GET_ACTION_VALUE then
+		local player = entity:ToPlayer()
+		if Helpers.CanMove(player, true) then
+			if button == ButtonAction.ACTION_BOMB and CanPlayerPlaceThunderBomb(player) then
+				return false
+			end
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PLAYER_USE_BOMB, ThunderBombs.TryPlaceBomb)
-
+EdithCompliance:AddPriorityCallback(ModCallbacks.MC_INPUT_ACTION, CallbackPriority.LATE, ThunderBombs.TryPlaceBombInput)
 
 ---@param bomb EntityBomb
 function ThunderBombs:ReplaceCostume(bomb)
@@ -184,8 +216,10 @@ function ThunderBombs:ReplaceCostume(bomb)
 	if not bomb:HasTearFlags(TearFlags.TEAR_GOLDEN_BOMB) then
 		local layer = sprite:GetLayer("body")
 
-		local path = string.sub(layer:GetSpritesheetPath(), 1, string.len(layer:GetSpritesheetPath())-4) .. "_gold.png"
-		sprite:ReplaceSpritesheet(0, path, true)
+		if bomb.Variant ~= BombVariant.BOMB_TROLL and bomb.Variant ~= BombVariant.BOMB_SUPERTROLL then
+			local path = string.sub(layer:GetSpritesheetPath(), 1, string.len(layer:GetSpritesheetPath())-4) .. "_gold.png"
+			sprite:ReplaceSpritesheet(0, path, true)
+		end
 
 		local color = sprite:GetLayer("body"):GetColor()
 		color:SetColorize(1, 1, 2.5, 2.5)

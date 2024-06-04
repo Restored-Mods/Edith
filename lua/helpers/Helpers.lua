@@ -158,7 +158,7 @@ function Helpers.InMirrorWorld()
 end
 
 ---@param player EntityPlayer
-function Helpers.CanMove(player)
+function Helpers.CanMove(player, allowJump)
 	local controlsEnabled = player.ControlsEnabled
 
 	local isDead = player:IsDead()
@@ -187,7 +187,7 @@ function Helpers.CanMove(player)
 	}
 	local playerSpr = player:GetSprite()
 	for _, anim in ipairs(forbiddenExtraAnimations) do
-		if playerSpr:IsPlaying(anim) then
+		if playerSpr:IsPlaying(anim) and (anim ~= "Jump" or anim == "Jump" and not allowJump) then
 			isPlayingForbiddenExtraAnimation = true
 			break
 		end
