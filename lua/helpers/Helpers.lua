@@ -623,7 +623,7 @@ function Helpers.GetPlayers(ignoreCoopBabies)
 end
 
 function Helpers.GetPlayerFromTear(tear)
-	for i=1, 3 do
+	for i=1, 2 do
 		local check = nil
 		if i == 1 then
 			check = tear.Parent
@@ -825,9 +825,22 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player) -
 	end
 	Game():BombDamage(player.Position, damage, radius, true, player, TearFlags.TEAR_NORMAL, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
 
-	if bombDamage > 0 then
-		--game:BombTearflagEffects(player.Position, radius, player:GetBombFlags(), player)
-		--game:BombDamage(player.Position, bombDamage, radius, true, player, player:GetBombFlags())
+	local bombEffectTriggered = bombDamage > 0
+
+	if not bombEffectTriggered and Helpers.GetData(player).BombStomp then
+		local callbacks = Isaac.GetCallbacks(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT)
+		for _,callback in ipairs(callbacks) do
+			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
+				local ret = callback.Function(callback.Mod, player)
+				if ret == true then
+					bombEffectTriggered = true
+					break
+				end
+			end
+		end
+	end
+
+	if bombEffectTriggered then
 		Game():BombExplosionEffects(player.Position, bombDamage, player:GetBombFlags(), Color.Default, player)
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_BOBS_CURSE) then
 			local poisonCloud = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SMOKE_CLOUD, 0, player.Position, Vector.Zero, player):ToEffect()
@@ -855,6 +868,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player) -
 			end
 		end
 	end
+
 end
 
 function Helpers.Stomp(player)

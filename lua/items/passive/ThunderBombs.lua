@@ -54,6 +54,20 @@ local function ThunderBombInit(bomb)
 	end
 end
 
+local function SpawnThunderBombLaser(bomb, parent, damage, radius)
+	Game():GetRoom():DoLightningStrike()
+	Game():MakeShockwave(bomb.Position, .035, .01, 10)
+
+	local ring = Isaac.Spawn(EntityType.ENTITY_LASER, LaserVariant.THIN_RED, LaserSubType.LASER_SUBTYPE_RING_FOLLOW_PARENT, bomb.Position, Vector.Zero, parent):ToLaser()
+	ring.Radius = 80 * (bomb.RadiusMultiplier and bomb.RadiusMultiplier or 1)
+	ring.CollisionDamage = damage and damage or bomb.ExplosionDamage / 2
+	ring:SetTimeout(10)
+	ring:SetOneHit(false)
+	ring.Parent = bomb
+	ring.Color = Color.LaserNumberOne
+	Helpers.GetData(ring).FromThunderBomb = true
+end
+
 ---@param bomb EntityBomb
 function ThunderBombs:BombUpdate(bomb)
 	
@@ -71,21 +85,33 @@ function ThunderBombs:BombUpdate(bomb)
 	end
 
 	if sprite:IsPlaying("Explode") then
-		Game():GetRoom():DoLightningStrike()
-		Game():MakeShockwave(bomb.Position, .035, .01, 10)
-
-		local ring = Isaac.Spawn(EntityType.ENTITY_LASER, LaserVariant.THIN_RED, LaserSubType.LASER_SUBTYPE_RING_FOLLOW_PARENT, bomb.Position, Vector.Zero, player):ToLaser()
-		ring.Radius = 80 * bomb.RadiusMultiplier
-		ring.CollisionDamage = bomb.ExplosionDamage / 2
-		ring:SetTimeout(10)
-		ring:SetOneHit(false)
-		ring.Parent = bomb
-		ring.Color = Color.LaserNumberOne
-		Helpers.GetData(ring).FromThunderBomb = true
+		SpawnThunderBombLaser(bomb, Helpers.GetPlayerFromTear(bomb))
 	end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpdate)
 
+function ThunderBombs:EdithStompThunderBombProc(player)
+	local data = Helpers.GetData(player)
+	return CanPlayerPlaceThunderBomb(player) and not data.LockBombs
+end
+EdithCompliance:AddCallback(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, ThunderBombs.EdithStompThunderBombProc, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+
+function ThunderBombs:EdithStompThunderBomb(player, damage, radius, forced)
+	local data = Helpers.GetData(player)
+	if CanPlayerPlaceThunderBomb(player) and not data.LockBombs then
+		for i = 0,2 do
+			if DoesItemSlotHaveCharge(player, i) then
+				player:AddActiveCharge(-1, i)
+				Game():GetHUD():FlashChargeBar(player, i)
+				SFXManager():Play(SoundEffect.SOUND_BATTERYDISCHARGE, 1 , 0)
+				player:SetMinDamageCooldown(60)
+				SpawnThunderBombLaser(player, player, damage / 2)
+				break
+			end
+		end
+	end
+end
+EdithCompliance:AddCallback(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBomb, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
 function ThunderBombs:HandleRingDamage(laser) --this exists because it doesnt properly hit everything inside of it
 	local data = Helpers.GetData(laser)
@@ -166,7 +192,8 @@ function ThunderBombs:TryPlaceBomb(player)
 	if Helpers.CanMove(player, true) then
 		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and player:GetBombPlaceDelay() <= 0 and player:GetNumBombs() <= 0 and not player:HasGoldenBomb() then
 			local bombButton = Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
-			if bombButton then
+			local data = Helpers.GetData(player)
+			if bombButton and not (Helpers.IsPlayerEdith(player, true, false) and data.LockBombs) then
 				for i = 0,2 do
 					if DoesItemSlotHaveCharge(player, i) then
 						player:AddActiveCharge(-1, i)

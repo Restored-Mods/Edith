@@ -1240,3 +1240,11 @@ function Player:TargetCamera()
 	end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_UPDATE, Player.TargetCamera)
+
+function Player:OnStompBloodBombs(player)
+	if player:GetNumBombs() <= 0 and not player:HasGoldenBomb() then
+		player:TakeDamage(1, DamageFlag.DAMAGE_IV_BAG | DamageFlag.DAMAGE_INVINCIBLE, EntityRef(nil), 60)
+		return true
+	end
+end
+EdithCompliance:AddPriorityCallback(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, CallbackPriority.LATE, Player.OnStompBloodBombs, CollectibleType.COLLECTIBLE_BLOOD_BOMBS)
