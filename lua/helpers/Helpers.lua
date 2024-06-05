@@ -784,40 +784,6 @@ end
 ---@param knockback number
 ---@param player EntityPlayer
 local function NewStompFunction(radius, damage, bombDamage, knockback, player) -- well its name is clear
-	--[[for _, e in pairs(Isaac.FindInRadius(player.Position, radius, 0xFFFFFFFF)) do -- well im including all partitions just to keep the shopkeeper destruction and chest opening and that
-		local ischest =
-		(e.Variant == PickupVariant.PICKUP_REDCHEST or 
-		e.Variant == PickupVariant.PICKUP_BOMBCHEST or
-		e.Variant == PickupVariant.PICKUP_CHEST or
-		e.Variant == PickupVariant.PICKUP_SPIKEDCHEST or
-		e.Variant == PickupVariant.PICKUP_MIMICCHEST or
-		e.Variant == PickupVariant.PICKUP_OLDCHEST or
-		e.Variant == PickupVariant.PICKUP_WOODENCHEST or
-		e.Variant == PickupVariant.PICKUP_HAUNTEDCHEST)
-
-		local iskeychest = 
-		(e.Variant == PickupVariant.PICKUP_ETERNALCHEST or
-		e.Variant == PickupVariant.PICKUP_LOCKEDCHEST)
-		
-		if e:IsActiveEnemy() and e:IsVulnerableEnemy() then
-			e:TakeDamage(damage, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_IGNORE_ARMOR, EntityRef(player), 0)
-			e.Velocity = (e.Position - player.Position):Resized(knockback)
-		elseif (e.Type == EntityType.ENTITY_FIREPLACE and e.Variant ~= 4) or e.Type == 17 then
-			e:Kill()
-		elseif (e.Type == EntityType.ENTITY_FAMILIAR and e.Variant == FamiliarVariant.CUBE_BABY) or (e.Type == EntityType.ENTITY_BOMB) then
-			e.Velocity = (e.Position - player.Position):Resized(knockback)
-		elseif e.Type == EntityType.ENTITY_PICKUP then
-			if ischest then
-				e:ToPickup():TryOpenChest(nil)
-			elseif iskeychest then
-				if player:GetNumKeys() > 0 or player:HasGoldenKey() then
-					player:TryUseKey()
-					e:ToPickup():TryOpenChest(nil)
-				end
-			end
-		end
-	end
-	destroyRocksAndStuff(player, radius)]]
 	local enemiesInRadius = Helpers.Filter(Helpers.GetEnemies(), function(_, enemy) return enemy.Position:Distance(player.Position) <= radius end)
 	for _,enemy in pairs(enemiesInRadius) do
 		--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
@@ -834,6 +800,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player) -
 				local ret = callback.Function(callback.Mod, player)
 				if ret == true then
 					bombEffectTriggered = true
+					bombDamage = player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) and 185 or 100
 					break
 				end
 			end
@@ -898,9 +865,7 @@ function Helpers.Stomp(player)
 			if not player:HasGoldenBomb() then
 				player:AddBombs(-1)
 			end
-		-- and end of that stuff
 			bombDamage = 100
-		-- Stomp Synergies start 
 			if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then -- Mr. Mega
 				stompDamage = stompDamage * 1.15
 				bombDamage = 185
