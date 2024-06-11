@@ -52,6 +52,14 @@ function Unlock:SaltyRevive(player)
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_TRIGGER_PLAYER_DEATH_POST_CHECK_REVIVES, Unlock.SaltyRevive)
 
+function Unlock:ResetTrinketsOnStart(cont)
+    if not cont and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH) then
+        Game():GetItemPool():ResetTrinkets()
+    end
+end
+
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Unlock.ResetTrinketsOnStart)
+
 function Unlock:DoubleCheck()
     if Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH) then
         Helpers.UnlockAchievement(EdithCompliance.Enums.Achievements.Misc.SALT_ROCK)
