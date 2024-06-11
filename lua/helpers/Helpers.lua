@@ -1017,6 +1017,17 @@ function Helpers.scheduleForUpdate(foo, delay, callback)
 end
 --#endregion
 
+---@param item CollectibleType | integer
+---@return boolean
+function Helpers.IsItemDisabled(item)
+	for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")) do
+        if item == disabledItem then
+            return true
+        end
+    end
+	return false
+end
+
 EdithCompliance.Helpers = Helpers
 
 return Helpers

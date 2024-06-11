@@ -44,11 +44,15 @@ local function ThunderBombInit(bomb)
 	and bomb.Variant ~= BombVariant.BOMB_TROLL and bomb.Variant ~= BombVariant.BOMB_SUPERTROLL then return false end
 	if player then
 		local rng = bomb:GetDropRNG()
-		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and 
-        (not bomb.IsFetus or bomb.IsFetus and rng:RandomInt(100) < 20) then
-			BombFlagsAPI.AddCustomBombFlag(bomb, "THUNDER_BOMB")
-		elseif player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and
-		player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS):RandomInt(100) < 7 then
+		
+		local thunderChance = player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and 
+        (not bomb.IsFetus or bomb.IsFetus and rng:RandomInt(100) < 20)
+		
+		local nancyChance = player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and
+		player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS):RandomInt(100) < 7
+		and not Helpers.IsItemDisabled(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+		
+		if thunderChance or nancyChance then
 			BombFlagsAPI.AddCustomBombFlag(bomb, "THUNDER_BOMB")
 		end
 	end
