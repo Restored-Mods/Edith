@@ -36,6 +36,7 @@ local function load(enums)
         if i == 104 then
             print("Can't add flag "..name..". Limit exceeded.")
             Isaac.DebugString("Can't add flag "..name..". Limit exceeded.")
+            return
         end
         Flags[name] = {Flag = TEARFLAG(i), Collectible = collectible}
     end
@@ -62,7 +63,7 @@ local function load(enums)
         end
         bomb:AddTearFlags(Flags[flag].Flag)
     end
-    
+
     function BombFlagsAPI.HasCustomBombFlag(bomb, flag)
         if not Flags[flag] then 
             print("Custom bomb flag "..flag.." doesn't exists.") 
@@ -71,7 +72,7 @@ local function load(enums)
         end
         return bomb:HasTearFlags(Flags[flag].Flag)
     end
-    
+
     function BombFlagsAPI.RemoveCustomBombFlag(bomb, flag)
         if not Flags[flag] then 
             print("Custom bomb flag "..flag.." doesn't exists.") 
@@ -80,17 +81,27 @@ local function load(enums)
         end
         bomb:ClearTearFlags(Flags[flag].Flag)
     end
-    --#endregion
-    print("[".. BombFlagsAPI.Name .."]", "is loaded")
+
+    function BombFlagsAPI:ModReset()
+        BombFlagsAPI.Loaded = false
+    end
+    BombFlagsAPI:AddCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, BombFlagsAPI.ModReset)
+
+    print("[".. BombFlagsAPI.Name .."]", "is loaded. Version "..BombFlagsAPI.Version)
+    BombFlagsAPI.Loaded = true
 end
 
 if BombFlagsAPI then
-	if BombFlagsAPI.Version < localversion then
-		print("[".. BombFlagsAPI.Name .."]", "found old script V" .. BombFlagsAPI.Version .. ", found new script V" .. localversion .. ". replacing...")
+	if BombFlagsAPI.Version < localversion or not BombFlagsAPI.Loaded then
+        if not BombFlagsAPI.Loaded then
+			print("Reloading [".. BombFlagsAPI.Name .."]")
+		else
+		    print("[".. BombFlagsAPI.Name .."]", "found old script V" .. BombFlagsAPI.Version .. ", found new script V" .. localversion .. ". replacing...")
+        end
 		local enums = BombFlagsAPI.GetFlags()
+        BombFlagsAPI:RemoveCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, BombFlagsAPI.ModReset)
         BombFlagsAPI = nil
 		load(enums)
-		print("[".. BombFlagsAPI.Name .."]", "replaced with V" .. BombFlagsAPI.Version)
 	end
 elseif not BombFlagsAPI then
 	load()

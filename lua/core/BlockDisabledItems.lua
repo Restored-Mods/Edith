@@ -7,7 +7,7 @@ function BlockDisabledItems:OnGameStart(isContinue)
     local itemPool = Game():GetItemPool()
 
     for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")) do
-        itemPool:RemoveCollectible(disabledItem)
+        itemPool:RemoveCollectible(EdithCompliance.Enums.CollectibleType[disabledItem])
     end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, BlockDisabledItems.OnGameStart)
@@ -21,7 +21,7 @@ function BlockDisabledItems:PostGetCollectible(selectedItem, poolType, decrease,
     local isDisabledItem = false
 
     for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")) do
-        if selectedItem == disabledItem then
+        if selectedItem == EdithCompliance.Enums.CollectibleType[disabledItem] then
             isDisabledItem = true
             break
         end

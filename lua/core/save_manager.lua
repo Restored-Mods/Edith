@@ -37,11 +37,19 @@ function SaveManager:OnPlayerInit()
         TSIL.SaveManager.LoadFromDisk()
         EdithCompliance.HiddenItemManager:LoadData(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "HiddenItemMangerSave"))
     end
-    for _, funct in ipairs(EdithCompliance.CallOnStart) do
-        funct()
-    end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, SaveManager.OnPlayerInit)
+
+function SaveManager:LoadDSSImGui()
+    TSIL.SaveManager.LoadFromDisk()
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, SaveManager.LoadDSSImGui)
+
+local function SaveAll()
+    if not TSIL.Stage.OnFirstFloor() then
+        SaveManager:SaveData(true)
+    end
+end
 
 function SaveManager:SaveData(isSaving)
     if isSaving then
@@ -51,6 +59,7 @@ function SaveManager:SaveData(isSaving)
     TSIL.SaveManager.SaveToDisk()
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveManager.SaveData)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, SaveAll)
 
 function SaveManager:LoadUpdate(isLoading)
     for _, player in ipairs(Helpers.GetPlayers()) do

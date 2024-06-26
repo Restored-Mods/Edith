@@ -1,12 +1,9 @@
 
 EdithCompliance = RegisterMod("Edith", 1)
 
---Functions that will be called when starting run
-EdithCompliance.CallOnStart = {}
-
 local LOCAL_TSIL = require("lua.extraLibs.loi.TSIL")
 LOCAL_TSIL.Init("lua.extraLibs.loi")
-include("lua.extraLibs.custom_bomb_flags")
+include("lua.extraLibs.APIs.custom_bomb_flags")
 
 --core
 include("lua.core.enums")
