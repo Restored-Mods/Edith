@@ -30,8 +30,8 @@ EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL,
 EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL, "Al usarlo, un cincél caerá sobre ti, removiendo una fase de la transformación a una estatua de pimienta#Cuando Edith Contaminada se libera de ser una estatua, dejará un rastro de polvo por un corto tiempo", "El Cincel", "spa")]]
 
 --Breath Mints
-EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT, "{{Chargeable}} Spawns a freezing breath cloud for 3 seconds#If enemies stay inside cloud for to long, they will freeze to death", "Breath Mints", "en_us")
-EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT, "{{Chargeable}} Создает ледяное облако дыхания на 3 секунды#Если враги будут внутри облака слишком долго, они замерзнут насмерть.", "Мятные конфеты", "ru")
+EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS, "{{Chargeable}} Spawns a freezing breath cloud for 3 seconds#If enemies stay inside cloud for to long, they will freeze to death", "Breath Mints", "en_us")
+EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS, "{{Chargeable}} Создает ледяное облако дыхания на 3 секунды#Если враги будут внутри облака слишком долго, они замерзнут насмерть.", "Мятные конфеты", "ru")
 
 --Salt Shaker
 EID:addCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER, "On use creates ring of salt creep near Isaac#Enemies coming close to it get {{Fear}} fear effect", "Salt Shaker")

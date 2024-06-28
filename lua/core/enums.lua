@@ -84,7 +84,7 @@ Enums.PlayerType =
 
 Enums.CollectibleType = 
 					{
-						COLLECTIBLE_PEPPERMINT = Isaac.GetItemIdByName("Breath Mints"),
+						COLLECTIBLE_BREATH_MINTS = Isaac.GetItemIdByName("Breath Mints"),
 						COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("Lithium Salts"),
 						COLLECTIBLE_SODOM = Isaac.GetItemIdByName("Sodom"),
 						COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),

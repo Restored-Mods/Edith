@@ -10,7 +10,7 @@ local Wiki = require("lua.mod_compat.encyclopedia.wiki")
 Encyclopedia.AddItem({
 	ModName = "Compliance",
 	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT,
+	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS,
 	WikiDesc = Wiki.Peppermint,
 })
 

@@ -55,7 +55,7 @@ function Peppermint:RenderPepperMintCharge()
             return
         end
 
-        if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT) then
+        if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS) then
             return
         end
 
@@ -108,7 +108,7 @@ EdithCompliance:AddCallback(ModCallbacks.MC_POST_RENDER, Peppermint.RenderPepper
 function Peppermint:AddPeppermintCharge(player)
     local data = Helpers.GetData(player)
 
-    if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT) then
+    if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS) then
         return
     end
 

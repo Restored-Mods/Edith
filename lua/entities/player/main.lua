@@ -1,4 +1,6 @@
 local Helpers = include("lua.helpers.Helpers")
+include("lua.entities.player.unlock")
+
 if CustomHealthAPI then
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithCompliance.Enums.PlayerType.EDITH] = true
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithCompliance.Enums.PlayerType.EDITH_B] = true
@@ -17,6 +19,12 @@ local JumpChargeMul = 1.5
 local JumpCharge = 1.5
 
 local game = Game()
+
+local function IsPlayerOnGravityGrid(player, position)
+	local pos = position or player.Position
+	local grid = game:GetRoom():GetGridEntityFromPos(pos)
+	return not player.CanFly and grid and grid:GetType() == GridEntityType.GRID_GRAVITY
+end
 
 local function ChangeToEdithTear(tear)
 	tear:ChangeVariant(TearVariant.ROCK)
@@ -295,11 +303,20 @@ local function EdithGridMovement(player, data)
 		if hasMarsEffect then
 			velocityMagnitude = velocityMagnitude * 2
 			local velocityDirection = (data.EdithTargetMovementDirection):Normalized()
-			player.Velocity = velocityDirection * velocityMagnitude
+			local vel = velocityDirection * velocityMagnitude
+			if IsPlayerOnGravityGrid(player) then
+				player.Velocity.X = vel.X
+			else
+				player.Velocity = vel
+			end
 		elseif data.EdithTargetMovementPosition then
+			if IsPlayerOnGravityGrid(player, data.EdithTargetMovementPosition) then
+				data.EdithTargetMovementPosition.Y = player.Position.Y
+				player.Velocity.Y = Helpers.Lerp(player.Velocity.Y, 1, 0.1)
+			end
 			local velocityDirection = (data.EdithTargetMovementPosition - player.Position):Normalized()
 			local distanceToTarget = player.Position:DistanceSquared(data.EdithTargetMovementPosition)
-
+			
 			if distanceToTarget < 5 then
 				player.Position = data.EdithTargetMovementPosition
 				player.Velocity = Vector.Zero
@@ -1235,7 +1252,7 @@ function Player:TargetCamera()
 			maxx = math.max(maxx, ent.Position.X)
 			maxy = math.max(maxy, ent.Position.Y)
 		end
-		local camera = Game():GetRoom():GetCamera()
+		local camera = game:GetRoom():GetCamera()
 		camera:SetFocusPosition(Vector((maxx + minx), (maxy +  miny)) / 2)
 	end
 end

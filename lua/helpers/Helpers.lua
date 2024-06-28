@@ -1021,7 +1021,7 @@ end
 ---@return boolean
 function Helpers.IsItemDisabled(item)
 	for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")) do
-        if item == disabledItem then
+        if item == EdithCompliance.Enums.CollectibleType[disabledItem] then
             return true
         end
     end

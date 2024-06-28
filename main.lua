@@ -14,34 +14,32 @@ include("lua.core.dss.deadseascrolls")
 include("lua.core.BlockDisabledItems")
 
 --entities
-include("lua.entities.player")
-include("lua.entities.clots")
-include("lua.entities.unlock")
+include("lua.entities.player.main")
+include("lua.entities.clots.main")
 
 --items
 --active
---include("lua.items.active.TheChisel")
-include("lua.items.active.GorgonMask")
-include("lua.items.active.SaltShaker")
+--include("lua.items.active.TheChisel.main")
+include("lua.items.active.GorgonMask.main")
+include("lua.items.active.SaltShaker.main")
 
 --passive
-include("lua.items.passive.Peppermint")
-include("lua.items.passive.Lithium")
-include("lua.items.passive.Sodom")
-include("lua.items.passive.BlastingBoots")
-include("lua.items.passive.LotBaby")
-include("lua.items.passive.SaltyBaby")
-include("lua.items.passive.PawnBaby")
-include("lua.items.passive.ThunderBombs")
-include("lua.items.passive.Landmine")
+include("lua.items.passive.BreathMints.main")
+include("lua.items.passive.Lithium.main")
+include("lua.items.passive.Sodom.main")
+include("lua.items.passive.BlastingBoots.main")
+include("lua.items.passive.LotBaby.main")
+include("lua.items.passive.SaltyBaby.main")
+include("lua.items.passive.PawnBaby.main")
+include("lua.items.passive.ThunderBombs.main")
+include("lua.items.passive.Landmine.main")
 
---include("lua.items.passive.RedHood")
-include("lua.items.passive.NewRedHood")
+include("lua.items.passive.RedHood.main")
 
 -- trinkets
-include("lua.items.trinkets.PepperGrinder")
-include("lua.items.trinkets.SaltRock")
-include("lua.items.trinkets.SmellingSalts")
+include("lua.items.trinkets.PepperGrinder.main")
+include("lua.items.trinkets.SaltRock.main")
+include("lua.items.trinkets.SmellingSalts.main")
 
 -- pickups
 include("lua.items.pickups.cards")
