@@ -1028,6 +1028,24 @@ function Helpers.IsItemDisabled(item)
 	return false
 end
 
+
+---@return integer
+function Helpers.GetCurrentMoonPhase()
+    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "MoonPhase")
+end
+
+---@param phase integer
+function Helpers.SetMoonPhase(phase)
+    phase = type(phase) == "number" and math.ceil(phase) or Helpers.GetCurrentMoonPhase()
+	phase = math.max(1, math.min(phase, 8))
+    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "MoonPhase", phase)
+end
+
+---@param step integer
+function Helpers.AdvanceMoonPhase(step)
+    Helpers.SetMoonPhase(Helpers.GetCurrentMoonPhase() + step)
+end
+
 EdithCompliance.Helpers = Helpers
 
 return Helpers

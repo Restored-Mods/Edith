@@ -49,11 +49,6 @@ Enums.Entities = {
 						Variant = Isaac.GetEntityVariantByName("Werewolf Swipe"),
 						SubType = 0
 					},
-					MOON_PHASE = {
-						Type = Isaac.GetEntityTypeByName("Moon Phases"),
-						Variant = Isaac.GetEntityVariantByName("Moon Phases"),
-						SubType = 0
-					}
 				}
 
 Enums.Familiars = 

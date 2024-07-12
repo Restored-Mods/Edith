@@ -350,11 +350,22 @@ if not ImGui.ElementExists("edithTargetColorRGB") then
     )
 end
 
+if ImGui.ElementExists("edithAlwaysShowMoonPhase") then
+    ImGui.RemoveElement("edithAlwaysShowMoonPhase")
+end
+
+ImGui.AddCheckbox("edithWindowSettings", "edithAlwaysShowMoonPhase", "Always show moon phase", function(val)
+    local newOption = val and 1 or 2
+    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AlwaysShowMoonPhase", newOption)
+    TSIL.SaveManager.SaveToDisk()
+end, true)
+
 ImGui.AddCallback("edithWindowSettings", ImGuiCallback.Render, function()
     ImGui.UpdateData("edithPushToSlide", ImGuiData.Value, TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "AllowHolding") - 1)
     ImGui.UpdateData("edithAllowBombs", ImGuiData.Value, TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps") - 1)
     local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
     ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, rgb.G / 255, rgb.B / 255})
+    ImGui.UpdateData("edithAlwaysShowMoonPhase", ImGuiData.Value, TSIL.SaveManager.GetPersitentVariable(EdithCompliance, "AlwaysShowMoonPhase") == 1)
 end)
 
 
@@ -538,6 +549,28 @@ local edithdirectory = {
                 nosel = true
             },
 			{str = 'target color', dest = 'targetcolor', tooltip = GenerateTooltip('edith target color customization')},
+            {
+                str = '',
+                fsize = 2,
+                nosel = true
+            },
+            {
+                strset = {'always show', 'moon phase'},
+                choices = {'enable', 'disable'},
+                setting = 1,
+                variable = 'AwaysShowMoonPhase',
+
+                load = function ()
+                    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "AlwaysShowMoonPhase") or 2
+                end,
+
+                store = function(newOption)
+                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AlwaysShowMoonPhase", newOption)
+                    ImGui.UpdateData("edithAwaysShowMoonPhase", ImGuiData.Value, newOption - 1)
+                end,
+
+                tooltip = GenerateTooltip('enable always showing moon phase')
+            },
             {
                 str = '',
                 fsize = 2,
