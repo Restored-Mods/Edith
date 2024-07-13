@@ -18,23 +18,29 @@ local moonPhaseAnim = {
     [8] = "WaningCrescent",
 }
 
-local function SetRedMoonPhaseSprites(bool)
-    local postfix = "_blue"
-    if bool == true then
-        postfix = "_red"
-    end
-    for i = 0, 1 do
-        moonPhaseSprite:ReplaceSpritesheet(i, "gfx/ui/moon_phase"..postfix..".png", true)
-    end
-end
-
 local function GetRedMoonPhase()
     return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "MoonPhaseWolf") == true
 end
 
 local function SetRedMoonPhase(bool)
+    if bool == true and TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "MoonPhaseWolf") ~= true then
+        SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
+    end
     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "MoonPhaseWolf", bool)
-    SetRedMoonPhaseSprites(bool)
+end
+
+local function GetSpritesheet()
+    local postfix = "_blue"
+    if GetRedMoonPhase() == true then
+        postfix = "_red"
+    end
+    return "gfx/ui/moon_phase"..postfix..".png"
+end
+
+local function SetRedMoonPhaseSprites()
+    for i = 0, 1 do
+        moonPhaseSprite:ReplaceSpritesheet(i, GetSpritesheet(), true)
+    end
 end
 
 local function PlayMoonPhase(animate)
@@ -46,10 +52,17 @@ local function PlayMoonPhase(animate)
             animatePhase = 0
         end
         moonPhaseSprite:Update()
+        if moonPhaseSprite:GetFrame() == 10 and moonPhaseSprite:GetLayer(0):GetSpritesheetPath() ~= GetSpritesheet() then
+            SetRedMoonPhaseSprites()
+        end
     else
         moonPhaseSprite:Play(moonPhaseAnim[Helpers.GetCurrentMoonPhase()], true)
         moonPhaseSprite:SetFrame(14)
     end
+    if moonPhaseSprite:GetFrame() >= 14 and moonPhaseSprite:GetLayer(0):GetSpritesheetPath() ~= GetSpritesheet() then
+        SetRedMoonPhaseSprites()
+    end
+    
 end
 
 ---@param player EntityPlayer
@@ -97,7 +110,6 @@ function RedHoodLocal:StompyEffect(player)
         data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
         if GetRedMoonPhase() then
             if not effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
-                SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
                 effects:AddNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
             end
         elseif effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then

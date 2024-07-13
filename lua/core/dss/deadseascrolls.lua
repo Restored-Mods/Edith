@@ -100,10 +100,6 @@ if not ImGui.ElementExists("tcMods") then
     ImGui.CreateMenu("tcMods", "TC Mods")
 end
 
-if ImGui.ElementExists("edithCompliance") then
-    ImGui.RemoveMenu("edithCompliance")
-end
-
 if not ImGui.ElementExists("edithCompliance") then
     ImGui.AddElement("tcMods", "edithCompliance", ImGuiElement.Menu, "Edith")
 end

@@ -52,8 +52,12 @@ EdithCompliance:AddCallback(ModCallbacks.MC_PRE_COMPLETION_EVENT, function(_, ma
 	end
 end)
 
+if not ImGui.ElementExists("tcMods") then
+    ImGui.CreateMenu("tcMods", "TC Mods")
+end
+
 if not ImGui.ElementExists("edithCompliance") then
-    ImGui.CreateMenu('edithCompliance', 'Edith')
+    ImGui.AddElement("tcMods", "edithCompliance", ImGuiElement.Menu, "Edith")
 end
 
 if ImGui.ElementExists("edithMenuUnlocks") then
