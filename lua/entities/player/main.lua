@@ -44,20 +44,6 @@ local function IsEdithExtraAnim(player)
 	return s:sub(1,5) == "Edith"
 end
 
-function Player:CountdownManager(player)
-	local data = Helpers.GetData(player)
-
-	if not data.knockBackCooldown or data.knockBackCooldown == 0 and not data.justStomped then
-		data.knockBackCooldown = 12
-	end
-
-	if data.knockBackCooldown > 0 and data.justStomped ~= nil then
-		data.knockBackCooldown = data.knockBackCooldown - 1
-	end
-
-end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.CountdownManager)
-
 ---@param player EntityPlayer
 local function CheckEdithsCollisionWithGrid(player, data)
 	local effects = player:GetEffects()
@@ -596,7 +582,7 @@ function Player:OnUpdatePlayer(player)
 				sprite:Play(sprite:GetAnimation():match("%w*[Walk]").."Down", true)
 			end
 			player:SetGnawedLeafTimer(0)
-			if not Helpers.InBlastingBootsState(player) then
+			if JumpLib:CanJump(player) then
 				EdithGridMovement(player, data)
 			end
 			
@@ -613,21 +599,16 @@ function Player:OnUpdatePlayer(player)
 				player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS or EntityGridCollisionClass.GRIDCOLL_GROUND
 			end
 			if Helpers.CanMove(player) and not hasMegaMush then
-				if data.EdithJumpTarget and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex) and not Helpers.InBlastingBootsState(player) then
+				if data.EdithJumpTarget and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
+				and JumpLib:CanJump(player) then
 					player:PlayExtraAnimation("EdithJump")
-					--player:QueueExtraAnimation("EdithJumpLand")
-					data.TargetJumpPos = data.EdithJumpTarget.Position--player.Position + data.MovementVector * (data.EdithJumpCharge - MinJumpCharge)
-					data.EdithJumpTarget:Remove()
-					data.EdithJumpTarget = nil
+					data.TargetJumpPos = data.EdithJumpTarget.Position
 					data.EdithJumpCharge = 0
 					data.EdithTargetMovementPosition = nil
-					player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
-					player.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
-					player.ControlsEnabled = false
 				end
 				if data.EdithJumpCharge >= (100 * JumpChargeMul + MinJumpCharge) then
 					data.LockBombs = true
-					if not data.EdithJumpTarget and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex) and not Helpers.InBlastingBootsState(player) then
+					if not data.EdithJumpTarget and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex) and not JumpLib:GetData(player).Jumping then
 						data.EdithJumpTarget = Isaac.Spawn(1000, EdithCompliance.Enums.Entities.EDITH_TARGET.Variant, 0, player.Position, Vector(0, 0), player):ToEffect()
 						data.EdithJumpTarget.Parent = player
 						data.EdithJumpTarget.SpawnerEntity = player
@@ -659,52 +640,15 @@ function Player:OnUpdatePlayer(player)
 				end
 			end
 
-			if data.PitFallJump and player:IsExtraAnimationFinished() then
-				data.PitFallJump = nil
-				data.AfterPitFallJump = true
-				player:PlayExtraAnimation("EdithAfterPitFall")
-				player.Position = Isaac.GetFreeNearPosition(player.Position, 1)
-			end
-
-			if data.AfterPitFallJump and player:IsExtraAnimationFinished() then
-				data.AfterPitFallJump = nil
-				player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-				player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS or EntityGridCollisionClass.GRIDCOLL_GROUND
-				player.Velocity = Vector.Zero
-				if data.EdithJumpTarget then
-					data.EdithJumpTarget:Remove()
-					data.EdithJumpTarget = nil
-				end
-				
-				data.TargetJumpPos = nil
-				player.ControlsEnabled = true
-			end
-
-			if sprite:IsEventTriggered("EdithLanding") and not data.justStomped then
-				player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-				player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS or EntityGridCollisionClass.GRIDCOLL_GROUND
-				Helpers.Stomp(player)
-				for _, pickup in ipairs(Isaac.FindInRadius(player.Position, 30, EntityPartition.PICKUP)) do
-					pickup.Velocity = Vector.Zero
-				end
-				data.justStomped = true
-				player.Velocity = Vector.Zero
-				if data.EdithJumpTarget then
-					data.EdithJumpTarget:Remove()
-					data.EdithJumpTarget = nil
-				end
-				
-				data.TargetJumpPos = nil
-				player.ControlsEnabled = true
-			end
-			
-			if data.justStomped and (player:IsExtraAnimationFinished()) then
-				data.justStomped = nil
-			end
-
 			if sprite:GetAnimation() == "EdithJump" and sprite:GetFrame() < 17 then
-				player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
-				player.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
+				if sprite:GetFrame() == 5 then
+					JumpLib:Jump(player, {
+						Height = 4,
+						Speed = 0.7,
+						Flags = JumpLib.Flags.NO_HURT_PITFALL | JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS_ONLY | JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING_ONLY,
+						Tags = {"EdithJump"}
+					})
+				end
 				if data.TargetJumpPos and sprite:GetFrame() > 5 then
 					player.Velocity = (data.TargetJumpPos - player.Position):Normalized() * (data.TargetJumpPos - player.Position):Length() / 7
 				end
@@ -726,13 +670,6 @@ function Player:OnUpdatePlayer(player)
 								data.TargetJumpPos = nil
 								player.ControlsEnabled = true
 								player:StopExtraAnimation()
-							end
-							if grid:GetType() == GridEntityType.GRID_PIT and grid.Desc.State ~= 1 
-							and grid.CollisionClass == GridCollisionClass.COLLISION_PIT and not player.CanFly 
-							and (player.Position - grid.Position):Length() <= 20 then
-								data.PitFallJump = true
-								player:StopExtraAnimation()
-								player:PlayExtraAnimation("EdithTrapdoorFall")
 							end
 						end
 					end
@@ -765,22 +702,48 @@ function Player:OnUpdatePlayer(player)
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePlayer, 0)
 
+function Player:Landing(player, jumpData, inPit)
+	if not inPit then
+		Helpers.Stomp(player)
+		local data = Helpers.GetData(player)
+		for _, pickup in ipairs(Isaac.FindInRadius(player.Position, 30, EntityPartition.PICKUP)) do
+			pickup.Velocity = Vector.Zero
+		end
+		player.Velocity = Vector.Zero
+		if data.EdithJumpTarget then
+			data.EdithJumpTarget:Remove()
+			data.EdithJumpTarget = nil
+		end
+		
+		data.TargetJumpPos = nil
+
+		for _, projectile in pairs(Isaac.FindInRadius(player.Position, 55, EntityPartition.BULLET)) do
+			projectile = projectile:ToProjectile()
+			---@cast projectile EntityProjectile
+			local angle = ((player.Position - projectile.Position) * -1):GetAngleDegrees()
+			projectile.Velocity = Vector.FromAngle(angle):Resized(10)
+			projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
+			projectile:AddProjectileFlags(ProjectileFlags.HIT_ENEMIES)
+		end
+	end
+end
+EdithCompliance:AddCallback(JumpLib.Callbacks.PLAYER_LAND, Player.Landing, {tag = "EdithJump"})
+
+---@param player EntityPlayer
+EdithCompliance:AddCallback(JumpLib.Callbacks.PLAYER_UPDATE_60, function (_, player)
+    player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+    -- player.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
+end, {
+    tag = "EdithJump"
+})
+
 function Player:DamageHandling(entity, amount, flags, source, cd)
 	if entity and entity:ToPlayer() and Helpers.IsPlayerEdith(entity:ToPlayer(), true, false) then
 		local sprite = entity:GetSprite()
 		local player = entity:ToPlayer()
 		local data = Helpers.GetData(player)
 		if sprite:GetAnimation():match("Edith")  then
-			if flags & DamageFlag.DAMAGE_INVINCIBLE > 0 or flags & DamageFlag.DAMAGE_RED_HEARTS > 0 then
-				player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-				player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS or EntityGridCollisionClass.GRIDCOLL_GROUND
-				if data.EdithJumpTarget then
-					data.EdithJumpTarget:Remove()
-					data.EdithJumpTarget = nil
-				end
-				data.TargetJumpPos = nil
-				player.ControlsEnabled = true
-			else
+			if not (flags & DamageFlag.DAMAGE_INVINCIBLE > 0 or flags & DamageFlag.DAMAGE_RED_HEARTS > 0) then
 				return false
 			end
 		end
@@ -797,13 +760,6 @@ function Player:OnRemovePlayer(entity)
 	end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, Player.OnRemovePlayer)
-
-function Player:AfterDeath(e)
-	if e.Type == EntityType.ENTITY_PLAYER then
-	    Helpers.RemoveEntityData(e)
-	end
-end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, Player.AfterDeath)
 
 function Player:edith_Stats(player, cacheFlag)
 	Helpers.ChangeSprite(player)
@@ -847,11 +803,9 @@ function Player:NewRoom()
 			player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 			player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS or EntityGridCollisionClass.GRIDCOLL_GROUND
 			Helpers.ChangeSprite(player)
-			data.justStomped = nil
 			data.TrapDoorFall = nil
+			data.TargetJumpPos = nil
 		end
-		data.PitFallJump = nil
-		data.AfterPitFallJump = nil
 	end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.NewRoom)
@@ -1206,24 +1160,6 @@ function Player:RenderTargetLine(fx)
 	end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, Player.RenderTargetLine, EdithCompliance.Enums.Entities.EDITH_TARGET.Variant)
-
-function Player:ProjectileDeflected(projectile)
-	
-	local projectileData = Helpers.GetData(projectile)
-	if projectileData.WasProjectileReflectedBy then
-		local player = projectileData.WasProjectileReflectedBy
-		local data = Helpers.GetData(player)
-		if Helpers.IsPlayerEdith(player,true,false) then
-			if data.knockBackCooldown > 6 then
-				local angle = ((player.Position - projectile.Position) * -1):GetAngleDegrees()
-				projectile.Velocity = Vector.FromAngle(angle):Resized(10)
-				projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
-				projectile:AddProjectileFlags(ProjectileFlags.HIT_ENEMIES)
-			end
-		end
-	end
-end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PROJECTILE_UPDATE, Player.ProjectileDeflected)
 
 ---@param player EntityPlayer
 function Player:OnInitPlayerWithShaker(player)

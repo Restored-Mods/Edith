@@ -5,6 +5,8 @@ local LOCAL_TSIL = require("lua.extraLibs.loi.TSIL")
 LOCAL_TSIL.Init("lua.extraLibs.loi")
 include("lua.extraLibs.APIs.custom_bomb_flags")
 
+require("lua.extraLibs.jumplib").Init()
+
 --core
 include("lua.core.enums")
 include("lua.core.globals")

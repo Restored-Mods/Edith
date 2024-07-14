@@ -607,11 +607,6 @@ function Helpers.DoesLaserHitEntity(laser, entity)
     end
 end
 
-function Helpers.InBlastingBootsState(player)
-	local data = Helpers.GetData(player)
-	return data.JumpCounter and data.JumpCounter > 0
-end
-
 -----------------------------------
 --Helper Functions (thanks piber)--
 -----------------------------------
@@ -759,25 +754,6 @@ function Helpers.UnlockAchievement(achievement, force) -- from Community Remix
 end
 
 
-local function destroyRocksAndStuff(e, radius)
-    local room = Game():GetRoom()
-    radius = radius or 10
-    for i = 0, (room:GetGridSize()) do
-		local gent = room:GetGridEntity(i)
-        if room:GetGridEntity(i) then
-			if (e.Position - gent.Position):Length() <= radius then
-				if (gent.Desc.Type ~= 16) then
-					gent:Destroy()
-				else
-					if gent.Desc.Variant ~= 1 or gent.Desc.State ~= 1 then
-						gent:Destroy()
-					end
-				end
-            end
-        end
-    end
-end
-
 ---@param radius number
 ---@param damage number
 ---@param bombDamage number
@@ -840,7 +816,6 @@ end
 
 function Helpers.Stomp(player)
 	local data = Helpers.GetData(player)
-	if data.justStomped then return end
 	local room = Game():GetRoom()
 	local bdType = room:GetBackdropType()
 	local chap4 = (bdType == 10 or bdType == 11 or bdType == 12 or bdType == 13 or bdType == 34 or bdType == 43 or bdType == 44)
@@ -850,13 +825,6 @@ function Helpers.Stomp(player)
 	local bombDamage = 0
 	local radius = 35
 	local knockbackFormula = 15 * ((Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)) and 2 or 1)
-
-	-- reflecting tears stuff
-	for _, projectile in pairs(Isaac.FindInRadius(player.Position, radius + 20, EntityPartition.BULLET)) do
-		local projectileData = Helpers.GetData(projectile)
-		projectileData.WasProjectileReflectedBy = player
-	end
-	-- reflecting tears stuff end
 
 	-- yeah the en of that stuff
 	if data.BombStomp ~= nil then
