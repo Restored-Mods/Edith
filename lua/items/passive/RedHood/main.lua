@@ -6,6 +6,7 @@ moonPhaseSprite:Load("gfx/ui/moon_phase.anm2", true)
 moonPhaseSprite.PlaybackSpeed = 0.5
 
 local animatePhase = 0
+local preRedMoonAnim = 0
 
 local moonPhaseAnim = {
     [1] = "NewMoon",
@@ -23,9 +24,6 @@ local function GetRedMoonPhase()
 end
 
 local function SetRedMoonPhase(bool)
-    if bool == true and TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "MoonPhaseWolf") ~= true then
-        SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
-    end
     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "MoonPhaseWolf", bool)
 end
 
@@ -44,20 +42,32 @@ local function SetRedMoonPhaseSprites()
 end
 
 local function PlayMoonPhase(animate)
+    local phase = Helpers.GetCurrentMoonPhase()
     if animate then
-        if moonPhaseSprite:GetAnimation() ~= moonPhaseAnim[Helpers.GetCurrentMoonPhase()] then
-            moonPhaseSprite:Play(moonPhaseAnim[Helpers.GetCurrentMoonPhase()], true)
+        if preRedMoonAnim > 0 then
+            phase = preRedMoonAnim
+        end
+        if moonPhaseSprite:GetAnimation() ~= moonPhaseAnim[phase] then
+            moonPhaseSprite:Play(moonPhaseAnim[phase], true)
         elseif moonPhaseSprite:IsFinished() then
             pressedMapButton = 0
             animatePhase = 0
+            preRedMoonAnim = 0
         end
         moonPhaseSprite:Update()
         if moonPhaseSprite:GetFrame() == 10 and moonPhaseSprite:GetLayer(0):GetSpritesheetPath() ~= GetSpritesheet() then
             SetRedMoonPhaseSprites()
+            if preRedMoonAnim > 0 then
+                local frame = moonPhaseSprite:GetFrame()
+                moonPhaseSprite:Play(moonPhaseAnim[Helpers.GetCurrentMoonPhase()], true)
+                moonPhaseSprite:SetFrame(frame)
+                preRedMoonAnim = 0
+            end
         end
     else
-        moonPhaseSprite:Play(moonPhaseAnim[Helpers.GetCurrentMoonPhase()], true)
+        moonPhaseSprite:Play(moonPhaseAnim[phase], true)
         moonPhaseSprite:SetFrame(14)
+        preRedMoonAnim = 0
     end
     if moonPhaseSprite:GetFrame() >= 14 and moonPhaseSprite:GetLayer(0):GetSpritesheetPath() ~= GetSpritesheet() then
         SetRedMoonPhaseSprites()
@@ -105,12 +115,15 @@ function RedHoodLocal:StompyEffect(player)
             data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
         end
         if data.LunaNullItems < effects:GetNullEffectNum(NullItemID.ID_LUNA) then
+            preRedMoonAnim = Helpers.GetCurrentMoonPhase() + 1
+            animatePhase = 1
             Helpers.SetMoonPhase(5)
         end
         data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
         if GetRedMoonPhase() then
             if not effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
                 effects:AddNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
+                SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
             end
         elseif effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
             effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
@@ -128,6 +141,9 @@ end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, RedHoodLocal.StompyEffect, 0)
 
 function RedHoodLocal:RedMoon()
+    if not PlayerManager.AnyoneHasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then 
+        return
+    end
     if Helpers.GetCurrentMoonPhase() == 5 then
         if not GetRedMoonPhase() then
             SetRedMoonPhase(true)
@@ -213,6 +229,7 @@ end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, RedHoodLocal.Swipes, EdithCompliance.Enums.Entities.WEREWOLF_SWIPE.Variant)
 
 function RedHoodLocal:MoonCounter()
+    if not PlayerManager.AnyoneHasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then return end
     local pressed = false
     
     if TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "AlwaysShowMoonPhase") == 1 then
@@ -234,7 +251,7 @@ function RedHoodLocal:MoonCounter()
         end
     end
 
-    if (not Helpers.IsMenuing() or animatePhase == 1) and PlayerManager.AnyoneHasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then
+    if (not Helpers.IsMenuing() or animatePhase == 1) then
         local pos = Vector(Isaac.GetScreenWidth() / 2 - 60, 20)
         moonPhaseSprite.Color = Color(1, 1, 1, math.max(pressedMapButton / 15, animatePhase))
         PlayMoonPhase(animatePhase == 1)
@@ -257,11 +274,9 @@ EdithCompliance:AddCallback(ModCallbacks.MC_USE_CARD, RedHoodLocal.UseCard)
 
 ---@param rng RNG
 function RedHoodLocal:AdvanceMoonPhase(rng)
+    if not PlayerManager.AnyoneHasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then return end
     local keepLunaEffect = false
     if PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_LUNA) then
-        if Helpers.GetCurrentMoonPhase() == 5 and rng:RandomFloat() <= 0.2 then
-            return
-        end
         keepLunaEffect = rng:RandomFloat() < 0.5
     end
     animatePhase = 1
