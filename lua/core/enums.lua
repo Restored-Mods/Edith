@@ -168,42 +168,54 @@ Enums.Challenges = {
 
 }
 
+Enums.Achievements = {}
+Enums.Achievements.Characters = {
+	EDITH =  Isaac.GetAchievementIdByName("Edith"),
+	TAINTED =  Isaac.GetAchievementIdByName("Tainted Edith"),
+}
+Enums.Achievements.CompletionMarks = {
+	-- A-side Unlicks
+	BLASTING_BOOTS =  Isaac.GetAchievementIdByName("Blasting Boots"),
+	SALTY_BABY =  Isaac.GetAchievementIdByName("Salty Baby"),
+	SALT_SHAKER =  Isaac.GetAchievementIdByName("Salt Shaker"),
+	THUNDER_BOMBS =  Isaac.GetAchievementIdByName("Thunder Bombs"),
+	SMELLING_SALTS =  Isaac.GetAchievementIdByName("Smelling Salts"),
+	PAWN_BABY =  Isaac.GetAchievementIdByName("Pawn Baby"),
+	GORGON_MASK =  Isaac.GetAchievementIdByName("Gorgon Mask"),
+	RED_HOOD =  Isaac.GetAchievementIdByName("Red Hood"),
+	LITHIUM =  Isaac.GetAchievementIdByName("Lithium Salts"),
+	SODOM =  Isaac.GetAchievementIdByName("Sodom"),
+	LOT_BABY =  Isaac.GetAchievementIdByName("Lot Baby"),
+	LANDMINE =  Isaac.GetAchievementIdByName("Landmine"),
+
+	-- Tainted Unlocks
+	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
+	REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
+}
+Enums.Achievements.Misc = {
+	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock")
+}
+-- Challenges
+Enums.Achievements.Challenges = {
+
+}
+
+Enums.Achievements.Marks = {
+	ASide = {
+		[CompletionType.MOMS_HEART] = Enums.Achievements.CompletionMarks.SALTY_BABY,
+		[CompletionType.ISAAC] = Enums.Achievements.CompletionMarks.SALT_SHAKER,
+		[CompletionType.SATAN] = Enums.Achievements.CompletionMarks.LANDMINE,
+		[CompletionType.BOSS_RUSH] = Enums.Achievements.CompletionMarks.RED_HOOD,
+		[CompletionType.BLUE_BABY] = Enums.Achievements.CompletionMarks.THUNDER_BOMBS,
+		[CompletionType.LAMB] = Enums.Achievements.CompletionMarks.SMELLING_SALTS,
+		[CompletionType.MEGA_SATAN] = Enums.Achievements.CompletionMarks.PAWN_BABY,
+		[CompletionType.HUSH] = Enums.Achievements.CompletionMarks.BLASTING_BOOTS,
+		[CompletionType.ULTRA_GREED] = Enums.Achievements.CompletionMarks.SALTY_BABY,
+		[CompletionType.ULTRA_GREEDIER] = Enums.Achievements.CompletionMarks.GORGON_MASK,
+		[CompletionType.DELIRIUM] = Enums.Achievements.CompletionMarks.LITHIUM,
+		[CompletionType.MOTHER] = Enums.Achievements.CompletionMarks.SALTY_BABY,
+		[CompletionType.BEAST] = Enums.Achievements.CompletionMarks.SODOM,
+	}
+}
+
 EdithCompliance.Enums = Enums
-
-local function InitAchievements()
-	if not EdithCompliance.Enums.Achievements then
-		EdithCompliance.Enums.Achievements = {}
-		EdithCompliance.Enums.Achievements.Characters = {
-			EDITH =  Isaac.GetAchievementIdByName("Edith"),
-			TAINTED =  Isaac.GetAchievementIdByName("Tainted Edith"),
-		}
-		EdithCompliance.Enums.Achievements.CompletionMarks = {
-			-- A-side Unlicks
-			BLASTING_BOOTS =  Isaac.GetAchievementIdByName("Blasting Boots"),
-			SALTY_BABY =  Isaac.GetAchievementIdByName("Salty Baby"),
-			SALT_SHAKER =  Isaac.GetAchievementIdByName("Salt Shaker"),
-			THUNDER_BOMBS =  Isaac.GetAchievementIdByName("Thunder Bombs"),
-			SMELLING_SALTS =  Isaac.GetAchievementIdByName("Smelling Salts"),
-			PAWN_BABY =  Isaac.GetAchievementIdByName("Pawn Baby"),
-			GORGON_MASK =  Isaac.GetAchievementIdByName("Gorgon Mask"),
-			RED_HOOD =  Isaac.GetAchievementIdByName("Red Hood"),
-			LITHIUM =  Isaac.GetAchievementIdByName("Lithium Salts"),
-			SODOM =  Isaac.GetAchievementIdByName("Sodom"),
-			LOT_BABY =  Isaac.GetAchievementIdByName("Lot Baby"),
-
-			-- Tainted Unlocks
-			SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
-			REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
-		}
-		EdithCompliance.Enums.Achievements.Misc = {
-			SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock")
-		}
-		-- Challenges
-		EdithCompliance.Enums.Achievements.Challenges = {
-
-		}
-	end
-end
-EdithCompliance:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, function() EdithCompliance:RemoveCallback(ModCallbacks.MC_MAIN_MENU_RENDER, InitAchievements) InitAchievements() end)
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_RENDER, function()  EdithCompliance:RemoveCallback(ModCallbacks.MC_POST_RENDER, InitAchievements) InitAchievements() end)
-InitAchievements()

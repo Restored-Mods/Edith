@@ -96,30 +96,7 @@ local DSSInitializerFunction = include("lua.core.dss.dssmenucore")
 -- This function returns a table that some useful functions and defaults are stored on
 local dssmod = DSSInitializerFunction(DSSModName, DSSCoreVersion, MenuProvider)
 
-if not ImGui.ElementExists("tcMods") then
-    ImGui.CreateMenu("tcMods", "TC Mods")
-end
-
-if not ImGui.ElementExists("edithCompliance") then
-    ImGui.AddElement("tcMods", "edithCompliance", ImGuiElement.Menu, "Edith")
-end
-
 local function InitDisableMenu()
-
-    if ImGui.ElementExists("edithMenuBlacklistItems") then
-        ImGui.RemoveElement("edithMenuBlacklistItems")
-    end
-
-    ImGui.AddElement("edithCompliance", "edithMenuBlacklistItems", ImGuiElement.MenuItem, "\u{f05e} Items Blacklist")
-
-    if not ImGui.ElementExists("edithWindowBlacklistItems") then
-        ImGui.CreateWindow("edithWindowBlacklistItems", "Items Blacklist")
-    end
-
-
-    ImGui.LinkWindowToElement("edithWindowBlacklistItems", "edithMenuBlacklistItems")
-
-    ImGui.SetWindowSize("edithWindowBlacklistItems", 600, #EdithCompliance.Enums.CollectibleType * 100)
 
     local itemTogglesMenu = {}
     local orderedItems = {}
@@ -226,7 +203,6 @@ local function InitDisableMenu()
                     table.insert(disabledItems, GetItemsEnum(collectible.ID))
                 end
                 local elemName = string.gsub(collectible.Name, " ", "").."BlackList"
-                ImGui.UpdateData(elemName, ImGuiData.Value, var - 1)
                 TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", disabledItems)
             end,
 
@@ -248,122 +224,11 @@ local function InitDisableMenu()
             }
         }
 
-        local elemName = string.gsub(collectible.Name, " ", "").."BlackList"
-        if ImGui.ElementExists(elemName) then
-            ImGui.RemoveElement(elemName)
-        end
-        
-        ImGui.AddCombobox("edithWindowBlacklistItems", elemName, collectible.Name, function (index, val)
-                --print("that label changed", index, val)
-                if not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems") then
-                    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", {})
-                end
-                local disabledItems = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")
-                for indexItem, disabledItem in ipairs(disabledItems) do
-                    if disabledItem == GetItemsEnum(collectible.ID) then
-                        if index == 0 then
-                            table.remove(disabledItems, indexItem)
-                        end
-                        break
-                    end
-                end
-                
-                if index == 1 then
-                    table.insert(disabledItems, GetItemsEnum(collectible.ID))
-                end
-                TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", disabledItems)
-                TSIL.SaveManager.SaveToDisk()
-                end, {
-                    "Enabled",
-                    "Disabled",
-                },
-                0,
-                true
-            )
-        
-        ImGui.AddCallback(elemName, ImGuiCallback.Render, function()
-                local val = true
-                for indexItem, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")) do
-                    if disabledItem == GetItemsEnum(collectible.ID) then
-                        val = false
-                        break
-                    end
-                end
-                ImGui.UpdateData(elemName, ImGuiData.Value, val and 0 or 1)
-            end)
-
         itemTogglesMenu[#itemTogglesMenu+1] = collectibleOption
     end
     
     return itemTogglesMenu
 end
-
-if ImGui.ElementExists("edithMenuSettings") then
-    ImGui.RemoveElement("edithMenuSettings")
-end
-
-ImGui.AddElement("edithCompliance", "edithMenuSettings", ImGuiElement.MenuItem, "\u{f013} Settings")
-
-if not ImGui.ElementExists("edithWindowSettings") then
-    ImGui.CreateWindow("edithWindowSettings", "Settings")
-end
-
-ImGui.LinkWindowToElement("edithWindowSettings", "edithMenuSettings")
-
-ImGui.SetWindowSize("edithWindowSettings", 700, 200)
-
-if ImGui.ElementExists("edithPushToSlide") then
-    ImGui.RemoveElement("edithPushToSlide")
-end
-
-ImGui.AddCombobox("edithWindowSettings", "edithPushToSlide", "Slide when holding button", function(index, val)
-        TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AllowHolding", index + 1)
-        TSIL.SaveManager.SaveToDisk()
-    end, { 'Enable', 'Disable' }, 0, true)
-
-if ImGui.ElementExists("edithAllowBombs") then
-    ImGui.RemoveElement("edithAllowBombs")
-end
-
-ImGui.AddCombobox("edithWindowSettings", "edithAllowBombs", "Edith can use bombs", function(index, val)
-        TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "OnlyStomps", index + 1)
-        TSIL.SaveManager.SaveToDisk()
-    end, { 'Enable', 'Disable' }, 0, true)
-
-if not ImGui.ElementExists("edithTargetColorRGB") then
-    ImGui.AddInputColor("edithWindowSettings", "edithTargetColorRGB", "\u{f1fc} Edith's Target Color",
-        function(r, g, b)
-            local targetColor = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
-            targetColor.R = math.floor(r * 255)
-            targetColor.G = math.floor(g * 255)
-            targetColor.B = math.floor(b * 255)
-            TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "TargetColor", targetColor)
-            TSIL.SaveManager.SaveToDisk()
-        end,
-        155 / 255,
-        0,
-        0
-    )
-end
-
-if ImGui.ElementExists("edithAlwaysShowMoonPhase") then
-    ImGui.RemoveElement("edithAlwaysShowMoonPhase")
-end
-
-ImGui.AddCheckbox("edithWindowSettings", "edithAlwaysShowMoonPhase", "Always show moon phase", function(val)
-    local newOption = val and 1 or 2
-    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AlwaysShowMoonPhase", newOption)
-    TSIL.SaveManager.SaveToDisk()
-end, true)
-
-ImGui.AddCallback("edithWindowSettings", ImGuiCallback.Render, function()
-    ImGui.UpdateData("edithPushToSlide", ImGuiData.Value, TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "AllowHolding") - 1)
-    ImGui.UpdateData("edithAllowBombs", ImGuiData.Value, TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps") - 1)
-    local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
-    ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, rgb.G / 255, rgb.B / 255})
-    ImGui.UpdateData("edithAlwaysShowMoonPhase", ImGuiData.Value, TSIL.SaveManager.GetPersitentVariable(EdithCompliance, "AlwaysShowMoonPhase") == 1)
-end)
-
 
 local function InitTargetColorMenu()
 
@@ -388,9 +253,6 @@ local function InitTargetColorMenu()
             end,
             store = function(newOption)
                 TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").R = newOption
-                local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
-
-                ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, {newOption / 255, rgb.G / 255, rgb.B / 255})
             end,
 
             tooltip = GenerateTooltip('color red value'),
@@ -415,8 +277,6 @@ local function InitTargetColorMenu()
             end,
             store = function(newOption)
                 TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").G = newOption
-                local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
-                ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, newOption / 255, rgb.B / 255})
             end,
 
             tooltip = GenerateTooltip('color green value'),
@@ -441,8 +301,6 @@ local function InitTargetColorMenu()
             end,
             store = function(newOption)
                 TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor").B = newOption
-                local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
-                ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, rgb.G / 255, newOption / 255})
             end,
 
             tooltip = GenerateTooltip('color blue value'),
@@ -512,7 +370,6 @@ local edithdirectory = {
 
                 store = function(newOption)
                     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AllowHolding", newOption)
-                    ImGui.UpdateData("edithPushToSlide", ImGuiData.Value, newOption - 1)
                 end,
 
                 tooltip = GenerateTooltip('enable or disable the sliding on holding a movement button')
@@ -534,7 +391,6 @@ local edithdirectory = {
 
                 store = function(newOption)
                     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "OnlyStomps", newOption)
-                    ImGui.UpdateData("edithAllowBombs", ImGuiData.Value, newOption - 1)
                 end,
 
                 tooltip = GenerateTooltip('enable or disable placing bombs when playing as edith')
@@ -562,7 +418,6 @@ local edithdirectory = {
 
                 store = function(newOption)
                     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AlwaysShowMoonPhase", newOption)
-                    ImGui.UpdateData("edithAwaysShowMoonPhase", ImGuiData.Value, newOption - 1)
                 end,
 
                 tooltip = GenerateTooltip('enable always showing moon phase')
@@ -664,6 +519,8 @@ local function CloseEdithDSSMenu(tbl, fullClose, noAnimate)
     FreezeGame(true)
     dssmod.closeMenu(tbl, fullClose, noAnimate)
 end
+
+include("lua.core.dss.imgui")
 
 --#endregion
 DeadSeaScrollsMenu.AddMenu(modMenuName, {

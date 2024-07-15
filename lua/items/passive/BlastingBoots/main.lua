@@ -1,5 +1,4 @@
 local BlastBoots = {}
-local Helpers = include("lua.helpers.Helpers")
 
 ---@param e Entity
 ---@param amount integer
@@ -24,4 +23,4 @@ function BlastBoots:OnBombDamage(e, amount, flags, source, countdown)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, BlastBoots.NewRoom)
+EdithCompliance:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, BlastBoots.OnBombDamage, EntityType.ENTITY_PLAYER)
