@@ -400,8 +400,8 @@ function Helpers.ChangeSprite(player, loading)
 	local data = Helpers.GetEntityData(player)
 	local sprite = player:GetSprite()
 	if Helpers.IsPlayerEdith(player, true, false) then
-		if sprite:GetFilename() ~= "gfx/edith.anm2" and not player:IsCoopGhost() then
-			sprite:Load("gfx/edith.anm2", true)
+		if sprite:GetFilename() ~= EdithCompliance.Enums.PlayerSprites.EDITH and not player:IsCoopGhost() then
+			sprite:Load(EdithCompliance.Enums.PlayerSprites.EDITH, true)
 			sprite:Update()
 		end
 		local changeCostume = data.MistCurse
@@ -419,25 +419,25 @@ function Helpers.ChangeSprite(player, loading)
 		if changeCostume ~= data.MistCurse then
 			for i=0,14 do
 				if i ~= 13 then
-					sprite:ReplaceSpritesheet(i,"gfx/characters/costumes/Character_001_Edith"..human..".png")
+					sprite:ReplaceSpritesheet(i,"gfx_cedith/characters/costumes/Character_001_C!Edith"..human..".png")
 				end
 			end
-			local hoodSprite = "gfx/characters/costumes/Character_001_Edith_Hood"..human..".png"
+			local hoodSprite = "gfx_cedith/characters/costumes/Character_001_C!Edith_Hood"..human..".png"
 			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithCompliance.Enums.Costumes.EDITH_HOOD), hoodSprite, 5)
 			sprite:LoadGraphics()
 		end
 	elseif Helpers.IsPlayerEdith(player, false, true) then
-		if sprite:GetFilename() ~= "gfx/edith_b.anm2" and not player:IsCoopGhost() then
-			sprite:Load("gfx/edith_b.anm2", true)
+		if sprite:GetFilename() ~= EdithCompliance.Enums.PlayerSprites.EDITH_B and not player:IsCoopGhost() then
+			sprite:Load(EdithCompliance.Enums.PlayerSprites.EDITH, true)
 			sprite:Update()
 		end
 		Helpers.ChangePepperValue(player)
 		if data.Pepper == 0 then
-			sprite:ReplaceSpritesheet(1, "gfx/characters/costumes/tedith_phase1.png")
+			sprite:ReplaceSpritesheet(1, "gfx_cedith/characters/costumes/tedith_phase1.png")
 			sprite:LoadGraphics()
 		end
 		if data.Pepper < 6 and (data.Pepper ~= data.PrevPepper or loading) then
-			local hairSprite = "gfx/characters/costumes/tedithhair_phase"
+			local hairSprite = "gfx_cedith/characters/costumes/tedithhair_phase"
 			if data.Pepper < 3 then
 				hairSprite = hairSprite.."1"
 			else
@@ -446,7 +446,7 @@ function Helpers.ChangeSprite(player, loading)
 				--spritesheet stuff
 			for i=0,14 do
 				if i ~= 13 then
-					sprite:ReplaceSpritesheet(i, "gfx/characters/costumes/tedith_phase"..(data.Pepper+1)..".png")
+					sprite:ReplaceSpritesheet(i, "gfx_cedith/characters/costumes/tedith_phase"..(data.Pepper+1)..".png")
 				end
 			end
 			sprite:LoadGraphics()
@@ -454,7 +454,7 @@ function Helpers.ChangeSprite(player, loading)
 			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithCompliance.Enums.Costumes.EDITH_B_HAIR), hairSprite, 5)
 			data.PrevPepper = data.Pepper
 		end
-	elseif sprite:GetFilename() == "gfx/edith.anm2" or sprite:GetFilename() == "gfx/edith_b.anm2" then
+	elseif sprite:GetFilename() == EdithCompliance.Enums.PlayerSprites.EDITH or sprite:GetFilename() == EdithCompliance.Enums.PlayerSprites.EDITH_B then
 		sprite:Load("gfx/001.000.player.anm2", true)
 		sprite:Update()
 	end

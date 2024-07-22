@@ -14,7 +14,9 @@ function SaltShakerLocal:UseShaker(collectible, rng, player, flags, slot, custom
             Isaac.Spawn(1000, EffectVariant.TOOTH_PARTICLE, 0, salt.Position, RandomVector() * rng:RandomFloat() * rng:RandomInt(6), player):ToEffect()
         end
         salt.Timeout = 240
-        salt.SortingLayer = SortingLayer.SORTING_BACKGROUND
+        salt:SetTimeout(240)
+        salt.CollisionDamage = 0
+        --salt.SortingLayer = SortingLayer.SORTING_BACKGROUND
     end
     return true
 end
@@ -22,17 +24,12 @@ EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, SaltShakerLocal.UseShaker,
 
 ---@param creep EntityEffect
 function SaltShakerLocal:CreepUpdate(creep)
+    if creep.SubType ~= EdithCompliance.Enums.Entities.SALT_CREEP.SubType then return end
     local enemies = Helpers.GetEnemies()
     for _, enemy in ipairs(enemies) do
 		if (enemy.Position - creep.Position):Length() <= 20 * creep.Scale and not enemy:HasEntityFlags(EntityFlag.FLAG_FEAR) then
 			enemy:AddFear(EntityRef(creep), 30)
 		end
-    end
-    local alpha = creep.Timeout > 40 and 1 or (creep.Timeout / 40)
-    local color = creep.Color;
-    creep.Color = Color(color.R, color.G, color.B, alpha, color.RO, color.GO, color.BO)
-    if creep.Timeout <= 0 then
-        creep:Remove()
     end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltShakerLocal.CreepUpdate, EdithCompliance.Enums.Entities.SALT_CREEP.Variant)

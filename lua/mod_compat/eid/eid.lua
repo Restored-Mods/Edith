@@ -3,13 +3,13 @@ if not EID then return end
 -- Mod Icon (TODO)
 EID:setModIndicatorName("Edith")
 local iconSprite = Sprite()
-iconSprite:Load("gfx/ui/eid_edith_icon.anm2", true)
+iconSprite:Load("gfx_cedith/ui/eid_edith_icon.anm2", true)
 EID:addIcon("Edith Icon", "EdithIcon", 0, 15, 24, 6, 6, iconSprite)
 EID:setModIndicatorIcon("Edith Icon")
 
 -- Birthright Icons
 PlayerIconSprite = Sprite()
-PlayerIconSprite:Load("gfx/ui/eid_edith_players_icons.anm2", true)
+PlayerIconSprite:Load("gfx_cedith/ui/eid_edith_players_icons.anm2", true)
 EID:addIcon("Player"..EdithCompliance.Enums.PlayerType.EDITH, "Edith", 0, 12, 12, -1, 1, PlayerIconSprite)
 --EID:addIcon("Player"..EdithCompliance.Enums.PlayerType.EDITH_B, "EdithB", 0, 12, 12, -1, 1, PlayerIconSprite)
 

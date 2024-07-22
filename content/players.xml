@@ -1,7 +1,7 @@
-<players root="gfx/characters/costumes/" 
-         portraitroot="gfx/ui/boss/" 
-         nameimageroot="gfx/ui/boss/">
-	   <player name="Edith" skin="Character_001_Edith.png" modcostume="150" armor="6"
+<players root="gfx_cedith/characters/costumes/" 
+         portraitroot="gfx_cedith/ui/boss/" 
+         nameimageroot="gfx_cedith/ui/boss/">
+	   <player name="C!Edith" skin="Character_001_C!Edith.png" modcostume="150" armor="6"
           nameimage="playername_Edith.png" 
           portrait="playerportrait_Edith_A.png" skinColor="0" costumeSuffix="apollyon"
           birthright="Jump and stomp"
@@ -11,12 +11,12 @@
           speedmodifier="-0.15"
           rangemodifier="-0.45"
           />
-       <player name ="Edith" skin="tedith_phase1.png" armor="6"
+       <player name ="C!Edith" skin="tedith_phase1.png" armor="6"
           nameimage="playername_Edith.png" modcostume="151"
           portrait="playerportrait_Edith_B.png" skinColor="-1"
           extraportrait="edith_stage.anm2" 
           birthright="Reflect their gaze" costumeSuffix="edithb"
           achievement="Tainted Edith"
           speedmodifier="-0.1"
-          bSkinParent="Edith" /> 
+          bSkinParent="C!Edith" /> 
 </players>

@@ -56,14 +56,14 @@ include("lua.items.funny")
 
 if StageAPI and StageAPI.Loaded then
     StageAPI.AddPlayerGraphicsInfo(EdithCompliance.Enums.PlayerType.EDITH, {
-        Name = "gfx/ui/boss/playername_Edith.png",
-        Portrait = "gfx/ui/boss/playerportrait_Edith_A.png",
+        Name = "gfx_cedith/ui/boss/playername_Edith.png",
+        Portrait = "gfx_cedith/ui/boss/playerportrait_Edith_A.png",
         NoShake = false
     })
 
     --[[StageAPI.AddPlayerGraphicsInfo(EdithCompliance.Enums.PlayerType.EDITH_B, {
-        Name = "gfx/ui/boss/playername_Edith.png",
-        Portrait = "gfx/ui/boss/playerportrait_Edith_B.png",
+        Name = "gfx_cedith/ui/boss/playername_Edith.png",
+        Portrait = "gfx_cedith/ui/boss/playerportrait_Edith_B.png",
         NoShake = false
     })]]
 end

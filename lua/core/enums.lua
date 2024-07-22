@@ -31,7 +31,7 @@ Enums.Entities = {
 					{
 						Type = Isaac.GetEntityTypeByName("Salt Creep"),
 						Variant = Isaac.GetEntityVariantByName("Salt Creep"),
-						SubType = 0
+						SubType = Isaac.GetEntitySubTypeByName("Salt Creep")
 					},
 					PEPPERMINT =
 					{
@@ -73,8 +73,8 @@ Enums.Familiars =
 
 Enums.PlayerType = 
 				{
-					EDITH = Isaac.GetPlayerTypeByName("Edith", false), 
-					EDITH_B = Isaac.GetPlayerTypeByName("Edith", true)
+					EDITH = Isaac.GetPlayerTypeByName("C!Edith", false), 
+					EDITH_B = Isaac.GetPlayerTypeByName("C!Edith", true)
 				}
 
 Enums.CollectibleType = 
@@ -149,8 +149,13 @@ Enums.GFX =
 
 -- Costumes
 Enums.Costumes = {
-	EDITH_HOOD = Isaac.GetCostumeIdByPath("gfx/characters/Character_001_Edith_Hood.anm2"),
-	EDITH_B_HAIR = Isaac.GetCostumeIdByPath("gfx/characters/Character_001_Edith_b_Hood.anm2"),
+	EDITH_HOOD = Isaac.GetCostumeIdByPath("gfx_cedith/characters/Character_001_C!Edith_Hood.anm2"),
+	EDITH_B_HAIR = Isaac.GetCostumeIdByPath("gfx_cedith/characters/Character_001_Edith_b_Hood.anm2"),
+}
+
+Enums.PlayerSprites = {
+	EDITH = "gfx_cedith/c!edith.anm2",
+	EDITH_B = "gfx_cedith/c!edith_b.anm2"
 }
 
 Enums.Callbacks = {

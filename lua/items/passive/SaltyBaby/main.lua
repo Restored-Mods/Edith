@@ -27,7 +27,9 @@ local function SpawnSaltCreep(player, numLeft, position, step, rotation, delay)
         Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 0, salt.Position, RandomVector() * rng:RandomFloat() * rng:RandomInt(6), player):ToEffect()
     end]]
     salt.Timeout = 120
-    salt.SortingLayer = SortingLayer.SORTING_BACKGROUND
+    salt:SetTimeout(120)
+    salt.CollisionDamage = 0
+    --salt.SortingLayer = SortingLayer.SORTING_BACKGROUND
     local bffScale = player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 1.3 or 1
     salt.Scale = salt.Scale * bffScale
     salt.SpriteScale = salt.SpriteScale * bffScale

@@ -37,8 +37,8 @@ function PepperGrinder:CreepSpawning(player)
 			if entity:IsDead() and dataP.CreepNum > 0 then
 				local creep = Isaac.Spawn(1000, 53, 0, entity.Position, Vector(TSIL.Random.GetRandomInt(1, 4) - 2, TSIL.Random.GetRandomInt(1, 4) - 2), player)
 				local sprite = creep:GetSprite()
-				sprite:Load("gfx/1000.092_creep (powder).anm2", true)
-				sprite:ReplaceSpritesheet(0, "gfx/effects/effect_blackpowder.png")
+				sprite:Load("gfx_cedith/1000.092_creep (powder).anm2", true)
+				sprite:ReplaceSpritesheet(0, "gfx_cedith/effects/effect_blackpowder.png")
 				local rngSprite = TSIL.Random.GetRandomInt(0, 5)
 				if rngSprite == 0 then
 					sprite:Play("SmallBlood01", true)

@@ -1,4 +1,4 @@
-<items gfxroot="gfx/items/" deathanm2="gfx/death items.anm2" version="1">
+<items gfxroot="gfx_cedith/items/" deathanm2="gfx/death items.anm2" version="1">
 	<!-- Passive Items -->
 	<passive id="0" name="Breath Mints" gfx="collectibles_001_peppermint.png" description="Peppermint chill" quality="2" tags="summonable offensive" />
 	<passive id="1" name="Lithium Salts" achievement="Lithium Salts" description="Numbed emotions" gfx="collectibles_002_lithium.png" quality="1" cache="damage firedelay" tags="summonable"/>

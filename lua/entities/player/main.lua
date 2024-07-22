@@ -502,9 +502,9 @@ function Player:TargetJumpRender(target)
 		target.Color = Color(1, 1, 1, 0, 0, 0, 0)
 		
 		if data.BombStomp ~= nil then
-			target:GetSprite():ReplaceSpritesheet(0, "gfx/effects/target_edith_bomb.png")
+			target:GetSprite():ReplaceSpritesheet(0, "gfx_cedith/effects/target_edith_bomb.png")
 		elseif data.BombStomp ~= true then
-			target:GetSprite():ReplaceSpritesheet(0, "gfx/effects/target_edith.png")
+			target:GetSprite():ReplaceSpritesheet(0, "gfx_cedith/effects/target_edith.png")
 		end
 		target:GetSprite():LoadGraphics()
 		
@@ -540,7 +540,7 @@ function Player:OnInitPlayer(player)
 	::EdithCheck::
 	if Helpers.IsPlayerEdith(player, true, false) then			
 		local mySprite = player:GetSprite()
-		mySprite:Load("gfx/edith.anm2", true)
+		mySprite:Load(EdithCompliance.Enums.PlayerSprites.EDITH, true)
 		mySprite:Update()
 		Helpers.ChangeSprite(player)
 	elseif Helpers.IsPlayerEdith(player, false, true) then -- Apply different costume for her tainted variant
@@ -549,7 +549,7 @@ function Player:OnInitPlayer(player)
 		end
 		goto EdithCheck
 		local mySprite = player:GetSprite()
-		mySprite:Load("gfx/edith_b.anm2", true)
+		mySprite:Load(EdithCompliance.Enums.PlayerSprites.EDITH_B, true)
 		mySprite:LoadGraphics()
 		Helpers.ChangeSprite(player,true)
 		player:SetPocketActiveItem(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL, ActiveSlot.SLOT_POCKET, false)
@@ -784,7 +784,7 @@ function Player:Home()
 				or (entity.Type == EntityType.ENTITY_SHOPKEEPER)) and room:IsFirstVisit()) then
 					entity:Remove()
 					local slot = Isaac.Spawn(EntityType.ENTITY_SLOT, 14, 0, entity.Position, Vector.Zero, nil)
-					slot:GetSprite():ReplaceSpritesheet(0,"gfx/characters/costumes/Character_001_Edith_b.png")
+					slot:GetSprite():ReplaceSpritesheet(0,"gfx_cedith/characters/costumes/Character_001_Edith_b.png")
 					slot:GetSprite():LoadGraphics()
 				end
 			end
@@ -1112,7 +1112,7 @@ local function drawLine(fx, from, to, frame)
 	local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
 	if not fx:GetData().Line then
 		fx:GetData().Line = Sprite()
-		fx:GetData().Line:Load("gfx/edith line.anm2", true)
+		fx:GetData().Line:Load("gfx_cedith/edith line.anm2", true)
 	end
 	if not fx:GetData().Line:IsLoaded() then return end
 

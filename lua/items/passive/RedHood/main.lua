@@ -2,7 +2,7 @@ local RedHoodLocal = {}
 local Helpers = include("lua.helpers.Helpers")
 local pressedMapButton = 0
 local moonPhaseSprite = Sprite()
-moonPhaseSprite:Load("gfx/ui/moon_phase.anm2", true)
+moonPhaseSprite:Load("gfx_cedith/ui/moon_phase.anm2", true)
 moonPhaseSprite.PlaybackSpeed = 0.5
 
 local animatePhase = 0
@@ -32,7 +32,7 @@ local function GetSpritesheet()
     if GetRedMoonPhase() == true then
         postfix = "_red"
     end
-    return "gfx/ui/moon_phase"..postfix..".png"
+    return "gfx_cedith/ui/moon_phase"..postfix..".png"
 end
 
 local function SetRedMoonPhaseSprites()
