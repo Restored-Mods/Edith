@@ -48,7 +48,7 @@ for _, collectible in pairs(orderedItems) do
         ImGui.RemoveElement(elemName)
     end
     
-    ImGui.AddCombobox("edithWindowBlacklistItems", elemName, collectible.Name, function (index, val)
+    ImGui.AddCheckbox("edithWindowBlacklistItems", elemName, collectible.Name, function (val)
             --print("that label changed", index, val)
             if not TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems") then
                 TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", {})
@@ -56,23 +56,19 @@ for _, collectible in pairs(orderedItems) do
             local disabledItems = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")
             for indexItem, disabledItem in ipairs(disabledItems) do
                 if disabledItem == GetItemsEnum(collectible.ID) then
-                    if index == 0 then
+                    if val then
                         table.remove(disabledItems, indexItem)
                     end
                     break
                 end
             end
             
-            if index == 1 then
+            if not val then
                 table.insert(disabledItems, GetItemsEnum(collectible.ID))
             end
             TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "DisabledItems", disabledItems)
             TSIL.SaveManager.SaveToDisk()
-            end, {
-                "Enabled",
-                "Disabled",
-            },
-            0,
+            end,
             true
         )
     
@@ -84,7 +80,7 @@ for _, collectible in pairs(orderedItems) do
                     break
                 end
             end
-            ImGui.UpdateData(elemName, ImGuiData.Value, val and 0 or 1)
+            ImGui.UpdateData(elemName, ImGuiData.Value, val)
         end)
 end
 
@@ -106,19 +102,19 @@ if ImGui.ElementExists("edithPushToSlide") then
     ImGui.RemoveElement("edithPushToSlide")
 end
 
-ImGui.AddCombobox("edithWindowSettings", "edithPushToSlide", "Slide when holding button", function(index, val)
-        TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AllowHolding", index + 1)
+ImGui.AddCheckbox("edithWindowSettings", "edithPushToSlide", "Slide when holding button", function(val)
+        TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "AllowHolding", val and 1 or 2)
         TSIL.SaveManager.SaveToDisk()
-    end, { 'Enable', 'Disable' }, 0, true)
+    end, true)
 
 if ImGui.ElementExists("edithAllowBombs") then
     ImGui.RemoveElement("edithAllowBombs")
 end
 
-ImGui.AddCombobox("edithWindowSettings", "edithAllowBombs", "Edith can use bombs", function(index, val)
+ImGui.AddCheckbox("edithWindowSettings", "edithAllowBombs", "Edith can use bombs", function(val)
         TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "OnlyStomps", index + 1)
         TSIL.SaveManager.SaveToDisk()
-    end, { 'Enable', 'Disable' }, 0, true)
+    end,  true)
 
 if not ImGui.ElementExists("edithTargetColorRGB") then
     ImGui.AddInputColor("edithWindowSettings", "edithTargetColorRGB", "\u{f1fc} Edith's Target Color",
@@ -147,8 +143,8 @@ ImGui.AddCheckbox("edithWindowSettings", "edithAlwaysShowMoonPhase", "Always sho
 end, true)
 
 ImGui.AddCallback("edithWindowSettings", ImGuiCallback.Render, function()
-    ImGui.UpdateData("edithPushToSlide", ImGuiData.Value, TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "AllowHolding") - 1)
-    ImGui.UpdateData("edithAllowBombs", ImGuiData.Value, TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps") - 1)
+    ImGui.UpdateData("edithPushToSlide", ImGuiData.Value, TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "AllowHolding") == 1)
+    ImGui.UpdateData("edithAllowBombs", ImGuiData.Value, TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps") == 1)
     local rgb = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
     ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, {rgb.R / 255, rgb.G / 255, rgb.B / 255})
     ImGui.UpdateData("edithAlwaysShowMoonPhase", ImGuiData.Value, TSIL.SaveManager.GetPersitentVariable(EdithCompliance, "AlwaysShowMoonPhase") == 1)

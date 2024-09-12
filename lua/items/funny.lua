@@ -9,4 +9,4 @@ local function InitSounds()
         end
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, InitSounds)
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, InitSounds)
