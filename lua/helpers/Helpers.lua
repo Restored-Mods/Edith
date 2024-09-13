@@ -1011,7 +1011,24 @@ end
 
 ---@param step integer
 function Helpers.AdvanceMoonPhase(step)
-    Helpers.SetMoonPhase(Helpers.GetCurrentMoonPhase() + step)
+	local moonPhase = Helpers.GetCurrentMoonPhase()
+	while step ~= 0 do
+		if step > 0 then
+			if moonPhase == 8 then
+				moonPhase = 1
+			else
+				moonPhase = moonPhase + 1
+			end
+		elseif step < 0 then
+			if moonPhase == 1 then
+				moonPhase = 8
+			else
+				moonPhase = moonPhase - 1
+			end
+		end
+		step = Helpers.Sign(step) * (math.abs(step) - 1)
+	end
+    Helpers.SetMoonPhase(moonPhase)
 end
 
 EdithCompliance.Helpers = Helpers

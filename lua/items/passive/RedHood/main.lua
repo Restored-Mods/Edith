@@ -1,6 +1,7 @@
 local RedHoodLocal = {}
 local Helpers = include("lua.helpers.Helpers")
 local pressedMapButton = 0
+local lastGreedWave = nil
 local moonPhaseSprite = Sprite()
 moonPhaseSprite:Load("gfx_cedith/ui/moon_phase.anm2", true)
 moonPhaseSprite.PlaybackSpeed = 0.5
@@ -291,6 +292,39 @@ function RedHoodLocal:AdvanceMoonPhase(rng)
     end
 end
 EdithCompliance:AddPriorityCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, CallbackPriority.EARLY, RedHoodLocal.AdvanceMoonPhase)
+
+-- kittenchilly's Mama Mega Greed Mode Buff code
+function EdithCompliance:WaveReset()
+	if Game():IsGreedMode() then
+		lastGreedWave = 0
+	end
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, EdithCompliance.WaveReset)
+
+function EdithCompliance:OnNewGreedWave()
+	local level = Game():GetLevel()
+	
+	if Game():IsGreedMode() then
+
+		local greedModeWave = level.GreedModeWave
+		
+		if not lastGreedWave then
+			lastGreedWave = greedModeWave
+		end
+		
+		if greedModeWave > lastGreedWave then
+			lastGreedWave = greedModeWave
+            local room = Game():GetRoom()
+            local plate = nil
+            if room:GetRoomShape() == RoomShape.ROOMSHAPE_1x2 and level:GetAbsoluteStage() < LevelStage.STAGE7_GREED then
+                plate = room:GetGridEntity(112):ToPressurePlate()
+            end
+			local rng = plate and plate.GreedModeRNG or RNG()
+			RedHoodLocal:AdvanceMoonPhase(rng)
+		end
+	end
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_UPDATE, EdithCompliance.OnNewGreedWave)
 
 ---@param player EntityPlayer
 ---@param cache CacheFlag | integer
