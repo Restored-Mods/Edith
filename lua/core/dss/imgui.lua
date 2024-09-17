@@ -96,7 +96,7 @@ end
 
 ImGui.LinkWindowToElement("edithWindowSettings", "edithMenuSettings")
 
-ImGui.SetWindowSize("edithWindowSettings", 700, 200)
+ImGui.SetWindowSize("edithWindowSettings", 800, 350)
 
 if ImGui.ElementExists("edithPushToSlide") then
     ImGui.RemoveElement("edithPushToSlide")
@@ -222,3 +222,5 @@ ImGui.AddCallback("edithMarkAll", ImGuiCallback.Render, function()
     local unlocked = Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.CompletionMarks.LOT_BABY)
     ImGui.UpdateData("edithMarkAll", ImGuiData.Value, unlocked and 1 or 0)
 end)
+
+ImGui.SetWindowSize("edithWindowUnlocks", 800, 650)
