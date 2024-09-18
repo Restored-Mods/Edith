@@ -7,7 +7,7 @@
     </entity>
 
     <!--Peppermint Cloud-->
-    <entity anm2path="1000.141_smoke cloud.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Peppermint Cloud" numGridCollisionPoints="0" shadowSize="0" stageHP="0" variant="908">
+    <entity anm2path="mint_cloud.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="1" id="1000" name="Peppermint Cloud" numGridCollisionPoints="0" shadowSize="0" stageHP="0" variant="908">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
     </entity>
     
@@ -24,7 +24,7 @@
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
     </entity>
     <!--Pawn Baby-->
-    <entity anm2path="pawn_baby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Pawn Baby" numGridCollisionPoints="12" shadowSize="13" stageHP="0" tags="cansacrifice" variant="5874">
+    <entity anm2path="pawn_baby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" collisionInterval="8" friction="1" id="3" name="Pawn Baby" numGridCollisionPoints="12" shadowSize="13" stageHP="0" tags="cansacrifice" variant="5874">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
     </entity>
 
@@ -60,7 +60,7 @@
     </entity>
 
     <!-- Landmine -->
-    <entity anm2path="items/pick ups/bombs/bomb2.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="1000" collisionRadius="0" friction="0" id="4" variant="1600" name="Landmine" numGridCollisionPoints="12" shadowSize="18" stageHP="0">        
+    <entity anm2path="../gfx/items/pick ups/bombs/bomb2.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="1000" collisionRadius="0" friction="0" id="4" variant="1600" name="Landmine" numGridCollisionPoints="12" shadowSize="18" stageHP="0">        
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
     </entity>
 </entities>

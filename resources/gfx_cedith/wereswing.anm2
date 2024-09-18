@@ -2,7 +2,7 @@
 	<Info CreatedBy="Unknown" CreatedOn="25.02.2024 21:58:25" Version="3" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="Effects/Effect_BoneClub.png" Id="0"/>
+			<Spritesheet Path="../gfx/Effects/Effect_BoneClub.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="main" Id="0" SpritesheetId="0"/>

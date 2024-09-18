@@ -25,6 +25,9 @@ local function GetRedMoonPhase()
 end
 
 local function SetRedMoonPhase(bool)
+    if not GetRedMoonPhase() and bool then
+        SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
+    end
     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "MoonPhaseWolf", bool)
 end
 
@@ -121,18 +124,10 @@ function RedHoodLocal:StompyEffect(player)
             Helpers.SetMoonPhase(5)
         end
         data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
-        if GetRedMoonPhase() then
-            if not effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
-                effects:AddNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
-                SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
-            end
-        elseif effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
-            effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
-        end
     elseif effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
-        effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD)
+        effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD, -1)
     end
-    if effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
+    if effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) and GetRedMoonPhase() then
         if not effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_LEO) and effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
             effects:AddCollectibleEffect(CollectibleType.COLLECTIBLE_LEO, false)
         end
@@ -161,12 +156,17 @@ function RedHoodLocal:DamageReduction(entity, amount, flags, source, cd)
     if entity then
         local player = entity:ToPlayer()
         local effects = player:GetEffects()
-        if effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
+        if effects:GetNullEffectNum(EdithCompliance.Enums.NullItems.RED_HOOD) and GetRedMoonPhase() then
             return {Damage = 1.0, DamageFlags = flags, DamageCountdown = cd}
         end
     end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, RedHoodLocal.DamageReduction, EntityType.ENTITY_PLAYER)
+
+function RedHoodLocal:UpdatePhaseOnPickup(col, charge, first, slot, vardata, player)
+    Helpers.UpdatePlayerMoonPhase(player)
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, RedHoodLocal.UpdatePhaseOnPickup, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD)
 
 function RedHoodLocal:SwipesInit(effect)
     local sprite = effect:GetSprite()
@@ -330,16 +330,15 @@ EdithCompliance:AddCallback(ModCallbacks.MC_POST_UPDATE, EdithCompliance.OnNewGr
 ---@param cache CacheFlag | integer
 function RedHoodLocal:Cache(player, cache)
     local effects = player:GetEffects()
-    if effects:HasNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD) then
-        if cache == CacheFlag.CACHE_DAMAGE then
-            player.Damage = player.Damage + 5
-        elseif cache == CacheFlag.CACHE_FIREDELAY then
-            player.MaxFireDelay = Helpers.tearsUp(player.MaxFireDelay, 2.5)
-        elseif cache == CacheFlag.CACHE_RANGE then
-            player.TearRange = Helpers.rangeUp(player.TearRange, 5)
-        elseif cache == CacheFlag.CACHE_SPEED then
-            player.MoveSpeed = math.max(1, player.MoveSpeed + 0.8)
-        end
+    local mul = effects:GetNullEffectNum(EdithCompliance.Enums.NullItems.RED_HOOD) / 4
+    if cache == CacheFlag.CACHE_DAMAGE then
+        player.Damage = player.Damage + 5 * mul
+    elseif cache == CacheFlag.CACHE_FIREDELAY then
+        player.MaxFireDelay = Helpers.tearsUp(player.MaxFireDelay, 2.5 * mul)
+    elseif cache == CacheFlag.CACHE_RANGE then
+        player.TearRange = Helpers.rangeUp(player.TearRange, 5 * mul)
+    elseif cache == CacheFlag.CACHE_SPEED then
+        player.MoveSpeed = math.max(1, player.MoveSpeed + 0.8 * mul)
     end
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, RedHoodLocal.Cache)

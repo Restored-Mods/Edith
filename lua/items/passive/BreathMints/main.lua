@@ -129,13 +129,14 @@ function Peppermint:AddPeppermintCharge(player)
         data.PeppermintCharge = math.min(1,data.PeppermintCharge + 0.01)
     else
         if data.PeppermintCharge >= 1 then
-            local pepperMintBreath =
+            local speed = getAimDirection(player):Resized(4)
+            local pepperMintBreath = 
                 Isaac.Spawn(
                 EntityType.ENTITY_EFFECT,
                 EdithCompliance.Enums.Entities.PEPPERMINT.Variant,
                 0,
                 player.Position + getAimDirection(player):Resized(20),
-                Vector.Zero + getAimDirection(player):Resized(2),
+                speed,
                 player
             ):ToEffect()
             pepperMintBreath:SetTimeout(90)
@@ -155,22 +156,29 @@ function Peppermint:CloudUpdate(cloud)
     cloud.Velocity = Helpers.Lerp(cloud.Velocity, Vector.Zero, 0.3, 0.2)
     for _, enemies in pairs(Helpers.GetEnemies()) do
         if (enemies.Position - cloud.Position):Length() <= 30 then
-            if Game():GetFrameCount() % 10 == 0 then -- Breath ticks, if right now it does a total of 45 damage for all breath duration
-                enemies:TakeDamage(5, 0, EntityRef(cloud), 0)
-                if enemies.HitPoints <= 5 then
-                    enemies:AddEntityFlags(EntityFlag.FLAG_ICE)
-                else
-                    local slowColor = Color(0.7, 0.9, 1, 1, 0, 0, 0)
-                    if not enemies:HasEntityFlags(EntityFlag.FLAG_SLOW) then
-                        enemies:AddSlowing(EntityRef(player), 10, 0.5, slowColor)
-                    end
-                end
+            if cloud.FrameCount % 15 == 0 then -- Breath ticks, if right now it does a total of 30 damage for all breath duration
+                enemies:TakeDamage(player.Damage / 3, 0, EntityRef(cloud), 15)
             end
         end
     end
     
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Peppermint.CloudUpdate, EdithCompliance.Enums.Entities.PEPPERMINT.Variant)
+
+function Peppermint:CloudDamage(ent, damage, flags, source, cd)
+    if source and source.Entity and source.Entity.Type == EntityType.ENTITY_EFFECT and source.Entity.Variant == EdithCompliance.Enums.Entities.PEPPERMINT.Variant then
+        local cloud = source.Entity:ToEffect()
+        if ent:HasMortalDamage() then
+            ent:AddEntityFlags(EntityFlag.FLAG_ICE)
+        else
+            local slowColor = Color(0.7, 0.9, 1, 1, 0, 0, 0)
+            if not ent:HasEntityFlags(EntityFlag.FLAG_SLOW) then
+                ent:AddSlowing(EntityRef(player), 10, 0.5, slowColor)
+            end
+        end
+    end
+end
+EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Peppermint.CloudDamage)
 
 EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, function(_, cloud)
     cloud.Color = Color(0.14, 0.91, 1, math.min(1, cloud.Timeout / 30), 0, 0, 0)

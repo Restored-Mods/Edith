@@ -109,8 +109,8 @@ end
 ---@return boolean
 function Helpers.IsEnemy(enemy, allEnemies)
 	allEnemies = allEnemies or false
-	return enemy and (enemy:IsVulnerableEnemy() or allEnemies) and enemy:IsActiveEnemy() and enemy:IsEnemy()
-	and not EntityRef(enemy).IsFriendly
+	return enemy and ((enemy:IsVulnerableEnemy() or allEnemies) and enemy:IsActiveEnemy() and enemy:IsEnemy()
+	and not EntityRef(enemy).IsFriendly or enemy.Type == EntityType.ENTITY_DUMMY)
 end
 
 ---@param allEnemies boolean | nil
@@ -1007,6 +1007,9 @@ function Helpers.SetMoonPhase(phase)
     phase = type(phase) == "number" and math.ceil(phase) or Helpers.GetCurrentMoonPhase()
 	phase = math.max(1, math.min(phase, 8))
     TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "MoonPhase", phase)
+	for _,player in ipairs(PlayerManager.GetPlayers()) do
+		Helpers.UpdatePlayerMoonPhase(player)
+	end
 end
 
 ---@param step integer
@@ -1029,6 +1032,25 @@ function Helpers.AdvanceMoonPhase(step)
 		step = Helpers.Sign(step) * (math.abs(step) - 1)
 	end
     Helpers.SetMoonPhase(moonPhase)
+end
+
+function Helpers.UpdatePlayerMoonPhase(player)
+	local moonPhaseCount = {
+		[1] = 0,
+		[2] = 1,
+		[3] = 2,
+		[4] = 3,
+		[5] = 4,
+		[6] = 3,
+		[7] = 2,
+		[8] = 1
+	}
+
+	local effects = player:GetEffects()
+	effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD, -1)
+	if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then
+		effects:AddNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD, false, moonPhaseCount[Helpers.GetCurrentMoonPhase()])
+	end
 end
 
 EdithCompliance.Helpers = Helpers
