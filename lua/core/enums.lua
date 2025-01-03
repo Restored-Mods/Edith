@@ -90,7 +90,6 @@ Enums.CollectibleType =
 						COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("Salt Shaker"),					
 						COLLECTIBLE_GORGON_MASK = Isaac.GetItemIdByName("Gorgon Mask"),
 						COLLECTIBLE_RED_HOOD = Isaac.GetItemIdByName("Red Hood"),
-						COLLECTIBLE_LANDMINE = Isaac.GetItemIdByName("Landmine"),
 						--COLLECTIBLE_THE_CHISEL = Isaac.GetItemIdByName("The Chisel"),
 					}
 
@@ -164,7 +163,7 @@ Enums.Callbacks = {
 }
 
 Enums.BombVariant = {
-	LANDMINE = Isaac.GetEntityVariantByName("Landmine"),
+	
 }
 
 BombFlagsAPI.AddNewCustomBombFlag("THUNDER_BOMB", Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
@@ -191,7 +190,6 @@ Enums.Achievements.CompletionMarks = {
 	LITHIUM =  Isaac.GetAchievementIdByName("Lithium Salts"),
 	SODOM =  Isaac.GetAchievementIdByName("Sodom"),
 	LOT_BABY =  Isaac.GetAchievementIdByName("Lot Baby"),
-	LANDMINE =  Isaac.GetAchievementIdByName("Landmine"),
 
 	-- Tainted Unlocks
 	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
@@ -209,7 +207,7 @@ Enums.Achievements.Marks = {
 	ASide = {
 		[CompletionType.MOMS_HEART] = Enums.Achievements.CompletionMarks.SALTY_BABY,
 		[CompletionType.ISAAC] = Enums.Achievements.CompletionMarks.SALT_SHAKER,
-		[CompletionType.SATAN] = Enums.Achievements.CompletionMarks.LANDMINE,
+		[CompletionType.SATAN] = Enums.Achievements.CompletionMarks.SALTY_BABY,
 		[CompletionType.BOSS_RUSH] = Enums.Achievements.CompletionMarks.RED_HOOD,
 		[CompletionType.BLUE_BABY] = Enums.Achievements.CompletionMarks.THUNDER_BOMBS,
 		[CompletionType.LAMB] = Enums.Achievements.CompletionMarks.SMELLING_SALTS,

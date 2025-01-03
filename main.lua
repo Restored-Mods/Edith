@@ -34,7 +34,6 @@ include("lua.items.passive.LotBaby.main")
 include("lua.items.passive.SaltyBaby.main")
 include("lua.items.passive.PawnBaby.main")
 include("lua.items.passive.ThunderBombs.main")
-include("lua.items.passive.Landmine.main")
 
 include("lua.items.passive.RedHood.main")
 

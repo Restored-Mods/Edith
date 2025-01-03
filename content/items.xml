@@ -9,7 +9,7 @@
 	<familiar id="6" name="Salty Baby" achievement="Salty Baby" description="Shaky friend" gfx="collectibles_007_salty_baby.png" quality="0" tags="baby summonable monstermanual offensive"/>
 	<familiar id="7" name="Pawn Baby" achievement="Pawn Baby" description="Search En passant" gfx="collectibles_008_pawn_baby.png" quality="1" tags="baby summonable monstermanual offensive"/>
     <passive id="8" name="Red Hood" achievement="Red Hood" description="Lycanthropy" gfx="collectibles_009_red_hood.png" quality="3" tags="offensive"/>
-	<passive id="11" name="Landmine" gfx="collectibles_012_landmine.png" achievement="Landmine" description="Watch your step" quality="2" tags="offensive summonable" />
+	<passive id="11" name="Blank Item" gfx="collectibles_012_blank.png" achievement="Blank" description="Watch your step" quality="2" tags="offensive summonable" />
 
 	<!-- Active Items -->
 	<active id="9" name="Salt Shaker" achievement="Salt Shaker" description="Keeps evil away" gfx="collectibles_010_salt_shaker.png" shopprice="10" quality="1" maxcharges="2" tags="offensive"/>
