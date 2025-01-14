@@ -35,7 +35,7 @@ local function CanPlayerPlaceThunderBomb(player)
 	player:GetNumBombs() == 0 and not player:HasGoldenBomb() and DoesPlayerHaveCharge(player)
 end
 
----@param bomb Entitybomb
+---@param bomb EntityBomb
 local function ThunderBombInit(bomb)
 	if Helpers.GetData(bomb).BombInit then return end
 	local player = Helpers.GetPlayerFromTear(bomb)

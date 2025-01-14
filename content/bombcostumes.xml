@@ -1,5 +1,0 @@
-<bombcostumes anm2root="gfx_cedith/items/pick ups/bombs/">
-    <bomb variant="1600"> 
-        <rule body="bomb.anm2" />
-    </bomb>
-</bombcostumes>
