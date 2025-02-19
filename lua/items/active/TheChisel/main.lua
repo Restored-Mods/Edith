@@ -29,7 +29,7 @@ function Chisel:UseTheChisel(_, _, player)
 	SFXManager():Play(SoundEffect.SOUND_SCYTHE_BREAK)
 	
 	Helpers.ChangeSprite(player,false)
-	return true
+	return {Discharge = true, Remove = false, ShowAnim = true}
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, Chisel.UseTheChisel, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 

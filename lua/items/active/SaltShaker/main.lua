@@ -18,7 +18,7 @@ function SaltShakerLocal:UseShaker(collectible, rng, player, flags, slot, custom
         salt.CollisionDamage = 0
         --salt.SortingLayer = SortingLayer.SORTING_BACKGROUND
     end
-    return true
+    return {Discharge = true, Remove = false, ShowAnim = true}
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, SaltShakerLocal.UseShaker, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER)
 

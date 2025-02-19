@@ -21,7 +21,7 @@ function GorgonMask:UseMask(collectible, rng, player, flags, slot, vardata)
 		Helpers.GetEntityData(player).GorgonCouldShoot = player:CanShoot()
 		player:SetCanShoot(false)
 	end
-	return true
+	return {Discharge = false, Remove = false, ShowAnim = true}
 end
 EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, GorgonMask.UseMask, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK)
 
