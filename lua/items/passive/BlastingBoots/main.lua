@@ -9,7 +9,7 @@ local BlastBoots = {}
 function BlastBoots:OnBombDamage(e, amount, flags, source, countdown)
 	if e and e:ToPlayer() then
         local player = e:ToPlayer()
-        if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS) then
+        if not player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS) then
             return
         end
 		if flags & DamageFlag.DAMAGE_EXPLOSION == DamageFlag.DAMAGE_EXPLOSION then
@@ -23,4 +23,4 @@ function BlastBoots:OnBombDamage(e, amount, flags, source, countdown)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, BlastBoots.OnBombDamage, EntityType.ENTITY_PLAYER)
+EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, BlastBoots.OnBombDamage, EntityType.ENTITY_PLAYER)

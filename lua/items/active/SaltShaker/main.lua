@@ -9,7 +9,7 @@ local Helpers = include("lua.helpers.Helpers")
 ---@param customvardata integer
 function SaltShakerLocal:UseShaker(collectible, rng, player, flags, slot, customvardata)
     for i = 0, 359, 20 do
-		local salt = Isaac.Spawn(1000, EdithCompliance.Enums.Entities.SALT_CREEP.Variant, EdithCompliance.Enums.Entities.SALT_CREEP.SubType, player.Position + Vector.FromAngle(i) * 60, player.Velocity*0, player):ToEffect()
+		local salt = Isaac.Spawn(1000, EdithRestored.Enums.Entities.SALT_CREEP.Variant, EdithRestored.Enums.Entities.SALT_CREEP.SubType, player.Position + Vector.FromAngle(i) * 60, player.Velocity*0, player):ToEffect()
         for j = 1, math.min(2, rng:RandomInt(5)) do
             Isaac.Spawn(1000, EffectVariant.TOOTH_PARTICLE, 0, salt.Position, RandomVector() * rng:RandomFloat() * rng:RandomInt(6), player):ToEffect()
         end
@@ -20,11 +20,11 @@ function SaltShakerLocal:UseShaker(collectible, rng, player, flags, slot, custom
     end
     return {Discharge = true, Remove = false, ShowAnim = true}
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, SaltShakerLocal.UseShaker, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER)
+EdithRestored:AddCallback(ModCallbacks.MC_USE_ITEM, SaltShakerLocal.UseShaker, EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER)
 
 ---@param creep EntityEffect
 function SaltShakerLocal:CreepUpdate(creep)
-    if creep.SubType ~= EdithCompliance.Enums.Entities.SALT_CREEP.SubType then return end
+    if creep.SubType ~= EdithRestored.Enums.Entities.SALT_CREEP.SubType then return end
     local enemies = Helpers.GetEnemies()
     for _, enemy in ipairs(enemies) do
 		if (enemy.Position - creep.Position):Length() <= 20 * creep.Scale and not enemy:HasEntityFlags(EntityFlag.FLAG_FEAR) then
@@ -32,4 +32,4 @@ function SaltShakerLocal:CreepUpdate(creep)
 		end
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltShakerLocal.CreepUpdate, EdithCompliance.Enums.Entities.SALT_CREEP.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltShakerLocal.CreepUpdate, EdithRestored.Enums.Entities.SALT_CREEP.Variant)

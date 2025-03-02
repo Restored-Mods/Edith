@@ -13,4 +13,4 @@ function EdithClots:Movement(clot)
     local velocityVector = Vector(velocityVectorX * mirrorMul, velocityVectorY):Normalized() * player.MoveSpeed
     clot.Velocity = clot.Velocity + velocityVector
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, EdithClots.Movement, FamiliarVariant.BLOOD_BABY)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, EdithClots.Movement, FamiliarVariant.BLOOD_BABY)

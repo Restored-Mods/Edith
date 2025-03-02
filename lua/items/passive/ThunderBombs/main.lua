@@ -31,7 +31,7 @@ local function DoesPlayerHaveCharge(player)
 end
 
 local function CanPlayerPlaceThunderBomb(player)
-	return player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and
+	return player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and
 	player:GetNumBombs() == 0 and not player:HasGoldenBomb() and DoesPlayerHaveCharge(player)
 end
 
@@ -45,12 +45,12 @@ local function ThunderBombInit(bomb)
 	if player then
 		local rng = bomb:GetDropRNG()
 		
-		local thunderChance = player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and 
+		local thunderChance = player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and 
         (not bomb.IsFetus or bomb.IsFetus and rng:RandomInt(100) < 20)
 		
 		local nancyChance = player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and
 		player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS):RandomInt(100) < 7
-		and not Helpers.IsItemDisabled(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+		and not Helpers.IsItemDisabled(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 		
 		if thunderChance or nancyChance then
 			BombFlagsAPI.AddCustomBombFlag(bomb, "THUNDER_BOMB")
@@ -92,13 +92,13 @@ function ThunderBombs:BombUpdate(bomb)
 		SpawnThunderBombLaser(bomb, Helpers.GetPlayerFromTear(bomb))
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpdate)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpdate)
 
 function ThunderBombs:EdithStompThunderBombProc(player)
 	local data = Helpers.GetData(player)
 	return CanPlayerPlaceThunderBomb(player) and not data.LockBombs
 end
-EdithCompliance:AddCallback(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, ThunderBombs.EdithStompThunderBombProc, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, ThunderBombs.EdithStompThunderBombProc, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
 function ThunderBombs:EdithStompThunderBomb(player, damage, radius, forced)
 	local data = Helpers.GetData(player)
@@ -115,7 +115,7 @@ function ThunderBombs:EdithStompThunderBomb(player, damage, radius, forced)
 		end
 	end
 end
-EdithCompliance:AddCallback(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBomb, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBomb, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
 function ThunderBombs:HandleRingDamage(laser) --this exists because it doesnt properly hit everything inside of it
 	local data = Helpers.GetData(laser)
@@ -127,7 +127,7 @@ function ThunderBombs:HandleRingDamage(laser) --this exists because it doesnt pr
 	end
 
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, ThunderBombs.HandleRingDamage)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, ThunderBombs.HandleRingDamage)
 
 ---@param bomb EntityBomb
 function ThunderBombs:EntityHit(entity, dmg, flags, source, countdown)
@@ -140,7 +140,7 @@ function ThunderBombs:EntityHit(entity, dmg, flags, source, countdown)
 		lightning.CollisionDamage = source.CollisionDamage
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, ThunderBombs.EntityHit)
+EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, ThunderBombs.EntityHit)
 
 
 ---@param bomb EntityBomb
@@ -170,7 +170,7 @@ function ThunderBombs:BombRender(bomb)
 	end
 
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_BOMB_RENDER, ThunderBombs.BombRender)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_RENDER, ThunderBombs.BombRender)
 
 ---@param collectible CollectibleType | integer
 ---@param charge integer
@@ -189,12 +189,12 @@ function ThunderBombs:AddCharge(collectible, charge, firstTime, slot, VarData, p
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, ThunderBombs.AddCharge, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, ThunderBombs.AddCharge, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
 ---@param player EntityPlayer
 function ThunderBombs:TryPlaceBomb(player)
 	if Helpers.CanMove(player, true) then
-		if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and player:GetBombPlaceDelay() <= 0 and player:GetNumBombs() <= 0 and not player:HasGoldenBomb() then
+		if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and player:GetBombPlaceDelay() <= 0 and player:GetNumBombs() <= 0 and not player:HasGoldenBomb() then
 			local bombButton = Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
 			local data = Helpers.GetData(player)
 			if bombButton and not (Helpers.IsPlayerEdith(player, true, false) and data.LockBombs) then
@@ -217,7 +217,7 @@ function ThunderBombs:TryPlaceBomb(player)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, ThunderBombs.TryPlaceBomb)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, ThunderBombs.TryPlaceBomb)
 
 ---@param player EntityPlayer
 function ThunderBombs:TryPlaceBombInput(entity, hook, button)
@@ -230,7 +230,7 @@ function ThunderBombs:TryPlaceBombInput(entity, hook, button)
 		end
 	end
 end
-EdithCompliance:AddPriorityCallback(ModCallbacks.MC_INPUT_ACTION, CallbackPriority.LATE, ThunderBombs.TryPlaceBombInput)
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_INPUT_ACTION, CallbackPriority.LATE, ThunderBombs.TryPlaceBombInput)
 
 ---@param bomb EntityBomb
 function ThunderBombs:ReplaceCostume(bomb)
@@ -260,7 +260,7 @@ function ThunderBombs:ReplaceCostume(bomb)
 	end
 
 	local overlay = Sprite()
-	overlay:Load("gfx_cedith/items/pick ups/bombs/spark" .. math.floor(bomb:GetScale() * 2) .. ".anm2", true)
+	overlay:Load("gfx_redith/items/pick ups/bombs/spark" .. math.floor(bomb:GetScale() * 2) .. ".anm2", true)
 	overlay:Play("Idle", true)
 	overlay.Color = Color(1,1,1,1)
 	data.ThunderBombsOverlay = overlay

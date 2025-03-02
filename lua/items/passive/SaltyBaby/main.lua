@@ -6,7 +6,7 @@ local vecDir = {[Direction.NO_DIRECTION] = Vector(0, 0), [Direction.UP] = Vector
 local fireCoolDown = 25
 local chargeCoolDown = 35
 
-local saltyBabyDesc = Isaac.GetItemConfig():GetCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY)
+local saltyBabyDesc = Isaac.GetItemConfig():GetCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY)
 local function RecheckCharge(familiar)
     local data = Helpers.GetData(familiar)
     data.Charge = data.Charge or chargeCoolDown
@@ -20,9 +20,9 @@ local function SpawnSaltCreep(player, numLeft, position, step, rotation, delay)
     if numLeft <= 0 then
         return
     end
-    local rng = player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY)
+    local rng = player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY)
     
-    local salt = Isaac.Spawn(1000, EdithCompliance.Enums.Entities.SALT_CREEP.Variant, EdithCompliance.Enums.Entities.SALT_CREEP.SubType, position, Vector.Zero, player):ToEffect()
+    local salt = Isaac.Spawn(1000, EdithRestored.Enums.Entities.SALT_CREEP.Variant, EdithRestored.Enums.Entities.SALT_CREEP.SubType, position, Vector.Zero, player):ToEffect()
     --[[for _ = 1, math.min(2, rng:RandomInt(5)) do
         Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 0, salt.Position, RandomVector() * rng:RandomFloat() * rng:RandomInt(6), player):ToEffect()
     end]]
@@ -44,10 +44,10 @@ end
 ---@param player EntityPlayer
 ---@param cache CacheFlag | integer
 function SaltyBaby:Cache(player, cache)
-    local numFamiliars = player:GetCollectibleNum(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY) + player:GetEffects():GetCollectibleEffectNum(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY)
-	player:CheckFamiliar(EdithCompliance.Enums.Familiars.SALTY_BABY.Variant, numFamiliars, player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY), saltyBabyDesc)
+    local numFamiliars = player:GetCollectibleNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY) + player:GetEffects():GetCollectibleEffectNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY)
+	player:CheckFamiliar(EdithRestored.Enums.Familiars.SALTY_BABY.Variant, numFamiliars, player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY), saltyBabyDesc)
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, SaltyBaby.Cache, CacheFlag.CACHE_FAMILIARS)
+EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, SaltyBaby.Cache, CacheFlag.CACHE_FAMILIARS)
 
 ---@param familiar EntityFamiliar
 function SaltyBaby:Init(familiar)
@@ -55,7 +55,7 @@ function SaltyBaby:Init(familiar)
     familiar.FireCooldown = fireCoolDown
     RecheckCharge(familiar)
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, SaltyBaby.Init, EdithCompliance.Enums.Familiars.SALTY_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, SaltyBaby.Init, EdithRestored.Enums.Familiars.SALTY_BABY.Variant)
 
 ---@param familiar EntityFamiliar
 function SaltyBaby:Update(familiar)
@@ -80,7 +80,7 @@ function SaltyBaby:Update(familiar)
             sprite:Play("FloatShoot"..sprite:GetAnimation():gsub("FloatCharged", ""), false)
             familiar.FireCooldown = tearcd
             data.Charge = chargecd
-            SFXManager():Play(EdithCompliance.Enums.SFX.SaltShaker.SHAKE, 1, 0)
+            SFXManager():Play(EdithRestored.Enums.SFX.SaltShaker.SHAKE, 1, 0)
             local trail_rotation = 20
             local angle = -90 -- we rotate the shot direction because we're curving two vertical creep trails
             local bffScale = player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 1.3 or 1
@@ -116,7 +116,7 @@ function SaltyBaby:Update(familiar)
     end
     familiar:FollowParent()
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, SaltyBaby.Update, EdithCompliance.Enums.Familiars.SALTY_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, SaltyBaby.Update, EdithRestored.Enums.Familiars.SALTY_BABY.Variant)
 
 ---@param familiar EntityFamiliar
 function SaltyBaby:Render(familiar)
@@ -161,7 +161,7 @@ function SaltyBaby:Render(familiar)
         data.ChargeBar:Render(Game():GetRoom():WorldToScreenPosition(familiar.Position), Vector.Zero, Vector.Zero)
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_RENDER, SaltyBaby.Render, EdithCompliance.Enums.Familiars.SALTY_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_RENDER, SaltyBaby.Render, EdithRestored.Enums.Familiars.SALTY_BABY.Variant)
 
 ---@param creep EntityEffect
 function SaltyBaby:CreepUpdate(creep)
@@ -171,9 +171,9 @@ function SaltyBaby:CreepUpdate(creep)
         SpawnSaltCreep(creep.SpawnerEntity:ToPlayer(), data.SaltyBabyTrailNum, creep.Position + data.SaltyBabyTrailStep, data.SaltyBabyTrailStep, data.SaltyBabyTrailRotation, data.SaltyBabyTrailDelay)
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltyBaby.CreepUpdate, EdithCompliance.Enums.Entities.SALT_CREEP.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltyBaby.CreepUpdate, EdithRestored.Enums.Entities.SALT_CREEP.Variant)
 
 function SaltyBaby:Priority(familiar)
     return FollowerPriority.SHOOTER
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_GET_FOLLOWER_PRIORITY, SaltyBaby.Priority, EdithCompliance.Enums.Familiars.SALTY_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_GET_FOLLOWER_PRIORITY, SaltyBaby.Priority, EdithRestored.Enums.Familiars.SALTY_BABY.Variant)

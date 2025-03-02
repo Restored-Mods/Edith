@@ -221,7 +221,7 @@ function Helpers.GetEntityData(entity)
 			end
 			if not player then return {} end
 			local index = tostring(Helpers.GetPlayerIndex(player))
-			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "PlayerData")
+			local data = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "PlayerData")
 			if not data[index] then
 				data[index] = {}
 			end
@@ -240,7 +240,7 @@ function Helpers.GetEntityData(entity)
 			return data[index]
 		elseif entity:ToFamiliar() then
 			local index = tostring(entity:ToFamiliar().InitSeed)
-			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "FamiliarData")
+			local data = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "FamiliarData")
 			if not data[index] then
 				data[index] = {}
 			end
@@ -260,11 +260,11 @@ function Helpers.RemoveEntityData(entity)
 			end
 			if not player then return end
 			index = tostring(Helpers.GetPlayerIndex(player))
-			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "PlayerData")
+			local data = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "PlayerData")
 			data[index] = nil
 		elseif entity:ToFamiliar() then
 			index = tostring(entity:ToFamiliar().InitSeed)
-			local data = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "FamiliarData")
+			local data = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "FamiliarData")
 			data[index] = nil
 		end
 	end
@@ -308,7 +308,7 @@ end
 function Helpers.IsPlayerEdith(player, includeNormal, includeTainted)
 	if includeNormal == nil then includeNormal = true end
 	if includeTainted == nil then includeTainted = true end
-	if player and ((Helpers.IsPlayerType(player,EdithCompliance.Enums.PlayerType.EDITH) and includeNormal) or Helpers.IsPlayerType(player,EdithCompliance.Enums.PlayerType.EDITH_B) and includeTainted) then
+	if player and ((Helpers.IsPlayerType(player,EdithRestored.Enums.PlayerType.EDITH) and includeNormal) or Helpers.IsPlayerType(player,EdithRestored.Enums.PlayerType.EDITH_B) and includeTainted) then
 		return true
 	end
 	return false
@@ -400,8 +400,8 @@ function Helpers.ChangeSprite(player, loading)
 	local data = Helpers.GetEntityData(player)
 	local sprite = player:GetSprite()
 	if Helpers.IsPlayerEdith(player, true, false) then
-		if sprite:GetFilename() ~= EdithCompliance.Enums.PlayerSprites.EDITH and not player:IsCoopGhost() then
-			sprite:Load(EdithCompliance.Enums.PlayerSprites.EDITH, true)
+		if sprite:GetFilename() ~= EdithRestored.Enums.PlayerSprites.EDITH and not player:IsCoopGhost() then
+			sprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
 			sprite:Update()
 		end
 		local changeCostume = data.MistCurse
@@ -419,25 +419,25 @@ function Helpers.ChangeSprite(player, loading)
 		if changeCostume ~= data.MistCurse then
 			for i=0,14 do
 				if i ~= 13 then
-					sprite:ReplaceSpritesheet(i,"gfx_cedith/characters/costumes/Character_001_C!Edith"..human..".png")
+					sprite:ReplaceSpritesheet(i,"gfx_redith/characters/costumes/Character_001_Redith"..human..".png")
 				end
 			end
-			local hoodSprite = "gfx_cedith/characters/costumes/Character_001_C!Edith_Hood"..human..".png"
-			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithCompliance.Enums.Costumes.EDITH_HOOD), hoodSprite, 5)
+			local hoodSprite = "gfx_redith/characters/costumes/Character_001_Redith_Hood"..human..".png"
+			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithRestored.Enums.Costumes.EDITH_HOOD), hoodSprite, 5)
 			sprite:LoadGraphics()
 		end
 	elseif Helpers.IsPlayerEdith(player, false, true) then
-		if sprite:GetFilename() ~= EdithCompliance.Enums.PlayerSprites.EDITH_B and not player:IsCoopGhost() then
-			sprite:Load(EdithCompliance.Enums.PlayerSprites.EDITH, true)
+		if sprite:GetFilename() ~= EdithRestored.Enums.PlayerSprites.EDITH_B and not player:IsCoopGhost() then
+			sprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
 			sprite:Update()
 		end
 		Helpers.ChangePepperValue(player)
 		if data.Pepper == 0 then
-			sprite:ReplaceSpritesheet(1, "gfx_cedith/characters/costumes/tedith_phase1.png")
+			sprite:ReplaceSpritesheet(1, "gfx_redith/characters/costumes/tedith_phase1.png")
 			sprite:LoadGraphics()
 		end
 		if data.Pepper < 6 and (data.Pepper ~= data.PrevPepper or loading) then
-			local hairSprite = "gfx_cedith/characters/costumes/tedithhair_phase"
+			local hairSprite = "gfx_redith/characters/costumes/tedithhair_phase"
 			if data.Pepper < 3 then
 				hairSprite = hairSprite.."1"
 			else
@@ -446,15 +446,15 @@ function Helpers.ChangeSprite(player, loading)
 				--spritesheet stuff
 			for i=0,14 do
 				if i ~= 13 then
-					sprite:ReplaceSpritesheet(i, "gfx_cedith/characters/costumes/tedith_phase"..(data.Pepper+1)..".png")
+					sprite:ReplaceSpritesheet(i, "gfx_redith/characters/costumes/tedith_phase"..(data.Pepper+1)..".png")
 				end
 			end
 			sprite:LoadGraphics()
 			hairSprite = hairSprite..".png"
-			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithCompliance.Enums.Costumes.EDITH_B_HAIR), hairSprite, 5)
+			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithRestored.Enums.Costumes.EDITH_B_HAIR), hairSprite, 5)
 			data.PrevPepper = data.Pepper
 		end
-	elseif sprite:GetFilename() == EdithCompliance.Enums.PlayerSprites.EDITH or sprite:GetFilename() == EdithCompliance.Enums.PlayerSprites.EDITH_B then
+	elseif sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH or sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH_B then
 		sprite:Load("gfx/001.000.player.anm2", true)
 		sprite:Update()
 	end
@@ -658,10 +658,10 @@ end
 function Helpers.GetData(entity)
 	if entity and entity.GetData then
 		local data = entity:GetData()
-		if not data.EdithCompliance then
-			data.EdithCompliance = {}
+		if not data.EdithRestored then
+			data.EdithRestored = {}
 		end
-		return data.EdithCompliance
+		return data.EdithRestored
 	end
 	return nil
 end
@@ -770,7 +770,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player) -
 	local bombEffectTriggered = bombDamage > 0
 
 	if not bombEffectTriggered and Helpers.GetData(player).BombStomp then
-		local callbacks = Isaac.GetCallbacks(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT)
+		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT)
 		for _,callback in ipairs(callbacks) do
 			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
 				local ret = callback.Function(callback.Mod, player)
@@ -804,7 +804,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player) -
 			local creep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_GREEN, 0, player.Position, Vector.Zero, player):ToEffect()
 			creep.Timeout = 60
 		end
-		local callbacks = Isaac.GetCallbacks(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
+		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
 		for _,callback in ipairs(callbacks) do
 			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
 				callback.Function(callback.Mod, player, bombDamage, radius)
@@ -860,7 +860,7 @@ function Helpers.Stomp(player)
 			local splashpitch = 0.9 + (TSIL.Random.GetRandomFloat(0, 1) / 10)
 			local waterSplash = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BIG_SPLASH, 0, player.Position + Vector(0, 2), Vector.Zero, player):ToEffect()
 			waterSplash.SpriteScale = waterSplash.SpriteScale * 0.65
-			SFXManager():Play(EdithCompliance.Enums.SFX.Edith.WATER_STOMP, 1, 0, false, splashpitch, 0)
+			SFXManager():Play(EdithRestored.Enums.SFX.Edith.WATER_STOMP, 1, 0, false, splashpitch, 0)
 		-- end
 	else
 		local poof
@@ -976,7 +976,7 @@ function Helpers.scheduleForUpdate(foo, delay, callback)
     callback = callback or ModCallbacks.MC_POST_UPDATE
     if not delayedFuncs[callback] then
         delayedFuncs[callback] = {}
-        EdithCompliance:AddCallback(callback, function()
+        EdithRestored:AddCallback(callback, function()
             runUpdates(delayedFuncs[callback])
         end)
     end
@@ -988,8 +988,8 @@ end
 ---@param item CollectibleType | integer
 ---@return boolean
 function Helpers.IsItemDisabled(item)
-	for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "DisabledItems")) do
-        if item == EdithCompliance.Enums.CollectibleType[disabledItem] then
+	for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems")) do
+        if item == EdithRestored.Enums.CollectibleType[disabledItem] then
             return true
         end
     end
@@ -999,14 +999,14 @@ end
 
 ---@return integer
 function Helpers.GetCurrentMoonPhase()
-    return TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "MoonPhase")
+    return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "MoonPhase")
 end
 
 ---@param phase integer
 function Helpers.SetMoonPhase(phase)
     phase = type(phase) == "number" and math.ceil(phase) or Helpers.GetCurrentMoonPhase()
 	phase = math.max(1, math.min(phase, 8))
-    TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "MoonPhase", phase)
+    TSIL.SaveManager.SetPersistentVariable(EdithRestored, "MoonPhase", phase)
 	for _,player in ipairs(PlayerManager.GetPlayers()) do
 		Helpers.UpdatePlayerMoonPhase(player)
 	end
@@ -1047,12 +1047,12 @@ function Helpers.UpdatePlayerMoonPhase(player)
 	}
 
 	local effects = player:GetEffects()
-	effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD, -1)
-	if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then
-		effects:AddNullEffect(EdithCompliance.Enums.NullItems.RED_HOOD, false, moonPhaseCount[Helpers.GetCurrentMoonPhase()])
+	effects:RemoveNullEffect(EdithRestored.Enums.NullItems.RED_HOOD, -1)
+	if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then
+		effects:AddNullEffect(EdithRestored.Enums.NullItems.RED_HOOD, false, moonPhaseCount[Helpers.GetCurrentMoonPhase()])
 	end
 end
 
-EdithCompliance.Helpers = Helpers
+EdithRestored.Helpers = Helpers
 
 return Helpers

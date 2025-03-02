@@ -1,4 +1,4 @@
-<achievements gfxroot="gfx_cedith/ui/achievement/">
+<achievements gfxroot="gfx_redith/ui/achievement/">
 
 	<!-- characters -->
 	<achievement name="Edith" text="" gfx="achievement_edith.png" />

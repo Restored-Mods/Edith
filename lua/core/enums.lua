@@ -23,8 +23,8 @@ Enums.Entities = {
 					},
 					EDITH_TARGET =
 					{
-						Type = Isaac.GetEntityTypeByName("Edith Target (TC)"),
-						Variant = Isaac.GetEntityVariantByName("Edith Target (TC)"),
+						Type = Isaac.GetEntityTypeByName("Restored Edith Target)"),
+						Variant = Isaac.GetEntityVariantByName("Restored Edith Target)"),
 						SubType = 0
 					},
 					SALT_CREEP =
@@ -73,8 +73,8 @@ Enums.Familiars =
 
 Enums.PlayerType = 
 				{
-					EDITH = Isaac.GetPlayerTypeByName("C!Edith", false), 
-					EDITH_B = Isaac.GetPlayerTypeByName("C!Edith", true)
+					EDITH = Isaac.GetPlayerTypeByName("Redith", false), 
+					EDITH_B = Isaac.GetPlayerTypeByName("Redith", true)
 				}
 
 Enums.CollectibleType = 
@@ -148,13 +148,13 @@ Enums.GFX =
 
 -- Costumes
 Enums.Costumes = {
-	EDITH_HOOD = Isaac.GetCostumeIdByPath("gfx_cedith/characters/Character_001_C!Edith_Hood.anm2"),
-	EDITH_B_HAIR = Isaac.GetCostumeIdByPath("gfx_cedith/characters/Character_001_Edith_b_Hood.anm2"),
+	EDITH_HOOD = Isaac.GetCostumeIdByPath("gfx_redith/characters/Character_001_Redith_Hood.anm2"),
+	EDITH_B_HAIR = Isaac.GetCostumeIdByPath("gfx_redith/characters/Character_001_Edith_b_Hood.anm2"),
 }
 
 Enums.PlayerSprites = {
-	EDITH = "gfx_cedith/c!edith.anm2",
-	EDITH_B = "gfx_cedith/c!edith_b.anm2"
+	EDITH = "gfx_redith/Redith.anm2",
+	EDITH_B = "gfx_redith/Redith_b.anm2"
 }
 
 Enums.Callbacks = {
@@ -221,4 +221,4 @@ Enums.Achievements.Marks = {
 	}
 }
 
-EdithCompliance.Enums = Enums
+EdithRestored.Enums = Enums

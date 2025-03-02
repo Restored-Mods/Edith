@@ -55,7 +55,7 @@ function Peppermint:RenderPepperMintCharge()
             return
         end
 
-        if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS) then
+        if not player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS) then
             return
         end
 
@@ -103,12 +103,12 @@ function Peppermint:RenderPepperMintCharge()
         -- end
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_RENDER, Peppermint.RenderPepperMintCharge)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Peppermint.RenderPepperMintCharge)
 
 function Peppermint:AddPeppermintCharge(player)
     local data = Helpers.GetData(player)
 
-    if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS) then
+    if not player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS) then
         return
     end
 
@@ -133,7 +133,7 @@ function Peppermint:AddPeppermintCharge(player)
             local pepperMintBreath = 
                 Isaac.Spawn(
                 EntityType.ENTITY_EFFECT,
-                EdithCompliance.Enums.Entities.PEPPERMINT.Variant,
+                EdithRestored.Enums.Entities.PEPPERMINT.Variant,
                 0,
                 player.Position + getAimDirection(player):Resized(20),
                 speed,
@@ -144,7 +144,7 @@ function Peppermint:AddPeppermintCharge(player)
         data.PeppermintCharge = 0
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Peppermint.AddPeppermintCharge)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Peppermint.AddPeppermintCharge)
 
 
 ---@param cloud EntityEffect
@@ -163,10 +163,10 @@ function Peppermint:CloudUpdate(cloud)
     end
     
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Peppermint.CloudUpdate, EdithCompliance.Enums.Entities.PEPPERMINT.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Peppermint.CloudUpdate, EdithRestored.Enums.Entities.PEPPERMINT.Variant)
 
 function Peppermint:CloudDamage(ent, damage, flags, source, cd)
-    if source and source.Entity and source.Entity.Type == EntityType.ENTITY_EFFECT and source.Entity.Variant == EdithCompliance.Enums.Entities.PEPPERMINT.Variant then
+    if source and source.Entity and source.Entity.Type == EntityType.ENTITY_EFFECT and source.Entity.Variant == EdithRestored.Enums.Entities.PEPPERMINT.Variant then
         local cloud = source.Entity:ToEffect()
         if ent:HasMortalDamage() then
             ent:AddEntityFlags(EntityFlag.FLAG_ICE)
@@ -178,9 +178,9 @@ function Peppermint:CloudDamage(ent, damage, flags, source, cd)
         end
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Peppermint.CloudDamage)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Peppermint.CloudDamage)
 
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, function(_, cloud)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, function(_, cloud)
     cloud.Color = Color(0.14, 0.91, 1, math.min(1, cloud.Timeout / 30), 0, 0, 0)
     cloud:GetSprite().Offset = Vector(0,-10)
-end, EdithCompliance.Enums.Entities.PEPPERMINT.Variant)
+end, EdithRestored.Enums.Entities.PEPPERMINT.Variant)

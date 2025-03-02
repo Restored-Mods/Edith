@@ -8,17 +8,17 @@ local Wiki = require("lua.mod_compat.encyclopedia.wiki")
 
 --Breath Mints
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS,
 	WikiDesc = Wiki.Peppermint,
 })
 
 --Salt Shaker
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER,
 	WikiDesc = Wiki.SaltShaker,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_TREASURE,
@@ -28,9 +28,9 @@ Encyclopedia.AddItem({
 
 --Gorgon Mask
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK,
 	WikiDesc = Wiki.GorgonMask,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_TREASURE,
@@ -42,9 +42,9 @@ Encyclopedia.AddItem({
 
 --Thunder Bombs
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS,
 	WikiDesc = Wiki.ThunderBombs,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_TREASURE,
@@ -57,9 +57,9 @@ Encyclopedia.AddItem({
 
 --Lithium Salts
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LITHIUM,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM,
 	WikiDesc = Wiki.LithiumSalts,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_CURSE,
@@ -72,9 +72,9 @@ Encyclopedia.AddItem({
 
 --Blasting Boots
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS,
 	WikiDesc = Wiki.BlastingBoots,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_TREASURE,
@@ -86,9 +86,9 @@ Encyclopedia.AddItem({
 
 --Lot Baby
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LOT_BABY,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_LOT_BABY,
 	WikiDesc = Wiki.LotBaby,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_TREASURE,
@@ -99,9 +99,9 @@ Encyclopedia.AddItem({
 
 --Pawn Baby
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY,
 	WikiDesc = Wiki.PawnBaby,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_SHOP,
@@ -115,9 +115,9 @@ Encyclopedia.AddItem({
 
 --Salty Baby
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY,
 	WikiDesc = Wiki.SaltyBaby,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_SHOP,
@@ -129,9 +129,9 @@ Encyclopedia.AddItem({
 
 --Sodom
 Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SODOM,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM,
 	WikiDesc = Wiki.Sodom,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_DEVIL,
@@ -140,9 +140,9 @@ Encyclopedia.AddItem({
 })
 
 --[[Encyclopedia.AddItem({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL,
 	WikiDesc = Wiki.TheChisel,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_TREASURE,
@@ -154,45 +154,45 @@ Encyclopedia.AddItem({
 -- Trinkets
 --Pepper grinder
 Encyclopedia.AddTrinket({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.TrinketType.TRINKET_PEPPER_GRINDER,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER,
 	WikiDesc = Wiki.PepperGrinder,
 })
 
 --Smelling Salts
 Encyclopedia.AddTrinket({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.TrinketType.TRINKET_SMELLING_SALTS,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS,
 	WikiDesc = Wiki.SmellingSalts,
 })
 
 --Salt Rock
 Encyclopedia.AddTrinket({
-	ModName = "Compliance",
-	Class = "Compliance",
-	ID = EdithCompliance.Enums.TrinketType.TRINKET_SALT_ROCK,
+	ModName = "RestoredEdith",
+	Class = "RestoredEdith",
+	ID = EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK,
 	WikiDesc = Wiki.SaltRock,
 })
 
 
 -- Characters
 Encyclopedia.AddCharacter({
-    ModName = "Compliance",
+    ModName = "RestoredEdith",
     Name = "Edith",
-    ID = EdithCompliance.Enums.PlayerType.EDITH,
-	Sprite = Encyclopedia.RegisterSprite(EdithCompliance.path .. "content/gfx/characterportraits.anm2", "Edith", 0),
+    ID = EdithRestored.Enums.PlayerType.EDITH,
+	Sprite = Encyclopedia.RegisterSprite(EdithRestored.path .. "content/gfx/characterportraits.anm2", "Edith", 0),
 	WikiDesc = Wiki.Edith,
 })
 
 --[[Encyclopedia.AddCharacterTainted({
-    ModName = "Compliance",
+    ModName = "RestoredEdith",
     Name = "Edith",
     Description = "The Effigy",
-    ID = EdithCompliance.Enums.PlayerType.EDITH_B,
-	Sprite = Encyclopedia.RegisterSprite(EdithCompliance.path .. "content/gfx/characterportraitsalt.anm2", "Edith", 0, EdithCompliance.path .. "content/gfx/charactermenu_edithb.png"),
+    ID = EdithRestored.Enums.PlayerType.EDITH_B,
+	Sprite = Encyclopedia.RegisterSprite(EdithRestored.path .. "content/gfx/characterportraitsalt.anm2", "Edith", 0, EdithRestored.path .. "content/gfx/charactermenu_edithb.png"),
 	WikiDesc = Wiki.TaintedEdith,
 })]]
 
-EdithCompliance.Enums.Wiki = Wiki
+EdithRestored.Enums.Wiki = Wiki

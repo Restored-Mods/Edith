@@ -1,7 +1,7 @@
 local PawnBaby = {}
 local Helpers = include("lua.helpers.Helpers")
 
-local pawnBabyDesc = Isaac.GetItemConfig():GetCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY)
+local pawnBabyDesc = Isaac.GetItemConfig():GetCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY)
 local fireCoolDown = 20
 
 local floatDir = {[Direction.NO_DIRECTION] = "Down", [Direction.UP] = "Up", [Direction.DOWN] = "Down", [Direction.LEFT] = "Side", [Direction.RIGHT] = "Side"}
@@ -10,10 +10,10 @@ local vecDir = {[Direction.NO_DIRECTION] = Vector(0, 0), [Direction.UP] = Vector
 ---@param player EntityPlayer
 ---@param cache CacheFlag | integer
 function PawnBaby:Cache(player, cache)
-    local numFamiliars = player:GetCollectibleNum(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY) + player:GetEffects():GetCollectibleEffectNum(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY)
-	player:CheckFamiliar(EdithCompliance.Enums.Familiars.PAWN_BABY.Variant, numFamiliars, player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY), pawnBabyDesc)
+    local numFamiliars = player:GetCollectibleNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY) + player:GetEffects():GetCollectibleEffectNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY)
+	player:CheckFamiliar(EdithRestored.Enums.Familiars.PAWN_BABY.Variant, numFamiliars, player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY), pawnBabyDesc)
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, PawnBaby.Cache, CacheFlag.CACHE_FAMILIARS)
+EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, PawnBaby.Cache, CacheFlag.CACHE_FAMILIARS)
 
 ---@param familiar EntityFamiliar
 function PawnBaby:Init(familiar)
@@ -21,7 +21,7 @@ function PawnBaby:Init(familiar)
     familiar.FireCooldown = 5
     familiar.State = 0
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, PawnBaby.Init, EdithCompliance.Enums.Familiars.PAWN_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, PawnBaby.Init, EdithRestored.Enums.Familiars.PAWN_BABY.Variant)
 
 local function ChangeToSaltTear(tear)
 	tear:ChangeVariant(TearVariant.ROCK)
@@ -118,7 +118,7 @@ function PawnBaby:Update(familiar)
         end
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, PawnBaby.Update, EdithCompliance.Enums.Familiars.PAWN_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, PawnBaby.Update, EdithRestored.Enums.Familiars.PAWN_BABY.Variant)
 
 ---@param familiar EntityFamiliar
 ---@param collider Entity
@@ -141,4 +141,4 @@ function PawnBaby:Colliding(familiar, collider, low)
         end
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, PawnBaby.Colliding, EdithCompliance.Enums.Familiars.PAWN_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, PawnBaby.Colliding, EdithRestored.Enums.Familiars.PAWN_BABY.Variant)

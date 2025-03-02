@@ -1,22 +1,22 @@
 local Helpers = include("lua.helpers.Helpers")
-EdithCompliance.HiddenItemManager = include("lua.extraLibs.hidden_item_manager")
-EdithCompliance.HiddenItemManager:Init(EdithCompliance)
+EdithRestored.HiddenItemManager = include("lua.extraLibs.hidden_item_manager")
+EdithRestored.HiddenItemManager:Init(EdithRestored)
 
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "PlayerData", {}, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "FamiliarData", {}, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "UsedDataMiner", false, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "HiddenItemMangerSave", {}, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "MoonPhase", 1, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "MoonPhaseWolf", false, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "PlayerData", {}, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "FamiliarData", {}, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "UsedDataMiner", false, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "HiddenItemMangerSave", {}, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "MoonPhase", 1, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "MoonPhaseWolf", false, TSIL.Enums.VariablePersistenceMode.RESET_RUN)
 
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "DSS", {}, TSIL.Enums.VariablePersistenceMode.NONE, true)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "OnlyStomps", 1, TSIL.Enums.VariablePersistenceMode.NONE, true)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "TargetColor", {R = 155, G = 0, B = 0}, TSIL.Enums.VariablePersistenceMode.NONE, true)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "AllowHolding", 2, TSIL.Enums.VariablePersistenceMode.NONE, true)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "DisabledItems", {}, TSIL.Enums.VariablePersistenceMode.NONE, true)
-TSIL.SaveManager.AddPersistentVariable(EdithCompliance, "AlwaysShowMoonPhase", 2, TSIL.Enums.VariablePersistenceMode.NONE, true)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "DSS", {}, TSIL.Enums.VariablePersistenceMode.NONE, true)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "OnlyStomps", 1, TSIL.Enums.VariablePersistenceMode.NONE, true)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "TargetColor", {R = 155, G = 0, B = 0}, TSIL.Enums.VariablePersistenceMode.NONE, true)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "AllowHolding", 2, TSIL.Enums.VariablePersistenceMode.NONE, true)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "DisabledItems", {}, TSIL.Enums.VariablePersistenceMode.NONE, true)
+TSIL.SaveManager.AddPersistentVariable(EdithRestored, "AlwaysShowMoonPhase", 2, TSIL.Enums.VariablePersistenceMode.NONE, true)
 
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, function()
+EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, function()
     for _, bomb in ipairs(Isaac.FindByType(EntityType.ENTITY_BOMB)) do
         Helpers.GetData(bomb).BombInit = true
     end

@@ -33,17 +33,17 @@ function SaveManager:OnPlayerInit()
 
     local isContinue = IsContinue()
 
-    if isContinue and EdithCompliance:HasData() then
+    if isContinue and EdithRestored:HasData() then
         TSIL.SaveManager.LoadFromDisk()
-        EdithCompliance.HiddenItemManager:LoadData(TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "HiddenItemMangerSave"))
+        EdithRestored.HiddenItemManager:LoadData(TSIL.SaveManager.GetPersistentVariable(EdithRestored, "HiddenItemMangerSave"))
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, SaveManager.OnPlayerInit)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, SaveManager.OnPlayerInit)
 
 function SaveManager:LoadDSSImGui()
     TSIL.SaveManager.LoadFromDisk()
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, SaveManager.LoadDSSImGui)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, SaveManager.LoadDSSImGui)
 
 local function SaveAll()
     if not TSIL.Stage.OnFirstFloor() then
@@ -54,12 +54,12 @@ end
 function SaveManager:SaveData(isSaving)
     if isSaving then
         TSIL.SaveManager.LoadFromDisk()
-        TSIL.SaveManager.SetPersistentVariable(EdithCompliance, "HiddenItemMangerSave", EdithCompliance.HiddenItemManager:GetSaveData())
+        TSIL.SaveManager.SetPersistentVariable(EdithRestored, "HiddenItemMangerSave", EdithRestored.HiddenItemManager:GetSaveData())
     end
     TSIL.SaveManager.SaveToDisk()
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveManager.SaveData)
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, SaveAll)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, SaveManager.SaveData)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, SaveAll)
 
 function SaveManager:LoadUpdate(isLoading)
     for _, player in ipairs(Helpers.GetPlayers()) do
@@ -69,11 +69,11 @@ function SaveManager:LoadUpdate(isLoading)
         Helpers.ChangeSprite(player,true)
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, SaveManager.LoadUpdate)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, SaveManager.LoadUpdate)
 
-EdithCompliance:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
-    if card == EdithCompliance.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.CompletionMarks.REV_PRUDENCE)
-    or card == EdithCompliance.Enums.Pickups.Cards.CARD_SOUL_EDITH and not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.CompletionMarks.SOUL_EDITH) then
+EdithRestored:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
+    if card == EdithRestored.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.REV_PRUDENCE)
+    or card == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH) then
         return 0
     end
 end)

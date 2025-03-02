@@ -7,12 +7,12 @@ function SmellingSalts:KeeperDamage(entity, damage, flags, source, cd)
         if flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE then
             local normalHP = player:GetHearts() + player:GetSoulHearts() + player:GetEternalHearts() - player:GetRottenHearts()
             local boneHp = player:GetBoneHearts()
-            if (normalHP == 0 and boneHp < 2 or boneHp == 0 and normalHP <= damage) and player:HasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_SMELLING_SALTS) then
-                player:TryRemoveTrinket(EdithCompliance.Enums.TrinketType.TRINKET_SMELLING_SALTS)
+            if (normalHP == 0 and boneHp < 2 or boneHp == 0 and normalHP <= damage) and player:HasTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS) then
+                player:TryRemoveTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS)
                 return {Damage = 0, DamageFlags = flags, DamageCountdown = cd}
             end
         end
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, SmellingSalts.KeeperDamage, EntityType.ENTITY_PLAYER)
+EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, SmellingSalts.KeeperDamage, EntityType.ENTITY_PLAYER)
 

@@ -4,7 +4,7 @@ local Helpers = include("lua.helpers.Helpers")
 function Chisel:UseTheChisel(_, _, player)
 	local ChiselSelection
 	local data = Helpers.GetEntityData(player)
-	local rng = player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
+	local rng = player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 	Helpers.ChangePepperValue(player)
 	local entities = Isaac.FindInRadius(player.Position, 99999, EntityPartition.ENEMY)
 	local enemies = {}
@@ -21,17 +21,17 @@ function Chisel:UseTheChisel(_, _, player)
 		ChiselSelection = player
 	end
 	-- falling chisel stuff
-	local chisel = Isaac.Spawn(EdithCompliance.Enums.Entities.FALLING_CHISEL.Type,EdithCompliance.Enums.Entities.FALLING_CHISEL.Variant,0,player.Position,Vector.Zero,player)
+	local chisel = Isaac.Spawn(EdithRestored.Enums.Entities.FALLING_CHISEL.Type,EdithRestored.Enums.Entities.FALLING_CHISEL.Variant,0,player.Position,Vector.Zero,player)
 	Helpers.GetData(chisel).ChiselSelection = ChiselSelection
 	local sprite = chisel:GetSprite()
-	sprite:Load("gfx_cedith/chisel.anm2", true)
+	sprite:Load("gfx_redith/chisel.anm2", true)
 	sprite:Play("Firing", true)
 	SFXManager():Play(SoundEffect.SOUND_SCYTHE_BREAK)
 	
 	Helpers.ChangeSprite(player,false)
 	return {Discharge = true, Remove = false, ShowAnim = true}
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, Chisel.UseTheChisel, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
+EdithRestored:AddCallback(ModCallbacks.MC_USE_ITEM, Chisel.UseTheChisel, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 
 function Chisel:PepperLevel(player)
 	if Helpers.IsPlayerEdith(player,false,true) then
@@ -67,9 +67,9 @@ function Chisel:PepperLevel(player)
 			 if Game():GetFrameCount()%5 == 0 then
 				local creep = Isaac.Spawn(1000, 53, 0, player.Position, Vector(0,0), nil):ToEffect()
 				local sprite = creep:GetSprite()
-				sprite:Load("gfx_cedith/1000.092_creep (powder).anm2", true)
-				sprite:ReplaceSpritesheet(0, "gfx_cedith/effect_blackpowder.png")
-				local rng = player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
+				sprite:Load("gfx_redith/1000.092_creep (powder).anm2", true)
+				sprite:ReplaceSpritesheet(0, "gfx_redith/effect_blackpowder.png")
+				local rng = player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 				local rngSprite = rng:RandomInt(6)+1
 					sprite:Play("SmallBlood0"..rngSprite, true)
 				creep.CollisionDamage = 0.4
@@ -77,7 +77,7 @@ function Chisel:PepperLevel(player)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.PepperLevel)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.PepperLevel)
 
 function Chisel:Chisel_CacheEval(player, cacheFlag)
 	local data = Helpers.GetEntityData(player)
@@ -94,7 +94,7 @@ function Chisel:Chisel_CacheEval(player, cacheFlag)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Chisel.Chisel_CacheEval)
+EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Chisel.Chisel_CacheEval)
 
 function Chisel:HasBirthright(player)
 	local data = Helpers.GetEntityData(player)
@@ -106,14 +106,14 @@ function Chisel:HasBirthright(player)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.HasBirthright)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.HasBirthright)
 
 function Chisel:ChiselAnm(chisel)
 	if chisel.SpawnerType == EntityType.ENTITY_PLAYER then
 		local player = chisel.SpawnerEntity:ToPlayer()
 		local data = Helpers.GetData(chisel)
 		local dataP = Helpers.GetEntityData(player)
-		local rng = player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
+		local rng = player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 
 		chisel.Position = data.ChiselSelection.Position
 		local sprite = chisel:GetSprite()
@@ -163,7 +163,7 @@ function Chisel:ChiselAnm(chisel)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Chisel.ChiselAnm, EdithCompliance.Enums.Entities.FALLING_CHISEL.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Chisel.ChiselAnm, EdithRestored.Enums.Entities.FALLING_CHISEL.Variant)
 
 function Chisel:TEdithPepperBlock(player, damage, flags, source, cd)
 	local dataP = Helpers.GetEntityData(player)
@@ -172,7 +172,7 @@ function Chisel:TEdithPepperBlock(player, damage, flags, source, cd)
 		return false
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, Chisel.TEdithPepperBlock, EdithCompliance.Enums.PlayerType.EDITH_B)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, Chisel.TEdithPepperBlock, EdithRestored.Enums.PlayerType.EDITH_B)
 
 function Chisel:PreProjectileCollision(projectile, collider, low)
 	if collider and collider:ToPlayer() then
@@ -188,7 +188,7 @@ function Chisel:PreProjectileCollision(projectile, collider, low)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, Chisel.PreProjectileCollision)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_COLLISION, Chisel.PreProjectileCollision)
 
 function Chisel:TMinidith(familiar)
 	local player = familiar.Parent or familiar.SpawnerEntity
@@ -197,17 +197,17 @@ function Chisel:TMinidith(familiar)
 			if Helpers.IsPlayerEdith(player:ToPlayer(), false, true) then
 				local dataP = Helpers.GetEntityData(player)
 				local sprite = EntityFamiliar:GetSprite()
-				sprite:Load("gfx_cedith/minidith.anm2", true)
+				sprite:Load("gfx_redith/minidith.anm2", true)
 				local miniPeppersaac = dataP.Pepper
 				if miniPeppersaac > 4 then
 					miniPeppersaac = 4
 				end
-				sprite:ReplaceSpritesheet(0, "gfx_cedith/familiar/familiar_minisaac_edith"..miniPeppersaac..".png")
-				sprite:ReplaceSpritesheet(1, "gfx_cedith/familiar/familiar_minisaac_edith"..miniPeppersaac..".png")
+				sprite:ReplaceSpritesheet(0, "gfx_redith/familiar/familiar_minisaac_edith"..miniPeppersaac..".png")
+				sprite:ReplaceSpritesheet(1, "gfx_redith/familiar/familiar_minisaac_edith"..miniPeppersaac..".png")
 				sprite:LoadGraphics()
 				--print("stage "..miniPeppersaac)
 			end
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, Chisel.TMinidith, FamiliarVariant.MINISAAC)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, Chisel.TMinidith, FamiliarVariant.MINISAAC)

@@ -2,10 +2,10 @@ local Helpers = include("lua.helpers.Helpers")
 include("lua.entities.player.unlock")
 
 if CustomHealthAPI then
-	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithCompliance.Enums.PlayerType.EDITH] = true
-	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithCompliance.Enums.PlayerType.EDITH_B] = true
-	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithCompliance.Enums.PlayerType.EDITH] = "SOUL_HEART"
-	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithCompliance.Enums.PlayerType.EDITH_B] = "BLACK_HEART"
+	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithRestored.Enums.PlayerType.EDITH] = true
+	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithRestored.Enums.PlayerType.EDITH_B] = true
+	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithRestored.Enums.PlayerType.EDITH] = "SOUL_HEART"
+	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithRestored.Enums.PlayerType.EDITH_B] = "BLACK_HEART"
 	CustomHealthAPI.Library.AddCallback("EdithTC", CustomHealthAPI.Enums.Callbacks.CAN_PICK_HEALTH, 0, function (player,key)
 		if Helpers.IsPlayerEdith(player, true, true) and key == "RED_HEART" then
 			return false
@@ -159,7 +159,7 @@ local function EdithGridMovement(player, data)
 		local isPressingRight
 		local isPressingUp
 		local isPressingDown
-		local allowHolding = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "AllowHolding")
+		local allowHolding = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "AllowHolding")
 
 		if allowHolding == 1 then
 			isPressingLeft = Input.IsActionPressed(ButtonAction.ACTION_LEFT, controllerIndex)
@@ -341,7 +341,7 @@ local function EdithGridMovement(player, data)
 				if chap4 then
 					SFXManager():Play(SoundEffect.SOUND_MEAT_JUMPS)
 				else
-					SFXManager():Play(EdithCompliance.Enums.SFX.Edith.ROCK_SLIDE)
+					SFXManager():Play(EdithRestored.Enums.SFX.Edith.ROCK_SLIDE)
 				end
 				
 				if game:GetRoom():HasWater() then
@@ -354,7 +354,7 @@ local function EdithGridMovement(player, data)
 					end
 				else
 					if not chap4 then
-						Isaac.Spawn(EdithCompliance.Enums.Entities.CUSTOM_DUST_CLOUD.Type, EdithCompliance.Enums.Entities.CUSTOM_DUST_CLOUD.Variant, 0, player.Position, dustVelocity, nil)
+						Isaac.Spawn(EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Type, EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant, 0, player.Position, dustVelocity, nil)
 					else
 						local bloodCloud = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 3, player.Position, Vector.Zero, nil):ToEffect() 
 						bloodCloud.SpriteScale = Vector(0.4 * (directionStuff), 0.25)
@@ -486,7 +486,7 @@ function Player:ChargeBar(player)
 		data.ChargeBar = nil
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBar, 0)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBar, 0)
 
 ---@param target EntityEffect
 function Player:TargetJumpRender(target)
@@ -502,13 +502,13 @@ function Player:TargetJumpRender(target)
 		target.Color = Color(1, 1, 1, 0, 0, 0, 0)
 		
 		if data.BombStomp ~= nil then
-			target:GetSprite():ReplaceSpritesheet(0, "gfx_cedith/effects/target_edith_bomb.png")
+			target:GetSprite():ReplaceSpritesheet(0, "gfx_redith/effects/target_edith_bomb.png")
 		elseif data.BombStomp ~= true then
-			target:GetSprite():ReplaceSpritesheet(0, "gfx_cedith/effects/target_edith.png")
+			target:GetSprite():ReplaceSpritesheet(0, "gfx_redith/effects/target_edith.png")
 		end
 		target:GetSprite():LoadGraphics()
 		
-		local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
+		local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
 
 		if TargetColor then
 			target.Color = Color(TargetColor.R/255, TargetColor.G/255, TargetColor.B/255, 1, 0, 0, 0)
@@ -517,7 +517,7 @@ function Player:TargetJumpRender(target)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, Player.TargetJumpRender, EdithCompliance.Enums.Entities.EDITH_TARGET.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, Player.TargetJumpRender, EdithRestored.Enums.Entities.EDITH_TARGET.Variant)
 
 ---@param target EntityEffect
 function Player:TargetJumpUpdate(target)
@@ -532,7 +532,7 @@ function Player:TargetJumpUpdate(target)
 		target:Remove()
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.TargetJumpUpdate, EdithCompliance.Enums.Entities.EDITH_TARGET.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.TargetJumpUpdate, EdithRestored.Enums.Entities.EDITH_TARGET.Variant)
 
 function Player:OnInitPlayer(player)
 	-- If the player is Edith it will apply the hood
@@ -540,34 +540,34 @@ function Player:OnInitPlayer(player)
 	::EdithCheck::
 	if Helpers.IsPlayerEdith(player, true, false) then			
 		local mySprite = player:GetSprite()
-		mySprite:Load(EdithCompliance.Enums.PlayerSprites.EDITH, true)
+		mySprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
 		mySprite:Update()
 		Helpers.ChangeSprite(player)
 	elseif Helpers.IsPlayerEdith(player, false, true) then -- Apply different costume for her tainted variant
 		if Helpers.IsPlayerEdith(player, false, true) then
-			player:ChangePlayerType(EdithCompliance.Enums.PlayerType.EDITH)
+			player:ChangePlayerType(EdithRestored.Enums.PlayerType.EDITH)
 		end
 		goto EdithCheck
 		local mySprite = player:GetSprite()
-		mySprite:Load(EdithCompliance.Enums.PlayerSprites.EDITH_B, true)
+		mySprite:Load(EdithRestored.Enums.PlayerSprites.EDITH_B, true)
 		mySprite:LoadGraphics()
 		Helpers.ChangeSprite(player,true)
-		player:SetPocketActiveItem(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL, ActiveSlot.SLOT_POCKET, false)
+		player:SetPocketActiveItem(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL, ActiveSlot.SLOT_POCKET, false)
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, Player.OnInitPlayer)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, Player.OnInitPlayer)
 
 ---@param player EntityPlayer
 function Player:OnUpdatePlayer(player)
 	if Helpers.IsPlayerEdith(player, false, true) then
-		player:ChangePlayerType(EdithCompliance.Enums.PlayerType.EDITH)
+		player:ChangePlayerType(EdithRestored.Enums.PlayerType.EDITH)
 		player:EvaluateItems()
 	end
 	-- If the player is Edith it will apply the hood
 	local dataP = Helpers.GetEntityData(player)
 	local data = Helpers.GetData(player)
 	if Helpers.IsPlayerEdith(player, true, false) then
-		local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
+		local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
 		if Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex) then
 			if not data.BombStomp then
 				data.BombStomp = true
@@ -609,7 +609,7 @@ function Player:OnUpdatePlayer(player)
 				if data.EdithJumpCharge >= (100 * JumpChargeMul + MinJumpCharge) then
 					data.LockBombs = true
 					if not data.EdithJumpTarget and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex) and not JumpLib:GetData(player).Jumping then
-						data.EdithJumpTarget = Isaac.Spawn(1000, EdithCompliance.Enums.Entities.EDITH_TARGET.Variant, 0, player.Position, Vector(0, 0), player):ToEffect()
+						data.EdithJumpTarget = Isaac.Spawn(1000, EdithRestored.Enums.Entities.EDITH_TARGET.Variant, 0, player.Position, Vector(0, 0), player):ToEffect()
 						data.EdithJumpTarget.Parent = player
 						data.EdithJumpTarget.SpawnerEntity = player
 						data.EdithJumpTarget.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
@@ -700,7 +700,7 @@ function Player:OnUpdatePlayer(player)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePlayer, 0)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePlayer, 0)
 
 function Player:Landing(player, jumpData, inPit)
 	if not inPit then
@@ -727,10 +727,10 @@ function Player:Landing(player, jumpData, inPit)
 		end
 	end
 end
-EdithCompliance:AddCallback(JumpLib.Callbacks.PLAYER_LAND, Player.Landing, {tag = "EdithJump"})
+EdithRestored:AddCallback(JumpLib.Callbacks.PLAYER_LAND, Player.Landing, {tag = "EdithJump"})
 
 ---@param player EntityPlayer
-EdithCompliance:AddCallback(JumpLib.Callbacks.PLAYER_UPDATE_60, function (_, player)
+EdithRestored:AddCallback(JumpLib.Callbacks.PLAYER_UPDATE_60, function (_, player)
     player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
     -- player.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
 end, {
@@ -752,14 +752,14 @@ function Player:DamageHandling(entity, amount, flags, source, cd)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Player.DamageHandling, EntityType.ENTITY_PLAYER)
+EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Player.DamageHandling, EntityType.ENTITY_PLAYER)
 
 function Player:OnRemovePlayer(entity)
 	if entity.Type == EntityType.ENTITY_PLAYER or entity.Type == EntityType.ENTITY_FAMILIAR then
 		Helpers.RemoveEntityData(entity)
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, Player.OnRemovePlayer)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, Player.OnRemovePlayer)
 
 function Player:edith_Stats(player, cacheFlag)
 	Helpers.ChangeSprite(player)
@@ -771,27 +771,27 @@ function Player:edith_Stats(player, cacheFlag)
 		Helpers.ChangePepperValue(player)
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Player.edith_Stats)
+EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Player.edith_Stats)
 
 function Player:Home()
 	local level = game:GetLevel()
 	local room = game:GetRoom()
 	for i = 0, game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
-		if Helpers.IsPlayerEdith(player, true, false) and level:GetCurrentRoomIndex() == 94 and level:GetStage() == LevelStage.STAGE8 and EdithCompliance.Unlocks.Edith.Tainted.Unlock ~= true  then
+		if Helpers.IsPlayerEdith(player, true, false) and level:GetCurrentRoomIndex() == 94 and level:GetStage() == LevelStage.STAGE8 and EdithRestored.Unlocks.Edith.Tainted.Unlock ~= true  then
 			for _, entity in ipairs(Isaac.GetRoomEntities()) do
 				if (((entity.Type == EntityType.ENTITY_PICKUP and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE)
 				or (entity.Type == EntityType.ENTITY_SHOPKEEPER)) and room:IsFirstVisit()) then
 					entity:Remove()
 					local slot = Isaac.Spawn(EntityType.ENTITY_SLOT, 14, 0, entity.Position, Vector.Zero, nil)
-					slot:GetSprite():ReplaceSpritesheet(0,"gfx_cedith/characters/costumes/Character_001_Edith_b.png")
+					slot:GetSprite():ReplaceSpritesheet(0,"gfx_redith/characters/costumes/Character_001_Edith_b.png")
 					slot:GetSprite():LoadGraphics()
 				end
 			end
 		end
 	end
 end
---EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.Home)
+--EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.Home)
 
 function Player:NewRoom()
 	for i = 0, game:GetNumPlayers() - 1 do
@@ -808,7 +808,7 @@ function Player:NewRoom()
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.NewRoom)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.NewRoom)
 
 ---@param pickup EntityPickup
 ---@param collider Entity
@@ -825,7 +825,7 @@ function Player:OnCollectibleCollission(pickup, collider)
 	player.Velocity = Vector.Zero
 	data.EdithTargetMovementPosition = nil
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, Player.OnCollectibleCollission, PickupVariant.PICKUP_COLLECTIBLE)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, Player.OnCollectibleCollission, PickupVariant.PICKUP_COLLECTIBLE)
 
 
 function Player:OnMegaChestCollision(pickup, collider)
@@ -841,7 +841,7 @@ function Player:OnMegaChestCollision(pickup, collider)
 	player.Velocity = Vector.Zero
 	data.EdithTargetMovementPosition = nil
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, Player.OnMegaChestCollision, PickupVariant.PICKUP_MEGACHEST)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, Player.OnMegaChestCollision, PickupVariant.PICKUP_MEGACHEST)
 
 ---@param entity EntityNPC
 ---@param collider Entity
@@ -859,7 +859,7 @@ function Player:OnNPCCollision(entity, collider)
 	player.Velocity = Vector.Zero
 	data.EdithTargetMovementPosition = nil
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, Player.OnNPCCollision)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, Player.OnNPCCollision)
 
 ---@param tear EntityTear
 function Player:OnEdithFireTear(tear)
@@ -873,7 +873,7 @@ function Player:OnEdithFireTear(tear)
 	tear.SpriteScale = tear.SpriteScale * 0.9
 
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_FIRE_TEAR, Player.OnEdithFireTear)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_FIRE_TEAR, Player.OnEdithFireTear)
 
 ---@param entity Entity
 function Player:EdithMovement(entity, hook, button)
@@ -881,7 +881,7 @@ function Player:EdithMovement(entity, hook, button)
 	
 		local player = entity:ToPlayer()
 		if player and Helpers.IsPlayerEdith(player, true, false) then
-			local OnlyStomps = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "OnlyStomps")
+			local OnlyStomps = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "OnlyStomps")
 			if player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) or player:HasCurseMistEffect() then return end
 			local data = Helpers.GetData(player)
 			if hook == InputHook.GET_ACTION_VALUE then
@@ -932,7 +932,7 @@ function Player:EdithMovement(entity, hook, button)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_INPUT_ACTION, Player.EdithMovement)
+EdithRestored:AddCallback(ModCallbacks.MC_INPUT_ACTION, Player.EdithMovement)
 
 function Player:PreUsePony(item, _, player)
 	if item ~= CollectibleType.COLLECTIBLE_PONY and item ~= CollectibleType.COLLECTIBLE_WHITE_PONY then return end
@@ -946,7 +946,7 @@ function Player:PreUsePony(item, _, player)
 		return true
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, Player.PreUsePony)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, Player.PreUsePony)
 
 
 ---@param laser EntityLaser
@@ -955,7 +955,7 @@ function Player:OnMontezumaLaserInit(laser)
 		laser.Visible = false
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, Player.OnMontezumaLaserInit, LaserVariant.THICK_BROWN)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, Player.OnMontezumaLaserInit, LaserVariant.THICK_BROWN)
 
 
 ---@param laser EntityLaser
@@ -1048,11 +1048,11 @@ function Player:OnMontezumaLaserUpdate(laser)
 		laser:GetData().TargetRotation = trueRotation
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, Player.OnMontezumaLaserUpdate, LaserVariant.THICK_BROWN)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, Player.OnMontezumaLaserUpdate, LaserVariant.THICK_BROWN)
 
 ---@param effect EntityEffect
 function Player:OnCustomDustInit(effect)
-	if effect.Variant ~= EdithCompliance.Enums.Entities.CUSTOM_DUST_CLOUD.Variant then return end
+	if effect.Variant ~= EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant then return end
 
 	local dustData = effect:GetData()
 	if math.random(2) == 1 then
@@ -1068,12 +1068,12 @@ function Player:OnCustomDustInit(effect)
 
 	effect.Color = Color(1, 1, 1, 0.7)
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, Player.OnCustomDustInit)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, Player.OnCustomDustInit)
 
 
 ---@param effect EntityEffect
 function Player:OnCustomDustCloudUpdate(effect)
-	if effect.Variant ~= EdithCompliance.Enums.Entities.CUSTOM_DUST_CLOUD.Variant then return end
+	if effect.Variant ~= EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant then return end
 
 	local data = effect:GetData()
 	effect.SpriteRotation = effect.SpriteRotation + data.RotationDir
@@ -1086,7 +1086,7 @@ function Player:OnCustomDustCloudUpdate(effect)
 		effect:Remove()
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.OnCustomDustCloudUpdate)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.OnCustomDustCloudUpdate)
 
 function Player:AccesToMirrorWorld(p)
 	local room = game:GetRoom()
@@ -1106,13 +1106,13 @@ function Player:AccesToMirrorWorld(p)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.AccesToMirrorWorld)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.AccesToMirrorWorld)
 
 local function drawLine(fx, from, to, frame)
-	local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithCompliance, "TargetColor")
+	local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
 	if not fx:GetData().Line then
 		fx:GetData().Line = Sprite()
-		fx:GetData().Line:Load("gfx_cedith/edith line.anm2", true)
+		fx:GetData().Line:Load("gfx_redith/edith line.anm2", true)
 	end
 	if not fx:GetData().Line:IsLoaded() then return end
 
@@ -1159,19 +1159,19 @@ function Player:RenderTargetLine(fx)
 		drawLine(fx, p.Position, fx.Position, 0)
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, Player.RenderTargetLine, EdithCompliance.Enums.Entities.EDITH_TARGET.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, Player.RenderTargetLine, EdithRestored.Enums.Entities.EDITH_TARGET.Variant)
 
 ---@param player EntityPlayer
 function Player:OnInitPlayerWithShaker(player)
-	if not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.CompletionMarks.SALT_SHAKER) then
-		player:RemoveCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER)
+	if not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SALT_SHAKER) then
+		player:RemoveCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER)
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PLAYER_INIT_POST_LEVEL_INIT_STATS, Player.OnInitPlayerWithShaker, EdithCompliance.Enums.PlayerType.EDITH)
+EdithRestored:AddCallback(ModCallbacks.MC_PLAYER_INIT_POST_LEVEL_INIT_STATS, Player.OnInitPlayerWithShaker, EdithRestored.Enums.PlayerType.EDITH)
 
 function Player:TargetCamera()
 	local list = {}
-	for _,entity in ipairs(Isaac.FindByType(EdithCompliance.Enums.Entities.EDITH_TARGET.Type, EdithCompliance.Enums.Entities.EDITH_TARGET.Variant)) do
+	for _,entity in ipairs(Isaac.FindByType(EdithRestored.Enums.Entities.EDITH_TARGET.Type, EdithRestored.Enums.Entities.EDITH_TARGET.Variant)) do
 		list[#list+1] = entity
 	end
 	if #list > 0 then
@@ -1192,7 +1192,7 @@ function Player:TargetCamera()
 		camera:SetFocusPosition(Vector((maxx + minx), (maxy +  miny)) / 2)
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_UPDATE, Player.TargetCamera)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_UPDATE, Player.TargetCamera)
 
 function Player:OnStompBloodBombs(player)
 	if player:GetNumBombs() <= 0 and not player:HasGoldenBomb() then
@@ -1200,4 +1200,4 @@ function Player:OnStompBloodBombs(player)
 		return true
 	end
 end
-EdithCompliance:AddPriorityCallback(EdithCompliance.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, CallbackPriority.LATE, Player.OnStompBloodBombs, CollectibleType.COLLECTIBLE_BLOOD_BOMBS)
+EdithRestored:AddPriorityCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, CallbackPriority.LATE, Player.OnStompBloodBombs, CollectibleType.COLLECTIBLE_BLOOD_BOMBS)

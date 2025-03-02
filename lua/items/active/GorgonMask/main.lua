@@ -11,37 +11,37 @@ local DIRECTION_VECTOR = {
 
 function GorgonMask:UseMask(collectible, rng, player, flags, slot, vardata)
 	local effects = player:GetEffects()
-	if effects:HasNullEffect(EdithCompliance.Enums.NullItems.GORGON_MASK) then
-		effects:RemoveNullEffect(EdithCompliance.Enums.NullItems.GORGON_MASK, 2)
+	if effects:HasNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK) then
+		effects:RemoveNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK, 2)
 		local canShoot = Helpers.GetEntityData(player).GorgonCouldShoot or true
 		player:SetCanShoot(canShoot)
 	else
 		local count = flags & UseFlag.USE_CARBATTERY > 0 and 2 or 1
-		effects:AddNullEffect(EdithCompliance.Enums.NullItems.GORGON_MASK, true, count)
+		effects:AddNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK, true, count)
 		Helpers.GetEntityData(player).GorgonCouldShoot = player:CanShoot()
 		player:SetCanShoot(false)
 	end
 	return {Discharge = false, Remove = false, ShowAnim = true}
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_USE_ITEM, GorgonMask.UseMask, EdithCompliance.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK)
+EdithRestored:AddCallback(ModCallbacks.MC_USE_ITEM, GorgonMask.UseMask, EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK)
 
 function GorgonMask:GorgonMaskCheck(player)
-	if not player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK) then
+	if not player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK) then
 		local canShoot = Helpers.GetEntityData(player).GorgonCouldShoot or true
-		player:GetEffects():RemoveNullEffect(EdithCompliance.Enums.NullItems.GORGON_MASK)
+		player:GetEffects():RemoveNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK)
 		player:SetCanShoot(canShoot)
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, GorgonMask.GorgonMaskCheck)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, GorgonMask.GorgonMaskCheck)
 
 function GorgonMask:UpdateCanShootOnLoad()
-	for _, player in ipairs(Helpers.GetPlayersByNullEffect(EdithCompliance.Enums.NullItems.GORGON_MASK)) do
-		if player:GetEffects():HasNullEffect(EdithCompliance.Enums.NullItems.GORGON_MASK) then
+	for _, player in ipairs(Helpers.GetPlayersByNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK)) do
+		if player:GetEffects():HasNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK) then
 			player:SetCanShoot(false)
 		end
 	end
 end
-EdithCompliance:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, CallbackPriority.LATE, GorgonMask.UpdateCanShootOnLoad)
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, CallbackPriority.LATE, GorgonMask.UpdateCanShootOnLoad)
 
 function GorgonMask:MaskNpcUpdate(npc)
 	if npc:IsActiveEnemy() == false then
@@ -50,8 +50,8 @@ function GorgonMask:MaskNpcUpdate(npc)
 
 	local room = Game():GetRoom()
 
-	for _, player in ipairs(Helpers.GetPlayersByNullEffect(EdithCompliance.Enums.NullItems.GORGON_MASK)) do
-		local count = player:GetEffects():GetNullEffectNum(EdithCompliance.Enums.NullItems.GORGON_MASK)
+	for _, player in ipairs(Helpers.GetPlayersByNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK)) do
+		local count = player:GetEffects():GetNullEffectNum(EdithRestored.Enums.NullItems.GORGON_MASK)
 		local direction = DIRECTION_VECTOR[player:GetHeadDirection()]
 
 		if room:CheckLine(player.Position, npc.Position, 3) then --check for obstructions
@@ -78,4 +78,4 @@ function GorgonMask:MaskNpcUpdate(npc)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_NPC_UPDATE, GorgonMask.MaskNpcUpdate)
+EdithRestored:AddCallback(ModCallbacks.MC_NPC_UPDATE, GorgonMask.MaskNpcUpdate)

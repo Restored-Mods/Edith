@@ -5,8 +5,8 @@ function PepperGrinder:OnKillPG(entity)
 	for i = 0, Game():GetNumPlayers() - 1 do
 		local player = Game():GetPlayer(i)
 		local dataP = Helpers.GetEntityData(player)
-		local goldenbox = player:GetTrinketMultiplier(EdithCompliance.Enums.TrinketType.TRINKET_PEPPER_GRINDER)
-		if player:HasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
+		local goldenbox = player:GetTrinketMultiplier(EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER)
+		if player:HasTrinket(EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
 			local rngGrinder = TSIL.Random.GetRandomInt(1,100)
 			if (goldenbox > 2 or goldenbox > 4) and rngGrinder <= 75 		-- Golden Trinket + Mom's Box
 			or goldenbox > 1 and goldenbox < 3 and rngGrinder <= 50			-- Golden Trinket or Mom's Box
@@ -19,11 +19,11 @@ function PepperGrinder:OnKillPG(entity)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, PepperGrinder.OnKillPG)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, PepperGrinder.OnKillPG)
 
 function PepperGrinder:CreepSpawning(player)
 	local dataP = Helpers.GetEntityData(player)
-	if player:HasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
+	if player:HasTrinket(EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
 		if dataP.CreepNum == nil then
 			dataP.CreepNum = 0
 		end
@@ -37,8 +37,8 @@ function PepperGrinder:CreepSpawning(player)
 			if entity:IsDead() and dataP.CreepNum > 0 then
 				local creep = Isaac.Spawn(1000, 53, 0, entity.Position, Vector(TSIL.Random.GetRandomInt(1, 4) - 2, TSIL.Random.GetRandomInt(1, 4) - 2), player)
 				local sprite = creep:GetSprite()
-				sprite:Load("gfx_cedith/1000.092_creep (powder).anm2", true)
-				sprite:ReplaceSpritesheet(0, "gfx_cedith/effects/effect_blackpowder.png")
+				sprite:Load("gfx_redith/1000.092_creep (powder).anm2", true)
+				sprite:ReplaceSpritesheet(0, "gfx_redith/effects/effect_blackpowder.png")
 				local rngSprite = TSIL.Random.GetRandomInt(0, 5)
 				if rngSprite == 0 then
 					sprite:Play("SmallBlood01", true)
@@ -58,4 +58,4 @@ function PepperGrinder:CreepSpawning(player)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, PepperGrinder.CreepSpawning)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, PepperGrinder.CreepSpawning)

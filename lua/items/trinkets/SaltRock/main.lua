@@ -52,12 +52,12 @@ function SaltRock:MiniStatue(Statue)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltRock.MiniStatue, EdithCompliance.Enums.Entities.SALT_STATUE_MINI.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltRock.MiniStatue, EdithRestored.Enums.Entities.SALT_STATUE_MINI.Variant)
 
 function SaltRock:Spawn(grid)
 	local room = Game():GetRoom()
-	if PlayerManager.AnyoneHasTrinket(EdithCompliance.Enums.TrinketType.TRINKET_SALT_ROCK) and room:IsFirstVisit()
-	and Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH) then
+	if PlayerManager.AnyoneHasTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK) and room:IsFirstVisit()
+	and Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) then
 		local rng = RNG()
 		local desc = grid:GetSaveState()
 		if desc then
@@ -70,19 +70,19 @@ function SaltRock:Spawn(grid)
 		end
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_SPAWN, SaltRock.Spawn, GridEntityType.GRID_ROCK)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_SPAWN, SaltRock.Spawn, GridEntityType.GRID_ROCK)
 
 function SaltRock:Render(rock, offset)
 	if rock:GetVariant() == 683 then
-		rock:GetSprite():ReplaceSpritesheet(0, "gfx_cedith/salt_rock.png")
+		rock:GetSprite():ReplaceSpritesheet(0, "gfx_redith/salt_rock.png")
 		rock:GetSprite():LoadGraphics()
 	end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_GRID_ENTITY_ROCK_RENDER, SaltRock.Render, GridEntityType.GRID_ROCK)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_GRID_ENTITY_ROCK_RENDER, SaltRock.Render, GridEntityType.GRID_ROCK)
 
 function SaltRock:OnKillSaltRock(grid, gridType, immediate)
-	if grid:GetVariant() ~= 683 or not Isaac.GetPersistentGameData():Unlocked(EdithCompliance.Enums.Achievements.Characters.EDITH) then return end
-	Isaac.Spawn(1000, EdithCompliance.Enums.Entities.SALT_STATUE_MINI.Variant, 0, grid.Position, Vector(0, 0), nil):ToEffect()
+	if grid:GetVariant() ~= 683 or not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) then return end
+	Isaac.Spawn(1000, EdithRestored.Enums.Entities.SALT_STATUE_MINI.Variant, 0, grid.Position, Vector(0, 0), nil):ToEffect()
 	SFXManager():Play(SoundEffect.SOUND_MAGGOT_ENTER_GROUND)
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_GRID_ROCK_DESTROY, SaltRock.OnKillSaltRock, GridEntityType.GRID_ROCK)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_GRID_ROCK_DESTROY, SaltRock.OnKillSaltRock, GridEntityType.GRID_ROCK)

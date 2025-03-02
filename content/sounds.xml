@@ -1,28 +1,28 @@
 <sounds root="sfx/">
 	<!-- Cards -->
 	<sound name="Prudence">
-		<sample weight="1" path="cedith/Prudence.wav" />
+		<sample weight="1" path="redith/Prudence.wav" />
 	</sound>
 	<sound name="Reverse Prudence">
-		<sample weight="1" path="cedith/PrudenceReverse.wav" />
+		<sample weight="1" path="redith/PrudenceReverse.wav" />
 	</sound>
 	<sound name="Soul Of Edith">
-		<sample weight="1" path="cedith/SoulOfEdith.wav" />
+		<sample weight="1" path="redith/SoulOfEdith.wav" />
 	</sound>
 	<sound name="Salt Shaker">
-		<sample weight="1" path="cedith/Salt_Shaker_1.wav" />
-		<sample weight="1" path="cedith/Salt_Shaker_2.wav" />
-		<sample weight="1" path="cedith/Salt_Shaker_3.wav" />
+		<sample weight="1" path="redith/Salt_Shaker_1.wav" />
+		<sample weight="1" path="redith/Salt_Shaker_2.wav" />
+		<sample weight="1" path="redith/Salt_Shaker_3.wav" />
 	</sound>
 	<sound name="RockSlide">
-		<sample weight="1" path="cedith/Rock_Slide_1.wav" />
-		<sample weight="1" path="cedith/Rock_Slide_2.wav" />
-		<sample weight="1" path="cedith/Rock_Slide_3.wav" />
-		<sample weight="1" path="cedith/Rock_Slide_4.wav" />
-		<sample weight="1" path="cedith/Rock_Slide_5.wav" />
-		<sample weight="1" path="cedith/Rock_Slide_6.wav" />
-		<sample weight="1" path="cedith/Rock_Slide_7.wav" />
-		<sample weight="1" path="cedith/Rock_Slide_8.wav" />
+		<sample weight="1" path="redith/Rock_Slide_1.wav" />
+		<sample weight="1" path="redith/Rock_Slide_2.wav" />
+		<sample weight="1" path="redith/Rock_Slide_3.wav" />
+		<sample weight="1" path="redith/Rock_Slide_4.wav" />
+		<sample weight="1" path="redith/Rock_Slide_5.wav" />
+		<sample weight="1" path="redith/Rock_Slide_6.wav" />
+		<sample weight="1" path="redith/Rock_Slide_7.wav" />
+		<sample weight="1" path="redith/Rock_Slide_8.wav" />
 	</sound>
 	<sound name="deadseascrolls_pop">
         <sample weight="1" path="deadseascrolls/pop.wav"/>
@@ -31,36 +31,36 @@
         <sample weight="1" path="deadseascrolls/whoosh.wav"/>
     </sound>
 	<sound name="Blasting Boots">
-		<sample weight="1" path="cedith/funny/Blasting Boots.wav" />
+		<sample weight="1" path="redith/funny/Blasting Boots.wav" />
 	</sound>
 	<sound name="Breath Mints">
-		<sample weight="1" path="cedith/funny/Breath Mints.wav" />
+		<sample weight="1" path="redith/funny/Breath Mints.wav" />
 	</sound>
 	<sound name="Gorgon Mask">
-		<sample weight="1" path="cedith/funny/Gorgon Mask.wav" />
+		<sample weight="1" path="redith/funny/Gorgon Mask.wav" />
 	</sound>
 	<sound name="Lithium Salts">
-		<sample weight="1" path="cedith/funny/Lithium Salts.wav" />
+		<sample weight="1" path="redith/funny/Lithium Salts.wav" />
 	</sound>
 	<sound name="Lot Baby">
-		<sample weight="1" path="cedith/funny/Lot Baby.wav" />
+		<sample weight="1" path="redith/funny/Lot Baby.wav" />
 	</sound>
 	<sound name="Pawn Baby">
-		<sample weight="1" path="cedith/funny/Pawn Baby.wav" />
+		<sample weight="1" path="redith/funny/Pawn Baby.wav" />
 	</sound>
 	<sound name="Red Hood">
-		<sample weight="1" path="cedith/funny/Red Hood.wav" />
+		<sample weight="1" path="redith/funny/Red Hood.wav" />
 	</sound>
 	<sound name="Salt Shaker">
-		<sample weight="1" path="cedith/funny/Salt Shaker.wav" />
+		<sample weight="1" path="redith/funny/Salt Shaker.wav" />
 	</sound>
 	<sound name="Salty Baby">
-		<sample weight="1" path="cedith/funny/Salty Baby.wav" />
+		<sample weight="1" path="redith/funny/Salty Baby.wav" />
 	</sound>
 	<sound name="Sodom">
-		<sample weight="1" path="cedith/funny/Sodom.wav" />
+		<sample weight="1" path="redith/funny/Sodom.wav" />
 	</sound>
 	<sound name="Thunder Bombs">
-		<sample weight="1" path="cedith/funny/Thunder Bombs.wav" />
+		<sample weight="1" path="redith/funny/Thunder Bombs.wav" />
 	</sound>
 </sounds>

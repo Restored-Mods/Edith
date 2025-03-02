@@ -14,7 +14,7 @@ function Sodom:npcInit(npc)
 
 end
 
---EdithCompliance:AddCallback(ModCallbacks.MC_POST_NPC_INIT, Sodom.npcInit)
+--EdithRestored:AddCallback(ModCallbacks.MC_POST_NPC_INIT, Sodom.npcInit)
 
 ---@param npc EntityNPC
 function Sodom:npcSaltUpdate(npc)
@@ -61,14 +61,14 @@ function Sodom:npcSaltUpdate(npc)
     
 end
 
-EdithCompliance:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, Sodom.npcSaltUpdate)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, Sodom.npcSaltUpdate)
 
 
 ---@param player EntityPlayer
 function Sodom:SodomItemUpdate(player)
     local room = game:GetRoom()
 
-    if player:HasCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_SODOM) then
+    if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM) then
         local ents = Isaac.FindInRadius(player.Position, 165, EntityPartition.ENEMY)
         for i, _ in ipairs(ents) do
             local data = Helpers.GetData(ents[i])
@@ -85,7 +85,7 @@ function Sodom:SodomItemUpdate(player)
     end
 end
 
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, Sodom.SodomItemUpdate)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, Sodom.SodomItemUpdate)
 
 
 --[[function Sodom:preNpcUpdate(npc)
@@ -99,7 +99,7 @@ EdithCompliance:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, Sodom.SodomItem
     end
 end]]
 
---EdithCompliance:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, Sodom.preNpcUpdate)
+--EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, Sodom.preNpcUpdate)
 
 
 return Sodom

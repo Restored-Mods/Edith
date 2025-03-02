@@ -1,15 +1,12 @@
-<items gfxroot="gfx_cedith/items/" deathanm2="gfx/death items.anm2" version="1">
+<items gfxroot="gfx_redith/items/" deathanm2="gfx/death items.anm2" version="1">
 	<!-- Passive Items -->
-	<passive id="0" name="Breath Mints" gfx="collectibles_001_peppermint.png" description="Peppermint chill" quality="2" tags="summonable offensive" />
 	<passive id="1" name="Lithium Salts" achievement="Lithium Salts" description="Numbed emotions" gfx="collectibles_002_lithium.png" quality="1" cache="damage firedelay" tags="summonable"/>
 	<passive id="2" name="Sodom" achievement="Sodom" description="Don't look back" gfx="collectibles_003_sodom.png" quality="3" tags="summonable offensive"/>
 	<passive id="3" name="Blasting Boots" achievement="Blasting Boots" description="Blast off! +5 Bombs" bombs="5" gfx="collectibles_004_blasting_boots.png" quality="3" tags="offensive"/>
 	<passive id="4" name="Thunder Bombs" achievement="Thunder Bombs" description="Shocking blast + full charge" bombs="5" gfx="collectibles_005_thunder_bombs.png" quality="2" tags="offensive"/>
-	<familiar id="5" name="Lot Baby" achievement="Lot Baby" description="Loyal companion" gfx="collectibles_006_lot_baby.png" quality="2" tags="baby summonable monstermanual offensive"/>
 	<familiar id="6" name="Salty Baby" achievement="Salty Baby" description="Shaky friend" gfx="collectibles_007_salty_baby.png" quality="0" tags="baby summonable monstermanual offensive"/>
 	<familiar id="7" name="Pawn Baby" achievement="Pawn Baby" description="Search En passant" gfx="collectibles_008_pawn_baby.png" quality="1" tags="baby summonable monstermanual offensive"/>
     <passive id="8" name="Red Hood" achievement="Red Hood" description="Lycanthropy" gfx="collectibles_009_red_hood.png" quality="3" tags="offensive"/>
-	<passive id="11" name="Blank Item" gfx="collectibles_012_blank.png" achievement="Blank" description="Watch your step" quality="2" tags="offensive summonable" />
 
 	<!-- Active Items -->
 	<active id="9" name="Salt Shaker" achievement="Salt Shaker" description="Keeps evil away" gfx="collectibles_010_salt_shaker.png" shopprice="10" quality="1" maxcharges="2" tags="offensive"/>

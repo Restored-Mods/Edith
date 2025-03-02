@@ -1,5 +1,5 @@
 
-EdithCompliance = RegisterMod("Edith", 1)
+EdithRestored = RegisterMod("Edith", 1)
 
 local LOCAL_TSIL = require("lua.extraLibs.loi.TSIL")
 LOCAL_TSIL.Init("lua.extraLibs.loi")
@@ -26,11 +26,9 @@ include("lua.items.active.GorgonMask.main")
 include("lua.items.active.SaltShaker.main")
 
 --passive
-include("lua.items.passive.BreathMints.main")
 include("lua.items.passive.Lithium.main")
 include("lua.items.passive.Sodom.main")
 include("lua.items.passive.BlastingBoots.main")
-include("lua.items.passive.LotBaby.main")
 include("lua.items.passive.SaltyBaby.main")
 include("lua.items.passive.PawnBaby.main")
 include("lua.items.passive.ThunderBombs.main")
@@ -54,17 +52,17 @@ include("lua.mod_compat.MiniMapiItems.MiniMapiItems")
 include("lua.items.funny")
 
 if StageAPI and StageAPI.Loaded then
-    StageAPI.AddPlayerGraphicsInfo(EdithCompliance.Enums.PlayerType.EDITH, {
-        Name = "gfx_cedith/ui/boss/playername_Edith.png",
-        Portrait = "gfx_cedith/ui/boss/playerportrait_Edith_A.png",
+    StageAPI.AddPlayerGraphicsInfo(EdithRestored.Enums.PlayerType.EDITH, {
+        Name = "gfx_redith/ui/boss/playername_Edith.png",
+        Portrait = "gfx_redith/ui/boss/playerportrait_Edith_A.png",
         NoShake = false
     })
 
-    --[[StageAPI.AddPlayerGraphicsInfo(EdithCompliance.Enums.PlayerType.EDITH_B, {
-        Name = "gfx_cedith/ui/boss/playername_Edith.png",
-        Portrait = "gfx_cedith/ui/boss/playerportrait_Edith_B.png",
+    --[[StageAPI.AddPlayerGraphicsInfo(EdithRestored.Enums.PlayerType.EDITH_B, {
+        Name = "gfx_redith/ui/boss/playername_Edith.png",
+        Portrait = "gfx_redith/ui/boss/playerportrait_Edith_B.png",
         NoShake = false
     })]]
 end
 
-print("TC Edith mod loaded'")
+print("Edith Restored loaded'")

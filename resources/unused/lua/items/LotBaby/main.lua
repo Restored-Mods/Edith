@@ -1,17 +1,17 @@
 local LotBaby = {}
 local Helpers = include("lua.helpers.Helpers")
 
-local lotBabyDesc = Isaac.GetItemConfig():GetCollectible(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LOT_BABY)
+local lotBabyDesc = Isaac.GetItemConfig():GetCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LOT_BABY)
 local floatDir = {[Direction.NO_DIRECTION] = "Down", [Direction.UP] = "Up", [Direction.DOWN] = "Down", [Direction.LEFT] = "Side", [Direction.RIGHT] = "Side"}
 local vecDir = {[Direction.NO_DIRECTION] = Vector(0, 0), [Direction.UP] = Vector(0, -1), [Direction.DOWN] = Vector(0, 1), [Direction.LEFT] = Vector(-1, 0),[Direction.RIGHT] = Vector(1, 0)}
 
 ---@param player EntityPlayer
 ---@param cache CacheFlag | integer
 function LotBaby:Cache(player, cache)
-    local numFamiliars = player:GetCollectibleNum(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LOT_BABY) + player:GetEffects():GetCollectibleEffectNum(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LOT_BABY)
-	player:CheckFamiliar(EdithCompliance.Enums.Familiars.LOT_BABY.Variant, numFamiliars, player:GetCollectibleRNG(EdithCompliance.Enums.CollectibleType.COLLECTIBLE_LOT_BABY), lotBabyDesc, EdithCompliance.Enums.Familiars.LOT_BABY.SubType)
+    local numFamiliars = player:GetCollectibleNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LOT_BABY) + player:GetEffects():GetCollectibleEffectNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LOT_BABY)
+	player:CheckFamiliar(EdithRestored.Enums.Familiars.LOT_BABY.Variant, numFamiliars, player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LOT_BABY), lotBabyDesc, EdithRestored.Enums.Familiars.LOT_BABY.SubType)
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, LotBaby.Cache, CacheFlag.CACHE_FAMILIARS)
+EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, LotBaby.Cache, CacheFlag.CACHE_FAMILIARS)
 
 ---@param familiar EntityFamiliar
 function LotBaby:Init(familiar)
@@ -20,15 +20,15 @@ function LotBaby:Init(familiar)
     familiar:RemoveFromFollowers()
     familiar:AddToDelayed()
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, LotBaby.Init, EdithCompliance.Enums.Familiars.LOT_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, LotBaby.Init, EdithRestored.Enums.Familiars.LOT_BABY.Variant)
 
 function LotBaby:NewRoom()
-    for _, lot in ipairs(Isaac.FindByType(EntityType.ENTITY_FAMILIAR, EdithCompliance.Enums.Familiars.LOT_BABY.Variant)) do
+    for _, lot in ipairs(Isaac.FindByType(EntityType.ENTITY_FAMILIAR, EdithRestored.Enums.Familiars.LOT_BABY.Variant)) do
         lot = lot:ToFamiliar()
         lot:SetMoveDelayNum(-1)
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, LotBaby.NewRoom)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, LotBaby.NewRoom)
 
 ---@param familiar EntityFamiliar
 function LotBaby:Update(familiar)
@@ -95,7 +95,7 @@ function LotBaby:Update(familiar)
     end
     familiar:MoveDelayed(20)
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, LotBaby.Update, EdithCompliance.Enums.Familiars.LOT_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, LotBaby.Update, EdithRestored.Enums.Familiars.LOT_BABY.Variant)
 
 function LotBaby:NPCFearApplyCooldown(npc)
     local data = Helpers.GetData(npc)
@@ -106,4 +106,4 @@ function LotBaby:NPCFearApplyCooldown(npc)
         end
     end
 end
-EdithCompliance:AddCallback(ModCallbacks.MC_NPC_UPDATE, LotBaby.NPCFearApplyCooldown)
+EdithRestored:AddCallback(ModCallbacks.MC_NPC_UPDATE, LotBaby.NPCFearApplyCooldown)
