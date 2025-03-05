@@ -1,11 +1,13 @@
 local pgd = Isaac.GetPersistentGameData()
 
 local function DoShowBlacklist()
-	for idx, collectible in pairs(EdithRestored.Enums.CollectibleType) do
-		local collectibleConf = Isaac.GetItemConfig():GetCollectible(collectible)
-		if collectibleConf then
-			if collectibleConf.AchievementID == -1 or pgd:Unlocked(collectibleConf.AchievementID) then
-				return true
+	if Isaac.IsInGame() then
+		for idx, collectible in pairs(EdithRestored.Enums.CollectibleType) do
+			local collectibleConf = Isaac.GetItemConfig():GetCollectible(collectible)
+			if collectibleConf then
+				if collectibleConf.AchievementID == -1 or pgd:Unlocked(collectibleConf.AchievementID) then
+					return true
+				end
 			end
 		end
 	end
