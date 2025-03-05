@@ -42,9 +42,6 @@
 	<sound name="Lithium Salts">
 		<sample weight="1" path="redith/funny/Lithium Salts.wav" />
 	</sound>
-	<sound name="Lot Baby">
-		<sample weight="1" path="redith/funny/Lot Baby.wav" />
-	</sound>
 	<sound name="Pawn Baby">
 		<sample weight="1" path="redith/funny/Pawn Baby.wav" />
 	</sound>

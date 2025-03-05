@@ -43,7 +43,6 @@ function Unlock:SaltyRevive(player)
     if player:HasTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK) and
     not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) then
         Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH)
-        Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Misc.SALT_ROCK)
         player:ChangePlayerType(EdithRestored.Enums.PlayerType.EDITH)
         player:TryRemoveTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK)
         Game():StartRoomTransition(Game():GetLevel():GetPreviousRoomIndex(), Direction.NO_DIRECTION)
@@ -55,9 +54,6 @@ EdithRestored:AddCallback(ModCallbacks.MC_TRIGGER_PLAYER_DEATH_POST_CHECK_REVIVE
 function Unlock:DoubleCheck(cont)
     if not cont and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) then
         Game():GetItemPool():ResetTrinkets()
-    end
-    if Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) then
-        Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Misc.SALT_ROCK)
     end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Unlock.DoubleCheck)

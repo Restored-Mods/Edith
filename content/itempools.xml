@@ -3,7 +3,6 @@
 		<Item Name="Thunder Bombs" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Gorgon Mask" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Red Hood" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="Lot Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Blasting Boots" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Salty Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Pawn Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
@@ -35,7 +34,6 @@
 	<Pool Name="greedTreasure">
 		<Item Name="Thunder Bombs" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Red Hood" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="Lot Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Gorgon Mask" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Salty Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>		
 	</Pool>

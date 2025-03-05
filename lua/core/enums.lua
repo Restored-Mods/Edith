@@ -79,7 +79,7 @@ Enums.PlayerType =
 
 Enums.CollectibleType = 
 					{
-						COLLECTIBLE_BREATH_MINTS = Isaac.GetItemIdByName("Breath Mints"),
+						--COLLECTIBLE_BREATH_MINTS = Isaac.GetItemIdByName("Breath Mints"),
 						COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("Lithium Salts"),
 						COLLECTIBLE_SODOM = Isaac.GetItemIdByName("Sodom"),
 						COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),
@@ -182,21 +182,21 @@ Enums.Achievements.CompletionMarks = {
 	BLASTING_BOOTS =  Isaac.GetAchievementIdByName("Blasting Boots"),
 	SALTY_BABY =  Isaac.GetAchievementIdByName("Salty Baby"),
 	SALT_SHAKER =  Isaac.GetAchievementIdByName("Salt Shaker"),
+	CHUNK_OF_AMBER =  Isaac.GetAchievementIdByName("Chunk of Amber"),
 	THUNDER_BOMBS =  Isaac.GetAchievementIdByName("Thunder Bombs"),
 	SMELLING_SALTS =  Isaac.GetAchievementIdByName("Smelling Salts"),
 	PAWN_BABY =  Isaac.GetAchievementIdByName("Pawn Baby"),
 	GORGON_MASK =  Isaac.GetAchievementIdByName("Gorgon Mask"),
 	RED_HOOD =  Isaac.GetAchievementIdByName("Red Hood"),
 	LITHIUM =  Isaac.GetAchievementIdByName("Lithium Salts"),
+	SHARPNEL_BOMBS = Isaac.GetAchievementIdByName("Sharpnel Bombs"),
 	SODOM =  Isaac.GetAchievementIdByName("Sodom"),
-	LOT_BABY =  Isaac.GetAchievementIdByName("Lot Baby"),
-
-	-- Tainted Unlocks
+	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),
 	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
-	REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
+	--REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
 }
 Enums.Achievements.Misc = {
-	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock")
+	
 }
 -- Challenges
 Enums.Achievements.Challenges = {
@@ -207,16 +207,16 @@ Enums.Achievements.Marks = {
 	ASide = {
 		[CompletionType.MOMS_HEART] = Enums.Achievements.CompletionMarks.SALTY_BABY,
 		[CompletionType.ISAAC] = Enums.Achievements.CompletionMarks.SALT_SHAKER,
-		[CompletionType.SATAN] = Enums.Achievements.CompletionMarks.SALTY_BABY,
+		[CompletionType.SATAN] = Enums.Achievements.CompletionMarks.CHUNK_OF_AMBER,
 		[CompletionType.BOSS_RUSH] = Enums.Achievements.CompletionMarks.RED_HOOD,
 		[CompletionType.BLUE_BABY] = Enums.Achievements.CompletionMarks.THUNDER_BOMBS,
 		[CompletionType.LAMB] = Enums.Achievements.CompletionMarks.SMELLING_SALTS,
-		[CompletionType.MEGA_SATAN] = Enums.Achievements.CompletionMarks.PAWN_BABY,
+		[CompletionType.MEGA_SATAN] = Enums.Achievements.CompletionMarks.SALT_ROCK,
 		[CompletionType.HUSH] = Enums.Achievements.CompletionMarks.BLASTING_BOOTS,
-		[CompletionType.ULTRA_GREED] = Enums.Achievements.CompletionMarks.SALTY_BABY,
+		[CompletionType.ULTRA_GREED] = Enums.Achievements.CompletionMarks.PAWN_BABY,
 		[CompletionType.ULTRA_GREEDIER] = Enums.Achievements.CompletionMarks.GORGON_MASK,
 		[CompletionType.DELIRIUM] = Enums.Achievements.CompletionMarks.LITHIUM,
-		[CompletionType.MOTHER] = Enums.Achievements.CompletionMarks.SALTY_BABY,
+		[CompletionType.MOTHER] = Enums.Achievements.CompletionMarks.SHARPNEL_BOMBS,
 		[CompletionType.BEAST] = Enums.Achievements.CompletionMarks.SODOM,
 	}
 }

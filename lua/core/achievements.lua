@@ -32,7 +32,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_PRE_COMPLETION_EVENT, function(_, mark
 			Helpers.UnlockAchievement(marksA[mark])
 		end
 		if Isaac.AllMarksFilled(EdithRestored.Enums.PlayerType.EDITH) == 2 then
-			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.CompletionMarks.LOT_BABY)
+			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
 		end
 	end
 end)

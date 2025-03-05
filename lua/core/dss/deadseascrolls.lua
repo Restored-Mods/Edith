@@ -2,6 +2,8 @@ local DSSModName = "Dead Sea Scrolls (Edith Restored)"
 
 local DSSCoreVersion = 7
 
+local imguiMenu = include("lua.core.dss.imgui")
+
 local modMenuName = "Edith Restored"
 -- Those functions were taken from Balance Mod, just to make things easier 
 	local BREAK_LINE = {str = "", fsize = 1, nosel = true}
@@ -91,6 +93,18 @@ function MenuProvider.SaveMenusPoppedUp(var)
     GetDSSOptions().MenusPoppedUp = var
 end
 
+local function ShowBlackListButton()
+	for idx, collectible in pairs(EdithRestored.Enums.CollectibleType) do
+        print(idx)
+		local collectibleConf = Isaac.GetItemConfig():GetCollectible(collectible)
+		if collectibleConf then
+			if collectibleConf.AchievementID == -1 or Isaac.GetPersistentGameData():Unlocked(collectibleConf.AchievementID) then
+				return true
+			end
+		end
+	end
+	return false
+end
 local DSSInitializerFunction = include("lua.core.dss.dssmenucore")
 
 -- This function returns a table that some useful functions and defaults are stored on
@@ -156,6 +170,8 @@ local function InitDisableMenu()
         itemSprite:LoadGraphics()
         itemSprite:SetFrame("Idle", 0)
 
+        local isUnlocked = collectible.AchievementID == -1 or Isaac.GetPersistentGameData():Unlocked(collectible.AchievementID)
+        
         local collectibleOption = {
             str = string.lower(collectible.Name),
 
@@ -202,10 +218,9 @@ local function InitDisableMenu()
                 if var == 2 then
                     table.insert(disabledItems, GetItemsEnum(collectible.ID))
                 end
-                local elemName = string.gsub(collectible.Name, " ", "").."BlackList"
                 TSIL.SaveManager.SetPersistentVariable(EdithRestored, "DisabledItems", disabledItems)
             end,
-
+            display = isUnlocked,
             -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
             tooltip = {
                 buttons = {
@@ -331,7 +346,7 @@ local edithdirectory = {
             -- If using the "openmenu" action, "dest" will pick which item of that menu you are sent to.
             {str = 'settings', dest = 'settings'},
 
-            {str = 'item toggles', dest = 'items'},
+            {str = 'item toggles', dest = 'items', displayif = ShowBlackListButton},
             -- A few default buttons are provided in the table returned from DSSInitializerFunction.
             -- They're buttons that handle generic menu features, like changelogs, palette, and the menu opening keybind
             -- They'll only be visible in your menu if your menu is the only mod menu active; otherwise, they'll show up in the outermost Dead Sea Scrolls menu that lets you pick which mod menu to open.
@@ -339,7 +354,6 @@ local edithdirectory = {
             dssmod.changelogsButton,
 
         },
-
         -- A tooltip can be set either on an item or a button, and will display in the corner of the menu while a button is selected or the item is visible with no tooltip selected from a button.
         -- The object returned from DSSInitializerFunction contains a default tooltip that describes how to open the menu, at "menuOpenToolTip"
         -- It's generally a good idea to use that one as a default!
@@ -347,8 +361,7 @@ local edithdirectory = {
     },
     items = {
         title = 'item toggles',
-
-        buttons = InitDisableMenu()
+        buttons = InitDisableMenu(),
     },
     targetcolor = {
         title = 'target color',
@@ -523,8 +536,6 @@ local function CloseEdithDSSMenu(tbl, fullClose, noAnimate)
     FreezeGame(true)
     dssmod.closeMenu(tbl, fullClose, noAnimate)
 end
-
-include("lua.core.dss.imgui")
 
 --#endregion
 DeadSeaScrollsMenu.AddMenu(modMenuName, {

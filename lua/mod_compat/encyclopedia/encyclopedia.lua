@@ -3,21 +3,21 @@ if not Encyclopedia then
 end
 
 local Wiki = require("lua.mod_compat.encyclopedia.wiki")
-
+local classname = "Restored Edith"
 -- Items
 
 --Breath Mints
-Encyclopedia.AddItem({
+--[[Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS,
 	WikiDesc = Wiki.Peppermint,
-})
+})]]
 
 --Salt Shaker
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER,
 	WikiDesc = Wiki.SaltShaker,
 	Pools = {
@@ -29,7 +29,7 @@ Encyclopedia.AddItem({
 --Gorgon Mask
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK,
 	WikiDesc = Wiki.GorgonMask,
 	Pools = {
@@ -43,7 +43,7 @@ Encyclopedia.AddItem({
 --Thunder Bombs
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS,
 	WikiDesc = Wiki.ThunderBombs,
 	Pools = {
@@ -58,7 +58,7 @@ Encyclopedia.AddItem({
 --Lithium Salts
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM,
 	WikiDesc = Wiki.LithiumSalts,
 	Pools = {
@@ -73,7 +73,7 @@ Encyclopedia.AddItem({
 --Blasting Boots
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS,
 	WikiDesc = Wiki.BlastingBoots,
 	Pools = {
@@ -85,9 +85,9 @@ Encyclopedia.AddItem({
 })
 
 --Lot Baby
-Encyclopedia.AddItem({
+--[[Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_LOT_BABY,
 	WikiDesc = Wiki.LotBaby,
 	Pools = {
@@ -95,12 +95,12 @@ Encyclopedia.AddItem({
 		Encyclopedia.ItemPools.POOL_SHOP,
 		Encyclopedia.ItemPools.POOL_BABY_SHOP
 	},
-})
+})]]
 
 --Pawn Baby
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY,
 	WikiDesc = Wiki.PawnBaby,
 	Pools = {
@@ -116,7 +116,7 @@ Encyclopedia.AddItem({
 --Salty Baby
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY,
 	WikiDesc = Wiki.SaltyBaby,
 	Pools = {
@@ -130,7 +130,7 @@ Encyclopedia.AddItem({
 --Sodom
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM,
 	WikiDesc = Wiki.Sodom,
 	Pools = {
@@ -141,7 +141,7 @@ Encyclopedia.AddItem({
 
 --[[Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL,
 	WikiDesc = Wiki.TheChisel,
 	Pools = {
@@ -155,7 +155,7 @@ Encyclopedia.AddItem({
 --Pepper grinder
 Encyclopedia.AddTrinket({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER,
 	WikiDesc = Wiki.PepperGrinder,
 })
@@ -163,7 +163,7 @@ Encyclopedia.AddTrinket({
 --Smelling Salts
 Encyclopedia.AddTrinket({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS,
 	WikiDesc = Wiki.SmellingSalts,
 })
@@ -171,7 +171,7 @@ Encyclopedia.AddTrinket({
 --Salt Rock
 Encyclopedia.AddTrinket({
 	ModName = "RestoredEdith",
-	Class = "RestoredEdith",
+	Class = classname,
 	ID = EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK,
 	WikiDesc = Wiki.SaltRock,
 })

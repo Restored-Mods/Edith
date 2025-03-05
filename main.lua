@@ -12,6 +12,7 @@ include("lua.core.enums")
 include("lua.core.globals")
 require("lua.core.achievements")
 include("lua.core.save_manager")
+include("lua.core.dss.imgui").Init()
 include("lua.core.dss.deadseascrolls")
 include("lua.core.BlockDisabledItems")
 

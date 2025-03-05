@@ -8,18 +8,18 @@
 	<achievement name="Red Hood" text="Edith Boss Rush" gfx="achievement_redhood.png" />
 	<achievement name="Salty Baby" text="Edith Mom's Heart" gfx="achievement_saltybaby.png" />
 	<achievement name="Salt Shaker" text="Edith Isaac" gfx="achievement_saltshaker.png" />
-	<achievement name="Blank" text="Edith Satan" gfx="achievement_.png" />
+	<achievement name="Chunk of Amber" text="Edith Satan" gfx="achievement_.png" />
 	<achievement name="Thunder Bombs" text="Edith Blue Baby" gfx="achievement_thunderbombs.png" />
 	<achievement name="Smelling Salts" text="Edith Lamb" gfx="achievement_smellingsalts.png" />
-	<achievement name="Pawn Baby" text="Edith Mega Satan" gfx="achievement_pawnbaby.png" />
-	<achievement name="" text="Edith Ultra Greed" gfx="achievement_.png" />
+	<achievement name="Pawn Baby" text="Edith Ultra Greed" gfx="achievement_pawnbaby.png" />
 	<achievement name="Gorgon Mask" text="Edith Ultra Greedier" gfx="achievement_gorgonmask.png" />
 	<achievement name="Blasting Boots" text="Edith Hush" gfx="achievement_blastingboots.png" />
 	<achievement name="Lithium Salts" text="Edith Delirium" gfx="achievement_lithium.png" />
-	<achievement name="" text="Edith Mother Witness" gfx="achievement_.png" />
+	<achievement name="Sharpnel Bombs" text="Edith Mother Witness" gfx="achievement_.png" />
 	<achievement name="Sodom" text="Edith Beast" gfx="achievement_sodom.png" />
+	<achievement name="Soul of Edith" text="Edith Full Completion" gfx="achievement_soulofedith.png" />
+	<!-- Unused
 	<achievement name="Lot Baby" text="Edith Full Completion" gfx="achievement_lotbaby.png" />
-	<!-- bside unlocks -->
-	<achievement name="Soul of Edith" text="Edith Boss Rush Hush" gfx="achievement_soulofedith.png" />
 	<achievement name="Reverse Prudence" text="Edith Ultra Greedier" gfx="achievement_revprudence.png" />
+	-->
 </achievements>
