@@ -2,7 +2,7 @@ local DSSModName = "Dead Sea Scrolls (Edith Restored)"
 
 local DSSCoreVersion = 7
 
-local imguiMenu = include("lua.core.dss.imgui")
+local pgd = Isaac.GetPersistentGameData()
 
 local modMenuName = "Edith Restored"
 -- Those functions were taken from Balance Mod, just to make things easier 
@@ -95,10 +95,9 @@ end
 
 local function ShowBlackListButton()
 	for idx, collectible in pairs(EdithRestored.Enums.CollectibleType) do
-        print(idx)
 		local collectibleConf = Isaac.GetItemConfig():GetCollectible(collectible)
 		if collectibleConf then
-			if collectibleConf.AchievementID == -1 or Isaac.GetPersistentGameData():Unlocked(collectibleConf.AchievementID) then
+			if collectibleConf.AchievementID == -1 or pgd:Unlocked(collectibleConf.AchievementID) then
 				return true
 			end
 		end
@@ -169,8 +168,6 @@ local function InitDisableMenu()
         itemSprite:ReplaceSpritesheet(0, collectible.GfxFileName)
         itemSprite:LoadGraphics()
         itemSprite:SetFrame("Idle", 0)
-
-        local isUnlocked = collectible.AchievementID == -1 or Isaac.GetPersistentGameData():Unlocked(collectible.AchievementID)
         
         local collectibleOption = {
             str = string.lower(collectible.Name),
@@ -220,7 +217,7 @@ local function InitDisableMenu()
                 end
                 TSIL.SaveManager.SetPersistentVariable(EdithRestored, "DisabledItems", disabledItems)
             end,
-            display = isUnlocked,
+            displayif = function() return collectible.AchievementID == -1 or pgd:Unlocked(collectible.AchievementID) end,
             -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
             tooltip = {
                 buttons = {
@@ -346,7 +343,7 @@ local edithdirectory = {
             -- If using the "openmenu" action, "dest" will pick which item of that menu you are sent to.
             {str = 'settings', dest = 'settings'},
 
-            {str = 'item toggles', dest = 'items', displayif = ShowBlackListButton},
+            {str = 'item toggles', dest = 'items', displayif = function() return ShowBlackListButton() end},
             -- A few default buttons are provided in the table returned from DSSInitializerFunction.
             -- They're buttons that handle generic menu features, like changelogs, palette, and the menu opening keybind
             -- They'll only be visible in your menu if your menu is the only mod menu active; otherwise, they'll show up in the outermost Dead Sea Scrolls menu that lets you pick which mod menu to open.

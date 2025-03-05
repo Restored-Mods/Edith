@@ -1,4 +1,3 @@
-local imgui = {}
 local pgd = Isaac.GetPersistentGameData()
 
 local function DoShowBlacklist()
@@ -13,219 +12,11 @@ local function DoShowBlacklist()
 	return false
 end
 
-function imgui.Init()
-	if not ImGui.ElementExists("RestoredMods") then
-		ImGui.CreateMenu("RestoredMods", "Restored Mods")
-	end
-
-	if not ImGui.ElementExists("EdithRestored") then
-		ImGui.AddElement("RestoredMods", "EdithRestored", ImGuiElement.Menu, "Edith")
-	end
-
-	if ImGui.ElementExists("edithMenuSettings") then
-		ImGui.RemoveElement("edithMenuSettings")
-	end
-
-	ImGui.AddElement("EdithRestored", "edithMenuSettings", ImGuiElement.MenuItem, "\u{f013} Settings")
-
-	if not ImGui.ElementExists("edithWindowSettings") then
-		ImGui.CreateWindow("edithWindowSettings", "Settings")
-	end
-
-	ImGui.LinkWindowToElement("edithWindowSettings", "edithMenuSettings")
-
-	ImGui.SetWindowSize("edithWindowSettings", 800, 350)
-
-	if ImGui.ElementExists("edithPushToSlide") then
-		ImGui.RemoveElement("edithPushToSlide")
-	end
-
-	ImGui.AddCheckbox("edithWindowSettings", "edithPushToSlide", "Slide when holding button", function(val)
-		TSIL.SaveManager.SetPersistentVariable(EdithRestored, "AllowHolding", val and 1 or 2)
-		TSIL.SaveManager.SaveToDisk()
-	end, true)
-
-	if ImGui.ElementExists("edithAllowBombs") then
-		ImGui.RemoveElement("edithAllowBombs")
-	end
-
-	ImGui.AddCheckbox("edithWindowSettings", "edithAllowBombs", "Edith can use bombs", function(val)
-		TSIL.SaveManager.SetPersistentVariable(EdithRestored, "OnlyStomps", index + 1)
-		TSIL.SaveManager.SaveToDisk()
-	end, true)
-
-	if not ImGui.ElementExists("edithTargetColorRGB") then
-		ImGui.AddInputColor(
-			"edithWindowSettings",
-			"edithTargetColorRGB",
-			"\u{f1fc} Edith's Target Color",
-			function(r, g, b)
-				local targetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
-				targetColor.R = math.floor(r * 255)
-				targetColor.G = math.floor(g * 255)
-				targetColor.B = math.floor(b * 255)
-				TSIL.SaveManager.SetPersistentVariable(EdithRestored, "TargetColor", targetColor)
-				TSIL.SaveManager.SaveToDisk()
-			end,
-			155 / 255,
-			0,
-			0
-		)
-	end
-
-	if ImGui.ElementExists("edithAlwaysShowMoonPhase") then
-		ImGui.RemoveElement("edithAlwaysShowMoonPhase")
-	end
-
-	ImGui.AddCheckbox("edithWindowSettings", "edithAlwaysShowMoonPhase", "Always show moon phase", function(val)
-		local newOption = val and 1 or 2
-		TSIL.SaveManager.SetPersistentVariable(EdithRestored, "AlwaysShowMoonPhase", newOption)
-		TSIL.SaveManager.SaveToDisk()
-	end, true)
-
-	ImGui.AddCallback("edithWindowSettings", ImGuiCallback.Render, function()
-		ImGui.UpdateData(
-			"edithPushToSlide",
-			ImGuiData.Value,
-			TSIL.SaveManager.GetPersistentVariable(EdithRestored, "AllowHolding") == 1
-		)
-		ImGui.UpdateData(
-			"edithAllowBombs",
-			ImGuiData.Value,
-			TSIL.SaveManager.GetPersistentVariable(EdithRestored, "OnlyStomps") == 1
-		)
-		local rgb = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
-		ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, { rgb.R / 255, rgb.G / 255, rgb.B / 255 })
-		ImGui.UpdateData(
-			"edithAlwaysShowMoonPhase",
-			ImGuiData.Value,
-			TSIL.SaveManager.GetPersitentVariable(EdithRestored, "AlwaysShowMoonPhase") == 1
-		)
-	end)
-
-	if ImGui.ElementExists("edithMenuUnlocks") then
-		ImGui.RemoveElement("edithMenuUnlocks")
-	end
-
-	ImGui.AddElement("EdithRestored", "edithMenuUnlocks", ImGuiElement.MenuItem, "\u{f013} Unlocks")
-
-	if ImGui.ElementExists("edithWindowUnlocks") then
-		ImGui.RemoveWindow("edithWindowUnlocks")
-	end
-
-	ImGui.CreateWindow("edithWindowUnlocks", "Edith Unlocks")
-
-	ImGui.LinkWindowToElement("edithWindowUnlocks", "edithMenuUnlocks")
-
-	local marksA = EdithRestored.Enums.Achievements.Marks.ASide
-
-	local unlocksMarksA = {
-		[CompletionType.MOMS_HEART] = "Mom's Heart",
-		[CompletionType.ISAAC] = "Isaac",
-		[CompletionType.SATAN] = "Satan",
-		[CompletionType.BOSS_RUSH] = "Boss Rush",
-		[CompletionType.BLUE_BABY] = "???",
-		[CompletionType.LAMB] = "Lamb",
-		[CompletionType.MEGA_SATAN] = "Mega Satan",
-		[CompletionType.HUSH] = "Hush",
-		[CompletionType.ULTRA_GREED] = "Ultra Greed",
-		[CompletionType.ULTRA_GREEDIER] = "Ultra Greedier",
-		[CompletionType.DELIRIUM] = "Delirium",
-		[CompletionType.MOTHER] = "Mother",
-		[CompletionType.BEAST] = "Beast",
-	}
-
-	ImGui.AddTabBar("edithWindowUnlocks", "edithMarks")
-	ImGui.AddTab("edithMarks", "edithUnlocksA", "Edith")
-
-	for key, val in pairs(unlocksMarksA) do
-		if ImGui.ElementExists("edithMark" .. key) then
-			ImGui.RemoveElement("edithMark" .. key)
-		end
-
-		ImGui.AddCombobox("edithUnlocksA", "edithMark" .. key, val, function(index, val)
-			if index == 0 then
-				Isaac.ExecuteCommand("lockachievement " .. marksA[key])
-				Isaac.ExecuteCommand("lockachievement " .. marksA[key])
-			end
-			Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key, index)
-			if index > 0 then
-				if not pgd:Unlocked(EdithRestored.Enums.Achievements.Marks.ASide[key]) then
-					Isaac.ExecuteCommand("achievement " .. marksA[key])
-				end
-				if
-					Isaac.AllMarksFilled(EdithRestored.Enums.PlayerType.EDITH) > 0
-					and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-				then
-					Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-				end
-			end
-			imgui.ReInitBlackList()
-		end, { "None", "Normal", "Hard" }, 0, true)
-		ImGui.AddCallback("edithMark" .. key, ImGuiCallback.Render, function()
-			ImGui.UpdateData(
-				"edithMark" .. key,
-				ImGuiData.Value,
-				Isaac.GetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key)
-			)
-		end)
-	end
-
-	ImGui.AddCombobox("edithUnlocksA", "edithMarkAll", "All Marks", function(index, val)
-		if index < 1 then
-			Isaac.ExecuteCommand("lockachievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-		elseif not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH) then
-			Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-			for key, val in pairs(unlocksMarksA) do
-				if not pgd:Unlocked(EdithRestored.Enums.Achievements.Marks.ASide[key]) then
-					Isaac.ExecuteCommand("achievement " .. marksA[key])
-					Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key, 1)
-				end
-			end
-			imgui.ReInitBlackList()
-		end
-	end, { "None", "Unlocked" }, 0, true)
-
-	ImGui.AddCallback("edithMarkAll", ImGuiCallback.Render, function()
-		local unlocked = pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-		ImGui.UpdateData("edithMarkAll", ImGuiData.Value, unlocked and 1 or 0)
-	end)
-
-	ImGui.SetWindowSize("edithWindowUnlocks", 800, 650)
-
-	EdithRestored:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, function(_, slot, selected)
-		if selected then
-			imgui.ReInitBlackList()
-		end
-	end)
-end
-
-function imgui.ReInitBlackList()
-
-	if ImGui.ElementExists("edithMenuBlacklistItems") then
-		ImGui.RemoveElement("edithMenuBlacklistItems")
-	end
+local function ReOrederItems()
+	local orderedItems = {}
 
 	local itemConfig = Isaac.GetItemConfig()
 	---@type ItemConfigItem[]
-
-	if not DoShowBlacklist() then
-		if ImGui.ElementExists("edithWindowBlacklistItems") then
-			ImGui.SetVisible("edithWindowBlacklistItems", false)
-			return
-		end
-	end
-	ImGui.AddElement("EdithRestored", "edithMenuBlacklistItems", ImGuiElement.MenuItem, "\u{f05e} Items Blacklist")
-
-	if not ImGui.ElementExists("edithWindowBlacklistItems") then
-		ImGui.CreateWindow("edithWindowBlacklistItems", "Items Blacklist")
-	end
-
-	ImGui.LinkWindowToElement("edithWindowBlacklistItems", "edithMenuBlacklistItems")
-
-	ImGui.SetWindowSize("edithWindowBlacklistItems", 600, #EdithRestored.Enums.CollectibleType * 100)
-
-	local orderedItems = {}
 
 	for idx, collectible in pairs(EdithRestored.Enums.CollectibleType) do
 		local collectibleConf = itemConfig:GetCollectible(collectible)
@@ -243,14 +34,15 @@ function imgui.ReInitBlackList()
 		end
 		return ""
 	end
+	local i = 0
 	for _, collectible in pairs(orderedItems) do
 		local elemName = string.gsub(collectible.Name, " ", "") .. "BlackList"
 		if ImGui.ElementExists(elemName) then
 			ImGui.RemoveElement(elemName)
 		end
 		if pgd:Unlocked(collectible.AchievementID) then
+			i = i + 1
 			ImGui.AddCheckbox("edithWindowBlacklistItems", elemName, collectible.Name, function(val)
-				--print("that label changed", index, val)
 				if not TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems") then
 					TSIL.SaveManager.SetPersistentVariable(EdithRestored, "DisabledItems", {})
 				end
@@ -277,13 +69,227 @@ function imgui.ReInitBlackList()
 					ipairs(TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems"))
 				do
 					if disabledItem == GetItemsEnum(collectible.ID) then
-						val = false
-						break
+						val = falsebreak
 					end
 				end
 				ImGui.UpdateData(elemName, ImGuiData.Value, val)
 			end)
 		end
 	end
+	ImGui.SetWindowSize("edithWindowBlacklistItems", 600, 10 + i * 90 + (1 - i) * 44)
 end
-return imgui
+
+local function ReInitBlackList()
+	if ImGui.ElementExists("edithMenuBlacklistItems") then
+		ImGui.RemoveElement("edithMenuBlacklistItems")
+	end
+
+	ImGui.AddElement("EdithRestored", "edithMenuBlacklistItems", ImGuiElement.MenuItem, "\u{f05e} Items Blacklist")
+
+	if not ImGui.ElementExists("edithWindowBlacklistItems") then
+		ImGui.CreateWindow("edithWindowBlacklistItems", "Items Blacklist")
+	end
+
+	ImGui.LinkWindowToElement("edithWindowBlacklistItems", "edithMenuBlacklistItems")
+
+	ReOrederItems()
+end
+
+local function UpdateBlackListMenu()
+	if ImGui.ElementExists("edithMenuBlacklistItems") then
+		ReOrederItems()
+	else
+		ReInitBlackList()
+	end
+end
+
+
+if not ImGui.ElementExists("RestoredMods") then
+	ImGui.CreateMenu("RestoredMods", "Restored Mods")
+end
+
+if not ImGui.ElementExists("EdithRestored") then
+	ImGui.AddElement("RestoredMods", "EdithRestored", ImGuiElement.Menu, "Edith")
+end
+
+if ImGui.ElementExists("edithMenuSettings") then
+	ImGui.RemoveElement("edithMenuSettings")
+end
+
+ImGui.AddElement("EdithRestored", "edithMenuSettings", ImGuiElement.MenuItem, "\u{f013} Settings")
+
+if not ImGui.ElementExists("edithWindowSettings") then
+	ImGui.CreateWindow("edithWindowSettings", "Settings")
+end
+
+ImGui.LinkWindowToElement("edithWindowSettings", "edithMenuSettings")
+
+ImGui.SetWindowSize("edithWindowSettings", 800, 350)
+
+if ImGui.ElementExists("edithPushToSlide") then
+	ImGui.RemoveElement("edithPushToSlide")
+end
+
+ImGui.AddCheckbox("edithWindowSettings", "edithPushToSlide", "Slide when holding button", function(val)
+	TSIL.SaveManager.SetPersistentVariable(EdithRestored, "AllowHolding", val and 1 or 2)
+	TSIL.SaveManager.SaveToDisk()
+end, true)
+
+if ImGui.ElementExists("edithAllowBombs") then
+	ImGui.RemoveElement("edithAllowBombs")
+end
+
+ImGui.AddCheckbox("edithWindowSettings", "edithAllowBombs", "Edith can use bombs", function(val)
+	TSIL.SaveManager.SetPersistentVariable(EdithRestored, "OnlyStomps", index + 1)
+	TSIL.SaveManager.SaveToDisk()
+end, true)
+
+if not ImGui.ElementExists("edithTargetColorRGB") then
+	ImGui.AddInputColor("edithWindowSettings", "edithTargetColorRGB", "\u{f1fc} Edith's Target Color", function(r, g, b)
+		local targetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
+		targetColor.R = math.floor(r * 255)
+		targetColor.G = math.floor(g * 255)
+		targetColor.B = math.floor(b * 255)
+		TSIL.SaveManager.SetPersistentVariable(EdithRestored, "TargetColor", targetColor)
+		TSIL.SaveManager.SaveToDisk()
+	end, 155 / 255, 0, 0)
+end
+
+if ImGui.ElementExists("edithAlwaysShowMoonPhase") then
+	ImGui.RemoveElement("edithAlwaysShowMoonPhase")
+end
+
+ImGui.AddCheckbox("edithWindowSettings", "edithAlwaysShowMoonPhase", "Always show moon phase", function(val)
+	local newOption = val and 1 or 2
+	TSIL.SaveManager.SetPersistentVariable(EdithRestored, "AlwaysShowMoonPhase", newOption)
+	TSIL.SaveManager.SaveToDisk()
+end, true)
+
+ImGui.AddCallback("edithWindowSettings", ImGuiCallback.Render, function()
+	ImGui.UpdateData(
+		"edithPushToSlide",
+		ImGuiData.Value,
+		TSIL.SaveManager.GetPersistentVariable(EdithRestored, "AllowHolding") == 1
+	)
+	ImGui.UpdateData(
+		"edithAllowBombs",
+		ImGuiData.Value,
+		TSIL.SaveManager.GetPersistentVariable(EdithRestored, "OnlyStomps") == 1
+	)
+	local rgb = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
+	ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, { rgb.R / 255, rgb.G / 255, rgb.B / 255 })
+	ImGui.UpdateData(
+		"edithAlwaysShowMoonPhase",
+		ImGuiData.Value,
+		TSIL.SaveManager.GetPersitentVariable(EdithRestored, "AlwaysShowMoonPhase") == 1
+	)
+end)
+
+if ImGui.ElementExists("edithMenuUnlocks") then
+	ImGui.RemoveElement("edithMenuUnlocks")
+end
+
+ImGui.AddElement("EdithRestored", "edithMenuUnlocks", ImGuiElement.MenuItem, "\u{f09c} Unlocks")
+
+if ImGui.ElementExists("edithWindowUnlocks") then
+	ImGui.RemoveWindow("edithWindowUnlocks")
+end
+
+ImGui.CreateWindow("edithWindowUnlocks", "Edith Unlocks")
+
+ImGui.LinkWindowToElement("edithWindowUnlocks", "edithMenuUnlocks")
+
+local marksA = EdithRestored.Enums.Achievements.Marks.ASide
+
+local unlocksMarksA = {
+	[CompletionType.MOMS_HEART] = "Mom's Heart",
+	[CompletionType.ISAAC] = "Isaac",
+	[CompletionType.SATAN] = "Satan",
+	[CompletionType.BOSS_RUSH] = "Boss Rush",
+	[CompletionType.BLUE_BABY] = "???",
+	[CompletionType.LAMB] = "Lamb",
+	[CompletionType.MEGA_SATAN] = "Mega Satan",
+	[CompletionType.HUSH] = "Hush",
+	[CompletionType.ULTRA_GREED] = "Ultra Greed",
+	[CompletionType.ULTRA_GREEDIER] = "Ultra Greedier",
+	[CompletionType.DELIRIUM] = "Delirium",
+	[CompletionType.MOTHER] = "Mother",
+	[CompletionType.BEAST] = "Beast",
+}
+
+ImGui.AddTabBar("edithWindowUnlocks", "edithMarks")
+ImGui.AddTab("edithMarks", "edithUnlocksA", "Edith")
+
+for key, val in pairs(unlocksMarksA) do
+	if ImGui.ElementExists("edithMark" .. key) then
+		ImGui.RemoveElement("edithMark" .. key)
+	end
+
+	ImGui.AddCombobox("edithUnlocksA", "edithMark" .. key, val, function(index, val)
+		if index == 0 then
+			Isaac.ExecuteCommand("lockachievement " .. marksA[key])
+			Isaac.ExecuteCommand("lockachievement " .. marksA[key])
+		end
+		Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key, index)
+		if index > 0 then
+			if not pgd:Unlocked(EdithRestored.Enums.Achievements.Marks.ASide[key]) then
+				Isaac.ExecuteCommand("achievement " .. marksA[key])
+			end
+			if
+				Isaac.AllMarksFilled(EdithRestored.Enums.PlayerType.EDITH) > 0
+				and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+			then
+				Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+			end
+		end
+		UpdateBlackListMenu()
+	end, { "None", "Normal", "Hard" }, 0, true)
+	ImGui.AddCallback("edithMark" .. key, ImGuiCallback.Render, function()
+		ImGui.UpdateData(
+			"edithMark" .. key,
+			ImGuiData.Value,
+			Isaac.GetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key)
+		)
+	end)
+end
+
+ImGui.AddCombobox("edithUnlocksA", "edithMarkAll", "All Marks", function(index, val)
+	if index < 1 then
+		Isaac.ExecuteCommand("lockachievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+	elseif not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH) then
+		Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+		for key, val in pairs(unlocksMarksA) do
+			if not pgd:Unlocked(EdithRestored.Enums.Achievements.Marks.ASide[key]) then
+				Isaac.ExecuteCommand("achievement " .. marksA[key])
+				Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key, 1)
+			end
+		end
+	end
+	UpdateBlackListMenu()
+end, { "None", "Unlocked" }, 0, true)
+
+ImGui.AddCallback("edithMarkAll", ImGuiCallback.Render, function()
+	local unlocked = pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+	ImGui.UpdateData("edithMarkAll", ImGuiData.Value, unlocked and 1 or 0)
+end)
+
+ImGui.SetWindowSize("edithWindowUnlocks", 800, 650)
+
+ReInitBlackList()
+
+local function RenderBlackList()
+	if DoShowBlacklist() and ImGui.ElementExists("edithMenuBlacklistItems") == false then
+		ReInitBlackList()
+	elseif not DoShowBlacklist() then
+		if ImGui.ElementExists("edithMenuBlacklistItems") then
+			ImGui.RemoveElement("edithMenuBlacklistItems")
+		end
+		if ImGui.ElementExists("edithWindowBlacklistItems") then
+			ImGui.RemoveWindow("edithWindowBlacklistItems")
+		end
+	end
+end
+
+EdithRestored:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, RenderBlackList)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, RenderBlackList)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_MARK_GET, UpdateBlackListMenu, EdithRestored.Enums.PlayerType.EDITH)
