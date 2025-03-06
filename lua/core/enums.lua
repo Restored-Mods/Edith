@@ -115,6 +115,14 @@ Enums.Pickups =
 								CARD_REVERSE_PRUDENCE = Isaac.GetCardIdByName("Prudence?"),
 								CARD_SOUL_EDITH = Isaac.GetCardIdByName("Soul of Edith"),
 							},
+					Pills  =
+							{
+								PILL_LITHIUM = Isaac.GetEntitySubTypeByName("Lithium Pill"),
+								PILL_HORSE_LITHIUM = Isaac.GetEntitySubTypeByName("Horse Lithium Pill"),
+							},
+					PillEffects = {
+								PILLEFFECT_LITHIUM = Isaac.GetPillEffectByName("Lithium");
+					},
 				}
 
 Enums.SFX = 

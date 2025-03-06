@@ -14,15 +14,24 @@ local IFRAME_INCREASE_AMOUNT = Lithium.IFRAME_INCREASE_AMOUNT
 ---@param flags UseFlag | integer
 ---@param pillColor PillColor
 function Lithium:OnPillUse(pillEffect, player, flags, pillColor)
-    if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM) then
+    if pillColor == (EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM)
+    or pillColor == (EdithRestored.Enums.Pickups.Pills.PILL_HORSE_LITHIUM) then
         local data = Helpers.GetEntityData(player)
         data.LithiumUses = data.LithiumUses + 1
         if pillColor & PillColor.PILL_GIANT_FLAG > 0 then
             data.LithiumUses = data.LithiumUses + 1
         end
+        player:AnimateSad()
     end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_USE_PILL, Lithium.OnPillUse)
+
+function Lithium:GetEffect(pillEffect, pillColor)
+    if pillColor == EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM then
+        return EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM
+    end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_GET_PILL_EFFECT, Lithium.GetEffect)
 
 ---@param player EntityPlayer
 ---@param cache CacheFlag
@@ -60,7 +69,8 @@ function Lithium:AddPill(collectible, charge, firstTime, slot, VarData, player)
     if firstTime and collectible == EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM then
         local room = Game():GetRoom()
         local spawningPos = room:FindFreePickupSpawnPosition(player.Position, 1, true)
-        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, 0, spawningPos, Vector.Zero, player):ToPickup()
+        --Game():GetItemPool():ForceAddPillEffect(EdithRestored.Enums.Pickups.Pills.PILLEFFECT_LITHIUM)
+        local pill = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM, spawningPos, Vector.Zero, player):ToPickup()
     end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, Lithium.AddPill)

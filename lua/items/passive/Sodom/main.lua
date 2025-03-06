@@ -2,104 +2,73 @@ local Sodom = {}
 local game = Game()
 local Helpers = include("lua.helpers.Helpers")
 
----@param npc EntityNPC
-function Sodom:npcInit(npc)
-    local data = Helpers.GetData(npc)
-
-    data.SaltedStatusCooldown = 0
-    data.SaltedStatusRecharge = 0
-    data.SaltedOriginalCollisionDamage = npc.CollisionDamage
-    data.SaltedStatusPos =  Vector.Zero
-    data.SaltedPlaybackSpeed = npc:GetSprite().PlaybackSpeed
-
+local function SetOnFire(enemy, player)
+    if Helpers.IsEnemy(enemy) then
+        enemy:AddBurn(EntityRef(player), 90, player.Damage * 0.8)
+        if type(Helpers.GetData(enemy).ExplodeInFlames) ~= "boolean" then
+            Helpers.GetData(enemy).ExplodeInFlames = true
+        end
+    end
 end
 
---EdithRestored:AddCallback(ModCallbacks.MC_POST_NPC_INIT, Sodom.npcInit)
+local function GetRandomPlayerWithSodom(players)
+    players = players or Helpers.Filter(PlayerManager.GetPlayers(), function(_, player) return player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM) end)
+    if #players > 0 then
+        return players[TSIL.Random.GetRandomInt(1, #players)]
+    end
+    return nil
+end
+
+function Sodom:NewRoom()
+    local players = Helpers.Filter(PlayerManager.GetPlayers(), function(_, player) return player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM) end)
+    if #players > 0 then
+        for _, enemy in ipairs(Helpers.GetEnemies()) do
+            local player = GetRandomPlayerWithSodom(players)
+            SetOnFire(enemy, player)
+        end
+    end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Sodom.NewRoom)
 
 ---@param npc EntityNPC
-function Sodom:npcSaltUpdate(npc)
+function Sodom:NPCOnFireUpdate(npc)
     local data = Helpers.GetData(npc)
-    if npc.FrameCount < 1 then return end
-    if data.SaltedStatusCooldown == nil then
-        Sodom:npcInit(npc)
-    end
-    if not npc:IsDead() and data.SaltedStatusCooldown > 0 then
-        npc:SetColor(Color(0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5), 3, 25, false, true)
-        npc.Friction = npc.Friction * 0.01
-        npc.CollisionDamage = 0
-
-        npc.Position = data.SaltedStatusPos
-        npc:GetSprite().PlaybackSpeed = 0.01
-
-        
-
-        data.SaltedStatusCooldown = math.max(data.SaltedStatusCooldown - 1, 0)
-
-        return true
+    if data.ExplodeInFlames and not npc:HasEntityFlags(EntityFlag.FLAG_BURN) then
+        data.ExplodeInFlames = false
     end
 
+end
+EdithRestored:AddCallback(ModCallbacks.MC_NPC_UPDATE, Sodom.NPCOnFireUpdate)
 
-    if npc:IsDead() and data.SaltedStatusCooldown > 0 then
-        data.SaltedStatusCooldown = 0
-        if npc:GetSprite().PlaybackSpeed ~= data.SaltedPlaybackSpeed then
-            npc:GetSprite().PlaybackSpeed = data.SaltedPlaybackSpeed
-        end
-    end
-    if data.SaltedStatusCooldown <= 0 then
-        if npc.CollisionDamage ~= data.SaltedOriginalCollisionDamage then
-            npc.CollisionDamage = data.SaltedOriginalCollisionDamage
-        end
-
-       if npc:GetSprite().PlaybackSpeed ~= data.SaltedPlaybackSpeed then
-            npc:GetSprite().PlaybackSpeed = data.SaltedPlaybackSpeed
-        end
-    end
-
-    if data.SaltedStatusRecharge > 0 then
-        data.SaltedStatusRecharge = math.max(data.SaltedStatusRecharge - 1, 0)
-    end
+---@param ent Entity
+---@param damage integer
+---@param flags DamageFlag | integer
+---@param source EntityRef
+---@param cd integer
+function Sodom:AcumulateFire(ent, damage, flags, source, cd)
+    local data = Helpers.GetData(ent)
     
-end
-
-EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, Sodom.npcSaltUpdate)
-
-
----@param player EntityPlayer
-function Sodom:SodomItemUpdate(player)
-    local room = game:GetRoom()
-
-    if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM) then
-        local ents = Isaac.FindInRadius(player.Position, 165, EntityPartition.ENEMY)
-        for i, _ in ipairs(ents) do
-            local data = Helpers.GetData(ents[i])
-            if ents[i]:IsVulnerableEnemy() and (not ents[i]:HasEntityFlags(EntityFlag.FLAG_FRIENDLY)) and room:CheckLine(ents[i].Position, player.Position, 3, 999) and data.SaltedStatusRecharge == 0 then
-                data.SaltedStatusCooldown = 120
-                data.SaltedStatusRecharge = 210
-                data.SaltedStatusPos = ents[i].Position
-                data.SaltedPlaybackSpeed = ents[i]:GetSprite().PlaybackSpeed
-
-                local salt = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.PLAYER_CREEP_BLACKPOWDER, 0, ents[i].Position, Vector.Zero, ents[i]):ToEffect()
-                salt.Color = Color(1, 1, 1, 1, 1, 1, 1)
-            end
+    if source.Entity and source.Type == EntityType.ENTITY_FIREPLACE then
+        local fireData = Helpers.GetData(source.Entity)
+        if not data.AlreadyHit then
+            data.AlreadyHit = {}
+        end
+        if fireData.SodomFire and not data.AlreadyHit[GetPtrHash(ent)] then
+            data.AlreadyHit[GetPtrHash(ent)] = true
+            SetOnFire(ent, source.Entity.SpawnerEntity and source.Entity.SpawnerEntity:ToPlayer() or GetRandomPlayerWithSodom())
         end
     end
 end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Sodom.AcumulateFire)
 
-EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, Sodom.SodomItemUpdate)
-
-
---[[function Sodom:preNpcUpdate(npc)
-    local data = npc:GetData()
-
-    if data.SaltedStatusCooldown > 1 then
-        npc.Position = data.SaltedStatusPos
-        npc:GetSprite().PlaybackSpeed = 0.01
-
-        return true
+function Sodom:SpreadFire(ent)
+    local data = Helpers.GetData(ent)
+    if data.ExplodeInFlames then
+        for _, angle in ipairs({0, 45, 90, 135, 180, 225, 270, 315}) do
+            local fire = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.RED_CANDLE_FLAME, 0, ent.Position, Vector.FromAngle(angle):Resized(10), GetRandomPlayerWithSodom()):ToEffect()
+            Helpers.GetData(fire).SodomFire = true
+            fire:SetTimeout(90)
+        end
     end
-end]]
-
---EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, Sodom.preNpcUpdate)
-
-
-return Sodom
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, Sodom.SpreadFire)

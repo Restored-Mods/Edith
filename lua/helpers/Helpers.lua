@@ -654,7 +654,8 @@ end
 
 
 ---@param entity Entity
----@return table | nil?
+---@return table
+---@return nil
 function Helpers.GetData(entity)
 	if entity and entity.GetData then
 		local data = entity:GetData()

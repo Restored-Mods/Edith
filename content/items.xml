@@ -1,7 +1,7 @@
 <items gfxroot="gfx_redith/items/" deathanm2="gfx/death items.anm2" version="1">
 	<!-- Passive Items -->
 	<passive id="1" name="Lithium Salts" achievement="Lithium Salts" description="Numbed emotions" gfx="collectibles_002_lithium.png" quality="1" cache="damage firedelay" tags="summonable"/>
-	<passive id="2" name="Sodom" achievement="Sodom" description="Don't look back" gfx="collectibles_003_sodom.png" quality="3" tags="summonable offensive"/>
+	<passive id="2" name="Sodom" achievement="Sodom" description="Don't look back" gfx="collectibles_003_sodom.png" quality="2" tags="summonable offensive"/>
 	<passive id="3" name="Blasting Boots" achievement="Blasting Boots" description="Blast off! +5 Bombs" bombs="5" gfx="collectibles_004_blasting_boots.png" quality="3" tags="offensive"/>
 	<passive id="4" name="Thunder Bombs" achievement="Thunder Bombs" description="Shocking blast + full charge" bombs="5" gfx="collectibles_005_thunder_bombs.png" quality="2" tags="offensive"/>
 	<familiar id="6" name="Salty Baby" achievement="Salty Baby" description="Shaky friend" gfx="collectibles_007_salty_baby.png" quality="0" tags="baby summonable monstermanual offensive"/>

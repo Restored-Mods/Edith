@@ -77,4 +77,5 @@ EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "Игно
 EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "Entering new room has 10% chance for rock to become salt rock#Destroying salt rock spawns mini Edith statue that stomp enemies#If there are no enemies left, stomp randrom rock/poop", "Salt Rock", "en_us")
 EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "При входе в новую комнату 10% шанс камень может превратиться в соляной камень#Уничтожение соляного камня создает мини-статую Эдит, которая прыгает на врагов#Если врагов не осталось, прыгает на случайные камни/какашки", "Соляной камень", "ru")
 
--- Cards/Runes
+-- Cards/Runes/Pills
+EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} {{Blank}} {{Damage}} -0.20 Damage for every consumed pill#{{ArrowDown}} {{Blank}} {{Tears}} -0.12 Tears for every consumed pill#{{ArrowUp}} +20 frames of invinsibility for every consumed pill", "Lithium")

@@ -343,7 +343,7 @@ local edithdirectory = {
             -- If using the "openmenu" action, "dest" will pick which item of that menu you are sent to.
             {str = 'settings', dest = 'settings'},
 
-            {str = 'item toggles', dest = 'items', displayif = function() return ShowBlackListButton() end},
+            {str = 'items blacklist ', dest = 'items', displayif = function() return ShowBlackListButton() end},
             -- A few default buttons are provided in the table returned from DSSInitializerFunction.
             -- They're buttons that handle generic menu features, like changelogs, palette, and the menu opening keybind
             -- They'll only be visible in your menu if your menu is the only mod menu active; otherwise, they'll show up in the outermost Dead Sea Scrolls menu that lets you pick which mod menu to open.
@@ -357,7 +357,7 @@ local edithdirectory = {
         tooltip = dssmod.menuOpenToolTip
     },
     items = {
-        title = 'item toggles',
+        title = 'items blacklist',
         buttons = InitDisableMenu(),
     },
     targetcolor = {
