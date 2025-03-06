@@ -60,8 +60,8 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "{{Chargeable}} Заряжающаяся атака, которая создает круг из соли#{{Fear}} Соль дает близлежащим врагам эффект страха", "Малыш-солонка", "ru")
 
 --Sodom
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "{{Freezing}} Freezes enemies in radius", "Sodom", "en_us")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "{{Freezing}} Замораживает врагов в радиусе", "Содом", "ru")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots opposite his movement direction a red flame#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 8 directions#These flames can also apply same effect#!!! Effect can be applied on enemy only one time", "Sodom", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#При смерти с эффектом враг выстреливает пламя в 8 направлениях#Это пламя может наложить этот же эффект#!!! Эффект можно наложить на врага только один раз", "Содом", "ru")
 
 -- Trinkets
 --Pepper Grinder
@@ -79,3 +79,6 @@ EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "При вхо
 
 -- Cards/Runes/Pills
 EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} {{Blank}} {{Damage}} -0.20 Damage for every consumed pill#{{ArrowDown}} {{Blank}} {{Tears}} -0.12 Tears for every consumed pill#{{ArrowUp}} +20 frames of invinsibility for every consumed pill", "Lithium")
+EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} {{Blank}} {{Damage}} -0.20 к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}} {{Tears}} -0.12 к скорострельности за каждую использованную пилюлю#{{ArrowUp}} +20 кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")
+EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} {{Blank}} {{Damage}} -0.40 Damage for every consumed pill#{{ArrowDown}} {{Blank}} {{Tears}} -0.24 Tears for every consumed pill#{{ArrowUp}} +40 frames of invinsibility for every consumed pill", "Lithium")
+EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} {{Blank}} {{Damage}} -0.40 к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}} {{Tears}} -0.24 к скорострельности за каждую использованную пилюлю#{{ArrowUp}} +40 кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")

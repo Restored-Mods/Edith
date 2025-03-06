@@ -1054,6 +1054,13 @@ function Helpers.UpdatePlayerMoonPhase(player)
 	end
 end
 
+---@param v1 Vector
+---@param v2 Vector
+---@return boolean
+function Helpers.VectorEquals(v1, v2)
+	return v1.X == v2.X and v1.Y == v2.Y
+end
+
 EdithRestored.Helpers = Helpers
 
 return Helpers

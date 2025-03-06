@@ -53,7 +53,10 @@ local Wiki = {
 	LithiumSalts = {
 		{ -- Effect
 			{str = "Effect", fsize = 2, clr = 3, halign = 0},
-			{str = "Using pills lowers damage and tear rate but increases invincibility time on damage taken."},
+			{str = "Adds extra Lithium pill that can replace normal pills."},
+			{str = "-0.2 damage per use."},
+			{str = "-0.12 tear rate per use."},
+			{str = "+20 frames of invincibility per use when taking damage."},
 		},
 		{ -- Synergies
 			{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
@@ -146,7 +149,11 @@ local Wiki = {
 	Sodom = {
 		{ -- Effect
 			{str = "Effect", fsize = 2, clr = 3, halign = 0},
-			{str = "Freezes enemeis in large radius."},
+			{str = "Every second when moving Isaac shoots flame."},
+			{str = "Flame goes opposite direction of Isaac's movement."},
+			{str = "Flame doesn't damage enemies, but applies burn effect, that deals 80% Isaac's damage."},
+			{str = "On death with effect enemies shoot 8 flames with same effect."},
+			{str = "Effect can be applied to enemy only one time."},
 		},
 		{ -- Trivia
 			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
