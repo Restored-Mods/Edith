@@ -104,6 +104,9 @@ Enums.NullItems =
 					{
 						GORGON_MASK = Isaac.GetNullItemIdByName("Gorgon Mask Effect"),
 						RED_HOOD = Isaac.GetNullItemIdByName("Red Hood Effect"),
+						LITHIUM_POSITIVE = Isaac.GetNullItemIdByName("Lithium Positive Effect"),
+						LITHIUM_NEGATIVE = Isaac.GetNullItemIdByName("Lithium Negative Effect"),
+						LITHIUM_FALSEPHD = Isaac.GetNullItemIdByName("Lithium False PHD Effect"),
 					}
 
 

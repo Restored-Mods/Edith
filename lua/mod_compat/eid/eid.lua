@@ -39,9 +39,9 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, 
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, "При использовании одевает/снимает маску Горгоны#Когда маска одета, Айзек не может стрелять#{{Freezing}} Глядя на врагов, когда Айзек в маске, они каменеют", "Маска Горгоны", "ru")
 
 --Lithium Salts
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Todas las píldoras reducirán el daño y las lágrimas, pero aumentarán el tiempo de invencibilidad", "Sales de litio", "spa")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "All pills lower damage and tears but increase Isaac's amount of invincibility time", "Lithium Salts")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Все пилюли понижают урон и скорострельность, но увеличивают количество времени неуязвимости", "Литивые соли", "ru")
+--EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Todas las píldoras reducirán el daño y las lágrimas, pero aumentarán el tiempo de invencibilidad", "Sales de litio", "spa")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Adds extra lithium pill that has 10% replace normal pill", "Lithium Salts")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Добовляет дополнительную пилюлю, которая может с шансом в 10% заменить обычную", "Литивые соли", "ru")
 
 --Thunder Bombs
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Fully recharges active items#{{Battery}} When Isaac has no bombs, one can be placed at the cost of a charge#Bombs make electricity that spreads to nearby enemies#Electricity deals half of the bomb's damage", "Thunder Bombs", "en_us")
@@ -78,7 +78,50 @@ EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "Entering new 
 EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "При входе в новую комнату 10% шанс камень может превратиться в соляной камень#Уничтожение соляного камня создает мини-статую Эдит, которая прыгает на врагов#Если врагов не осталось, прыгает на случайные камни/какашки", "Соляной камень", "ru")
 
 -- Cards/Runes/Pills
-EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} {{Blank}} {{Damage}} -0.20 Damage for every consumed pill#{{ArrowDown}} {{Blank}} {{Tears}} -0.12 Tears for every consumed pill#{{ArrowUp}} +20 frames of invinsibility for every consumed pill", "Lithium")
-EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} {{Blank}} {{Damage}} -0.20 к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}} {{Tears}} -0.12 к скорострельности за каждую использованную пилюлю#{{ArrowUp}} +20 кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")
-EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} {{Blank}} {{Damage}} -0.40 Damage for every consumed pill#{{ArrowDown}} {{Blank}} {{Tears}} -0.24 Tears for every consumed pill#{{ArrowUp}} +40 frames of invinsibility for every consumed pill", "Lithium")
-EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} {{Blank}} {{Damage}} -0.40 к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}} {{Tears}} -0.24 к скорострельности за каждую использованную пилюлю#{{ArrowUp}} +40 кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")
+
+local Lithium = {
+    DAMAGE_DECREASE_AMOUNT = -0.20,
+    FALSEPHD_DAMAGE_DECREASE_AMOUNT = -0.05,
+    TEARS_DECREASE_AMOUNT = -0.12,
+    FALSEPHD_TEARS_DECREASE_AMOUNT = -0.01,
+    IFRAME_INCREASE_AMOUNT = 20,
+    FALSEPHD_IFRAME_INCREASE_AMOUNT = 5,
+}
+
+EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT Damage for every consumed pill#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT Tear rate for every consumed pill#{{ArrowUp}} IFRAME_INCREASE_AMOUNT frames of invinsibility for every consumed pill", "Lithium")
+EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT к скорострельности за каждую использованную пилюлю#{{ArrowUp}} IFRAME_INCREASE_AMOUNT кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")
+EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT Damage for every consumed pill#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT Tears for every consumed pill#{{ArrowUp}} IFRAME_INCREASE_AMOUNT frames of invinsibility for every consumed pill", "Lithium")
+EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT к скорострельности за каждую использованную пилюлю#{{ArrowUp}} IFRAME_INCREASE_AMOUNT кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")
+
+local function LithiumCondition(descObj)
+    if descObj.ObjType == 5 and descObj.ObjVariant == 70 and descObj.ObjSubType % 2048 == EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM then
+        return true
+    end
+    return false
+end
+
+local function LithiumCallback(descObj)
+    local player = Game():GetNearestPlayer(descObj.Entity.Position)
+    local horseMul = descObj.ObjSubType > 2048 and 2 or 1
+    if player:HasCollectible(CollectibleType.COLLECTIBLE_PHD) and not player:HasCollectible(CollectibleType.COLLECTIBLE_FALSE_PHD) then
+        descObj.Description = descObj.Description:gsub(".*%#", "")
+        descObj.Description = descObj.Description:gsub("IFRAME_INCREASE_AMOUNT", "+"..(Lithium.IFRAME_INCREASE_AMOUNT * horseMul))
+    else
+        local extra = nil
+        for idx,_ in pairs(Lithium) do
+            if idx:sub(1,9) ~= "FALSEPHD_" then
+                if player:HasCollectible(CollectibleType.COLLECTIBLE_FALSE_PHD) then
+                    if type(extra) == "nil" then extra = descObj.Description end
+                    local amount = Lithium["FALSEPHD_"..idx] * horseMul
+                    extra = extra:gsub(idx, amount > 0 and "+"..amount or amount)
+                end
+                local amount = Lithium[idx] * horseMul
+                descObj.Description = descObj.Description:gsub(idx, amount > 0 and "+"..amount or amount)
+            end
+        end
+        if type(extra) ~= "nil" then descObj.Description = descObj.Description..extra:gsub("#", "#{{Collectible654}} {{Blank}}") end
+    end
+    return descObj
+end
+
+EID:addDescriptionModifier("LithiumPHDFalsePHD", LithiumCondition, LithiumCallback)

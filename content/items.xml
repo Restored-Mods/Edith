@@ -21,4 +21,7 @@
 	<!-- Null Items -->
 	<null id="1" name="Gorgon Mask Effect" persistent="true"/>
 	<null id="2" name="Red Hood Effect" persistent="true" cache="damage firedelay speed range"/>
+	<null id="3" name="Lithium Positive Effect" persistent="true" />
+	<null id="4" name="Lithium Negative Effect" persistent="true" cache="damage firedelay"/>
+	<null id="4" name="Lithium False PHD Effect" persistent="true" cache="damage firedelay"/>
 </items>
