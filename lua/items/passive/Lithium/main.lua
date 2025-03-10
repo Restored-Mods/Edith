@@ -41,47 +41,62 @@ function Lithium:GetEffect(pillEffect, pillColor)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_GET_PILL_EFFECT, Lithium.GetEffect)
 
+---@param pickup EntityPickup
 function Lithium:ReplacePill(pickup)
-    if pickup:GetDropRNG():RandomFloat() <= 0.1 and PlayerManager.AnyoneHasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM) then
-        local pill = pickup.SubType & PillColor.PILL_GIANT_FLAG > 0 and EdithRestored.Enums.Pickups.Pills.PILL_HORSE_LITHIUM or EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM
-        pickup:Morph(pickup.Type, pickup.Variant, pill, true, true)
-    end
+    if pickup.SubType == EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM
+    or pickup.SubType == EdithRestored.Enums.Pickups.Pills.PILL_HORSE_LITHIUM
+    or not PlayerManager.AnyoneHasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM)
+    or pickup:GetDropRNG():RandomFloat() > 0.1 then return end
+
+    local pill = pickup.SubType & PillColor.PILL_GIANT_FLAG ~= 0 and EdithRestored.Enums.Pickups.Pills.PILL_HORSE_LITHIUM or EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM
+
+    pickup:Morph(pickup.Type, pickup.Variant, pill, true, true)
 end
 EdithRestored:AddCallback(TSIL.Enums.CustomCallback.POST_PICKUP_INIT_FIRST, Lithium.ReplacePill, PickupVariant.PICKUP_PILL)
 
 ---@param player EntityPlayer
 ---@param cache CacheFlag
 function Lithium:LithiumCache(player, cache)
-    
-    local effects = player:GetEffects()
-    local lithiumUses = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_NEGATIVE)
-    local lithiumFalsePHD = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_FALSEPHD)
     if cache == CacheFlag.CACHE_FIREDELAY then
+        local effects = player:GetEffects()
+        local lithiumUses = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_NEGATIVE)
+        local lithiumFalsePHD = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_FALSEPHD)
         local tearDiff = math.max(lithiumUses * TEARS_DECREASE_AMOUNT - lithiumFalsePHD * 0.01, - (Helpers.ToTearsPerSecond(player.MaxFireDelay) - 0.01))
         player.MaxFireDelay = Helpers.tearsUp(player.MaxFireDelay, tearDiff)
     elseif cache == CacheFlag.CACHE_DAMAGE then
+        local effects = player:GetEffects()
+        local lithiumUses = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_NEGATIVE)
+        local lithiumFalsePHD = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_FALSEPHD)
         player.Damage = player.Damage + DAMAGE_DECREASE_AMOUNT * lithiumUses - lithiumFalsePHD * 0.05
     end
-    
 end
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Lithium.LithiumCache)
 
-function Lithium:AddPill(collectible, charge, firstTime, slot, VarData, player)
-    if firstTime and collectible == EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM then
-        local room = Game():GetRoom()
-        local spawningPos = room:FindFreePickupSpawnPosition(player.Position, 1, true)
-        local pill = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM, spawningPos, Vector.Zero, player):ToPickup()
-    end
-end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, Lithium.AddPill)
+function Lithium:AddPill(_, _, firstTime, _, _, player)
+    if not firstTime then return end
 
-function Lithium:AfterDamage(entity, damage, flags, source, cd)
-    if entity and entity:ToPlayer() then
-        local player = entity:ToPlayer()
-        local newDamageCD = cd + IFRAME_INCREASE_AMOUNT * player:GetEffects():GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_POSITIVE)
-        + player:GetEffects():GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_FALSEPHD) * IFRAME_INCREASE_FALSEPHD_AMOUNT
-        player:ResetDamageCooldown()
-        player:SetMinDamageCooldown(newDamageCD)
-    end
+    TSIL.EntitySpecific.SpawnPickup(
+        PickupVariant.PICKUP_PILL,
+        EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM,
+        Game():GetRoom():FindFreePickupSpawnPosition(player.Position, 1, true),
+        Vector.Zero,
+        player
+    )
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, Lithium.AddPill, EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM)
+
+---@param entity Entity
+function Lithium:AfterDamage(entity)
+    local player = entity and entity:ToPlayer()
+    if not player then return end
+
+    local pos = player:GetEffects():GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_POSITIVE)
+    local neg = player:GetEffects():GetNullEffectNum(EdithRestored.Enums.NullItems.LITHIUM_FALSEPHD)
+    if pos + neg == 0 then return end
+
+    local cd = player:GetDamageCooldown()
+
+    player:ResetDamageCooldown()
+    player:SetMinDamageCooldown(cd + pos * IFRAME_INCREASE_AMOUNT + neg * IFRAME_INCREASE_FALSEPHD_AMOUNT)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Lithium.AfterDamage, EntityType.ENTITY_PLAYER)
