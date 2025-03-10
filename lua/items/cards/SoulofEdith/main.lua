@@ -1,22 +1,6 @@
 local Cards = {}
 local Helpers = include("lua.helpers.Helpers")
 
-EdithRestored.HiddenItemManager:HideCostumes("Prudence")
-
-function Cards:UsePrudence(prud, player, useflags)
-    EdithRestored.HiddenItemManager:AddForRoom(player, CollectibleType.COLLECTIBLE_GUPPYS_EYE, -1, 1, "Prudence")
-end
-EdithRestored:AddCallback(ModCallbacks.MC_USE_CARD, Cards.UsePrudence, EdithRestored.Enums.Pickups.Cards.CARD_PRUDENCE)
-
-function Cards:UseReversePrudence(revPrud, player, useflags)
-    --ItemOverlay.Show(Isaac.GetGiantBookIdByName("Reverse Prudence"), 0 , player)
-    Helpers.PlaySND(EdithRestored.Enums.SFX.Cards.CARD_REVERSE_PRUDENCE)
-    local slot = Isaac.Spawn(EntityType.ENTITY_SLOT,16,0,Game():GetRoom():FindFreePickupSpawnPosition(player.Position,40,true),Vector.Zero,nil)
-    TSIL.EntitySpecific.SpawnEffect(EffectVariant.POOF01, 0, slot.Position)
-    SFXManager():Play(SoundEffect.SOUND_SUMMONSOUND,1,0)
-end
-EdithRestored:AddCallback(ModCallbacks.MC_USE_CARD, Cards.UseReversePrudence, EdithRestored.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE)
-
 function Cards:UseSoulEdith(soe, player, useflags)
     local statue = TSIL.EntitySpecific.SpawnEffect(EdithRestored.Enums.Entities.SALT_STATUE.Variant, 0, player.Position, Vector(0, 0), player)
     Helpers.PlaySND(EdithRestored.Enums.SFX.Cards.CARD_SOUL_EDITH)

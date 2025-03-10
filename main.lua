@@ -41,8 +41,10 @@ include("lua.items.trinkets.PepperGrinder.main")
 include("lua.items.trinkets.SaltRock.main")
 include("lua.items.trinkets.SmellingSalts.main")
 
--- pickups
-include("lua.items.pickups.cards")
+-- cards
+include("lua.items.cards.Prudence.main")
+include("lua.items.cards.SoulofEdith.main")
+include("lua.items.cards.PrudenceReverse.main")
 
 --mod compatibility
 include("lua.mod_compat.eid.eid")
