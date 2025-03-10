@@ -1,81 +1,88 @@
 local GorgonMask = {}
 local Helpers = include("lua.helpers.Helpers")
 
-local DIRECTION_VECTOR = {
-	[Direction.NO_DIRECTION] = Vector(0, 1),	-- when you don't shoot or move, you default to HeadDown
-	[Direction.LEFT] = Vector(-1, 0),
-	[Direction.UP] = Vector(0, -1),
-	[Direction.RIGHT] = Vector(1, 0),
-	[Direction.DOWN] = Vector(0, 1)
-}
+GorgonMask.FREEZE_DURATION = 90
+GorgonMask.FREEZE_SIZE = 12
 
-function GorgonMask:UseMask(collectible, rng, player, flags, slot, vardata)
-	local effects = player:GetEffects()
-	if effects:HasNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK) then
-		effects:RemoveNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK, 2)
-		local canShoot = Helpers.GetEntityData(player).GorgonCouldShoot or true
-		player:SetCanShoot(canShoot)
-	else
-		local count = flags & UseFlag.USE_CARBATTERY > 0 and 2 or 1
-		effects:AddNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK, true, count)
-		Helpers.GetEntityData(player).GorgonCouldShoot = player:CanShoot()
+---@param player EntityPlayer
+function GorgonMask:GetData(player)
+	---@class GorgonMaskData
+	---@field CouldShoot boolean
+	---@field Active boolean
+	return Helpers.GetData(player)
+end
+
+---@param player EntityPlayer
+function GorgonMask:UpdateCanShoot(player)
+	local data = GorgonMask:GetData(player)
+
+	if data.Active then
 		player:SetCanShoot(false)
+	elseif data.CouldShoot then
+		player:SetCanShoot(true)
+		data.CouldShoot = nil
 	end
-	return {Discharge = false, Remove = false, ShowAnim = true}
+end
+
+---@param player EntityPlayer
+function GorgonMask:UseMask(_, _, player, flags)
+	if flags & UseFlag.USE_CARBATTERY ~= 0 then return end
+
+	local data = GorgonMask:GetData(player)
+
+	if not data.Active then
+		data.CouldShoot = player:CanShoot()
+	end
+
+	data.Active = not data.Active
+
+	GorgonMask:UpdateCanShoot(player)
+
+	return true
 end
 EdithRestored:AddCallback(ModCallbacks.MC_USE_ITEM, GorgonMask.UseMask, EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK)
 
-function GorgonMask:GorgonMaskCheck(player)
-	if not player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK) then
-		local canShoot = Helpers.GetEntityData(player).GorgonCouldShoot or true
-		player:GetEffects():RemoveNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK)
-		player:SetCanShoot(canShoot)
-	end
-end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, GorgonMask.GorgonMaskCheck)
+function GorgonMask:BlockShootDelayed(player)
+	if not player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK)
+	or not GorgonMask:GetData(player).Active then return end
 
-function GorgonMask:UpdateCanShootOnLoad()
-	for _, player in ipairs(Helpers.GetPlayersByNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK)) do
-		if player:GetEffects():HasNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK) then
-			player:SetCanShoot(false)
+	GorgonMask:UpdateCanShoot(player)
+end
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, CallbackPriority.LATE, GorgonMask.BlockShootDelayed)
+
+---@param player EntityPlayer
+function GorgonMask:PlayerEffectUpdate(player)
+	if not player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK) then
+		local data = GorgonMask:GetData(player)
+
+		if data.Active then
+			data.Active = false
+			GorgonMask:UpdateCanShoot(player)
 		end
 	end
-end
-EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, CallbackPriority.LATE, GorgonMask.UpdateCanShootOnLoad)
 
-function GorgonMask:MaskNpcUpdate(npc)
-	if npc:IsActiveEnemy() == false then
-		return
-	end
+	local data = GorgonMask:GetData(player)
+	if not data.Active then return end
 
 	local room = Game():GetRoom()
+	local direction = TSIL.Direction.DirectionToVector(player:GetHeadDirection())
+	local count = player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) and 2 or 1
+	local ref
 
-	for _, player in ipairs(Helpers.GetPlayersByNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK)) do
-		local count = player:GetEffects():GetNullEffectNum(EdithRestored.Enums.NullItems.GORGON_MASK)
-		local direction = DIRECTION_VECTOR[player:GetHeadDirection()]
-
-		if room:CheckLine(player.Position, npc.Position, 3) then --check for obstructions
-
-			if direction.X == 0 and math.abs(npc.Position.X - player.Position.X) <= 12 then --up/down
-
-				if (player.Position * direction).Y > 0 and npc.Position.Y > player.Position.Y then --down
-					npc:AddFreeze(EntityRef(player), 150 * count)
-
-				elseif (player.Position * direction).Y < 0 and npc.Position.Y < player.Position.Y then --up
-					npc:AddFreeze(EntityRef(player), 150 * count)
-				end
-
-			elseif direction.Y == 0 and math.abs(npc.Position.Y - player.Position.Y) <= 12 then --left/right
-
-				if (player.Position * direction).X > 0 and npc.Position.X > player.Position.X then --right
-					npc:AddFreeze(EntityRef(player), 90 * count)
-
-				elseif (player.Position * direction).X < 0 and npc.Position.X < player.Position.X then --left
-					npc:AddFreeze(EntityRef(player), 90 * count)
-				end
-
+	for _, npc in ipairs(Helpers.GetEnemies()) do
+		if room:CheckLine(player.Position, npc.Position, 3) then
+			if (direction.X == 0 and math.abs(npc.Position.X - player.Position.X) <= GorgonMask.FREEZE_SIZE and
+			((player.Position * direction).Y > 0 and npc.Position.Y > player.Position.Y or -- Down
+			(player.Position * direction).Y < 0 and npc.Position.Y < player.Position.Y) -- Up
+		)
+		or (direction.Y == 0 and math.abs(npc.Position.Y - player.Position.Y) <= GorgonMask.FREEZE_SIZE and
+			((player.Position * direction).X > 0 and npc.Position.X > player.Position.X or -- Right
+			(player.Position * direction).X < 0 and npc.Position.X < player.Position.X) -- Left
+		) then
+				ref = ref or EntityRef(player)
+				npc:AddFreeze(ref, 90 * count)
 			end
 		end
 	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_NPC_UPDATE, GorgonMask.MaskNpcUpdate)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, GorgonMask.PlayerEffectUpdate)

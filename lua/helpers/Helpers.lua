@@ -655,16 +655,10 @@ end
 
 ---@param entity Entity
 ---@return table
----@return nil
 function Helpers.GetData(entity)
-	if entity and entity.GetData then
-		local data = entity:GetData()
-		if not data.EdithRestored then
-			data.EdithRestored = {}
-		end
-		return data.EdithRestored
-	end
-	return nil
+	local data = entity:GetData()
+	data.EdithRestored = data.EdithRestored or {}
+	return data.EdithRestored
 end
 
 function Helpers.Contains(list, x)

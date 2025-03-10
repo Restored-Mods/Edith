@@ -1,4 +1,4 @@
-
+---@class ModReference
 EdithRestored = RegisterMod("Edith", 1)
 
 local LOCAL_TSIL = require("lua.extraLibs.loi.TSIL")
