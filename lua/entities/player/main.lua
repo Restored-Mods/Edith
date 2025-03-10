@@ -232,9 +232,7 @@ local function EdithGridMovement(player, data)
 					spawningVel = Vector(-data.EdithTargetMovementDirection.X, randomVel)
 				end
 
-				local smokeCloud = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SMOKE_CLOUD, 0,
-											player.Position, spawningVel:Normalized() * 10, player)
-				smokeCloud = smokeCloud:ToEffect()
+				local smokeCloud = TSIL.EntitySpecific.SpawnEffect(EffectVariant.SMOKE_CLOUD, 0, player.Position, spawningVel:Normalized() * 10, player)
 				local randomScale = rng:RandomFloat() * 0.3
 				smokeCloud.SpriteScale = Vector(0.5 + randomScale, 0.5 + randomScale)
 				smokeCloud:SetTimeout(70)
@@ -250,9 +248,7 @@ local function EdithGridMovement(player, data)
 					spawningVel = Vector(-data.EdithTargetMovementDirection.X, randomVel)
 				end
 
-				local waterParticle = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.WATER_SPLASH, 1,
-											player.Position, spawningVel:Normalized() * 10, player)
-				waterParticle = waterParticle:ToEffect()
+				local waterParticle = TSIL.EntitySpecific.SpawnEffect(EffectVariant.WATER_SPLASH, 1, player.Position, spawningVel:Normalized() * 10, player)
 				local randomScale = rng:RandomFloat() * 0.3
 				waterParticle.SpriteScale = Vector(2 + randomScale, 2 + randomScale)
 				waterParticle:SetTimeout(10)
@@ -521,16 +517,14 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, Player.TargetJumpR
 
 ---@param target EntityEffect
 function Player:TargetJumpUpdate(target)
-	local player = target.Parent or target.SpawnerEntity
-	if player and player:ToPlayer() and Helpers.IsPlayerEdith(player:ToPlayer(), true, false) then
-		player = player:ToPlayer()
-		local movement = player:GetShootingInput()
-		---@cast movement Vector
-		movement:Resize(12)
-		target.Velocity = movement
-	else
+	local player = TSIL.Players.GetPlayerFromEntity(target)
+
+	if not player or not Helpers.IsPlayerEdith(player:ToPlayer(), true, false) then
 		target:Remove()
+		return
 	end
+
+	target.Velocity = player:GetShootingInput():Resized(12)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.TargetJumpUpdate, EdithRestored.Enums.Entities.EDITH_TARGET.Variant)
 
@@ -565,6 +559,8 @@ function Player:OnUpdatePlayer(player)
 	end
 	-- If the player is Edith it will apply the hood
 	local dataP = Helpers.GetPersistentEntityData(player)
+	if not dataP then return end
+
 	local data = Helpers.GetData(player)
 	if Helpers.IsPlayerEdith(player, true, false) then
 		local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
@@ -581,6 +577,7 @@ function Player:OnUpdatePlayer(player)
 			if sprite:GetAnimation():find("Walk") then
 				sprite:Play(sprite:GetAnimation():match("%w*[Walk]").."Down", true)
 			end
+			---@diagnostic disable-next-line: undefined-field
 			player:SetGnawedLeafTimer(0)
 			if JumpLib:CanJump(player) then
 				EdithGridMovement(player, data)
@@ -645,7 +642,7 @@ function Player:OnUpdatePlayer(player)
 					JumpLib:Jump(player, {
 						Height = 4,
 						Speed = 0.7,
-						Flags = JumpLib.Flags.NO_HURT_PITFALL | JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS_ONLY | JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING_ONLY,
+						Flags = JumpLib.Flags.NO_HURT_PITFALL | JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS | JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING,
 						Tags = {"EdithJump"}
 					})
 				end
@@ -717,9 +714,8 @@ function Player:Landing(player, jumpData, inPit)
 		
 		data.TargetJumpPos = nil
 
-		for _, projectile in pairs(Isaac.FindInRadius(player.Position, 55, EntityPartition.BULLET)) do
-			projectile = projectile:ToProjectile()
-			---@cast projectile EntityProjectile
+		for _, v in pairs(Isaac.FindInRadius(player.Position, 55, EntityPartition.BULLET)) do
+			local projectile = v:ToProjectile() ---@cast projectile EntityProjectile
 			local angle = ((player.Position - projectile.Position) * -1):GetAngleDegrees()
 			projectile.Velocity = Vector.FromAngle(angle):Resized(10)
 			projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
@@ -727,15 +723,7 @@ function Player:Landing(player, jumpData, inPit)
 		end
 	end
 end
-EdithRestored:AddCallback(JumpLib.Callbacks.PLAYER_LAND, Player.Landing, {tag = "EdithJump"})
-
----@param player EntityPlayer
-EdithRestored:AddCallback(JumpLib.Callbacks.PLAYER_UPDATE_60, function (_, player)
-    player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
-    -- player.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
-end, {
-    tag = "EdithJump"
-})
+EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_LAND, Player.Landing, {tag = "EdithJump", type = EntityType.ENTITY_PLAYER})
 
 function Player:DamageHandling(entity, amount, flags, source, cd)
 	if entity and entity:ToPlayer() and Helpers.IsPlayerEdith(entity:ToPlayer(), true, false) then

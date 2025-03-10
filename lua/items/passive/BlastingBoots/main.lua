@@ -8,7 +8,7 @@ function BlastBoots:PreBombDamage(player, _, flags)
     JumpLib:Jump(player, {
         Height = 13,
         Speed = 1,
-        Flags = JumpLib.Flags.NO_HURT_PITFALL | JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS_ONLY | JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING_ONLY,
+        Flags = JumpLib.Flags.NO_HURT_PITFALL | JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS | JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING,
         Tags = {"BlastingBootsJump"}
     })
 
