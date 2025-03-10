@@ -536,7 +536,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.TargetJumpU
 
 function Player:OnInitPlayer(player)
 	-- If the player is Edith it will apply the hood
-	Helpers.GetEntityData(player)
+	Helpers.GetPersistentEntityData(player)
 	::EdithCheck::
 	if Helpers.IsPlayerEdith(player, true, false) then			
 		local mySprite = player:GetSprite()
@@ -564,7 +564,7 @@ function Player:OnUpdatePlayer(player)
 		player:EvaluateItems()
 	end
 	-- If the player is Edith it will apply the hood
-	local dataP = Helpers.GetEntityData(player)
+	local dataP = Helpers.GetPersistentEntityData(player)
 	local data = Helpers.GetData(player)
 	if Helpers.IsPlayerEdith(player, true, false) then
 		local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")

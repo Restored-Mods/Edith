@@ -3,7 +3,7 @@ local Helpers = include("lua.helpers.Helpers")
 
 function Chisel:UseTheChisel(_, _, player)
 	local ChiselSelection
-	local data = Helpers.GetEntityData(player)
+	local data = Helpers.GetPersistentEntityData(player)
 	local rng = player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 	Helpers.ChangePepperValue(player)
 	local entities = Isaac.FindInRadius(player.Position, 99999, EntityPartition.ENEMY)
@@ -80,7 +80,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.PepperLevel)
 
 function Chisel:Chisel_CacheEval(player, cacheFlag)
-	local data = Helpers.GetEntityData(player)
+	local data = Helpers.GetPersistentEntityData(player)
 	local sprite = player:GetSprite()
 	if Helpers.IsPlayerEdith(player, false, true) then
 		Helpers.ChangePepperValue(player)
@@ -97,7 +97,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Chisel.Chisel_CacheEval)
 
 function Chisel:HasBirthright(player)
-	local data = Helpers.GetEntityData(player)
+	local data = Helpers.GetPersistentEntityData(player)
 	if Helpers.IsPlayerEdith(player, false, true) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) then
 		for _, enemiesBR in pairs(Isaac.FindInRadius(player.Position, 20*data.Pepper)) do
 			if enemiesBR:IsVulnerableEnemy() and enemiesBR:IsActiveEnemy() and data.Pepper < 5 and EntityRef(enemiesBR).IsCharmed == false then
@@ -112,7 +112,7 @@ function Chisel:ChiselAnm(chisel)
 	if chisel.SpawnerType == EntityType.ENTITY_PLAYER then
 		local player = chisel.SpawnerEntity:ToPlayer()
 		local data = Helpers.GetData(chisel)
-		local dataP = Helpers.GetEntityData(player)
+		local dataP = Helpers.GetPersistentEntityData(player)
 		local rng = player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 
 		chisel.Position = data.ChiselSelection.Position
@@ -166,7 +166,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Chisel.ChiselAnm, EdithRestored.Enums.Entities.FALLING_CHISEL.Variant)
 
 function Chisel:TEdithPepperBlock(player, damage, flags, source, cd)
-	local dataP = Helpers.GetEntityData(player)
+	local dataP = Helpers.GetPersistentEntityData(player)
 	if not player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_HOLY_MANTLE) and not player:HasCollectible(CollectibleType.COLLECTIBLE_ISAACS_HEART)
 	and TSIL.Random.GetRandomInt(1, 100) <= dataP.Pepper * 12 then
 		return false
@@ -178,7 +178,7 @@ function Chisel:PreProjectileCollision(projectile, collider, low)
 	if collider and collider:ToPlayer() then
 		local player = collider:ToPlayer()
 		if Helpers.IsPlayerEdith(player, false, true) then
-			local dataP = Helpers.GetEntityData(player)
+			local dataP = Helpers.GetPersistentEntityData(player)
 			if TSIL.Random.GetRandomInt(1, 100) <= dataP.Pepper * 12 then			
 				projectile.Velocity = projectile.Velocity * -1
 				projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
@@ -195,7 +195,7 @@ function Chisel:TMinidith(familiar)
 	if player then
 		if player:ToPlayer() then
 			if Helpers.IsPlayerEdith(player:ToPlayer(), false, true) then
-				local dataP = Helpers.GetEntityData(player)
+				local dataP = Helpers.GetPersistentEntityData(player)
 				local sprite = EntityFamiliar:GetSprite()
 				sprite:Load("gfx_redith/minidith.anm2", true)
 				local miniPeppersaac = dataP.Pepper

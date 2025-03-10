@@ -1,61 +1,34 @@
 local PepperGrinder = {}
-local Helpers = include("lua.helpers.Helpers")
 
 function PepperGrinder:OnKillPG(entity)
-	for i = 0, Game():GetNumPlayers() - 1 do
-		local player = Game():GetPlayer(i)
-		local dataP = Helpers.GetEntityData(player)
-		local goldenbox = player:GetTrinketMultiplier(EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER)
-		if player:HasTrinket(EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
-			local rngGrinder = TSIL.Random.GetRandomInt(1,100)
-			if (goldenbox > 2 or goldenbox > 4) and rngGrinder <= 75 		-- Golden Trinket + Mom's Box
-			or goldenbox > 1 and goldenbox < 3 and rngGrinder <= 50			-- Golden Trinket or Mom's Box
-			or goldenbox < 2 and rngGrinder <= 25 then						-- Normal Trinket
-				dataP.CreepNum = 5
-			end
-			if dataP.CreepNum > 0 then
-				Game():SpawnParticles(entity.Position, EffectVariant.POOF02, 1, 0, Color(0, 0, 0, 1, 0.25, 0.25, 0.25), 1, 0)
-			end
-		end
+	local num = PlayerManager.GetTotalTrinketMultiplier(EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER)
+	if num == 0 then return end
+
+	local rng = RNG(entity.DropSeed)
+	local roll = rng:RandomFloat()
+
+	if (num <= 2 or roll > 0.75)
+	and (num <= 1 or num >= 3 or roll > 0.5)
+	and (num >= 2 or roll > 0.25) then
+		return
+	end
+
+	Game():SpawnParticles(entity.Position, EffectVariant.POOF02, 1, 0, Color(0, 0, 0, 1, 0.25, 0.25, 0.25), 1, 0)
+
+	for i = 1, 5 do
+		local creep = TSIL.EntitySpecific.SpawnEffect(
+			53,
+			0,
+			entity.Position,
+			rng:RandomVector() * 2
+		)
+		local sprite = creep:GetSprite()
+
+		creep.CollisionDamage = 0.4
+
+		sprite:Load("gfx_redith/1000.092_creep (powder).anm2", true)
+		sprite:ReplaceSpritesheet(0, "gfx_redith/effects/effect_blackpowder.png")
+		sprite:Play("SmallBlood0" .. rng:RandomInt(1, 6), true)
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, PepperGrinder.OnKillPG)
-
-function PepperGrinder:CreepSpawning(player)
-	local dataP = Helpers.GetEntityData(player)
-	if player:HasTrinket(EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER) then
-		if dataP.CreepNum == nil then
-			dataP.CreepNum = 0
-		end
-		if dataP.CreepNum > 0 then
-			dataP.CreepNum = dataP.CreepNum - 1
-		end
-		if dataP.CreepNum < 0 then
-			dataP.CreepNum = 0
-		end
-		for _, entity in pairs(Isaac.FindInRadius(player.Position, 999)) do -- What is actually spawning the Pepper
-			if entity:IsDead() and dataP.CreepNum > 0 then
-				local creep = Isaac.Spawn(1000, 53, 0, entity.Position, Vector(TSIL.Random.GetRandomInt(1, 4) - 2, TSIL.Random.GetRandomInt(1, 4) - 2), player)
-				local sprite = creep:GetSprite()
-				sprite:Load("gfx_redith/1000.092_creep (powder).anm2", true)
-				sprite:ReplaceSpritesheet(0, "gfx_redith/effects/effect_blackpowder.png")
-				local rngSprite = TSIL.Random.GetRandomInt(0, 5)
-				if rngSprite == 0 then
-					sprite:Play("SmallBlood01", true)
-				elseif rngSprite == 1 then
-					sprite:Play("SmallBlood02", true)
-				elseif rngSprite == 2 then
-					sprite:Play("SmallBlood03", true)
-				elseif rngSprite == 3 then
-					sprite:Play("SmallBlood04", true)
-				elseif rngSprite == 4 then
-					sprite:Play("SmallBlood05", true)
-				else
-					sprite:Play("SmallBlood06", true)
-				end
-				creep.CollisionDamage = 0.4
-			end
-		end
-	end
-end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, PepperGrinder.CreepSpawning)
