@@ -129,15 +129,16 @@ function ThunderBombs:HandleRingDamage(laser) --this exists because it doesnt pr
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, ThunderBombs.HandleRingDamage)
 
----@param bomb EntityBomb
 function ThunderBombs:EntityHit(entity, dmg, flags, source, countdown)
 	source = source.Entity
 
-	local data = Helpers.GetData(source)
-	if IsThunderBomb(source) or data and data.FromThunderBomb == true then
-		local lightning = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CHAIN_LIGHTNING, 0, entity.Position, Vector.Zero, bomb):ToEffect()
-		lightning:SetDamageSource(EntityType.ENTITY_PLAYER)
-		lightning.CollisionDamage = source.CollisionDamage
+	if source then
+		local data = Helpers.GetData(source)
+		if IsThunderBomb(source) or data and data.FromThunderBomb == true then
+			local lightning = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CHAIN_LIGHTNING, 0, entity.Position, Vector.Zero, bomb):ToEffect()
+			lightning:SetDamageSource(EntityType.ENTITY_PLAYER)
+			lightning.CollisionDamage = source.CollisionDamage
+		end
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, ThunderBombs.EntityHit)
