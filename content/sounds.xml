@@ -9,7 +9,7 @@
 	<sound name="Soul Of Edith">
 		<sample weight="1" path="redith/SoulOfEdith.wav" />
 	</sound>
-	<sound name="Salt Shaker">
+	<sound name="Salt Shaker Use">
 		<sample weight="1" path="redith/Salt_Shaker_1.wav" />
 		<sample weight="1" path="redith/Salt_Shaker_2.wav" />
 		<sample weight="1" path="redith/Salt_Shaker_3.wav" />

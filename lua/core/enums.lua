@@ -138,7 +138,7 @@ Enums.SFX =
 							},
 					SaltShaker =
 							{
-								SHAKE = Isaac.GetSoundIdByName("Salt Shaker"),
+								SHAKE = Isaac.GetSoundIdByName("Salt Shaker Use"),
 							},
 					Edith = 
 							{
