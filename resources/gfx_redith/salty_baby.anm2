@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="Aczom + Strawrat" CreatedOn="25.01.2024 8:21:44" Version="113" Fps="30"/>
+	<Info CreatedBy="Aczom + Strawrat" CreatedOn="14.03.2025 22:00:25" Version="114" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="familiar\familiar_salty_baby.png" Id="0"/>
@@ -10,7 +10,7 @@
 		<Nulls/>
 		<Events/>
 	</Content>
-	<Animations DefaultAnimation="IdleDown">
+	<Animations DefaultAnimation="FloatDown">
 		<Animation Name="IdleDown" FrameNum="1" Loop="false">
 			<RootAnimation>
 				<Frame XPosition="0" YPosition="0" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>

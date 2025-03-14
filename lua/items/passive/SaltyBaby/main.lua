@@ -79,6 +79,11 @@ function SaltyBaby:OnSaltyBabyUpdate(familiar)
         end
         familiar.FireCooldown = 0
     end
+    local sprite = familiar:GetSprite()
+    local anim = familiar.FireCooldown / 1000 >= 1 and "FloatChargedDown" or "FloatDown"
+    if not sprite:IsPlaying(anim) then
+        sprite:Play(anim, false)
+    end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, SaltyBaby.OnSaltyBabyUpdate, SaltyBabyVariant)
 
