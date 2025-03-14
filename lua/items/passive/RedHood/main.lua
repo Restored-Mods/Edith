@@ -22,6 +22,7 @@ local moonPhaseAnim = {
 
 local function GetRedMoonPhase()
     return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "MoonPhaseWolf") == true
+    or Game():GetLevel():GetCurses() & LevelCurse.CURSE_OF_DARKNESS > 0
 end
 
 local function SetRedMoonPhase(bool)
@@ -156,7 +157,7 @@ function RedHoodLocal:DamageReduction(entity, amount, flags, source, cd)
     if entity then
         local player = entity:ToPlayer()
         local effects = player:GetEffects()
-        if effects:GetNullEffectNum(EdithRestored.Enums.NullItems.RED_HOOD) and GetRedMoonPhase() then
+        if effects:GetNullEffectNum(EdithRestored.Enums.NullItems.RED_HOOD) > 0 and GetRedMoonPhase() then
             return {Damage = 1.0, DamageFlags = flags, DamageCountdown = cd}
         end
     end
@@ -177,7 +178,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, RedHoodLocal.SwipesI
 
 function RedHoodLocal:Swipes(effect)
     local player = effect.Parent
-    if not player or not player:ToPlayer() or Helpers.GetCurrentMoonPhase() ~= 5 then
+    if not player or not player:ToPlayer() or not GetRedMoonPhase() then
         effect:Remove()
         return
     end
@@ -330,7 +331,8 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_UPDATE, EdithRestored.OnNewGreedW
 ---@param cache CacheFlag | integer
 function RedHoodLocal:Cache(player, cache)
     local effects = player:GetEffects()
-    local mul = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.RED_HOOD) / 4
+    local del = GetRedMoonPhase() and 4 or 8
+    local mul = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.RED_HOOD) / del
     if cache == CacheFlag.CACHE_DAMAGE then
         player.Damage = player.Damage + 5 * mul
     elseif cache == CacheFlag.CACHE_FIREDELAY then
