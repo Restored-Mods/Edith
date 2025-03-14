@@ -24,35 +24,44 @@ local SaltCreepSubtype = EdithRestored.Enums.Entities.SALT_CREEP.SubType
 local SaltyBabyVariant = EdithRestored.Enums.Familiars.SALTY_BABY.Variant
 
 ---@param familiar EntityFamiliar
-local function ShootSaltyBabyTear(familiar)
+local function ShootSaltyBabyTear(familiar, hasBFFS)
     local player = familiar.Player
-    local rng = player:GetCollectibleRNG(SaltyBabyVariant)
-    local baseMultiplier = -30 / baseRange
-    local halfBaseHeight = baseHeight * 0.9
+    local rng = player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY)
+    local baseMultiplier = -70 / baseRange
+    local halfBaseHeight = baseHeight * 1.1
     local tearCount = rng:RandomInt(6, 12)
 
     for _ = 1, tearCount do
-        local tear = familiar:FireProjectile(RandomVector())
-        tear.FallingAcceleration = rng:RandomInt(150, 200) / 100
-
-        local fallSpeedVar = rng:RandomInt(80, 120) / 100
+        local tear = familiar:FireProjectile(RandomVector():Resized(1))
+        tear.Velocity = tear.Velocity * rng:RandomInt(2, 6) / 10
+        tear.FallingAcceleration = rng:RandomInt(70, 160) / 100
+        local fallSpeedVar = rng:RandomInt(180, 220) / 100
         tear.FallingSpeed = baseMultiplier * fallSpeedVar
-        tear.Height = halfBaseHeight * (rng:RandomInt(20, 120) / 100)
+        tear.Height = halfBaseHeight
         tear.Scale = 1
-
+        tear.CollisionDamage = tear.CollisionDamage * rng:RandomInt(8, 12) / 10
+        if hasBFFS then
+            tear.CollisionDamage = tear.CollisionDamage * 1.25
+        end
         ChangeToEdithTear(tear)
+        tear:Update()
     end
 end		
 
 ---@param familiar EntityFamiliar
+function SaltyBaby:OnSaltyBabyInit(familiar)
+    familiar.FireCooldown = 0
+    familiar:AddToFollowers()
+end
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, SaltyBaby.OnSaltyBabyInit, SaltyBabyVariant)
+
+---@param familiar EntityFamiliar
 function SaltyBaby:OnSaltyBabyUpdate(familiar)
     familiar:FollowParent()
-    familiar:AddToFollowers()
-
-    local data = Helpers.GetData(familiar)
     local player = familiar.Player
     
-    data.SaltyBabyCharge = data.SaltyBabyCharge or 0
+    local lulabyMult = player:HasTrinket(TrinketType.TRINKET_FORGOTTEN_LULLABY) and 2 or 1
+
     local shoot = {
         l = Input.IsActionPressed(ButtonAction.ACTION_SHOOTLEFT, player.ControllerIndex),
         r = Input.IsActionPressed(ButtonAction.ACTION_SHOOTRIGHT, player.ControllerIndex),
@@ -63,20 +72,20 @@ function SaltyBaby:OnSaltyBabyUpdate(familiar)
     local isShooting = (shoot.l or shoot.r or shoot.u or shoot.d)
 
     if isShooting == true then
-        data.SaltyBabyCharge = math.min(1, data.SaltyBabyCharge + 0.025)
+        familiar.FireCooldown = math.min(1000, familiar.FireCooldown + 25 * lulabyMult)
     else
-        if data.SaltyBabyCharge >= 1 then
-            ShootSaltyBabyTear(familiar)
+        if familiar.FireCooldown / 1000 >= 1 then
+            ShootSaltyBabyTear(familiar, player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS))
         end
-        data.SaltyBabyCharge = 0
+        familiar.FireCooldown = 0
     end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, SaltyBaby.OnSaltyBabyUpdate, SaltyBabyVariant)
 
 ---@param player EntityPlayer
 function SaltyBaby:Cache(player)
-    local numFamiliars = player:GetCollectibleNum(SaltyBabyVariant) + player:GetEffects():GetCollectibleEffectNum(SaltyBabyVariant)
-	player:CheckFamiliar(SaltyBabyVariant, numFamiliars, player:GetCollectibleRNG(SaltyBabyVariant), saltyBabyDesc)
+    local numFamiliars = player:GetCollectibleNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY) + player:GetEffects():GetCollectibleEffectNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY)
+	player:CheckFamiliar(SaltyBabyVariant, numFamiliars, player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY), saltyBabyDesc)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, SaltyBaby.Cache, CacheFlag.CACHE_FAMILIARS)
 
@@ -86,10 +95,10 @@ function SaltyBaby:RenderSaltyChargebar(familiar)
     if not data.Chargebar then
 		data.Chargebar = Sprite("gfx/chargebar.anm2", true)
 	end
-	local Chargebar = data.Chargebar    
-
-    local RenderPos = Isaac.WorldToScreen(familiar.Position) + Vector(10 * familiar.SpriteScale.X, -30 * familiar.SpriteScale.Y)    
-    HudHelper.RenderChargeBar(Chargebar, data.SaltyBabyCharge, 1, RenderPos)
+	local Chargebar = data.Chargebar
+    Chargebar.Offset = Vector(10 * familiar.SpriteScale.X, -30 * familiar.SpriteScale.Y)
+    local RenderPos = Isaac.WorldToScreen(familiar.Position)
+    HudHelper.RenderChargeBar(Chargebar, familiar.FireCooldown / 1000, 1, RenderPos)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_FAMILIAR_RENDER, SaltyBaby.RenderSaltyChargebar, EdithRestored.Enums.Familiars.SALTY_BABY.Variant)
 
@@ -101,6 +110,6 @@ function EdithRestored:OnSaltyBabyTearDeath(tear)
     local salt = Isaac.Spawn(EntityType.ENTITY_EFFECT, SaltCreepVar, SaltCreepSubtype, tear.Position, Vector.Zero, tear):ToEffect()
     if not salt then return end
 
-    salt:SetTimeout(150)
+    salt:SetTimeout(30)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_TEAR_DEATH, EdithRestored.OnSaltyBabyTearDeath)

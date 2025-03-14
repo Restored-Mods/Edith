@@ -432,57 +432,20 @@ local function EdithGridMovement(player, data)
 	data.HadMarsEffect = hasMarsEffect
 end
 
----@param player EntityPlayer
-function Player:ChargeBar(player)
+function Player:ChargeBarRender(player)
 	local data = Helpers.GetData(player)
-	if game:GetRoom():GetRenderMode() == RenderMode.RENDER_WATER_REFLECT or 
-	not Helpers.IsPlayerEdith(player,true,false) then return end
+	if not Helpers.IsPlayerEdith(player,true,false) then return end
 	
-	local MinJumpCharge = MinJumpVal
 	data.EdithJumpCharge = data.EdithJumpCharge or 0
-	if not data.ChargeBar and data.EdithJumpCharge >= MinJumpCharge then
-		data.ChargeBar = Sprite()
-		data.ChargeBar:Load("gfx/chargebar.anm2", true)
-	end
-	
-	if not data.ChargeBar then return end
-	
-	data.ChargeBar.PlaybackSpeed = 0.5
-	
-	if not game:IsPaused() then
-		local update = true
-		if not data.ChargeBar:IsPlaying("Disappear") then
-			if data.EdithJumpCharge >= MinJumpCharge then
-				if data.EdithJumpCharge < (100 * JumpChargeMul + MinJumpCharge) or data.EdithJumpCharge >= (100 * JumpChargeMul + MinJumpCharge) and not data.ChargeBar:GetAnimation():match("Charg") then --and not (data.ChargeBar:GetAnimation():sub(-#"Charged") == "Charged")
-					data.ChargeBar:SetFrame("Charging", math.ceil((data.EdithJumpCharge - MinJumpCharge) / JumpChargeMul))
-					update = false
-				else
-					if data.ChargeBar:GetAnimation() == "Charging" then
-						data.ChargeBar:Play("StartCharged", true)
-					elseif data.ChargeBar:IsFinished("StartCharged") and not data.ChargeBar:IsPlaying("Charged") then
-						data.ChargeBar:Play("Charged", true)
-					end
-				end
-			end
-			if data.EdithJumpCharge < MinJumpCharge and (data.ChargeBar:GetAnimation():find("Charg", 1, true)) then
-				data.ChargeBar:Play("Disappear", true)
-			end
-		end
+	if not data.ChargeBar then
+		data.ChargeBar = Sprite("gfx/chargebar.anm2", true)
 		
-		if update then
-			data.ChargeBar:Update()
-		end
 	end
-	
 	data.ChargeBar.Offset = Vector(-12 * player.SpriteScale.X,-35 * player.SpriteScale.Y)
-	if data.EdithJumpCharge >= MinJumpCharge or data.ChargeBar:IsPlaying("Disappear") then
-		data.ChargeBar:Render(game:GetRoom():WorldToScreenPosition(player.Position), Vector.Zero, Vector.Zero)
-	end
-	if data.ChargeBar:IsFinished("Disappear") then
-		data.ChargeBar = nil
-	end
+	HudHelper.RenderChargeBar(data.ChargeBar, math.max(0, data.EdithJumpCharge - MinJumpVal), JumpChargeMul * 100, game:GetRoom():WorldToScreenPosition(player.Position))
+	
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBar, 0)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBarRender, 0)
 
 ---@param target EntityEffect
 function Player:TargetJumpRender(target)
