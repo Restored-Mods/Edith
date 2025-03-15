@@ -55,8 +55,8 @@ Enums.Familiars =
 				{
 					SALTY_BABY =
 								{
-									Type = Isaac.GetEntityTypeByName("Salty Baby"),
-									Variant = Isaac.GetEntityVariantByName("Salty Baby"),
+									Type = Isaac.GetEntityTypeByName("​Salty Baby"),
+									Variant = Isaac.GetEntityVariantByName("​Salty Baby"),
 									SubType = 0
 								},
 					LOT_BABY = {
@@ -65,8 +65,8 @@ Enums.Familiars =
 									SubType = Isaac.GetEntitySubTypeByName("Lot Baby")
 								},
 					PAWN_BABY = {
-									Type = Isaac.GetEntityTypeByName("Pawn Baby"),
-									Variant = Isaac.GetEntityVariantByName("Pawn Baby"),
+									Type = Isaac.GetEntityTypeByName("​Salt Pawns"),
+									Variant = Isaac.GetEntityVariantByName("​Salt Pawns"),
 									SubType = 0
 								},
 				}
@@ -80,16 +80,16 @@ Enums.PlayerType =
 Enums.CollectibleType = 
 					{
 						--COLLECTIBLE_BREATH_MINTS = Isaac.GetItemIdByName("Breath Mints"),
-						COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("Lithium Salts"),
-						COLLECTIBLE_SODOM = Isaac.GetItemIdByName("Sodom"),
+						COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("​Lithium Salts"),
+						COLLECTIBLE_SODOM = Isaac.GetItemIdByName("​Sodom"),
 						COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),
-						COLLECTIBLE_THUNDER_BOMBS = Isaac.GetItemIdByName("Thunder Bombs"),
+						COLLECTIBLE_THUNDER_BOMBS = Isaac.GetItemIdByName("​Thunder Bombs"),
 						COLLECTIBLE_LOT_BABY = Isaac.GetItemIdByName("Lot Baby"),
-						COLLECTIBLE_SALTY_BABY = Isaac.GetItemIdByName("Salty Baby"),
-						COLLECTIBLE_PAWN_BABY = Isaac.GetItemIdByName("Pawn Baby"),
-						COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("Salt Shaker"),					
+						COLLECTIBLE_SALTY_BABY = Isaac.GetItemIdByName("​Salty Baby"),
+						COLLECTIBLE_PAWN_BABY = Isaac.GetItemIdByName("​Salt Pawns"),
+						COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("​Salt Shaker"),					
 						COLLECTIBLE_GORGON_MASK = Isaac.GetItemIdByName("Gorgon Mask"),
-						COLLECTIBLE_RED_HOOD = Isaac.GetItemIdByName("Red Hood"),
+						COLLECTIBLE_RED_HOOD = Isaac.GetItemIdByName("​Red Hood"),
 						--COLLECTIBLE_THE_CHISEL = Isaac.GetItemIdByName("The Chisel"),
 					}
 
@@ -191,17 +191,17 @@ Enums.Achievements.Characters = {
 Enums.Achievements.CompletionMarks = {
 	-- A-side Unlicks
 	BLASTING_BOOTS =  Isaac.GetAchievementIdByName("Blasting Boots"),
-	SALTY_BABY =  Isaac.GetAchievementIdByName("Salty Baby"),
-	SALT_SHAKER =  Isaac.GetAchievementIdByName("Salt Shaker"),
+	SALTY_BABY =  Isaac.GetAchievementIdByName("​Salty Baby"),
+	SALT_SHAKER =  Isaac.GetAchievementIdByName("​Salt Shaker"),
 	CHUNK_OF_AMBER =  Isaac.GetAchievementIdByName("Chunk of Amber"),
-	THUNDER_BOMBS =  Isaac.GetAchievementIdByName("Thunder Bombs"),
+	THUNDER_BOMBS =  Isaac.GetAchievementIdByName("​Thunder Bombs"),
 	SMELLING_SALTS =  Isaac.GetAchievementIdByName("Smelling Salts"),
-	PAWN_BABY =  Isaac.GetAchievementIdByName("Pawn Baby"),
+	PAWN_BABY =  Isaac.GetAchievementIdByName("​Salt Pawns"),
 	GORGON_MASK =  Isaac.GetAchievementIdByName("Gorgon Mask"),
-	RED_HOOD =  Isaac.GetAchievementIdByName("Red Hood"),
-	LITHIUM =  Isaac.GetAchievementIdByName("Lithium Salts"),
+	RED_HOOD =  Isaac.GetAchievementIdByName("​Red Hood"),
+	LITHIUM =  Isaac.GetAchievementIdByName("​Lithium Salts"),
 	SHARPNEL_BOMBS = Isaac.GetAchievementIdByName("Sharpnel Bombs"),
-	SODOM =  Isaac.GetAchievementIdByName("Sodom"),
+	SODOM =  Isaac.GetAchievementIdByName("​Sodom"),
 	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),
 	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
 	--REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),

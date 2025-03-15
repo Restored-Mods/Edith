@@ -31,7 +31,7 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL, "
 
 
 --Salt Shaker
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER, "On use creates ring of salt creep near Isaac#Enemies coming close to it get {{Fear}} fear effect", "Salt Shaker")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER, "On use creates ring of salt creep near Isaac#Enemies coming close to it get {{Fear}} fear effect", "​Salt Shaker")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER, "При использовании создает круг из соли рядом с Айзеком#Враги, приближающиеся к нему, получают {{Fear}} эффект страха", "Солонка", "ru")
 
 --Gorgon Mask
@@ -40,11 +40,11 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, 
 
 --Lithium Salts
 --EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Todas las píldoras reducirán el daño y las lágrimas, pero aumentarán el tiempo de invencibilidad", "Sales de litio", "spa")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Adds extra lithium pill that has 10% replace normal pill", "Lithium Salts")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Adds extra lithium pill that has 10% replace normal pill", "​Lithium Salts")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Добовляет дополнительную пилюлю, которая может с шансом в 10% заменить обычную", "Литивые соли", "ru")
 
 --Thunder Bombs
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Fully recharges active items#{{Battery}} When Isaac has no bombs, one can be placed at the cost of a charge#Bombs make electricity that spreads to nearby enemies#Electricity deals half of the bomb's damage", "Thunder Bombs", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Fully recharges active items#{{Battery}} When Isaac has no bombs, one can be placed at the cost of a charge#Bombs make electricity that spreads to nearby enemies#Electricity deals half of the bomb's damage", "​Thunder Bombs", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Полностью заряжает активные предметы#{{Battery}} Когда у Айзека нет бомб, одна может быть использована взамен на заряд#Бомбы создают электричество, которое распространяется на близлежащих врагов#Електричество наносит половину урона от бомб", "Громовые бомбы", "ru")
 
 --Blasting Boots
@@ -52,15 +52,15 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOT
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "Дает устойчивость ко взрывам#Взрыв подбрасывет Айзека в воздух", "Взрывостойкие сапоги", "ru")
 
 --Pawn Baby
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY, "Brother Bobby-like familiar#{{Fear}} 20% chance to shoot fear tear#If enemy is near, stomps it#Regular enemies are killed instantly#Bosses take 20% of maximum HP damage", "Pawn Baby", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY, "Brother Bobby-like familiar#{{Fear}} 20% chance to shoot fear tear#If enemy is near, stomps it#Regular enemies are killed instantly#Bosses take 20% of maximum HP damage", "​Salt Pawns", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY, "Фамильяр, cхожий c братиком Бобби#{{Fear}} 20% шанс выстрелить слезой с эффектом страха#Если враг рядом, прыгает на него#Обычные враги убиваются мгновенно#Боссы получают урон, равный 20% от максимального здоровья", "Малыш-пешка", "ru")
 
 --Salty Baby
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "{{Chargeable}} Charges attack that spawns a ring of salt creep#{{Fear}} Creep fears nearby enemies", "Salty Baby", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "{{Chargeable}} Charges attack that spawns a ring of salt creep#{{Fear}} Creep fears nearby enemies", "​Salty Baby", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "{{Chargeable}} Заряжающаяся атака, которая создает круг из соли#{{Fear}} Соль дает близлежащим врагам эффект страха", "Малыш-солонка", "ru")
 
 --Sodom
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots opposite his movement direction a red flame#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 8 directions#These flames can also apply same effect#!!! Effect can be applied on enemy only one time", "Sodom", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots opposite his movement direction a red flame#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 8 directions#These flames can also apply same effect#!!! Effect can be applied on enemy only one time", "​Sodom", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#При смерти с эффектом враг выстреливает пламя в 8 направлениях#Это пламя может наложить этот же эффект#!!! Эффект можно наложить на врага только один раз", "Содом", "ru")
 
 -- Trinkets

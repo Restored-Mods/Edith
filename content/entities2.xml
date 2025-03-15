@@ -12,11 +12,11 @@
     </entity>
 
     <!--Pawn Baby-->
-    <entity anm2path="pawn_baby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" collisionInterval="8" friction="1" id="3" name="Pawn Baby" numGridCollisionPoints="12" shadowSize="13" stageHP="0" tags="cansacrifice" variant="5874">
+    <entity anm2path="pawn_baby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" collisionInterval="8" friction="1" id="3" name="​Salt Pawns" numGridCollisionPoints="12" shadowSize="13" stageHP="0" tags="cansacrifice" variant="5874">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
     </entity>
 
-    <entity anm2path="salty_baby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="Salty Baby" numGridCollisionPoints="12" shadowSize="11" stageHP="0" tags="cansacrifice" variant="5873">
+    <entity anm2path="salty_baby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" friction="1" id="3" name="​Salty Baby" numGridCollisionPoints="12" shadowSize="11" stageHP="0" tags="cansacrifice" variant="5873">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
     </entity>
 	   
@@ -60,7 +60,7 @@
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
     </entity> -->
     <!--Salt Shaker-->
-    <!--entity anm2path="saltshaker.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="5" collisionRadius="10" friction="1" id="3" name="Salt Shaker" numGridCollisionPoints="40" shadowSize="0" stageHP="0" variant="5234" >
+    <!--entity anm2path="saltshaker.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="5" collisionRadius="10" friction="1" id="3" name="​Salt Shaker" numGridCollisionPoints="40" shadowSize="0" stageHP="0" variant="5234" >
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
     </entity-->
     <!-- Lot -->

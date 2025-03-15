@@ -39,25 +39,25 @@
 	<sound name="Gorgon Mask">
 		<sample weight="1" path="redith/funny/Gorgon Mask.wav" />
 	</sound>
-	<sound name="Lithium Salts">
+	<sound name="​Lithium Salts">
 		<sample weight="1" path="redith/funny/Lithium Salts.wav" />
 	</sound>
-	<sound name="Pawn Baby">
+	<sound name="​Salt Pawns">
 		<sample weight="1" path="redith/funny/Pawn Baby.wav" />
 	</sound>
-	<sound name="Red Hood">
+	<sound name="​Red Hood">
 		<sample weight="1" path="redith/funny/Red Hood.wav" />
 	</sound>
-	<sound name="Salt Shaker">
+	<sound name="​Salt Shaker">
 		<sample weight="1" path="redith/funny/Salt Shaker.wav" />
 	</sound>
-	<sound name="Salty Baby">
+	<sound name="​Salty Baby">
 		<sample weight="1" path="redith/funny/Salty Baby.wav" />
 	</sound>
-	<sound name="Sodom">
+	<sound name="​Sodom">
 		<sample weight="1" path="redith/funny/Sodom.wav" />
 	</sound>
-	<sound name="Thunder Bombs">
+	<sound name="​Thunder Bombs">
 		<sample weight="1" path="redith/funny/Thunder Bombs.wav" />
 	</sound>
 </sounds>
