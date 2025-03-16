@@ -40,10 +40,11 @@ include("lua.items.passive.RedHood.main")
 include("lua.items.trinkets.PepperGrinder.main")
 include("lua.items.trinkets.SaltRock.main")
 include("lua.items.trinkets.SmellingSalts.main")
+include("lua.items.trinkets.ChunkOfAmber.main")
 
 -- cards
 include("lua.items.cards.Prudence.main")
-include("lua.items.cards.SoulofEdith.main")
+include("lua.items.cards.SoulOfEdith.main")
 include("lua.items.cards.PrudenceReverse.main")
 
 --mod compatibility

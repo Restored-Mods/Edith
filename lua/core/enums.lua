@@ -98,6 +98,7 @@ Enums.TrinketType =
 						TRINKET_PEPPER_GRINDER = Isaac.GetTrinketIdByName("Pepper Grinder"),
 						TRINKET_SALT_ROCK = Isaac.GetTrinketIdByName("Salt Rock"),
 						TRINKET_SMELLING_SALTS = Isaac.GetTrinketIdByName("Smelling Salts"),
+						TRINKET_CHUNK_OF_AMBER = Isaac.GetTrinketIdByName("Chunk of Amber"),
 					}
 
 Enums.NullItems = 

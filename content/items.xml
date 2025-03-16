@@ -17,7 +17,8 @@
 	<trinket id="0" name="Pepper Grinder" description="Achoo!" gfx="pepper_grinder.png" />
 	<trinket id="1" name="Salt Rock" achievement="Salt Rock" description="Back to the salt mines" customtags="revive hiddenrevive" gfx="salt_rock.png" />
 	<trinket id="2" name="Smelling Salts" description="Regain consciousness" gfx="smelling_salts.png" />
-	
+	<trinket id="3" name="Chunk of Amber" achievement="Chunk of Amber" description="Preserved rewards" gfx="chunk_of_amber.png"/>
+
 	<!-- Null Items -->
 	<null id="1" name="Gorgon Mask Effect" persistent="true"/>
 	<null id="2" name="Red Hood Effect" persistent="true" cache="damage firedelay speed range"/>
