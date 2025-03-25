@@ -94,6 +94,5 @@ function Lithium:AfterDamage(entity)
 
     player:ResetDamageCooldown()
     player:SetMinDamageCooldown(cd + pos * IFRAME_INCREASE_AMOUNT + neg * IFRAME_INCREASE_FALSEPHD_AMOUNT)
-    print(cd + pos * IFRAME_INCREASE_AMOUNT + neg * IFRAME_INCREASE_FALSEPHD_AMOUNT)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Lithium.AfterDamage, EntityType.ENTITY_PLAYER)
