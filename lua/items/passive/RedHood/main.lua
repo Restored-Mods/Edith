@@ -76,20 +76,18 @@ local moonPhaseCount = {
 local function SpawnMoonPhaseView(player)
     local playerData = Helpers.GetData(player)
 
-    -- if not playerData.MoonPhaseView then
-        playerData.MoonPhaseView = Isaac.Spawn(
-            EntityType.ENTITY_EFFECT,
-            MoonIndVariant,
-            MoonIndSubType,
-            player.Position + Vector(0, -75),
-            Vector.Zero,
-            player
-        ):ToEffect()
+    playerData.MoonPhaseView = Isaac.Spawn(
+       EntityType.ENTITY_EFFECT,
+        MoonIndVariant,
+        MoonIndSubType,
+        player.Position + Vector(0, -75),
+        Vector.Zero,
+        player
+    ):ToEffect()
 
-        playerData.MoonPhaseView:FollowParent(player)
-        playerData.MoonPhaseView:AddEntityFlags(EntityFlag.FLAG_PERSISTENT)
-        playerData.MoonPhaseView.DepthOffset = 10
-    -- end 
+    playerData.MoonPhaseView:FollowParent(player)
+    playerData.MoonPhaseView:AddEntityFlags(EntityFlag.FLAG_PERSISTENT)
+    playerData.MoonPhaseView.DepthOffset = 10
 end
 
 local function PlayNewMoonPhase(moon, Animation)
@@ -142,12 +140,6 @@ local function AdvanceMoonPhase(step)
 	end
     SetMoonPhase(moonPhase)
 end
-
-function RedHoodLocal:Mierda(tear)
-    AdvanceMoonPhase(1)
-    SpawnMoonPhaseView(tear.SpawnerEntity:ToPlayer())
-end
-mod:AddCallback(ModCallbacks.MC_POST_FIRE_TEAR, RedHoodLocal.Mierda)
 
 ---@param effect EntityEffect
 ---@param offset Vector

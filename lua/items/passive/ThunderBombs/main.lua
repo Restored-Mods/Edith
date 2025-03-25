@@ -105,7 +105,7 @@ function ThunderBombs:EdithStompThunderBomb(player, damage, radius, forced)
 	if CanPlayerPlaceThunderBomb(player) and not data.LockBombs then
 		for i = 0,2 do
 			if DoesItemSlotHaveCharge(player, i) then
-				player:AddActiveCharge(-1, i)
+				player:AddActiveCharge(-3, i)
 				Game():GetHUD():FlashChargeBar(player, i)
 				SFXManager():Play(SoundEffect.SOUND_BATTERYDISCHARGE, 1 , 0)
 				player:SetMinDamageCooldown(60)
@@ -201,7 +201,7 @@ function ThunderBombs:TryPlaceBomb(player)
 			if bombButton and not (Helpers.IsPlayerEdith(player, true, false) and data.LockBombs) then
 				for i = 0,2 do
 					if DoesItemSlotHaveCharge(player, i) then
-						player:AddActiveCharge(-1, i)
+						player:AddActiveCharge(-3, i)
 						Game():GetHUD():FlashChargeBar(player, i)
 						SFXManager():Play(SoundEffect.SOUND_BATTERYDISCHARGE, 1 , 0)
 						local bomb = Isaac.Spawn(EntityType.ENTITY_BOMB, 0, 0, player.Position, Vector.Zero, player)
