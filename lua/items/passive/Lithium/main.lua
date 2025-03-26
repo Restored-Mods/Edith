@@ -22,6 +22,11 @@ local StatsDownPills = {
 
 local RNG = RNG()
 
+function Lithium:InitRNG(isContinue)
+    RNG:SetSeed(Game():GetSeeds():GetStartSeed(), 35)
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Lithium.InitRNG)
+
 ---@param pillEffect PillEffect | integer
 ---@param player EntityPlayer
 ---@param flags UseFlag | integer
@@ -44,7 +49,7 @@ function Lithium:OnPillUse(pillEffect, player, flags, pillColor)
     end
 
     local randomNum = RNG:RandomInt(1, #StatsDownPills)
-    player:UsePill(StatsDownPills[randomNum], PillColor.PILL_NULL)
+    player:UsePill(StatsDownPills[randomNum], PillColor.PILL_NULL, UseFlag.USE_NOANNOUNCER)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_USE_PILL, Lithium.OnPillUse)
 
