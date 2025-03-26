@@ -109,7 +109,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_FAMILIAR_RENDER, SaltyBaby.Render
 
 function EdithRestored:OnSaltyBabyTearDeath(tear)
     local tearParent = tear.Parent
-    if not tearParent and not tearParent:ToFamiliar() then return end
+    if not tearParent or not tearParent:ToFamiliar() then return end
     if tearParent.Variant ~= EdithRestored.Enums.Familiars.SALTY_BABY.Variant then return end
 
     local salt = Isaac.Spawn(EntityType.ENTITY_EFFECT, SaltCreepVar, SaltCreepSubtype, tear.Position, Vector.Zero, tear):ToEffect()
