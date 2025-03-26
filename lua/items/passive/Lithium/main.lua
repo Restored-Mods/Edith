@@ -16,8 +16,8 @@ local StatsDownPills = {
     PillEffect.PILLEFFECT_LUCK_DOWN,
     PillEffect.PILLEFFECT_SHOT_SPEED_DOWN,
     PillEffect.PILLEFFECT_RANGE_DOWN,
-    PillEffect.PILLEFFECT_LUCK_DOWN,
     PillEffect.PILLEFFECT_SPEED_DOWN,
+    PillEffect.PILLEFFECT_TEARS_DOWN,
 }
 
 local RNG = RNG()
