@@ -49,7 +49,7 @@ function Lithium:OnPillUse(pillEffect, player, flags, pillColor)
     end
 
     local randomNum = RNG:RandomInt(1, #StatsDownPills)
-    player:UsePill(StatsDownPills[randomNum], PillColor.PILL_NULL, UseFlag.USE_NOANNOUNCER)
+    player:UsePill(StatsDownPills[randomNum], PillColor.PILL_NULL, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOHUD)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_USE_PILL, Lithium.OnPillUse)
 
