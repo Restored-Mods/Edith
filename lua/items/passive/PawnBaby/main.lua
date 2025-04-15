@@ -60,10 +60,7 @@ function PawnBaby:Update(familiar)
             end
             sprite.FlipX = data.animDir == Direction.LEFT
             if familiar.FireCooldown <= 0 then
-                local trajectory = tearTrajectory * 9 + player.Velocity
-                if trajectory:Length() < 9 then
-                    trajectory:Resize(9)
-                end
+                local trajectory = tearTrajectory:Resized(9) + player:GetTearMovementInheritance(tearTrajectory)
                 local tear = familiar:FireProjectile(Vector.Zero)
                 tear.Velocity = trajectory
                 --local tear = Isaac.Spawn(2, 0, 0, familiar.Position + vecDir[data.animDir]:Resized(5), trajectory, familiar):ToTear()
