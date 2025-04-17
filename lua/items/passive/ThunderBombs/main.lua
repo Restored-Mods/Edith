@@ -261,7 +261,7 @@ function ThunderBombs:ReplaceCostume(bomb)
 	end
 
 	local overlay = Sprite()
-	overlay:Load("gfx_redith/items/pick ups/bombs/spark" .. math.floor(bomb:GetScale() * 2) .. ".anm2", true)
+	overlay:Load("gfx_redith/items/pick ups/bombs/thunder/spark" .. math.floor(bomb:GetScale() * 2) .. ".anm2", true)
 	overlay:Play("Idle", true)
 	overlay.Color = Color(1,1,1,1)
 	data.ThunderBombsOverlay = overlay
