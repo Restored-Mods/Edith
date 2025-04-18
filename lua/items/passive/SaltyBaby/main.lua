@@ -62,6 +62,7 @@ function SaltyBaby:OnSaltyBabyUpdate(familiar)
 
     local colCapsule = familiar:GetCollisionCapsule()
     local famData = Helpers.GetData(familiar)
+    local sprite = familiar:GetSprite()
 
     famData.CurrentBlocks = famData.CurrentBlocks or 0
     famData.IsShattered = famData.IsShattered or false
@@ -71,17 +72,26 @@ function SaltyBaby:OnSaltyBabyUpdate(familiar)
             ShootSaltyBabyTear(familiar, 3, 6)
             proj:Die()
             famData.CurrentBlocks = famData.CurrentBlocks + 1
+            
+            sprite:Play("FloatChargedDown", false)
 
             if famData.CurrentBlocks >= maxBlocks then
                 famData.IsShattered = true
-                SFXManager():Play(SoundEffect.SOUND_GLASS_BREAK, 1, 2, false)
+                SFXManager():Play(SoundEffect.SOUND_GLASS_BREAK)
+                sprite:Play("BrokenDown", true)
             end
+        end
+    end
+
+    if sprite:GetAnimation() == "FloatChargedDown" then
+        if sprite:GetFrame() == 15 then
+            sprite:Play("FloatDown", true)
         end
     end
 
     if famData.IsShattered then
         if familiar.FrameCount % 10 == 0 then
-            local salt = Isaac.Spawn(EntityType.ENTITY_EFFECT, SaltCreepVar, SaltCreepSubtype, familiar.Position, Vector.Zero, familiar):ToEffect() 
+            Isaac.Spawn(EntityType.ENTITY_EFFECT, SaltCreepVar, SaltCreepSubtype, familiar.Position, Vector.Zero, familiar):ToEffect() 
         end
     end
 end
@@ -91,9 +101,13 @@ function SaltyBaby:RestoreSaltyBabyState()
     local saltyBabies = Isaac.FindByType(EntityType.ENTITY_FAMILIAR, SaltyBabyVariant)
 
     for _, saltybaby in ipairs(saltyBabies) do
+        local sprite = saltybaby:GetSprite()
+
         local famData = Helpers.GetData(saltybaby)
         famData.IsShattered = false
         famData.CurrentBlocks = 0
+
+        sprite:Play("FloatDown", true)
     end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, SaltyBaby.RestoreSaltyBabyState)
