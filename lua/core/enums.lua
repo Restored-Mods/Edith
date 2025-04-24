@@ -23,8 +23,8 @@ Enums.Entities = {
 					},
 					EDITH_TARGET =
 					{
-						Type = Isaac.GetEntityTypeByName("Restored Edith Target)"),
-						Variant = Isaac.GetEntityVariantByName("Restored Edith Target)"),
+						Type = Isaac.GetEntityTypeByName("Restored Edith Target"),
+						Variant = Isaac.GetEntityVariantByName("Restored Edith Target"),
 						SubType = 0
 					},
 					SALT_CREEP =
@@ -43,11 +43,6 @@ Enums.Entities = {
 					{
 						Type = Isaac.GetEntityTypeByName("Custom Dust Cloud"),
 						Variant = Isaac.GetEntityVariantByName("Custom Dust Cloud")
-					},
-					MOON_INDICATOR = {
-						Type = Isaac.GetEntityTypeByName("Moon indicator"),
-						Variant = Isaac.GetEntityVariantByName("Moon indicator"),
-						SubType = Isaac.GetEntitySubTypeByName("Moon indicator")
 					},
 					WEREWOLF_SWIPE = {
 						Type = Isaac.GetEntityTypeByName("Werewolf Swipe"),
