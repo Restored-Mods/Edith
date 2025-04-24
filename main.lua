@@ -35,6 +35,7 @@ include("lua.items.passive.PawnBaby.main")
 include("lua.items.passive.ThunderBombs.main")
 
 include("lua.items.passive.RedHood.main")
+include("lua.items.passive.ShrapnelBombs.main")
 
 -- trinkets
 include("lua.items.trinkets.PepperGrinder.main")

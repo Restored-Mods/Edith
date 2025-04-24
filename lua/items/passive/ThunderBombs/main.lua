@@ -39,9 +39,9 @@ end
 local function ThunderBombInit(bomb)
 	if Helpers.GetData(bomb).BombInit then return end
 	local player = Helpers.GetPlayerFromTear(bomb)
-	if bomb.Variant ~= BombVariant.BOMB_NORMAL and bomb.Variant ~= BombVariant.BOMB_GIGA and
+	--[[if bomb.Variant ~= BombVariant.BOMB_NORMAL and bomb.Variant ~= BombVariant.BOMB_GIGA and
 	bomb.Variant ~= BombVariant.BOMB_ROCKET 
-	and bomb.Variant ~= BombVariant.BOMB_TROLL and bomb.Variant ~= BombVariant.BOMB_SUPERTROLL then return false end
+	and bomb.Variant ~= BombVariant.BOMB_TROLL and bomb.Variant ~= BombVariant.BOMB_SUPERTROLL then return false end]]
 	if player then
 		local rng = bomb:GetDropRNG()
 		

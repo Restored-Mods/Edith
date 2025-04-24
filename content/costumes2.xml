@@ -1,6 +1,10 @@
 <costumes anm2root="gfx_redith/characters/">
+	<!-- Blasting Boots -->
+	<costume id="2" anm2path="blasting_boots.anm2" type="passive" />
 	<!-- Red Hood -->
 	<costume id="8" anm2path="red_hood.anm2" type="passive" />
+	<!-- Shrapnel Bombs -->
+	<costume id="9" anm2path="shrapnel_bombs.anm2" type="passive" />
 	<!-- Edith Hood -->
 	<costume id="150" anm2path="Character_001_Redith_Hood.anm2" type="none" />
 	<!-- Unused -->

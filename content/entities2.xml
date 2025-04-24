@@ -1,5 +1,12 @@
 <entities anm2root="gfx_redith/" version="5">
-     <!--Dummy-->
+     <!--Bomb Variants-->
+    <entity anm2path="../gfx/items/pick ups/bombs/bomb2.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="4" variant="1504" name="Thunder Bomb" numGridCollisionPoints="12" shadowSize="18" stageHP="0">
+        <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
+    </entity>
+    
+    <entity anm2path="items/pick ups/bombs/shrapnel/shrapnel2.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="4" variant="1505" name="Shrapnel Bomb" numGridCollisionPoints="12" shadowSize="18" stageHP="0">
+        <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0" />
+    </entity>
 
     <!--Dust Cloud-->
     <entity anm2path="custom_dust_cloud.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="0" collisionRadius="0" friction="0" id="1000" variant="2075" name="Custom Dust Cloud" numGridCollisionPoints="0" shadowSize="0" stageHP="0" >

@@ -1,0 +1,60 @@
+local ShrapnelBombs = {}
+local Helpers = EdithRestored.Helpers
+
+local directions = {
+	0,
+	90,
+	180,
+	270
+}
+
+function ShrapnelBombs:BombInit(bomb)
+	if Helpers.GetData(bomb).BombInit then return end
+	local player = Helpers.GetPlayerFromTear(bomb)
+	if player then
+		local rng = bomb:GetDropRNG()
+		
+		local stoneChance = player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS) and 
+        (not bomb.IsFetus or bomb.IsFetus and rng:RandomInt(100) < 20)
+
+		local nancyChance = player:HasCollectible(CollectibleType.COLLECTIBLE_NANCY_BOMBS) and
+		player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_NANCY_BOMBS):RandomInt(100) < 10
+		and not Helpers.IsItemDisabled(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS)
+
+		if stoneChance or nancyChance then
+			if (bomb.Variant > BombVariant.BOMB_SUPERTROLL or bomb.Variant < BombVariant.BOMB_TROLL) then
+				if bomb.Variant == 0 then
+					bomb.Variant = EdithRestored.Enums.BombVariant.BOMB_SHRAPNEL
+				end
+			end
+			BombFlagsAPI.AddCustomBombFlag(bomb, "SHRAPNEL_BOMB")
+		end
+	end
+end
+--EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_INIT, ShrapnelBombs.BombInit)
+
+function ShrapnelBombs:BombUpdate(bomb)
+	local player = Helpers.GetPlayerFromTear(bomb)
+	if not player then return end
+	local data = Helpers.GetData(bomb)
+
+	if bomb.FrameCount == 1 then
+        ShrapnelBombs:BombInit(bomb)
+        if bomb.Variant == EdithRestored.Enums.BombVariant.BOMB_SHRAPNEL then
+            local sprite = bomb:GetSprite()
+            local anim = sprite:GetAnimation()
+            local file = sprite:GetFilename()
+            sprite:Load("gfx_redith/items/pick ups/bombs/shrapnel/shrapnel"..file:sub(file:len()-5), true)
+            sprite:Play(anim, true)
+        end
+    end
+
+	if BombFlagsAPI.HasCustomBombFlag(bomb, "SHRAPNEL_BOMB") then
+		local sprite = bomb:GetSprite()
+
+		if sprite:IsPlaying("Explode") then
+			
+		end
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ShrapnelBombs.BombUpdate)

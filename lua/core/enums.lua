@@ -95,6 +95,7 @@ Enums.CollectibleType =
 						COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("​Salt Shaker"),					
 						COLLECTIBLE_GORGON_MASK = Isaac.GetItemIdByName("Gorgon Mask"),
 						COLLECTIBLE_RED_HOOD = Isaac.GetItemIdByName("​Red Hood"),
+						COLLECTIBLE_SHRAPNEL_BOMBS = Isaac.GetItemIdByName("Shrapnel Bombs"),
 						--COLLECTIBLE_THE_CHISEL = Isaac.GetItemIdByName("The Chisel"),
 					}
 
@@ -180,10 +181,11 @@ Enums.Callbacks = {
 }
 
 Enums.BombVariant = {
-	
+	BOMB_SHRAPNEL = Isaac.GetEntityVariantByName("Shrapnel Bomb")
 }
 
 BombFlagsAPI.AddNewCustomBombFlag("THUNDER_BOMB", Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+BombFlagsAPI.AddNewCustomBombFlag("SHRAPNEL_BOMB", Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS)
 
 Enums.Challenges = {
 

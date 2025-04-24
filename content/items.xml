@@ -7,6 +7,7 @@
 	<familiar id="4" name="​Salty Baby" achievement="​Salty Baby" description="Shaky friend" gfx="collectibles_007_salty_baby.png" quality="0" tags="baby summonable monstermanual offensive"/>
 	<familiar id="5" name="​Salt Pawns" achievement="​Salt Pawns" description="Search En passant" gfx="collectibles_008_pawn_baby.png" quality="1" tags="baby summonable monstermanual offensive"/>
     <passive id="6" name="​Red Hood" achievement="​Red Hood" description="Lycanthropy" gfx="collectibles_009_red_hood.png" quality="3" tags="offensive"/>
+    <passive id="9" name="Shrapnel Bombs" achievement="Shrapnel Bombs" description="Fragging blasts +5 bombs" bombs="5" gfx="collectibles_015_shrapnel_bombs.png" quality="2" tags="offensive"/>
 
 	<!-- Active Items -->
 	<active id="7" name="​Salt Shaker" achievement="​Salt Shaker" description="Keeps evil away" gfx="collectibles_010_salt_shaker.png" shopprice="10" quality="1" maxcharges="2" tags="offensive"/>
