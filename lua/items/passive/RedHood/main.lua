@@ -30,6 +30,11 @@ local moonPhaseAnim = {
     [8] = "WaningCrescent",
 }
 
+---@return integer
+local function GetCurrentMoonPhase()
+    return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "MoonPhase")
+end
+
 local function IsRedMoonPhase()
     return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "MoonPhaseWolf") == true
     or level:GetCurses() & LevelCurse.CURSE_OF_DARKNESS > 0
@@ -54,11 +59,6 @@ local function SetRedMoonPhaseSprites(moon)
     for i = 0, 1 do
         moonSprite:ReplaceSpritesheet(i, GetMoonSpritesheetPath(), true)
     end
-end
-
----@return integer
-local function GetCurrentMoonPhase()
-    return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "MoonPhase")
 end
 
 local moonPhaseCount = {
@@ -113,7 +113,7 @@ end
 
 ---@param phase integer
 local function SetMoonPhase(phase)
-    phase = type(phase) == "number" and math.ceil(phase) or Helpers.GetCurrentMoonPhase()
+    phase = type(phase) == "number" and math.ceil(phase) or GetCurrentMoonPhase()
 	phase = math.max(1, math.min(phase, 8))
     TSIL.SaveManager.SetPersistentVariable(EdithRestored, "MoonPhase", phase)
     
@@ -189,7 +189,7 @@ function RedHoodLocal:AdvanceMoonPhase(rng)
 
     if GetCurrentMoonPhase() > 5 then
         if check < 5 then
-            Helpers.SetMoonPhase(5)
+            SetMoonPhase(5)
         elseif not keepLunaEffect and IsRedMoonPhase() then
             SetRedMoonPhase(false)
         end
@@ -239,9 +239,9 @@ function RedHoodLocal:StompyEffect(player)
             data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
         end
         if data.LunaNullItems < effects:GetNullEffectNum(NullItemID.ID_LUNA) then
-            preRedMoonAnim = Helpers.GetCurrentMoonPhase() + 1
+            preRedMoonAnim = GetCurrentMoonPhase() + 1
             animatePhase = 1
-            Helpers.SetMoonPhase(5)
+            SetMoonPhase(5)
         end
         data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
     elseif effects:HasNullEffect(EdithRestored.Enums.NullItems.RED_HOOD) then
