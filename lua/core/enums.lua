@@ -203,7 +203,7 @@ Enums.Achievements.CompletionMarks = {
 	GORGON_MASK =  Isaac.GetAchievementIdByName("Gorgon Mask"),
 	RED_HOOD =  Isaac.GetAchievementIdByName("​Red Hood"),
 	LITHIUM =  Isaac.GetAchievementIdByName("​Lithium Salts"),
-	SHARPNEL_BOMBS = Isaac.GetAchievementIdByName("Sharpnel Bombs"),
+	SHRAPNEL_BOMBS = Isaac.GetAchievementIdByName("Shrapnel Bombs"),
 	SODOM =  Isaac.GetAchievementIdByName("​Sodom"),
 	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),
 	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
@@ -230,7 +230,7 @@ Enums.Achievements.Marks = {
 		[CompletionType.ULTRA_GREED] = Enums.Achievements.CompletionMarks.PAWN_BABY,
 		[CompletionType.ULTRA_GREEDIER] = Enums.Achievements.CompletionMarks.GORGON_MASK,
 		[CompletionType.DELIRIUM] = Enums.Achievements.CompletionMarks.LITHIUM,
-		[CompletionType.MOTHER] = Enums.Achievements.CompletionMarks.SHARPNEL_BOMBS,
+		[CompletionType.MOTHER] = Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS,
 		[CompletionType.BEAST] = Enums.Achievements.CompletionMarks.SODOM,
 	}
 }

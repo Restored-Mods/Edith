@@ -212,64 +212,6 @@ function Helpers.GetPlayerIndex(player)
 	return player:GetCollectibleRNG(id):GetSeed()
 end
 
----@param entity EntityPlayer | EntityFamiliar
----@return table?
-function Helpers.GetPersistentEntityData(entity)
-	local player = entity:ToPlayer()
-
-	if player then
-		if player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
-			player = player:GetOtherTwin()
-		end
-		if not player then return {} end
-		local index = tostring(Helpers.GetPlayerIndex(player))
-		local data = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "PlayerData")
-		if not data[index] then
-			data[index] = {}
-		end
-		if not data[index].BethsHeartIdentifier then
-			data[index].BethsHeartIdentifier = tonumber(index)
-		end
-		if not data[index].Pepper then
-			data[index].Pepper = 0
-		end
-		if not data[index].PrevPepper then
-			data[index].PrevPepper = data[index].Pepper
-		end
-		if not data[index].LithiumUses then
-			data[index].LithiumUses = 0
-		end
-		return data[index]
-	elseif entity.Type == EntityType.ENTITY_FAMILIAR then
-		local index = tostring(entity.InitSeed)
-		local data = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "FamiliarData")
-		if not data[index] then
-			data[index] = {}
-		end
-		return data[index]
-	end
-end
-
-function Helpers.RemoveEntityData(entity)
-	if entity then
-		local index
-		if entity:ToPlayer() then
-			local player = entity:ToPlayer()
-			if player:GetPlayerType() == PlayerType.PLAYER_THESOUL_B then
-				player = player:GetOtherTwin()
-			end
-			if not player then return end
-			index = tostring(Helpers.GetPlayerIndex(player))
-			local data = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "PlayerData")
-			data[index] = nil
-		elseif entity:ToFamiliar() then
-			index = tostring(entity:ToFamiliar().InitSeed)
-			local data = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "FamiliarData")
-			data[index] = nil
-		end
-	end
-end
-
 function Helpers.GetBombExplosionRadius(bomb)
 	local damage = bomb.ExplosionDamage
 	local radiusMult = bomb.RadiusMultiplier
@@ -378,7 +320,7 @@ function Helpers.VecToDir(_vec)
 end
 
 function Helpers.IsEdithNearEnemy(player) -- Enemy detection
-	local data = Helpers.GetPersistentEntityData(player)
+	local data = EdithRestored:RunSave(player)
 	for _, enemies in pairs(Isaac.FindInRadius(player.Position, 95)) do
 		if enemies:IsVulnerableEnemy() and enemies:IsActiveEnemy() and data.Pepper < 5 and EntityRef(enemies).IsCharmed == false then
 			return true
@@ -389,7 +331,7 @@ end
 
 function Helpers.ChangePepperValue(player, amount)
 	amount = amount or 0
-	local data = Helpers.GetPersistentEntityData(player)
+	local data = EdithRestored:RunSave(player)
 	if not data.Pepper then
 		data.Pepper = 0
 	end
@@ -397,7 +339,7 @@ function Helpers.ChangePepperValue(player, amount)
 end
 
 function Helpers.ChangeSprite(player, loading)
-	local data = Helpers.GetPersistentEntityData(player)
+	local data = EdithRestored:RunSave(player)
 	local sprite = player:GetSprite()
 	if Helpers.IsPlayerEdith(player, true, false) then
 		if sprite:GetFilename() ~= EdithRestored.Enums.PlayerSprites.EDITH and not player:IsCoopGhost() then
@@ -983,7 +925,7 @@ end
 ---@param item CollectibleType | integer
 ---@return boolean
 function Helpers.IsItemDisabled(item)
-	for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems")) do
+	for _, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledItems")) do
         if item == EdithRestored.Enums.CollectibleType[disabledItem] then
             return true
         end
@@ -997,6 +939,16 @@ end
 ---@return boolean
 function Helpers.VectorEquals(v1, v2)
 	return v1.X == v2.X and v1.Y == v2.Y
+end
+
+function Helpers.Clamp(value, min, max)
+	if value < min then
+		return min
+	elseif value > max then
+		return max
+	else
+		return value
+	end
 end
 
 EdithRestored.Helpers = Helpers

@@ -85,7 +85,15 @@ local function ReOrederItems()
 end
 
 local function UpdateBlackListMenu(show)
-	if not ShowBlackListButton() then return end
+	if not ShowBlackListButton() then 
+		if ImGui.ElementExists("edithWindowBlacklistItems") then
+			ImGui.RemoveWindow("edithWindowBlacklistItems")
+		end
+		if ImGui.ElementExists("edithMenuBlacklistItems") then
+			ImGui.RemoveElement("edithMenuBlacklistItems")
+		end
+		return 
+	end
 	if not ImGui.ElementExists("edithMenuBlacklistItems") then
 		ImGui.AddElement("EdithRestored", "edithMenuBlacklistItems", ImGuiElement.MenuItem, "\u{f05e} Items Blacklist")
 	end
@@ -136,7 +144,9 @@ local function UpdateSettingsMenu(show)
 			end, true)
 		end
 
-		if not ImGui.ElementExists("edithTargetColorRGB") then
+		--Disabled since RemoveElement doesn't work in 1.0.12e and lower
+		--[[if not ImGui.ElementExists("edithTargetColorRGB") then
+			
 			ImGui.AddInputColor("edithWindowSettings", "edithTargetColorRGB", "\u{f1fc} Edith's Target Color", function(r, g, b)
 				local targetColor = EdithRestored:GetDefaultFileSave("TargetColor")
 				targetColor.R = math.floor(r * 255)
@@ -144,7 +154,7 @@ local function UpdateSettingsMenu(show)
 				targetColor.B = math.floor(b * 255)
 				EdithRestored.SaveManager.Save()
 			end, 155 / 255, 0, 0)
-		end
+		end]]
 
 		if not ImGui.ElementExists("edithAlwaysShowMoonPhase") then
 			ImGui.AddCheckbox("edithWindowSettings", "edithAlwaysShowMoonPhase", "Always show moon phase", function(val)
@@ -308,7 +318,16 @@ local function InitImGuiMenu()
 	ImGui.SetWindowSize("edithWindowUnlocks", 800, 650)]]
 end
 
-EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_MARK_GET, UpdateBlackListMenu, EdithRestored.Enums.PlayerType.EDITH)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_MARK_GET, function()
+	UpdateBlackListMenu(Isaac.IsInGame())
+end, EdithRestored.Enums.PlayerType.EDITH)
+
+---@param cmd string
+EdithRestored:AddCallback(ModCallbacks.MC_EXECUTE_CMD, function(_, cmd, args)
+	if string.lower(cmd):match("achievement") == "achievement" then
+		UpdateBlackListMenu(Isaac.IsInGame())
+	end
+end, EdithRestored.Enums.PlayerType.EDITH)
 
 InitImGuiMenu()
 UpdateImGuiMenu()

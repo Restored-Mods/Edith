@@ -503,7 +503,6 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.TargetJumpU
 
 function Player:OnInitPlayer(player)
 	-- If the player is Edith it will apply the hood
-	Helpers.GetPersistentEntityData(player)
 	::EdithCheck::
 	if Helpers.IsPlayerEdith(player, true, false) then			
 		local mySprite = player:GetSprite()
@@ -531,7 +530,7 @@ function Player:OnUpdatePlayer(player)
 		player:EvaluateItems()
 	end
 	-- If the player is Edith it will apply the hood
-	local dataP = Helpers.GetPersistentEntityData(player)
+	local dataP = EdithRestored:RunSave(player)
 	if not dataP then return end
 
 	local data = Helpers.GetData(player)
@@ -714,13 +713,6 @@ function Player:DamageHandling(entity, amount, flags, source, cd)
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Player.DamageHandling, EntityType.ENTITY_PLAYER)
-
-function Player:OnRemovePlayer(entity)
-	if entity.Type == EntityType.ENTITY_PLAYER or entity.Type == EntityType.ENTITY_FAMILIAR then
-		Helpers.RemoveEntityData(entity)
-	end
-end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, Player.OnRemovePlayer)
 
 function Player:edith_Stats(player, cacheFlag)
 	Helpers.ChangeSprite(player)
