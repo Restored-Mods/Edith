@@ -30,67 +30,77 @@ local modMenuName = "Edith Restored"
 local MenuProvider = {}
 
 function MenuProvider.SaveSaveData()
-    TSIL.SaveManager.SaveToDisk()
-end
-
-local function GetDSSOptions()
-    return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DSS")
+	EdithRestored.SaveManager.Save()
 end
 
 function MenuProvider.GetPaletteSetting()
-    return GetDSSOptions().MenuPalette or {}
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    return dssSave and dssSave.MenuPalette or nil
 end
 
 function MenuProvider.SavePaletteSetting(var)
-    GetDSSOptions().MenuPalette = var
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    dssSave.MenuPalette = var
 end
 
 function MenuProvider.GetGamepadToggleSetting()
-    return  GetDSSOptions().GamepadToggle
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    return dssSave and dssSave.GamepadToggle or nil
 end
 
 function MenuProvider.SaveGamepadToggleSetting(var)
-    GetDSSOptions().GamepadToggle = var
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    dssSave.GamepadToggle = var
 end
 
 function MenuProvider.GetMenuKeybindSetting()
-    return  GetDSSOptions().MenuKeybind
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    return dssSave and dssSave.MenuKeybind or nil
 end
 
 function MenuProvider.SaveMenuKeybindSetting(var)
-    GetDSSOptions().MenuKeybind = var
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    dssSave.MenuKeybind = var
 end
 
 function MenuProvider.GetMenuHintSetting()
-    return  GetDSSOptions().MenuHint
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    return dssSave and dssSave.MenuHint or nil
 end
 
 function MenuProvider.SaveMenuHintSetting(var)
-    GetDSSOptions().MenuHint = var
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    dssSave.MenuHint = var
 end
 
 function MenuProvider.GetMenuBuzzerSetting()
-    return GetDSSOptions().MenuBuzzer
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    return dssSave and dssSave.MenuBuzzer or nil
 end
 
 function MenuProvider.SaveMenuBuzzerSetting(var)
-    GetDSSOptions().MenuBuzzer = var
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    dssSave.MenuBuzzer = var
 end
 
 function MenuProvider.GetMenusNotified()
-    return GetDSSOptions().MenusNotified
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    return dssSave and dssSave.MenusNotified or nil
 end
 
 function MenuProvider.SaveMenusNotified(var)
-    GetDSSOptions().MenusNotified = var
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    dssSave.MenusNotified = var
 end
 
 function MenuProvider.GetMenusPoppedUp()
-    return GetDSSOptions().MenusPoppedUp
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+    return dssSave and dssSave.MenusPoppedUp or nil
 end
 
 function MenuProvider.SaveMenusPoppedUp(var)
-    GetDSSOptions().MenusPoppedUp = var
+    local dssSave = EdithRestored.SaveManager.GetDeadSeaScrollsSave()
+   dssSave.MenusPoppedUp = var
 end
 
 local function ShowBlackListButton()
@@ -184,11 +194,7 @@ local function InitDisableMenu()
             -- The "load" function for a button should return what its current setting should be
             -- This generally means looking at your mod's save data, and returning whatever setting you have stored
             load = function()
-                if not TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems") then
-                    TSIL.SaveManager.SetPersistentVariable(EdithRestored, "DisabledItems", {})
-                end
-
-                for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems")) do
+                for _, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledItems")) do
                     if disabledItem == GetItemsEnum(collectible.ID) then
                         return 2
                     end
@@ -199,10 +205,7 @@ local function InitDisableMenu()
             -- When the menu is closed, "store" will be called on all settings-buttons
             -- The "store" function for a button should save the button's setting (passed in as the first argument) to save data!
             store = function(var)
-                if not TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems") then
-                    TSIL.SaveManager.SetPersistentVariable(EdithRestored, "DisabledItems", {})
-                end
-                local disabledItems = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems")
+                local disabledItems = EdithRestored:GetDefaultFileSave("DisabledItems")
                 for index, disabledItem in ipairs(disabledItems) do
                     if disabledItem == GetItemsEnum(collectible.ID) then
                         if var == 1 then
@@ -215,7 +218,7 @@ local function InitDisableMenu()
                 if var == 2 then
                     table.insert(disabledItems, GetItemsEnum(collectible.ID))
                 end
-                TSIL.SaveManager.SetPersistentVariable(EdithRestored, "DisabledItems", disabledItems)
+                EdithRestored.SaveManager.Save()
             end,
             displayif = function() return collectible.AchievementID == -1 or pgd:Unlocked(collectible.AchievementID) end,
             -- A simple way to define tooltips is using the "strset" tag, where each string in the table is another line of the tooltip
@@ -261,10 +264,11 @@ local function InitTargetColorMenu()
             variable = "TargetColorRed",
 
             load = function()
-                return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor").R or 155
+                return EdithRestored:GetDefaultFileSave("TargetColor").R or 155
             end,
             store = function(newOption)
-                TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor").R = newOption
+                EdithRestored:GetDefaultFileSave("TargetColor").R = newOption
+                EdithRestored.SaveManager.Save()
             end,
 
             tooltip = GenerateTooltip('color red value'),
@@ -285,10 +289,11 @@ local function InitTargetColorMenu()
             variable = "TargetColorGreen",
 
             load = function()
-                return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor").G or 0
+                return EdithRestored:GetDefaultFileSave("TargetColor").G or 0
             end,
             store = function(newOption)
-                TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor").G = newOption
+                EdithRestored:GetDefaultFileSave("TargetColor").G = newOption
+                EdithRestored.SaveManager.Save()
             end,
 
             tooltip = GenerateTooltip('color green value'),
@@ -309,10 +314,11 @@ local function InitTargetColorMenu()
             variable = "TargetColorBlue",
 
             load = function()
-                return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor").B or 0
+                return EdithRestored:GetDefaultFileSave("TargetColor").B or 0
             end,
             store = function(newOption)
-                TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor").B = newOption
+                EdithRestored:GetDefaultFileSave("TargetColor").B = newOption
+                EdithRestored.SaveManager.Save()
             end,
 
             tooltip = GenerateTooltip('color blue value'),
@@ -375,11 +381,12 @@ local edithdirectory = {
                 variable = 'AllowHolding',
 
                 load = function ()
-                    return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "AllowHolding") or 2
+                    return EdithRestored:GetDefaultFileSave("AllowHolding") and 1 or 2
                 end,
 
                 store = function(newOption)
-                    TSIL.SaveManager.SetPersistentVariable(EdithRestored, "AllowHolding", newOption)
+                    EdithRestored:AddDefaultFileSave("AllowHolding", newOption == 1)
+                    EdithRestored.SaveManager.Save()
                 end,
 
                 tooltip = GenerateTooltip('enable or disable the sliding on holding a movement button')
@@ -396,11 +403,12 @@ local edithdirectory = {
                 variable = 'OnlyStomps',
 
                 load = function ()
-                    return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "OnlyStomps") or 1
+                    return EdithRestored:GetDefaultFileSave("OnlyStomps") and 1 or 2
                 end,
 
                 store = function(newOption)
-                    TSIL.SaveManager.SetPersistentVariable(EdithRestored, "OnlyStomps", newOption)
+                    EdithRestored:AddDefaultFileSave("OnlyStomps", newOption == 1)
+                    EdithRestored.SaveManager.Save()
                 end,
 
                 tooltip = GenerateTooltip('enable or disable placing bombs when playing as edith')
@@ -423,11 +431,12 @@ local edithdirectory = {
                 variable = 'AwaysShowMoonPhase',
 
                 load = function ()
-                    return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "AlwaysShowMoonPhase") or 2
+                    return EdithRestored:GetDefaultFileSave("AlwaysShowMoonPhase") and 1 or 2
                 end,
 
                 store = function(newOption)
-                    TSIL.SaveManager.SetPersistentVariable(EdithRestored, "AlwaysShowMoonPhase", newOption)
+                    EdithRestored:AddDefaultFileSave("AlwaysShowMoonPhase", newOption == 1)
+                    EdithRestored.SaveManager.Save()
                 end,
 
                 tooltip = GenerateTooltip('enable always showing moon phase')

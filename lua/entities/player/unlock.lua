@@ -2,7 +2,7 @@ local Unlock = {}
 local Helpers = include("lua.helpers.Helpers")
 
 function Unlock:DataMinerUse(collectible, rng, player, flags, slot, vardata)
-    local usedDataMiner = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "UsedDataMiner")
+    local usedDataMiner = EdithRestored:GetDefaultFileSave("UsedDataMiner")
     if not usedDataMiner and not Game():AchievementUnlocksDisallowed()
     and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) then
         local room = Game():GetRoom()
@@ -16,7 +16,7 @@ function Unlock:DataMinerUse(collectible, rng, player, flags, slot, vardata)
         if #gridTable > 0 and rng:RandomFloat() >= 0.75 then
             local saltGent = gridTable[rng:RandomInt(#gridTable) + 1]
             saltGent:SetVariant(683)
-            TSIL.SaveManager.SetPersistentVariable(EdithRestored, "UsedDataMiner", true)
+            EdithRestored:AddDefaultFileSave("UsedDataMiner", true)
         end
     end
 end
@@ -62,7 +62,7 @@ function Unlock:MoreDaraMiner(collectible, itemPoolType, Decrease, seed)
     if not Game():AchievementUnlocksDisallowed()
     and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH)
     and not PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_DATAMINER)
-    and not TSIL.SaveManager.GetPersistentVariable(EdithRestored, "UsedDataMiner")
+    and not EdithRestored:GetDefaultFileSave("UsedDataMiner")
     and TSIL.Random.GetRandom(seed) >= 0.8 then
         return CollectibleType.COLLECTIBLE_DATAMINER
     end

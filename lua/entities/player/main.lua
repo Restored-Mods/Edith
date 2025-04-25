@@ -159,14 +159,14 @@ local function EdithGridMovement(player, data)
 		local isPressingRight
 		local isPressingUp
 		local isPressingDown
-		local allowHolding = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "AllowHolding")
+		local allowHolding = EdithRestored:GetDefaultFileSave("AllowHolding")
 
-		if allowHolding == 1 then
+		if allowHolding == true then
 			isPressingLeft = Input.IsActionPressed(ButtonAction.ACTION_LEFT, controllerIndex)
 			isPressingRight = Input.IsActionPressed(ButtonAction.ACTION_RIGHT, controllerIndex)
 			isPressingUp = Input.IsActionPressed(ButtonAction.ACTION_UP, controllerIndex)
 			isPressingDown = Input.IsActionPressed(ButtonAction.ACTION_DOWN, controllerIndex)
-		elseif allowHolding ~= 1 then
+		elseif allowHolding ~= true then
 			isPressingLeft = Input.IsActionTriggered(ButtonAction.ACTION_LEFT, controllerIndex)
 			isPressingRight = Input.IsActionTriggered(ButtonAction.ACTION_RIGHT, controllerIndex)
 			isPressingUp = Input.IsActionTriggered(ButtonAction.ACTION_UP, controllerIndex)
@@ -432,6 +432,16 @@ local function EdithGridMovement(player, data)
 	data.HadMarsEffect = hasMarsEffect
 end
 
+function Player:LoadUpdate(isLoading)
+    for _, player in ipairs(Helpers.GetPlayers()) do
+        player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+        player:AddCacheFlags(CacheFlag.CACHE_SPEED)
+        player:EvaluateItems()
+        Helpers.ChangeSprite(player,true)
+    end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Player.LoadUpdate)
+
 function Player:ChargeBarRender(player)
 	local data = Helpers.GetData(player)
 	if not Helpers.IsPlayerEdith(player,true,false) then return end
@@ -467,7 +477,7 @@ function Player:TargetJumpRender(target)
 		end
 		target:GetSprite():LoadGraphics()
 		
-		local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
+		local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
 
 		if TargetColor then
 			target.Color = Color(TargetColor.R/255, TargetColor.G/255, TargetColor.B/255, 1, 0, 0, 0)
@@ -526,7 +536,7 @@ function Player:OnUpdatePlayer(player)
 
 	local data = Helpers.GetData(player)
 	if Helpers.IsPlayerEdith(player, true, false) then
-		local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
+		local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
 		if Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex) then
 			if not data.BombStomp then
 				data.BombStomp = true
@@ -832,7 +842,7 @@ function Player:EdithMovement(entity, hook, button)
 	
 		local player = entity:ToPlayer()
 		if player and Helpers.IsPlayerEdith(player, true, false) then
-			local OnlyStomps = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "OnlyStomps")
+			local OnlyStomps = EdithRestored:GetDefaultFileSave("OnlyStomps")
 			if player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) or player:HasCurseMistEffect() then return end
 			local data = Helpers.GetData(player)
 			if hook == InputHook.GET_ACTION_VALUE then
@@ -875,7 +885,7 @@ function Player:EdithMovement(entity, hook, button)
 				if IsEdithExtraAnim(player) then
 					return false
 				end
-				if button == ButtonAction.ACTION_BOMB and (data.LockBombs or OnlyStomps == 2) then
+				if button == ButtonAction.ACTION_BOMB and (data.LockBombs or OnlyStomps) then
 					data.LockBombs = nil
 					return false
 				end
@@ -1060,7 +1070,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.AccesToMirrorWorld)
 
 local function drawLine(fx, from, to, frame)
-	local TargetColor = TSIL.SaveManager.GetPersistentVariable(EdithRestored, "TargetColor")
+	local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
 	if not fx:GetData().Line then
 		fx:GetData().Line = Sprite()
 		fx:GetData().Line:Load("gfx_redith/edith line.anm2", true)

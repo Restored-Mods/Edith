@@ -7,11 +7,14 @@ include("lua.extraLibs.APIs.custom_bomb_flags")
 require("lua.extraLibs.jumplib").Init()
 include("lua.extraLibs.HudHelper")
 
+EdithRestored.SaveManager = include("lua.core.save_manager")
+EdithRestored.SaveManager.Init(EdithRestored)
+include("lua.core.saving_system")
+
 --core
 include("lua.core.enums")
 include("lua.core.globals")
 require("lua.core.achievements")
-include("lua.core.save_manager")
 include("lua.core.dss.deadseascrolls")
 include("lua.core.dss.imgui")
 include("lua.core.BlockDisabledItems")

@@ -6,7 +6,7 @@ function BlockDisabledItems:OnGameStart(isContinue)
 
     local itemPool = Game():GetItemPool()
 
-    for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems")) do
+    for _, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledItems")) do
         itemPool:RemoveCollectible(EdithRestored.Enums.CollectibleType[disabledItem])
     end
 end
@@ -20,7 +20,7 @@ function BlockDisabledItems:PostGetCollectible(selectedItem, poolType, decrease,
 
     local isDisabledItem = false
 
-    for _, disabledItem in ipairs(TSIL.SaveManager.GetPersistentVariable(EdithRestored, "DisabledItems")) do
+    for _, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledItems")) do
         if selectedItem == EdithRestored.Enums.CollectibleType[disabledItem] then
             isDisabledItem = true
             break

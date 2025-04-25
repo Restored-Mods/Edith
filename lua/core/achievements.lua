@@ -36,3 +36,10 @@ EdithRestored:AddCallback(ModCallbacks.MC_PRE_COMPLETION_EVENT, function(_, mark
 		end
 	end
 end)
+
+EdithRestored:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
+    if card == EdithRestored.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.REV_PRUDENCE)
+    or card == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH) then
+        return 0
+    end
+end)

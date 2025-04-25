@@ -23,11 +23,11 @@ local moonPhaseAnim = {
 
 ---@return integer
 local function GetCurrentMoonPhase()
-    return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "MoonPhase")
+    return EdithRestored:GetDefaultFileSave("MoonPhase")
 end
 
 local function IsRedMoonPhase()
-    return TSIL.SaveManager.GetPersistentVariable(EdithRestored, "MoonPhaseWolf") == true
+    return EdithRestored:GetDefaultFileSave("MoonPhaseWolf") == true
     or level:GetCurses() & LevelCurse.CURSE_OF_DARKNESS > 0
 end
 
@@ -36,7 +36,7 @@ local function SetRedMoonPhase(bool)
     if not IsRedMoonPhase() and bool then
         SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
     end
-    TSIL.SaveManager.SetPersistentVariable(EdithRestored, "MoonPhaseWolf", bool)
+    EdithRestored:AddDefaultFileSave("MoonPhaseWolf", bool)
 end
 
 local function GetMoonSpritesheetPath()
@@ -83,7 +83,7 @@ end
 local function SetMoonPhase(phase)
     phase = type(phase) == "number" and math.ceil(phase) or GetCurrentMoonPhase()
 	phase = math.max(1, math.min(phase, 8))
-    TSIL.SaveManager.SetPersistentVariable(EdithRestored, "MoonPhase", phase)
+    EdithRestored:AddDefaultFileSave("MoonPhase", phase)
     
 	for _, player in ipairs(PlayerManager.GetPlayers()) do
 		UpdatePlayerMoonPhase(player)
