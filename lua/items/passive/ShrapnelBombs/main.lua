@@ -51,10 +51,27 @@ function ShrapnelBombs:BombUpdate(bomb)
 
 	if BombFlagsAPI.HasCustomBombFlag(bomb, "SHRAPNEL_BOMB") then
 		local sprite = bomb:GetSprite()
+    local rng = RNG()
+    rng:SetSeed(bomb.InitSeed)
 
 		if sprite:IsPlaying("Explode") then
-			
+			for i=1,(7 + rng:RandomInt(6)) do
+        local tear = Isaac.Spawn(EntityType.ENTITY_TEAR, TearVariant.NAIL, 0, bomb.Position, Vector.FromAngle(rng:RandomInt(360)) * (9 + rng:RandomInt(6)), player):ToTear();
+        tear.CollisionDamage = 1
+        tear.Scale = 0.5
+        tear:AddTearFlags(TearFlags.TEAR_PIERCING)
+        Helpers.GetData(tear).Shrapnel = true
+      end
 		end
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ShrapnelBombs.BombUpdate)
+
+function ShrapnelBombs:TearCollision(tear, colider, low)
+  if Helpers.GetData(tear) and colider:IsVulnerableEnemy() then
+    if not colider:HasEntityFlags(EntityFlag.FLAG_BLEED_OUT) then
+      colider:AddBleeding(EntityRef(tear.SpawnerEntity),300)
+    end
+  end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_TEAR_COLLISION, ShrapnelBombs.TearCollision, TearVariant.NAIL)
