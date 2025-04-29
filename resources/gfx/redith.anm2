@@ -2,7 +2,7 @@
 	<Info CreatedBy="robot" CreatedOn="24.02.2024 19:10:35" Version="238" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="characters\costumes\Character_001_Edith.png" Id="0"/>
+			<Spritesheet Path="characters\costumes\Character_001_Redith.png" Id="0"/>
 			<Spritesheet Path="Characters/costumes/ghost.png" Id="1"/>
 		</Spritesheets>
 		<Layers>

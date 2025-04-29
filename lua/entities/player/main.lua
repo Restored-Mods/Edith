@@ -471,9 +471,9 @@ function Player:TargetJumpRender(target)
 		target.Color = Color(1, 1, 1, 0, 0, 0, 0)
 		
 		if data.BombStomp ~= nil then
-			target:GetSprite():ReplaceSpritesheet(0, "gfx_redith/effects/target_edith_bomb.png")
+			target:GetSprite():ReplaceSpritesheet(0, "gfx/effects/target_edith_bomb.png")
 		elseif data.BombStomp ~= true then
-			target:GetSprite():ReplaceSpritesheet(0, "gfx_redith/effects/target_edith.png")
+			target:GetSprite():ReplaceSpritesheet(0, "gfx/effects/target_edith.png")
 		end
 		target:GetSprite():LoadGraphics()
 		
@@ -737,7 +737,7 @@ function Player:Home()
 				or (entity.Type == EntityType.ENTITY_SHOPKEEPER)) and room:IsFirstVisit()) then
 					entity:Remove()
 					local slot = Isaac.Spawn(EntityType.ENTITY_SLOT, 14, 0, entity.Position, Vector.Zero, nil)
-					slot:GetSprite():ReplaceSpritesheet(0,"gfx_redith/characters/costumes/Character_001_Edith_b.png")
+					slot:GetSprite():ReplaceSpritesheet(0,"gfx/characters/costumes/Character_001_Edith_b.png")
 					slot:GetSprite():LoadGraphics()
 				end
 			end
@@ -1065,7 +1065,7 @@ local function drawLine(fx, from, to, frame)
 	local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
 	if not fx:GetData().Line then
 		fx:GetData().Line = Sprite()
-		fx:GetData().Line:Load("gfx_redith/edith line.anm2", true)
+		fx:GetData().Line:Load("gfx/edith line.anm2", true)
 	end
 	if not fx:GetData().Line:IsLoaded() then return end
 

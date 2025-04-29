@@ -26,8 +26,8 @@ function PepperGrinder:OnKillPG(entity)
 
 		creep.CollisionDamage = 0.4
 
-		sprite:Load("gfx_redith/1000.092_creep (powder).anm2", true)
-		sprite:ReplaceSpritesheet(0, "gfx_redith/effects/effect_blackpowder.png")
+		sprite:Load("gfx/1000.092_creep (powder).anm2", true)
+		sprite:ReplaceSpritesheet(0, "gfx/effects/effect_blackpowder.png")
 		sprite:Play("SmallBlood0" .. rng:RandomInt(1, 6), true)
 	end
 end

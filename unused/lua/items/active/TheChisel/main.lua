@@ -24,7 +24,7 @@ function Chisel:UseTheChisel(_, _, player)
 	local chisel = Isaac.Spawn(EdithRestored.Enums.Entities.FALLING_CHISEL.Type,EdithRestored.Enums.Entities.FALLING_CHISEL.Variant,0,player.Position,Vector.Zero,player)
 	Helpers.GetData(chisel).ChiselSelection = ChiselSelection
 	local sprite = chisel:GetSprite()
-	sprite:Load("gfx_redith/chisel.anm2", true)
+	sprite:Load("gfx/chisel.anm2", true)
 	sprite:Play("Firing", true)
 	SFXManager():Play(SoundEffect.SOUND_SCYTHE_BREAK)
 	
@@ -67,8 +67,8 @@ function Chisel:PepperLevel(player)
 			 if Game():GetFrameCount()%5 == 0 then
 				local creep = Isaac.Spawn(1000, 53, 0, player.Position, Vector(0,0), nil):ToEffect()
 				local sprite = creep:GetSprite()
-				sprite:Load("gfx_redith/1000.092_creep (powder).anm2", true)
-				sprite:ReplaceSpritesheet(0, "gfx_redith/effect_blackpowder.png")
+				sprite:Load("gfx/1000.092_creep (powder).anm2", true)
+				sprite:ReplaceSpritesheet(0, "gfx/effect_blackpowder.png")
 				local rng = player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 				local rngSprite = rng:RandomInt(6)+1
 					sprite:Play("SmallBlood0"..rngSprite, true)
@@ -197,13 +197,13 @@ function Chisel:TMinidith(familiar)
 			if Helpers.IsPlayerEdith(player:ToPlayer(), false, true) then
 				local dataP = Helpers.GetPersistentEntityData(player)
 				local sprite = EntityFamiliar:GetSprite()
-				sprite:Load("gfx_redith/minidith.anm2", true)
+				sprite:Load("gfx/minidith.anm2", true)
 				local miniPeppersaac = dataP.Pepper
 				if miniPeppersaac > 4 then
 					miniPeppersaac = 4
 				end
-				sprite:ReplaceSpritesheet(0, "gfx_redith/familiar/familiar_minisaac_edith"..miniPeppersaac..".png")
-				sprite:ReplaceSpritesheet(1, "gfx_redith/familiar/familiar_minisaac_edith"..miniPeppersaac..".png")
+				sprite:ReplaceSpritesheet(0, "gfx/familiar/familiar_minisaac_edith"..miniPeppersaac..".png")
+				sprite:ReplaceSpritesheet(1, "gfx/familiar/familiar_minisaac_edith"..miniPeppersaac..".png")
 				sprite:LoadGraphics()
 				--print("stage "..miniPeppersaac)
 			end

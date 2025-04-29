@@ -2,7 +2,7 @@
 	<Info CreatedBy="robot" CreatedOn="11/23/2021 7:23:51 AM" Version="109" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="costumes\Character_001_Edith_Hood.png" Id="0"/>
+			<Spritesheet Path="costumes\Character_001_Redith_Hood.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="head0" Id="0" SpritesheetId="0"/>

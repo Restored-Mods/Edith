@@ -1,4 +1,4 @@
-<costumes anm2root="gfx_redith/characters/">
+<costumes anm2root="gfx/characters/">
 	<!-- Blasting Boots -->
 	<costume id="2" anm2path="blasting_boots.anm2" type="passive" />
 	<!-- Red Hood -->

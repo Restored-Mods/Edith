@@ -44,7 +44,7 @@ function ShrapnelBombs:BombUpdate(bomb)
             local sprite = bomb:GetSprite()
             local anim = sprite:GetAnimation()
             local file = sprite:GetFilename()
-            sprite:Load("gfx_redith/items/pick ups/bombs/shrapnel/shrapnel"..file:sub(file:len()-5), true)
+            sprite:Load("gfx/items/pick ups/bombs/shrapnel/shrapnel"..file:sub(file:len()-5), true)
             sprite:Play(anim, true)
         end
     end

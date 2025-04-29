@@ -174,7 +174,7 @@ local function InitDisableMenu()
         tooltipStr[#tooltipStr] = tooltipStr[#tooltipStr]:sub(0, tooltipStr[#tooltipStr]:len()-1)
 
         local itemSprite = Sprite()
-        itemSprite:Load("gfx_redith/ui/dss_item.anm2", false)
+        itemSprite:Load("gfx/ui/dss_item.anm2", false)
         itemSprite:ReplaceSpritesheet(0, collectible.GfxFileName)
         itemSprite:LoadGraphics()
         itemSprite:SetFrame("Idle", 0)

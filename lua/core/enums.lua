@@ -161,13 +161,13 @@ Enums.GFX =
 
 -- Costumes
 Enums.Costumes = {
-	EDITH_HOOD = Isaac.GetCostumeIdByPath("gfx_redith/characters/Character_001_Redith_Hood.anm2"),
-	EDITH_B_HAIR = Isaac.GetCostumeIdByPath("gfx_redith/characters/Character_001_Edith_b_Hood.anm2"),
+	EDITH_HOOD = Isaac.GetCostumeIdByPath("gfx/characters/Character_001_Redith_Hood.anm2"),
+	EDITH_B_HAIR = Isaac.GetCostumeIdByPath("gfx/characters/Character_001_Edith_b_Hood.anm2"),
 }
 
 Enums.PlayerSprites = {
-	EDITH = "gfx_redith/Redith.anm2",
-	EDITH_B = "gfx_redith/Redith_b.anm2"
+	EDITH = "gfx/Redith.anm2",
+	EDITH_B = "gfx/Redith_b.anm2"
 }
 
 Enums.Callbacks = {

@@ -1,4 +1,4 @@
-<items gfxroot="gfx_redith/items/" deathanm2="gfx/death items.anm2" version="1">
+<items gfxroot="gfx/items/" deathanm2="gfx/death items.anm2" version="1">
 	<!-- Passive Items -->
 	<passive id="0" name="​Lithium Salts" achievement="​Lithium Salts" description="Numbed emotions" gfx="collectibles_002_lithium.png" quality="1" cache="damage firedelay" tags="summonable"/>
 	<passive id="1" name="​Sodom" achievement="​Sodom" description="Don't look back" gfx="collectibles_003_sodom.png" quality="2" tags="summonable offensive"/>

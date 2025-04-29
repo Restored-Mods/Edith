@@ -74,7 +74,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_SPAWN, SaltRock.Spawn
 
 function SaltRock:Render(rock, offset)
 	if rock:GetVariant() == 683 then
-		rock:GetSprite():ReplaceSpritesheet(0, "gfx_redith/salt_rock.png")
+		rock:GetSprite():ReplaceSpritesheet(0, "gfx/salt_rock.png")
 		rock:GetSprite():LoadGraphics()
 	end
 end

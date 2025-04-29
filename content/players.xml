@@ -1,6 +1,6 @@
-<players root="gfx_redith/characters/costumes/" 
-         portraitroot="gfx_redith/ui/boss/" 
-         nameimageroot="gfx_redith/ui/boss/">
+<players root="gfx/characters/costumes/" 
+         portraitroot="gfx/ui/boss/" 
+         nameimageroot="gfx/ui/boss/">
 	   <player name="Redith" skin="Character_001_Redith.png" modcostume="150" armor="6"
           nameimage="playername_Edith.png" 
           portrait="playerportrait_Edith_A.png" skinColor="0" costumeSuffix="apollyon"

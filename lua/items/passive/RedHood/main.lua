@@ -2,8 +2,8 @@ local mod = EdithRestored
 local RedHoodLocal = {}
 local Helpers = include("lua.helpers.Helpers")
 local lastGreedWave = nil
-local moonPhaseSprite = Sprite("gfx_redith/moon_phase.anm2", true)
-local moonPhaseSpriteStatic = Sprite("gfx_redith/moon_phase.anm2", true)
+local moonPhaseSprite = Sprite("gfx/moon_phase.anm2", true)
+local moonPhaseSpriteStatic = Sprite("gfx/moon_phase.anm2", true)
 moonPhaseSpriteStatic:SetFrame(15)
 local moonPhaseAlpha = moonPhaseSpriteStatic.Color
 moonPhaseAlpha.A = 0
@@ -52,7 +52,7 @@ end
 
 local function GetMoonSpritesheetPath()
 	local MoonColor = IsRedMoonPhase() and "_red" or "_blue"
-	return "gfx_redith/effects/moon_phase" .. MoonColor .. ".png"
+	return "gfx/effects/moon_phase" .. MoonColor .. ".png"
 end
 
 local function SetRedMoonPhaseSprites()
