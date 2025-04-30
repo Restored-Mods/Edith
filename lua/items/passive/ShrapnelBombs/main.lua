@@ -55,8 +55,8 @@ function ShrapnelBombs:BombUpdate(bomb)
     rng:SetSeed(bomb.InitSeed)
 
 		if sprite:IsPlaying("Explode") then
-			for i=1,(7 + rng:RandomInt(6)) do
-        local tear = Isaac.Spawn(EntityType.ENTITY_TEAR, TearVariant.NAIL, 0, bomb.Position, Vector.FromAngle(rng:RandomInt(360)) * (9 + rng:RandomInt(6)), player):ToTear();
+			for i=1,(12 + rng:RandomInt(5)) do
+        local tear = Isaac.Spawn(EntityType.ENTITY_TEAR, TearVariant.NAIL, 0, bomb.Position, Vector.FromAngle(rng:RandomInt(360)) * (15 + rng:RandomInt(8)), player):ToTear();
         tear.CollisionDamage = 1
         tear.Scale = 0.5
         tear:AddTearFlags(TearFlags.TEAR_PIERCING)
