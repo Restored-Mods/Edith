@@ -25,7 +25,6 @@ include("lua.entities.clots.main")
 
 --items
 --active
---include("lua.items.active.TheChisel.main")
 include("lua.items.active.GorgonMask.main")
 include("lua.items.active.SaltShaker.main")
 
@@ -47,9 +46,7 @@ include("lua.items.trinkets.SmellingSalts.main")
 include("lua.items.trinkets.ChunkOfAmber.main")
 
 -- cards
-include("lua.items.cards.Prudence.main")
 include("lua.items.cards.SoulOfEdith.main")
-include("lua.items.cards.PrudenceReverse.main")
 
 --mod compatibility
 include("lua.mod_compat.eid.eid")
