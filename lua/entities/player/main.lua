@@ -18,11 +18,9 @@ local MinJumpVal = 10
 local JumpChargeMul = 1.5
 local JumpCharge = 1.5
 
-local game = Game()
-
 local function IsPlayerOnGravityGrid(player, position)
 	local pos = position or player.Position
-	local grid = game:GetRoom():GetGridEntityFromPos(pos)
+	local grid = EdithRestored.Room():GetGridEntityFromPos(pos)
 	return not player.CanFly and grid and grid:GetType() == GridEntityType.GRID_GRAVITY
 end
 
@@ -48,7 +46,7 @@ end
 local function CheckEdithsCollisionWithGrid(player, data)
 	local effects = player:GetEffects()
 	local hasMarsEffect = effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)
-	local room = game:GetRoom()
+	local room = EdithRestored.Room()
 
 	local gridEntities = {
 		room:GetGridEntityFromPos(player.Position + Vector(-40, 0)),	--Left
@@ -94,7 +92,7 @@ local function CheckEdithsCollisionWithGrid(player, data)
 							local marsEffect = effects:GetCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)
 							local marsCooldown = marsEffect.Cooldown
 
-							game:ShakeScreen(marsCooldown + 10)
+							EdithRestored.Game:ShakeScreen(marsCooldown + 10)
 						end
 					end
 				end
@@ -186,7 +184,7 @@ local function EdithGridMovement(player, data)
 		if not isPressingLeft and not isPressingRight and
 		not isPressingUp and not isPressingDown then return end
 
-		local room = game:GetRoom()
+		local room = EdithRestored.Room()
 		local clampedPlayerPos = room:GetGridPosition(room:GetGridIndex(player.Position))
 		local targetMovementPosition
 		local targetMovementDirection
@@ -262,7 +260,7 @@ local function EdithGridMovement(player, data)
 	end
 
 	if data.EdithTargetMovementPosition then
-		if not player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and not game:IsPaused() then
+		if not player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and not EdithRestored.Game:IsPaused() then
 			data.EdithJumpCharge = math.max(0,data.EdithJumpCharge - JumpCharge)
 		end
 		--[[if data.EdithJumpTarget then
@@ -331,7 +329,7 @@ local function EdithGridMovement(player, data)
 		if data.EdithTargetMovementPosition and not player:IsFlying() then
 			if firstFrameOfMovement then
 				local dustVelocity = (-player.Velocity):Normalized() * 10
-				local bdType = game:GetRoom():GetBackdropType()
+				local bdType = EdithRestored.Room():GetBackdropType()
 				local chap4 = (bdType == 10 or bdType == 11 or bdType == 12 or bdType == 13 or bdType == 34 or bdType == 43 or bdType == 44)
 
 				if chap4 then
@@ -340,7 +338,7 @@ local function EdithGridMovement(player, data)
 					SFXManager():Play(EdithRestored.Enums.SFX.Edith.ROCK_SLIDE)
 				end
 				
-				if game:GetRoom():HasWater() then
+				if EdithRestored.Room():HasWater() then
 					local waterStart = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BIG_SPLASH, 1, player.Position, Vector(0,0), nil):ToEffect() 
 					waterStart.SpriteScale = (Vector(1 * (directionStuff), 1 ))
 					if bdType == 44 then
@@ -364,10 +362,10 @@ local function EdithGridMovement(player, data)
 					end
 				end
 	
-				game:ShakeScreen(1)
+				EdithRestored.Game:ShakeScreen(1)
 			end
 
-			-- if game:GetFrameCount() % 6 == 0 then
+			-- if EdithRestored.Game:GetFrameCount() % 6 == 0 then
 				-- local rockParticleVelocity = Vector(0, 0)
 
 				-- if math.random(2) == 2 then
@@ -443,7 +441,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Player.LoadUpdate)
 
 function Player:ChargeBarRender(player)
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 	if not Helpers.IsPlayerEdith(player,true,false) then return end
 	
 	data.EdithJumpCharge = data.EdithJumpCharge or 0
@@ -452,20 +450,20 @@ function Player:ChargeBarRender(player)
 		
 	end
 	data.ChargeBar.Offset = Vector(-12 * player.SpriteScale.X,-35 * player.SpriteScale.Y)
-	HudHelper.RenderChargeBar(data.ChargeBar, math.max(0, data.EdithJumpCharge - MinJumpVal), JumpChargeMul * 100, game:GetRoom():WorldToScreenPosition(player.Position))
+	HudHelper.RenderChargeBar(data.ChargeBar, math.max(0, data.EdithJumpCharge - MinJumpVal), JumpChargeMul * 100, EdithRestored.Room():WorldToScreenPosition(player.Position))
 	
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBarRender, 0)
 
 ---@param target EntityEffect
 function Player:TargetJumpRender(target)
-	if game:IsPaused() then return end
+	if EdithRestored.Game:IsPaused() then return end
 	target:GetSprite().PlaybackSpeed = 0.05
 	target:GetSprite():Update()
 	
 	local player = target.Parent or target.SpawnerEntity
 	if player and player:ToPlayer() and Helpers.IsPlayerEdith(player:ToPlayer(), true, false) then
-		local data = Helpers.GetData(player)
+		local data = EdithRestored:GetData(player)
 		
 		
 		target.Color = Color(1, 1, 1, 0, 0, 0, 0)
@@ -533,7 +531,7 @@ function Player:OnUpdatePlayer(player)
 	local dataP = EdithRestored:RunSave(player)
 	if not dataP then return end
 
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 	if Helpers.IsPlayerEdith(player, true, false) then
 		local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
 		if Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex) then
@@ -555,10 +553,10 @@ function Player:OnUpdatePlayer(player)
 				EdithGridMovement(player, data)
 			end
 			
-			local room = game:GetRoom()
+			local room = EdithRestored.Room()
 			local MinJumpCharge = MinJumpVal
 			data.EdithJumpCharge = data.EdithJumpCharge or 0
-			if sprite:GetAnimation() ~= "EdithJump" and not Helpers.IsMenuing() and not game:IsPaused() then
+			if sprite:GetAnimation() ~= "EdithJump" and not Helpers.IsMenuing() and not EdithRestored.Game:IsPaused() then
 				data.EdithJumpCharge = math.max(0, math.min(data.EdithJumpCharge + JumpCharge * (player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and 2 or 1), 100 * JumpChargeMul + MinJumpCharge))
 			end
 			local hasMegaMush = player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
@@ -673,8 +671,8 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePla
 
 function Player:Landing(player, jumpData, inPit)
 	if not inPit then
+		local data = EdithRestored:GetData(player)
 		Helpers.Stomp(player)
-		local data = Helpers.GetData(player)
 		for _, pickup in ipairs(Isaac.FindInRadius(player.Position, 30, EntityPartition.PICKUP)) do
 			pickup.Velocity = Vector.Zero
 		end
@@ -701,7 +699,7 @@ function Player:DamageHandling(entity, amount, flags, source, cd)
 	if entity and entity:ToPlayer() and Helpers.IsPlayerEdith(entity:ToPlayer(), true, false) then
 		local sprite = entity:GetSprite()
 		local player = entity:ToPlayer()
-		local data = Helpers.GetData(player)
+		local data = EdithRestored:GetData(player)
 		if sprite:GetAnimation():match("Edith")  then
 			if not (flags & DamageFlag.DAMAGE_INVINCIBLE > 0 or flags & DamageFlag.DAMAGE_RED_HEARTS > 0) then
 				return false
@@ -715,8 +713,8 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Player.DamageHandling, EntityType.ENTITY_PLAYER)
 
 function Player:edith_Stats(player, cacheFlag)
-	Helpers.ChangeSprite(player)
 	if Helpers.IsPlayerEdith(player, true, false) then -- If the player is Edith it will apply her specific stats
+		Helpers.ChangeSprite(player)
 		if cacheFlag == CacheFlag.CACHE_DAMAGE then
 			player.Damage = player.Damage * 1.1
 		end
@@ -727,14 +725,12 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Player.edith_Stats)
 
 function Player:Home()
-	local level = game:GetLevel()
-	local room = game:GetRoom()
-	for i = 0, game:GetNumPlayers() - 1 do
+	for i = 0, EdithRestored.Game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
-		if Helpers.IsPlayerEdith(player, true, false) and level:GetCurrentRoomIndex() == 94 and level:GetStage() == LevelStage.STAGE8 and EdithRestored.Unlocks.Edith.Tainted.Unlock ~= true  then
+		if Helpers.IsPlayerEdith(player, true, false) and EdithRestored.Level():GetCurrentRoomIndex() == 94 and EdithRestored.Level():GetStage() == LevelStage.STAGE8 and EdithRestored.Unlocks.Edith.Tainted.Unlock ~= true  then
 			for _, entity in ipairs(Isaac.GetRoomEntities()) do
 				if (((entity.Type == EntityType.ENTITY_PICKUP and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE)
-				or (entity.Type == EntityType.ENTITY_SHOPKEEPER)) and room:IsFirstVisit()) then
+				or (entity.Type == EntityType.ENTITY_SHOPKEEPER)) and EdithRestored.Room():IsFirstVisit()) then
 					entity:Remove()
 					local slot = Isaac.Spawn(EntityType.ENTITY_SLOT, 14, 0, entity.Position, Vector.Zero, nil)
 					slot:GetSprite():ReplaceSpritesheet(0,"gfx/characters/costumes/Character_001_Edith_b.png")
@@ -747,18 +743,19 @@ end
 --EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.Home)
 
 function Player:NewRoom()
-	for i = 0, game:GetNumPlayers() - 1 do
+	for i = 0, EdithRestored.Game:GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
-		local data = Helpers.GetData(player)
+		local data = EdithRestored:GetData(player)
 		--No need to check for edith here because for other players its gonna be nil anyways
 		data.EdithTargetMovementPosition = nil
 		if Helpers.IsPlayerEdith(player, true, false) then
 			player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 			player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS or EntityGridCollisionClass.GRIDCOLL_GROUND
-			Helpers.ChangeSprite(player)
 			data.TrapDoorFall = nil
-			data.TargetJumpPos = nil
 		end
+		Helpers.ChangeSprite(player)
+		data.StoneJumps = nil
+		data.TargetJumpPos = nil
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.NewRoom)
@@ -772,7 +769,7 @@ function Player:OnCollectibleCollission(pickup, collider)
 	local player = collider:ToPlayer()
 	if not Helpers.IsPlayerEdith(player, true, false) then return end
 
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 	if not data.EdithTargetMovementPosition then return end
 
 	player.Velocity = Vector.Zero
@@ -788,7 +785,7 @@ function Player:OnMegaChestCollision(pickup, collider)
 	local player = collider:ToPlayer()
 	if not Helpers.IsPlayerEdith(player, true, false) then return end
 
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 	if not data.EdithTargetMovementPosition then return end
 
 	player.Velocity = Vector.Zero
@@ -806,7 +803,7 @@ function Player:OnNPCCollision(entity, collider)
 	local player = collider:ToPlayer()
 	if not Helpers.IsPlayerEdith(player, true, false) then return end
 
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 	if not data.EdithTargetMovementPosition then return end
 
 	player.Velocity = Vector.Zero
@@ -836,7 +833,7 @@ function Player:EdithMovement(entity, hook, button)
 		if player and Helpers.IsPlayerEdith(player, true, false) then
 			local OnlyStomps = EdithRestored:GetDefaultFileSave("OnlyStomps")
 			if player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) or player:HasCurseMistEffect() then return end
-			local data = Helpers.GetData(player)
+			local data = EdithRestored:GetData(player)
 			if hook == InputHook.GET_ACTION_VALUE then
 				if data.ForceMovementInput then
 					local forceInput = false
@@ -891,7 +888,7 @@ function Player:PreUsePony(item, _, player)
 	if item ~= CollectibleType.COLLECTIBLE_PONY and item ~= CollectibleType.COLLECTIBLE_WHITE_PONY then return end
 	if not Helpers.IsPlayerEdith(player, true, false) then return end
 
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 
 	if not data.ForceMovementInput then
 		data.ForceMovementInput = 3
@@ -919,7 +916,7 @@ function Player:OnMontezumaLaserUpdate(laser)
 	if not laser.SpawnerEntity or not laser.SpawnerEntity:ToPlayer() then laser.Visible = true; return end
 
 	local player = laser.SpawnerEntity:ToPlayer()
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 
 	if not Helpers.IsPlayerEdith(player, true, false) then laser.Visible = true; return end
 
@@ -1041,17 +1038,15 @@ function Player:OnCustomDustCloudUpdate(effect)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.OnCustomDustCloudUpdate)
 
-function Player:AccesToMirrorWorld(p)
-	local room = game:GetRoom()
-	local level = game:GetLevel()
+function Player:AccessToMirrorWorld(p)
 	if Helpers.IsPlayerEdith(p,true,false) and p:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) then
 		for _, Door in ipairs(TSIL.Doors.GetDoorsToRoomIndex(-100)) do
 			if Door.State == 1 then
 				if (p.Position - Door.Position):Length() <= 30 then
-					if not room:IsMirrorWorld() then
-						game:StartRoomTransition(game:GetLevel():GetCurrentRoomIndex(), Door.Slot % 4, RoomTransitionAnim.FADE_MIRROR, p, 1)
+					if not EdithRestored.Room():IsMirrorWorld() then
+						EdithRestored.Game:StartRoomTransition(EdithRestored.Level():GetCurrentRoomIndex(), Door.Slot % 4, RoomTransitionAnim.FADE_MIRROR, p, 1)
 					else
-						game:StartRoomTransition(game:GetLevel():GetCurrentRoomIndex(), Door.Slot % 4, RoomTransitionAnim.FADE_MIRROR, p, 0)
+						EdithRestored.Game:StartRoomTransition(EdithRestored.Level():GetCurrentRoomIndex(), Door.Slot % 4, RoomTransitionAnim.FADE_MIRROR, p, 0)
 					end
 					level.LeaveDoor = Door.Slot
 				end
@@ -1059,7 +1054,7 @@ function Player:AccesToMirrorWorld(p)
 		end
 	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.AccesToMirrorWorld)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.AccessToMirrorWorld)
 
 local function drawLine(fx, from, to, frame)
 	local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
@@ -1101,7 +1096,7 @@ local function drawLine(fx, from, to, frame)
 end
 
 function Player:RenderTargetLine(fx)
-	local room = game:GetRoom()
+	local room = EdithRestored.Room()
 	if room:GetRenderMode() == RenderMode.RENDER_WATER_REFLECT then return end
 	
 	local d = fx:GetData()
@@ -1141,7 +1136,7 @@ function Player:TargetCamera()
 			maxx = math.max(maxx, ent.Position.X)
 			maxy = math.max(maxy, ent.Position.Y)
 		end
-		local camera = game:GetRoom():GetCamera()
+		local camera = EdithRestored.Room():GetCamera()
 		camera:SetFocusPosition(Vector((maxx + minx), (maxy +  miny)) / 2)
 	end
 end

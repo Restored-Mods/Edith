@@ -20,7 +20,7 @@ local function RemoveStoreCreditFromPlayer(player) -- Partially from FF
 end
 
 local function TryRemoveStoreCredit(player)
-	if Game():GetRoom():GetType() == RoomType.ROOM_SHOP then
+	if EdithRestored.Room():GetType() == RoomType.ROOM_SHOP then
 		if player:HasTrinket(TrinketType.TRINKET_STORE_CREDIT) then
 			RemoveStoreCreditFromPlayer(player)
 		else
@@ -33,7 +33,7 @@ local function TryRemoveStoreCredit(player)
 end
 
 function Helpers.HereticBattle(enemy)
-	local room = Game():GetRoom()
+	local room = EdithRestored.Room()
 	if room:GetType() == RoomType.ROOM_BOSS and room:GetBossID() == 81 and enemy.Type == EntityType.ENTITY_EXORCIST then
 		return true
 	end
@@ -154,7 +154,7 @@ function Helpers.InBoilerMirrorWorld()
 end
 
 function Helpers.InMirrorWorld()
-	return Game():GetRoom():IsMirrorWorld() or Helpers.InBoilerMirrorWorld()
+	return EdithRestored.Room():IsMirrorWorld() or Helpers.InBoilerMirrorWorld()
 end
 
 ---@param player EntityPlayer
@@ -287,7 +287,7 @@ function Helpers.OverCharge(player,slot,item)
 	effect:GetSprite().Offset = Vector(0,-22)
 end
 
-function Helpers.GetNearestEnemy(_pos)
+function Helpers.GetNearestEnemy(_pos, noPlayer)
 	local distance = 9999999
 	local closestPos = nil
 	local enemies = Isaac.GetRoomEntities()
@@ -300,8 +300,8 @@ function Helpers.GetNearestEnemy(_pos)
 			end
 		end
 	end
-	if distance == 9999999 then
-		return Game():GetNearestPlayer(_pos)
+	if distance == 9999999 and not noPlayer then
+		return EdithRestored.Game:GetNearestPlayer(_pos)
 	else
 		return closestPos
 	end
@@ -397,7 +397,7 @@ function Helpers.ChangeSprite(player, loading)
 			data.PrevPepper = data.Pepper
 		end
 	elseif sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH or sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH_B then
-		sprite:Load("gfx/001.000.player.anm2", true)
+		sprite:Load("gfx/001.000_Player.anm2", true)
 		sprite:Update()
 	end
 end
@@ -571,7 +571,7 @@ function Helpers.GetPlayerFromTear(tear)
 			if check.Type == EntityType.ENTITY_PLAYER then
 				return Helpers.GetPtrHashEntity(check):ToPlayer()
 			elseif check.Type == EntityType.ENTITY_FAMILIAR and check.Variant == FamiliarVariant.INCUBUS then
-				local data = Helpers.GetData(tear)
+				local data = EdithRestored:GetData(tear)
 				data.IsIncubusTear = true
 				return check:ToFamiliar().Player:ToPlayer()
 			end
@@ -592,15 +592,6 @@ function Helpers.GetPtrHashEntity(entity)
 		end
 	end
 	return nil
-end
-
-
----@param entity Entity
----@return table
-function Helpers.GetData(entity)
-	local data = entity:GetData()
-	data.EdithRestored = data.EdithRestored or {}
-	return data.EdithRestored
 end
 
 function Helpers.Contains(list, x)
@@ -680,7 +671,7 @@ end
 
 function Helpers.UnlockAchievement(achievement, force) -- from Community Remix
 	if not force then
-		if not Game():AchievementUnlocksDisallowed() then
+		if not EdithRestored.Game:AchievementUnlocksDisallowed() then
 			if not Isaac.GetPersistentGameData():Unlocked(achievement) then
 				Isaac.GetPersistentGameData():TryUnlock(achievement)
 			end
@@ -696,17 +687,18 @@ end
 ---@param bombDamage number
 ---@param knockback number
 ---@param player EntityPlayer
-local function NewStompFunction(radius, damage, bombDamage, knockback, player) -- well its name is clear
+---@param doBombStomp boolean
+local function NewStompFunction(radius, damage, bombDamage, knockback, player, doBombStomp) -- well its name is clear
 	local enemiesInRadius = Helpers.Filter(Helpers.GetEnemies(), function(_, enemy) return enemy.Position:Distance(player.Position) <= radius end)
 	for _,enemy in pairs(enemiesInRadius) do
 		--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
 		enemy:AddKnockback(EntityRef(player), (enemy.Position - player.Position):Resized(knockback), 5, Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT))
 	end
-	Game():BombDamage(player.Position, damage, radius, true, player, TearFlags.TEAR_NORMAL, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
+	EdithRestored.Game:BombDamage(player.Position, damage, radius, true, player, TearFlags.TEAR_NORMAL, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
 
 	local bombEffectTriggered = bombDamage > 0
 
-	if not bombEffectTriggered and Helpers.GetData(player).BombStomp then
+	if not bombEffectTriggered and doBombStomp then
 		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT)
 		for _,callback in ipairs(callbacks) do
 			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
@@ -721,7 +713,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player) -
 	end
 
 	if bombEffectTriggered then
-		Game():BombExplosionEffects(player.Position, bombDamage, player:GetBombFlags(), Color.Default, player)
+		EdithRestored.Game:BombExplosionEffects(player.Position, bombDamage, player:GetBombFlags(), Color.Default, player)
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_BOBS_CURSE) then
 			local poisonCloud = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SMOKE_CLOUD, 0, player.Position, Vector.Zero, player):ToEffect()
 			poisonCloud:SetTimeout(150)
@@ -729,7 +721,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player) -
 				
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
 			for _, enemies in pairs(enemiesInRadius) do
-				Game():BombExplosionEffects(enemies.Position, bombDamage, 0, Color.Default, player, 0.5, true, player, 0)
+				EdithRestored.Game:BombExplosionEffects(enemies.Position, bombDamage, 0, Color.Default, player, 0.5, true, player, 0)
 			end
 		end
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_GHOST_BOMBS) then
@@ -751,12 +743,12 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player) -
 
 end
 
-function Helpers.Stomp(player)
-	local data = Helpers.GetData(player)
-	local room = Game():GetRoom()
+function Helpers.Stomp(player, force)
+	local data = EdithRestored:GetData(player)
+	local room = EdithRestored.Room()
 	local bdType = room:GetBackdropType()
 	local chap4 = (bdType == 10 or bdType == 11 or bdType == 12 or bdType == 13 or bdType == 34 or bdType == 43 or bdType == 44)
-	local level = Game():GetLevel():GetStage()
+	local level = EdithRestored.Level():GetStage()
 	
 	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5)
 	local bombDamage = 0
@@ -764,10 +756,10 @@ function Helpers.Stomp(player)
 	local knockbackFormula = 15 * ((Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)) and 2 or 1)
 
 	-- yeah the en of that stuff
-	if data.BombStomp ~= nil then
-		if player:GetNumBombs() > 0 or player:HasGoldenBomb() then
+	if data.BombStomp ~= nil or force then
+		if player:GetNumBombs() > 0 or player:HasGoldenBomb() or force then
 		-- Check if edith has a golden bomb cause well using a golden bomb doesn't substract your bomb count
-			if not player:HasGoldenBomb() then
+			if not player:HasGoldenBomb() and not force then
 				player:AddBombs(-1)
 			end
 			bombDamage = 100
@@ -778,9 +770,9 @@ function Helpers.Stomp(player)
 			end
 		end
 	end
-	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player)
+	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player, force or data.BombStomp)
 	
-	Game():ShakeScreen(10)
+	EdithRestored.Game:ShakeScreen(10)
 	
 	if chap4 then	
 		SFXManager():Play(SoundEffect.SOUND_MEATY_DEATHS, 1, 0, false, 1, 0)

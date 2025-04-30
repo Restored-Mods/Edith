@@ -9,7 +9,7 @@ local directions = {
 }
 
 function ShrapnelBombs:BombInit(bomb)
-	if Helpers.GetData(bomb).BombInit then return end
+	if EdithRestored:GetData(bomb).BombInit then return end
 	local player = Helpers.GetPlayerFromTear(bomb)
 	if player then
 		local rng = bomb:GetDropRNG()
@@ -36,7 +36,7 @@ end
 function ShrapnelBombs:BombUpdate(bomb)
 	local player = Helpers.GetPlayerFromTear(bomb)
 	if not player then return end
-	local data = Helpers.GetData(bomb)
+	local data = EdithRestored:GetData(bomb)
 
 	if bomb.FrameCount == 1 then
         ShrapnelBombs:BombInit(bomb)
@@ -60,7 +60,7 @@ function ShrapnelBombs:BombUpdate(bomb)
         tear.CollisionDamage = 1
         tear.Scale = 0.5
         tear:AddTearFlags(TearFlags.TEAR_PIERCING)
-        Helpers.GetData(tear).Shrapnel = true
+        EdithRestored:GetData(tear).Shrapnel = true
       end
 		end
 	end
@@ -68,7 +68,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ShrapnelBombs.BombUpdate)
 
 function ShrapnelBombs:TearCollision(tear, colider, low)
-  if Helpers.GetData(tear) and colider:IsVulnerableEnemy() then
+  if EdithRestored:GetData(tear) and colider:IsVulnerableEnemy() then
     if not colider:HasEntityFlags(EntityFlag.FLAG_BLEED_OUT) then
       colider:AddBleeding(EntityRef(tear.SpawnerEntity),300)
     end

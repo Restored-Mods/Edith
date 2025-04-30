@@ -4,7 +4,7 @@ local Helpers = include("lua.helpers.Helpers")
 
 ---@param npc EntityNPC
 function Sodom:npcInit(npc)
-    local data = Helpers.GetData(npc)
+    local data = EdithRestored:GetData(npc)
 
     data.SaltedStatusCooldown = 0
     data.SaltedStatusRecharge = 0
@@ -18,7 +18,7 @@ end
 
 ---@param npc EntityNPC
 function Sodom:npcSaltUpdate(npc)
-    local data = Helpers.GetData(npc)
+    local data = EdithRestored:GetData(npc)
     if npc.FrameCount < 1 then return end
     if data.SaltedStatusCooldown == nil then
         Sodom:npcInit(npc)
@@ -66,12 +66,12 @@ EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, Sodom.npcSaltUpdate)
 
 ---@param player EntityPlayer
 function Sodom:SodomItemUpdate(player)
-    local room = game:GetRoom()
+    local room = EdithRestored.Room()
 
     if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM) then
         local ents = Isaac.FindInRadius(player.Position, 165, EntityPartition.ENEMY)
         for i, _ in ipairs(ents) do
-            local data = Helpers.GetData(ents[i])
+            local data = EdithRestored:GetData(ents[i])
             if ents[i]:IsVulnerableEnemy() and (not ents[i]:HasEntityFlags(EntityFlag.FLAG_FRIENDLY)) and room:CheckLine(ents[i].Position, player.Position, 3, 999) and data.SaltedStatusRecharge == 0 then
                 data.SaltedStatusCooldown = 120
                 data.SaltedStatusRecharge = 210

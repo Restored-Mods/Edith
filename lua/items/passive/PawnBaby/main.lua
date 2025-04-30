@@ -40,7 +40,7 @@ end
 function PawnBaby:Update(familiar)    
     local sprite = familiar:GetSprite()
     local player = familiar.Player
-    local data = Helpers.GetData(familiar)
+    local data = EdithRestored:GetData(familiar)
     local fireDir = player:GetFireDirection()
     local tearcd = math.ceil(fireCoolDown / (player:GetTrinketMultiplier(TrinketType.TRINKET_FORGOTTEN_LULLABY) + 1))
     local bffBonus = player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 1 or 0
@@ -123,7 +123,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, PawnBaby.Update, Edit
 function PawnBaby:Colliding(familiar, collider, low)    
     if familiar.State ~= 0 then return end
     local sprite = familiar:GetSprite()
-    local data = Helpers.GetData(familiar)
+    local data = EdithRestored:GetData(familiar)
     if collider:ToNPC() and data.EnPassantCooldown and data.EnPassantCooldown <= 0 then
         local npc = collider:ToNPC()
         if npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then

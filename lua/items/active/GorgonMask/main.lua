@@ -9,7 +9,7 @@ function GorgonMask:GetData(player)
 	---@class GorgonMaskData
 	---@field CouldShoot boolean
 	---@field Active boolean
-	return Helpers.GetData(player)
+	return EdithRestored:GetData(player)
 end
 
 ---@param player EntityPlayer
@@ -64,7 +64,7 @@ function GorgonMask:PlayerEffectUpdate(player)
 	local data = GorgonMask:GetData(player)
 	if not data.Active then return end
 
-	local room = Game():GetRoom()
+	local room = EdithRestored.Room()
 	local direction = TSIL.Direction.DirectionToVector(player:GetHeadDirection())
 	local count = player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) and 2 or 1
 	local ref

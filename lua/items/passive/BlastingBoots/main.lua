@@ -1,6 +1,4 @@
 local BlastBoots = {}
-local Helpers = include("lua.helpers.Helpers")
-local game = Game()
 local sfx = SFXManager()
 local timerColor = Color(1, 1, 1, 1, 0.5)
 local BlastBootsID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS
@@ -24,7 +22,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, BlastBoots.PreBom
 ---@param player EntityPlayer
 function BlastBoots:AntiSoftlock(player)
     if not player:HasCollectible(BlastBootsID) then return end
-    local playerData = Helpers.GetData(player)
+    local playerData = EdithRestored:GetData(player)
     local movDir = player:GetMovementDirection()
 
     playerData.Antisoftlocktimer = playerData.Antisoftlocktimer or 150
@@ -47,6 +45,6 @@ function BlastBoots:AntiSoftlock(player)
     JumpLib:Jump(player, BootsJumpInfo)
 
 ---@diagnostic disable-next-line: param-type-mismatch
-    game:BombExplosionEffects(player.Position, 0, 0, Color.Default, player, 1, false, false, 0)
+    EdithRestored.Game:BombExplosionEffects(player.Position, 0, 0, Color.Default, player, 1, false, false, 0)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, BlastBoots.AntiSoftlock)

@@ -61,7 +61,7 @@ function SaltyBaby:OnSaltyBabyUpdate(familiar)
     familiar:FollowParent()
 
     local colCapsule = familiar:GetCollisionCapsule()
-    local famData = Helpers.GetData(familiar)
+    local famData = EdithRestored:GetData(familiar)
     local sprite = familiar:GetSprite()
 
     famData.CurrentBlocks = famData.CurrentBlocks or 0
@@ -103,7 +103,7 @@ function SaltyBaby:RestoreSaltyBabyState()
     for _, saltybaby in ipairs(saltyBabies) do
         local sprite = saltybaby:GetSprite()
 
-        local famData = Helpers.GetData(saltybaby)
+        local famData = EdithRestored:GetData(saltybaby)
         famData.IsShattered = false
         famData.CurrentBlocks = 0
 

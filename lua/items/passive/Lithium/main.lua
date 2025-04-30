@@ -79,7 +79,7 @@ function Lithium:AddPill(_, _, firstTime, _, _, player)
     TSIL.EntitySpecific.SpawnPickup(
         PickupVariant.PICKUP_PILL,
         EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM,
-        Game():GetRoom():FindFreePickupSpawnPosition(player.Position, 1, true),
+        EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 1, true),
         Vector.Zero,
         player
     )

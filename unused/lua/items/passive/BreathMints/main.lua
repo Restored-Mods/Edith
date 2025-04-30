@@ -48,7 +48,7 @@ end
 function Peppermint:RenderPepperMintCharge()
     for i = 0, Game():GetNumPlayers() - 1 do
         local player = Isaac.GetPlayer(i)
-        local data = Helpers.GetData(player)
+        local data = EdithRestored:GetData(player)
         local room = Game():GetRoom()
 
         if room:GetRenderMode() == RenderMode.RENDER_WATER_REFLECT then
@@ -106,7 +106,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Peppermint.RenderPepperMintCharge)
 
 function Peppermint:AddPeppermintCharge(player)
-    local data = Helpers.GetData(player)
+    local data = EdithRestored:GetData(player)
 
     if not player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS) then
         return

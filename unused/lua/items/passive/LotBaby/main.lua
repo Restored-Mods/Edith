@@ -39,7 +39,7 @@ function LotBaby:Update(familiar)
     local edithBonus = Helpers.IsPlayerEdith(player, true, false) and 1 or 0
     familiar.FireCooldown = math.max(0, math.min(familiar.FireCooldown - 1, tearcd))
     local sprite = familiar:GetSprite()
-    local data = Helpers.GetData(familiar)
+    local data = EdithRestored:GetData(familiar)
     if fireDir ~= Direction.NO_DIRECTION then
         local tearTrajectory = vecDir[fireDir]
         if player:HasCollectible(CollectibleType.COLLECTIBLE_MARKED) or player:HasCollectible(CollectibleType.COLLECTIBLE_ANALOG_STICK) then
@@ -79,14 +79,14 @@ function LotBaby:Update(familiar)
     if edithBonus > 0 then
         local enemies = Helpers.Filter(Helpers.GetEnemies(), 
                                 function(_, enemy)
-                                    local ndata = Helpers.GetData(enemy)
+                                    local ndata = EdithRestored:GetData(enemy)
                                     if familiar.Position:Distance(enemy.Position) < 40 and not enemy:HasEntityFlags(EntityFlag.FLAG_FEAR)
                                     and not ndata.LotFearCooldown then
                                         return true
                                     end
                                 end)
         for _,enemy in ipairs(enemies) do
-            local ndata = Helpers.GetData(enemy)
+            local ndata = EdithRestored:GetData(enemy)
             if rng:RandomInt(5) == 0 then
                enemy:AddFear(EntityRef(familiar), 60)
             end
@@ -98,7 +98,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, LotBaby.Update, EdithRestored.Enums.Familiars.LOT_BABY.Variant)
 
 function LotBaby:NPCFearApplyCooldown(npc)
-    local data = Helpers.GetData(npc)
+    local data = EdithRestored:GetData(npc)
     if data.LotFearCooldown then
         data.LotFearCooldown = data.LotFearCooldown - 1
         if data.LotFearCooldown <= 0 then

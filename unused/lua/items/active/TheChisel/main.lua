@@ -22,7 +22,7 @@ function Chisel:UseTheChisel(_, _, player)
 	end
 	-- falling chisel stuff
 	local chisel = Isaac.Spawn(EdithRestored.Enums.Entities.FALLING_CHISEL.Type,EdithRestored.Enums.Entities.FALLING_CHISEL.Variant,0,player.Position,Vector.Zero,player)
-	Helpers.GetData(chisel).ChiselSelection = ChiselSelection
+	EdithRestored:GetData(chisel).ChiselSelection = ChiselSelection
 	local sprite = chisel:GetSprite()
 	sprite:Load("gfx/chisel.anm2", true)
 	sprite:Play("Firing", true)
@@ -35,7 +35,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_USE_ITEM, Chisel.UseTheChisel, EdithRe
 
 function Chisel:PepperLevel(player)
 	if Helpers.IsPlayerEdith(player,false,true) then
-		local data = Helpers.GetData(player)
+		local data = EdithRestored:GetData(player)
 		if not data.PepperTimer then
 			data.PepperTimer = 60
 		end
@@ -111,7 +111,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.HasBirthrig
 function Chisel:ChiselAnm(chisel)
 	if chisel.SpawnerType == EntityType.ENTITY_PLAYER then
 		local player = chisel.SpawnerEntity:ToPlayer()
-		local data = Helpers.GetData(chisel)
+		local data = EdithRestored:GetData(chisel)
 		local dataP = Helpers.GetPersistentEntityData(player)
 		local rng = player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL)
 
@@ -155,7 +155,7 @@ function Chisel:ChiselAnm(chisel)
 			-- Pepper creep timing
 			if Helpers.IsPlayerEdith(player,false,true) then
 				if dataP.PrevPepper > 0 then
-					Helpers.GetData(player).CreepTimer = (dataP.Pepper + 1) * 40 - 10--150
+					EdithRestored:GetData(player).CreepTimer = (dataP.Pepper + 1) * 40 - 10--150
 				end
 				Helpers.ChangeSprite(player)
 			end

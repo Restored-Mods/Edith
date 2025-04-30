@@ -11,9 +11,6 @@ moonPhaseAlpha.A = 0
 local RedhoodItem = EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD
 local RedhoodNull = EdithRestored.Enums.NullItems.RED_HOOD
 
-local game = Game()
-local level = game:GetLevel()
-
 local moonPhaseAnim = {
 	[1] = "NewMoon",
 	[2] = "WaxingCrescent",
@@ -39,7 +36,7 @@ local function GetCurrentMoonPhase()
 end
 
 local function IsRedMoonPhase()
-	return EdithRestored:RunSave()["MoonPhaseWolf"] == true or level:GetCurses() & LevelCurse.CURSE_OF_DARKNESS > 0
+	return EdithRestored:RunSave()["MoonPhaseWolf"] == true or EdithRestored.Level():GetCurses() & LevelCurse.CURSE_OF_DARKNESS > 0
 end
 
 ---@param bool boolean
@@ -230,7 +227,7 @@ EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, CallbackPri
 ---@param player EntityPlayer
 function RedHoodLocal:StompyEffect(player)
 	local effects = player:GetEffects()
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 	if player:HasCollectible(RedhoodItem) then
 		if not data.LunaNullItems then
 			data.LunaNullItems = effects:GetNullEffectNum(NullItemID.ID_LUNA)
@@ -292,7 +289,7 @@ function RedHoodLocal:Swipes(effect)
 		return
 	end
 	local sprite = effect:GetSprite()
-	local blackList = Helpers.GetData(effect)
+	local blackList = EdithRestored:GetData(effect)
 	blackList.HitBlacklist = blackList.HitBlacklist or {}
 	if sprite:IsFinished("Swing") or sprite:IsFinished("Swing2") then
 		local closest
@@ -373,8 +370,8 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, EdithRestored.WaveReset)
 
 function EdithRestored:OnNewGreedWave()
-	if game:IsGreedMode() then
-		local greedModeWave = level.GreedModeWave
+	if EdithRestored.Game:IsGreedMode() then
+		local greedModeWave = EdithRestored.Level().GreedModeWave
 
 		if not lastGreedWave then
 			lastGreedWave = greedModeWave
@@ -382,11 +379,11 @@ function EdithRestored:OnNewGreedWave()
 
 		if greedModeWave > lastGreedWave then
 			lastGreedWave = greedModeWave
-			local room = game:GetRoom()
+			local room = EdithRestored.Room()
 			local plate = nil
 			if
 				room:GetRoomShape() == RoomShape.ROOMSHAPE_1x2
-				and level:GetAbsoluteStage() < LevelStage.STAGE7_GREED
+				and EdithRestored.Level():GetAbsoluteStage() < LevelStage.STAGE7_GREED
 			then
 				plate = room:GetGridEntity(112):ToPressurePlate()
 			end

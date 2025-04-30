@@ -101,7 +101,7 @@ local function LithiumCondition(descObj)
 end
 
 local function LithiumCallback(descObj)
-    local player = Game():GetNearestPlayer(descObj.Entity.Position)
+    local player = EdithRestored.Game:GetNearestPlayer(descObj.Entity.Position)
     local horseMul = descObj.ObjSubType > 2048 and 2 or 1
     if player:HasCollectible(CollectibleType.COLLECTIBLE_PHD) and not player:HasCollectible(CollectibleType.COLLECTIBLE_FALSE_PHD) then
         descObj.Description = descObj.Description:gsub(".*%#", "")

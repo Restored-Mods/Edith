@@ -2,8 +2,8 @@ local SaltRock = {}
 local Helpers = include("lua.helpers.Helpers")
 
 function SaltRock:MiniStatue(Statue)
-	local room = Game():GetRoom()
-	local data = Helpers.GetData(Statue)
+	local room = EdithRestored.Room()
+	local data = EdithRestored:GetData(Statue)
 	local sprite = Statue:GetSprite()
 	if data.jumps == nil then
 		sprite:Play("JumpUp")
@@ -55,7 +55,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, SaltRock.MiniStatue, EdithRestored.Enums.Entities.SALT_STATUE_MINI.Variant)
 
 function SaltRock:Spawn(grid)
-	local room = Game():GetRoom()
+	local room = EdithRestored.Room()
 	if PlayerManager.AnyoneHasTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK) and room:IsFirstVisit()
 	and Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) then
 		local rng = RNG()

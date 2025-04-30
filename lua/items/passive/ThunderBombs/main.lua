@@ -37,7 +37,7 @@ end
 
 ---@param bomb EntityBomb
 local function ThunderBombInit(bomb)
-	if Helpers.GetData(bomb).BombInit then return end
+	if EdithRestored:GetData(bomb).BombInit then return end
 	local player = Helpers.GetPlayerFromTear(bomb)
 	--[[if bomb.Variant ~= BombVariant.BOMB_NORMAL and bomb.Variant ~= BombVariant.BOMB_GIGA and
 	bomb.Variant ~= BombVariant.BOMB_ROCKET 
@@ -59,7 +59,7 @@ local function ThunderBombInit(bomb)
 end
 
 local function SpawnThunderBombLaser(bomb, parent, damage, radius)
-	Game():GetRoom():DoLightningStrike()
+	EdithRestored.Room():DoLightningStrike()
 	Game():MakeShockwave(bomb.Position, .035, .01, 10)
 
 	local ring = Isaac.Spawn(EntityType.ENTITY_LASER, LaserVariant.THIN_RED, LaserSubType.LASER_SUBTYPE_RING_FOLLOW_PARENT, bomb.Position, Vector.Zero, parent):ToLaser()
@@ -69,7 +69,7 @@ local function SpawnThunderBombLaser(bomb, parent, damage, radius)
 	ring:SetOneHit(false)
 	ring.Parent = bomb
 	ring.Color = Color.LaserNumberOne
-	Helpers.GetData(ring).FromThunderBomb = true
+	EdithRestored:GetData(ring).FromThunderBomb = true
 end
 
 ---@param bomb EntityBomb
@@ -81,7 +81,7 @@ function ThunderBombs:BombUpdate(bomb)
 
 	if not IsThunderBomb(bomb) then return end
 
-	local data = Helpers.GetData(bomb)
+	local data = EdithRestored:GetData(bomb)
 	local sprite = bomb:GetSprite()
 
 	if data.IsBlankBombInstaDetonating then
@@ -95,13 +95,13 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpdate)
 
 function ThunderBombs:EdithStompThunderBombProc(player)
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 	return CanPlayerPlaceThunderBomb(player) and not data.LockBombs
 end
 EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, ThunderBombs.EdithStompThunderBombProc, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
 function ThunderBombs:EdithStompThunderBomb(player, damage, radius, forced)
-	local data = Helpers.GetData(player)
+	local data = EdithRestored:GetData(player)
 	if CanPlayerPlaceThunderBomb(player) and not data.LockBombs then
 		for i = 0,2 do
 			if DoesItemSlotHaveCharge(player, i) then
@@ -118,7 +118,7 @@ end
 EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBomb, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
 function ThunderBombs:HandleRingDamage(laser) --this exists because it doesnt properly hit everything inside of it
-	local data = Helpers.GetData(laser)
+	local data = EdithRestored:GetData(laser)
 
 	if data and data.FromThunderBomb == true then
 		for i, enemy in ipairs(Isaac.FindInRadius(laser.Position, laser.Radius, EntityPartition.ENEMY)) do
@@ -133,7 +133,7 @@ function ThunderBombs:EntityHit(entity, dmg, flags, source, countdown)
 	source = source.Entity
 
 	if source then
-		local data = Helpers.GetData(source)
+		local data = EdithRestored:GetData(source)
 		if IsThunderBomb(source) or data and data.FromThunderBomb == true then
 			local lightning = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CHAIN_LIGHTNING, 0, entity.Position, Vector.Zero, bomb):ToEffect()
 			lightning:SetDamageSource(EntityType.ENTITY_PLAYER)
@@ -149,7 +149,7 @@ function ThunderBombs:BombRender(bomb)
 
 	if not IsThunderBomb(bomb) then return end
 
-	local data = Helpers.GetData(bomb)
+	local data = EdithRestored:GetData(bomb)
 
 	if data.ThunderBombsOverlay then
 		if bomb.FrameCount % 2 == 0 and not Game():IsPaused() then
@@ -197,7 +197,7 @@ function ThunderBombs:TryPlaceBomb(player)
 	if Helpers.CanMove(player, true) then
 		if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and player:GetBombPlaceDelay() <= 0 and player:GetNumBombs() <= 0 and not player:HasGoldenBomb() then
 			local bombButton = Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
-			local data = Helpers.GetData(player)
+			local data = EdithRestored:GetData(player)
 			if bombButton and not (Helpers.IsPlayerEdith(player, true, false) and data.LockBombs) then
 				for i = 0,2 do
 					if DoesItemSlotHaveCharge(player, i) then
@@ -236,7 +236,7 @@ EdithRestored:AddPriorityCallback(ModCallbacks.MC_INPUT_ACTION, CallbackPriority
 ---@param bomb EntityBomb
 function ThunderBombs:ReplaceCostume(bomb)
 	local sprite = bomb:GetSprite()
-	local data = Helpers.GetData(bomb)
+	local data = EdithRestored:GetData(bomb)
 
 	-- local bombentry = XMLData.GetEntryById(XMLNode.BOMBCOSTUME, 1)
 
