@@ -228,7 +228,7 @@ local function InitImGuiMenu()
 	UpdateImGuiMenu()
 	UpdateBlackListMenu()
 
-	--[[if not ImGui.ElementExists("edithMenuUnlocks") then
+	if not ImGui.ElementExists("edithMenuUnlocks") then
 		ImGui.AddElement("EdithRestored", "edithMenuUnlocks", ImGuiElement.MenuItem, "\u{f09c} Unlocks")
 	end
 		
@@ -315,7 +315,7 @@ local function InitImGuiMenu()
 		ImGui.UpdateData("edithMarkAll", ImGuiData.Value, unlocked and 1 or 0)
 	end)
 	
-	ImGui.SetWindowSize("edithWindowUnlocks", 800, 650)]]
+	ImGui.SetWindowSize("edithWindowUnlocks", 800, 650)
 end
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_MARK_GET, function()
