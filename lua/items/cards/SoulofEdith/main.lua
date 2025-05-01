@@ -172,19 +172,22 @@ function SoulOfEdith:UseSoulEdith(soe, player, useflags)
 		player:SwapForgottenForm(true, false)
 	end
 	SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
-	--data.PrevAnimFile = sprite:GetFilename()
-	--sprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
-	--sprite:Update()
-	data.Statue = Isaac.Spawn(
-		EntityType.ENTITY_EFFECT,
-		EdithRestored.Enums.Entities.SALT_STATUE.Variant,
-		0,
-		player.Position,
-		Vector.Zero,
-		player
-	):ToEffect()
-	data.Statue:FollowParent(player)
-	EdithRestored:GetData(data.Statue).StoneJumps = 4
+	if useflags & UseFlag.USE_NOANIM == 0 then
+		player:AnimateCard(-1, "HideItem")
+	end
+	if not data.Statue then
+		data.Statue = Isaac.Spawn(
+			EntityType.ENTITY_EFFECT,
+			EdithRestored.Enums.Entities.SALT_STATUE.Variant,
+			0,
+			player.Position,
+			Vector.Zero,
+			player
+		):ToEffect()
+		data.Statue:FollowParent(player)
+	end
+	local statueData = EdithRestored:GetData(data.Statue)
+	statueData.StoneJumps = 4
 	JumpInit(player, data.Statue)
 	data.EdithTargetMovementPosition = nil
 	player:AddCacheFlags(CacheFlag.CACHE_COLOR, true)
@@ -193,6 +196,26 @@ EdithRestored:AddCallback(
 	ModCallbacks.MC_USE_CARD,
 	SoulOfEdith.UseSoulEdith,
 	EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH
+)
+
+---@param collectible CollectibleType
+---@param rng RNG
+---@param player EntityPlayer
+---@param useflags integer | UseFlag
+---@param slot ActiveSlot
+---@param vardata integer
+---@return boolean | table?
+function SoulOfEdith:UseSoulEdithWithClearRune(collectible, rng, player, useflags, slot, vardata)
+	if player:GetCard(0) == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH then
+		player:UseCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, UseFlag.USE_NOANIM)
+		return true
+	end
+end
+EdithRestored:AddPriorityCallback(
+	ModCallbacks.MC_PRE_USE_ITEM,
+	CallbackPriority.IMPORTANT,
+	SoulOfEdith.UseSoulEdithWithClearRune,
+	CollectibleType.COLLECTIBLE_CLEAR_RUNE
 )
 
 function SoulOfEdith:NoStatueDamage(entity, damage, flags, source, cd)
