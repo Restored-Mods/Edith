@@ -1,150 +1,370 @@
 local SoulOfEdith = {}
 local Helpers = include("lua.helpers.Helpers")
 
+local function GetRandomDoorPosition(rng)
+	local doorSlots = {}
+	for i = 0, DoorSlot.NUM_DOOR_SLOTS - 1 do
+		if EdithRestored.Room():GetDoor(i) then
+			table.insert(doorSlots, EdithRestored.Room():GetDoor(i).Position)
+		end
+	end
+	if #doorSlots > 0 then
+		return doorSlots[rng:RandomInt(#doorSlots) + 1]
+	end
+	return nil
+end
+
+local function GetAntiSoftLockPosition(tab, initPos, rng, canFly)
+	local pathFinderNPC = Isaac.Spawn(EntityType.ENTITY_SHOPKEEPER, 0, 0, initPos, Vector.Zero, nil):ToNPC()
+	pathFinderNPC:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+	pathFinderNPC.Visible = false
+	pathFinderNPC.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+	pathFinderNPC.GridCollisionClass = canFly and EntityGridCollisionClass.GRIDCOLL_WALLS
+		or EntityGridCollisionClass.GRIDCOLL_GROUND
+	local doorPos
+	local antiInfLoop = 0
+	repeat
+		doorPos = GetRandomDoorPosition(rng)
+		local newTab =
+			Helpers.Shuffle(Helpers.MergeTables(tab, { { Position = EdithRestored.Room():GetRandomPosition(20) } }))
+		pathFinderNPC.Position = #tab == 1 and tab[1].Position or newTab[rng:RandomInt(1, #newTab)].Position
+		antiInfLoop = antiInfLoop + 1
+	until type(doorPos) ~= nil and pathFinderNPC.Pathfinder:HasPathToPos(doorPos, false) or antiInfLoop >= 100
+	local hasExit = false
+	for i = 0, DoorSlot.NUM_DOOR_SLOTS - 1 do
+		if EdithRestored.Room():GetDoor(i) then
+			if pathFinderNPC.Pathfinder:HasPathToPos(EdithRestored.Room():GetDoor(i).Position) then
+				hasExit = true
+				break
+			end
+		end
+	end
+	while not hasExit do
+		pathFinderNPC.Position = EdithRestored.Room():GetRandomPosition(20)
+		hasExit = pathFinderNPC.Pathfinder:HasPathToPos(GetRandomDoorPosition(rng), false)
+	end
+	local finalPos = pathFinderNPC.Position
+	pathFinderNPC:Remove()
+	return finalPos
+end
+
 ---@param player EntityPlayer
-local function JumpInit(player)
-    local data = EdithRestored:GetData(player)
-    data.StartPosition = data.StartPosition or player.Position
-    if data.StoneJumps <= 0 then
-        data.StoneJumps = nil
-        player:GetSprite():Load(data.PrevAnimFile or "gfx/001.000_Player.anm2", true)
-        player:GetSprite():Update()
-        return
-    end
-    if data.StoneJumps > 1 then
-        local ent = Helpers.GetNearestEnemy(player.Position, true)
-        if ent == nil then
-            local grids = {}
-            for i = 0, EdithRestored.Room():GetGridSize() - 1 do
-                local grid = EdithRestored.Room():GetGridEntity(i)
-                if grid and (grid:GetType() == GridEntityType.GRID_ROCK or grid:GetType() == GridEntityType.GRID_ROCKB)
-                and grid.State ~= 2 then
-                    table.insert(grids, {Type = grid:GetType(), Position = grid.Position})
-                end
-            end
-            local rocks = Helpers.Filter(grids, function(idx, grid) return grid.Type == GridEntityType.GRID_ROCKB end)
-            if #rocks == 0 then
-                rocks = Helpers.Filter(grids, function(idx, grid) return grid.Type == GridEntityType.GRID_ROCK end)
-            end
-            if #rocks == 0 then
-                rocks = Helpers.Filter(Isaac.FindByType(EntityType.ENTITY_FIREPLACE), function(index, fire) return fire.Variant ~= 4 and fire:ToNPC().State ~= NpcState.STATE_IDLE end)
-            end
-            if #rocks == 0 then
-                ent = player
+---@param statue EntityEffect
+---@return Vector?
+local function GetPosition(player, statue)
+	local data = EdithRestored:GetData(player)
+	local statueData = EdithRestored:GetData(statue)
+
+	local enemies = Helpers.GetEnemies()
+	local rng = player:GetCardRNG(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH)
+	local finalPos = data.StartPosition
+
+	local grids = {}
+	for i = 0, EdithRestored.Room():GetGridSize() - 1 do
+		local grid = EdithRestored.Room():GetGridEntity(i)
+		if grid then
+			table.insert(grids, grid)
+		end
+	end
+	local skullRocks = Helpers.Filter(grids, function(index, rock)
+		return rock.State ~= 2 and rock:GetType() == GridEntityType.GRID_ROCK_ALT2
+	end)
+	local doors = Helpers.Filter(grids, function(index, door)
+		---@cast door GridEntity
+		return door:GetType() == GridEntityType.GRID_DOOR and door:ToDoor():CanBlowOpen() and door:ToDoor():IsLocked()
+	end)
+	local ssRocks = Helpers.Filter(grids, function(index, rock)
+		return rock.State ~= 2 and rock:GetType() == GridEntityType.GRID_ROCK_SS
+	end)
+	local tintedRocks = Helpers.Filter(grids, function(index, rock)
+		return rock.State ~= 2 and rock:GetType() == GridEntityType.GRID_ROCKT
+	end)
+	local statues = Helpers.Filter(grids, function(index, statue)
+		return statue:GetType() == GridEntityType.GRID_STATUE and statue.State ~= 2
+	end)
+	local rocks = Helpers.Filter(grids, function(index, rock)
+		return rock.State ~= 2
+			and (
+				rock:GetType() == GridEntityType.GRID_ROCK
+				or rock:GetType() == GridEntityType.GRID_ROCK_SPIKED
+				or rock:GetType() == GridEntityType.GRID_ROCK_ALT
+				or rock:GetType() == GridEntityType.GRID_ROCK_BOMB
+				or rock:GetType() == GridEntityType.GRID_ROCK_GOLD
+			)
+	end)
+	local fires = Helpers.Filter(Isaac.FindByType(EntityType.ENTITY_FIREPLACE), function(index, fire)
+		return fire.Variant ~= 4 and fire:ToNPC().State ~= NpcState.STATE_IDLE
+	end)
+	local poops = Helpers.Filter(grids, function(index, poop)
+		return poop:GetType() == GridEntityType.GRID_POOP and poop.State < 1000
+	end)
+    local shopKeepers = Isaac.FindByType(EntityType.ENTITY_SHOPKEEPER)
+	local destrGrids = Helpers.MergeTables(skullRocks, doors, ssRocks, tintedRocks, statues, rocks, fires, poops, shopKeepers)
+
+    local antiInfLoop = 0
+    local chosen = false
+	repeat
+		if #enemies > 0 then
+			finalPos = enemies[rng:RandomInt(1, #enemies)].Position
+            chosen = true
+		end
+		antiInfLoop = antiInfLoop + 1
+	until antiInfLoop >= 100 or player.CanFly or EdithRestored.Room():GetGridCollisionAtPos(finalPos) ~= GridCollisionClass.COLLISION_PIT and chosen
+    if antiInfLoop >= 100 then
+        antiInfLoop = 0
+        while
+            antiInfLoop < 100
+            and not player.CanFly
+            and EdithRestored.Room():GetGridCollisionAtPos(finalPos) ~= GridCollisionClass.COLLISION_PIT
+        do
+            if #destrGrids > 0 then
+                finalPos = destrGrids[rng:RandomInt(1, #destrGrids)].Position
             else
-                table.sort(rocks, function(a, b) return player.Position:Distance(a.Position) < player.Position:Distance(b.Position) end)
-                ent = rocks[1]
+                finalPos = EdithRestored.Room():GetRandomPosition(20)
             end
+            antiInfLoop = antiInfLoop + 1
         end
-        data.TargetJumpPos = ent.Position
-    else
-        data.TargetJumpPos = data.StartPosition
-        data.StartPosition = nil
     end
-    player:PlayExtraAnimation("EdithJump")
+
+	if data.StoneJumps == 1 then
+		finalPos = GetAntiSoftLockPosition(
+			{ { Position = finalPos }, { Position = data.StartPosition } },
+			data.StartPosition,
+			rng,
+			player.CanFly
+		)
+	end
+	while
+		EdithRestored.Room():GetGridCollisionAtPos(finalPos) == GridCollisionClass.COLLISION_PIT
+		and not player.CanFly
+	do
+		finalPos = EdithRestored.Room()
+			:GetRandomPosition(20)
+	end
+	data.StartPosition = nil
+	return finalPos
+end
+
+---@param player EntityPlayer
+---@param statue EntityEffect
+local function JumpInit(player, statue)
+	local data = EdithRestored:GetData(player)
+	local statueData = EdithRestored:GetData(statue)
+	data.StartPosition = data.StartPosition or player.Position
+	if statueData.StoneJumps <= 0 then
+		statueData.StoneJumps = nil
+		data.Statue = nil
+		data.StartPosition = nil
+		statue:Remove()
+		return
+	end
+	statue:GetSprite():Play(statueData.StoneJumps <= 1 and "BigJump" or "EdithJump", true)
 end
 
 ---@param soe Card
 ---@param player EntityPlayer
 ---@param useflags integer | UseFlag
 function SoulOfEdith:UseSoulEdith(soe, player, useflags)
-    Helpers.PlaySND(EdithRestored.Enums.SFX.Cards.CARD_SOUL_EDITH)
-    local data = EdithRestored:GetData(player)
-    data.StoneJumps = 4
-    local sprite = player:GetSprite()
-    if player:GetPlayerType() == PlayerType.PLAYER_THESOUL then
-        player:SwapForgottenForm(true, false)
-    end
-    SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
-    data.PrevAnimFile = sprite:GetFilename()
-    sprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
-    sprite:Update()
-    JumpInit(player)
-    data.EdithTargetMovementPosition = nil
+	Helpers.PlaySND(EdithRestored.Enums.SFX.Cards.CARD_SOUL_EDITH)
+	local data = EdithRestored:GetData(player)
+	local sprite = player:GetSprite()
+	if player:GetPlayerType() == PlayerType.PLAYER_THESOUL then
+		player:SwapForgottenForm(true, false)
+	end
+	SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
+	--data.PrevAnimFile = sprite:GetFilename()
+	--sprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
+	--sprite:Update()
+	data.Statue = Isaac.Spawn(
+		EntityType.ENTITY_EFFECT,
+		EdithRestored.Enums.Entities.SALT_STATUE.Variant,
+		0,
+		player.Position,
+		Vector.Zero,
+		player
+	):ToEffect()
+	data.Statue:FollowParent(player)
+	EdithRestored:GetData(data.Statue).StoneJumps = 4
+	JumpInit(player, data.Statue)
+	data.EdithTargetMovementPosition = nil
+	player:AddCacheFlags(CacheFlag.CACHE_COLOR, true)
 end
-EdithRestored:AddCallback(ModCallbacks.MC_USE_CARD, SoulOfEdith.UseSoulEdith, EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH)
+EdithRestored:AddCallback(
+	ModCallbacks.MC_USE_CARD,
+	SoulOfEdith.UseSoulEdith,
+	EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH
+)
 
 function SoulOfEdith:NoStatueDamage(entity, damage, flags, source, cd)
-    if entity:ToPlayer() then
-        local player = entity:ToPlayer()
-        ---@cast player EntityPlayer
-        local data = EdithRestored:GetData(player)
-        if data.StoneJumps then
-            return false
-        end
-    end
+	if entity:ToPlayer() then
+		local player = entity:ToPlayer()
+		---@cast player EntityPlayer
+		local data = EdithRestored:GetData(player)
+		if data.Statue then
+			return false
+		end
+	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, SoulOfEdith.NoStatueDamage, EntityType.ENTITY_PLAYER)
 
 function SoulOfEdith:Landing(player, jumpData, inPit)
 	if not inPit then
-        local data = EdithRestored:GetData(player)
-        if data.StoneJumps then
-            data.StoneJumps = math.max(data.StoneJumps - 1, 0)
-            Helpers.Stomp(player, data.StoneJumps == 1)
-            if data.StoneJumps == 0 then
-                SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
-            end
-            for _, pickup in ipairs(Isaac.FindInRadius(player.Position, 30, EntityPartition.PICKUP)) do
-                pickup.Velocity = Vector.Zero
-            end
-            player.Velocity = Vector.Zero
-            if data.EdithJumpTarget then
-                data.EdithJumpTarget:Remove()
-                data.EdithJumpTarget = nil
-            end
-            
-            data.TargetJumpPos = nil
-    
-            for _, v in pairs(Isaac.FindInRadius(player.Position, 55, EntityPartition.BULLET)) do
-                local projectile = v:ToProjectile() ---@cast projectile EntityProjectile
-                local angle = ((player.Position - projectile.Position) * -1):GetAngleDegrees()
-                projectile.Velocity = Vector.FromAngle(angle):Resized(10)
-                projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
-                projectile:AddProjectileFlags(ProjectileFlags.HIT_ENEMIES)
-            end
-        end
+		local data = EdithRestored:GetData(player)
+		local statueData = EdithRestored:GetData(data.Statue)
+		if statueData.StoneJumps then
+			statueData.StoneJumps = math.max(statueData.StoneJumps - 1, 0)
+			Helpers.Stomp(player, statueData.StoneJumps == 0)
+			if statueData.StoneJumps == 0 then
+				SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
+			end
+			for _, pickup in ipairs(Isaac.FindInRadius(player.Position, 30, EntityPartition.PICKUP)) do
+				pickup.Velocity = Vector.Zero
+			end
+			player.Velocity = Vector.Zero
+			if data.EdithJumpTarget then
+				data.EdithJumpTarget:Remove()
+				data.EdithJumpTarget = nil
+			end
+
+			data.TargetJumpPos = nil
+
+			for _, v in pairs(Isaac.FindInRadius(player.Position, 55, EntityPartition.BULLET)) do
+				local projectile = v:ToProjectile() ---@cast projectile EntityProjectile
+				local angle = ((player.Position - projectile.Position) * -1):GetAngleDegrees()
+				projectile.Velocity = Vector.FromAngle(angle):Resized(10)
+				projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
+				projectile:AddProjectileFlags(ProjectileFlags.HIT_ENEMIES)
+			end
+		end
 	end
 end
-EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_LAND, SoulOfEdith.Landing, {tag = "SoulEdithJump", type = EntityType.ENTITY_PLAYER})
+EdithRestored:AddCallback(
+	JumpLib.Callbacks.ENTITY_LAND,
+	SoulOfEdith.Landing,
+	{ tag = "SoulEdithJump", type = EntityType.ENTITY_PLAYER }
+)
+
+function SoulOfEdith:NewRoom()
+	for i = 0, EdithRestored.Game:GetNumPlayers() - 1 do
+		local player = Isaac.GetPlayer(i)
+		player:AddCacheFlags(CacheFlag.CACHE_COLOR, true)
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, SoulOfEdith.NewRoom)
+
+function SoulOfEdith:ReturnColors(effect)
+	if
+		effect.Type == EntityType.ENTITY_EFFECT
+		and effect.Variant == EdithRestored.Enums.Entities.SALT_STATUE.Variant
+		and effect.SpawnerEntity
+		and effect.SpawnerEntity:ToPlayer()
+	then
+		effect.SpawnerEntity:ToPlayer():AddCacheFlags(CacheFlag.CACHE_COLOR, true)
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, SoulOfEdith.ReturnColors)
+
+---@param statue EntityEffect
+function SoulOfEdith:StatueJumping(statue)
+	local data = EdithRestored:GetData(statue)
+	local player = statue.SpawnerEntity
+	if not player or not player:ToPlayer() then
+		statue:Remove()
+		return
+	end
+	player = player:ToPlayer()
+	---@cast player EntityPlayer
+	local playerData = EdithRestored:GetData(player)
+	if data.StoneJumps then
+		local sprite = statue:GetSprite()
+		if JumpLib:CanJump(player) and (sprite:IsFinished("EdithJump") or sprite:IsFinished("BigJump")) then
+			JumpInit(player, statue)
+		end
+		if sprite:GetAnimation() == "EdithJump" and sprite:GetFrame() < 17 then
+			if sprite:GetFrame() == 5 then
+				JumpLib:Jump(player, {
+					Height = 4,
+					Speed = 0.7,
+					Flags = JumpLib.Flags.NO_PITFALL
+						| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
+						| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING,
+					Tags = { "SoulEdithJump" },
+				})
+			end
+			if sprite:GetFrame() > 5 and sprite:GetFrame() < 10 then
+				playerData.TargetJumpPos = playerData.TargetJumpPos or GetPosition(player, statue)
+				player.Velocity = (playerData.TargetJumpPos - player.Position):Normalized()
+					* (playerData.TargetJumpPos - player.Position):Length()
+					/ 7
+			end
+		end
+		if sprite:GetAnimation() == "BigJump" and sprite:GetFrame() < 20 then
+			if sprite:GetFrame() == 10 then
+				JumpLib:Jump(player, {
+					Height = 25,
+					Speed = 3,
+					Flags = JumpLib.Flags.NO_PITFALL
+						| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
+						| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING,
+					Tags = { "SoulEdithJump" },
+				})
+			end
+			if sprite:GetFrame() > 15 then
+				playerData.TargetJumpPos = playerData.TargetJumpPos or GetPosition(player, statue)
+				player.Velocity = (playerData.TargetJumpPos - player.Position):Normalized()
+					* (playerData.TargetJumpPos - player.Position):Length()
+					/ 3
+			end
+		end
+	else
+		playerData.Statue = nil
+		statue:Remove()
+	end
+end
+EdithRestored:AddCallback(
+	ModCallbacks.MC_POST_EFFECT_UPDATE,
+	SoulOfEdith.StatueJumping,
+	EdithRestored.Enums.Entities.SALT_STATUE.Variant
+)
 
 ---@param player EntityPlayer
-function SoulOfEdith:StatueJumping(player)
-    local data = EdithRestored:GetData(player)
-    if data.StoneJumps then
-        local sprite = player:GetSprite()
-        if JumpLib:CanJump(player) and not data.TargetJumpPos and player:IsExtraAnimationFinished() then
-            JumpInit(player)
-        end
-        if sprite:GetAnimation() == "EdithJump" and sprite:GetFrame() < 17 then
-            if sprite:GetFrame() == 5 then
-                JumpLib:Jump(player, {
-                    Height = 4,
-                    Speed = 0.7,
-                    Flags = JumpLib.Flags.NO_HURT_PITFALL | JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS | JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING,
-                    Tags = {"SoulEdithJump"}
-                })
-            end
-            if data.TargetJumpPos and sprite:GetFrame() > 5 then
-                player.Velocity = (data.TargetJumpPos - player.Position):Normalized() * (data.TargetJumpPos - player.Position):Length() / 7
-            end
-        end
-    end
+function SoulOfEdith:PlayerVisible(player, cacheFlags)
+	local data = EdithRestored:GetData(player)
+	if data.Statue then
+		data.PrevColor = player.Color
+		player.Color = Color(1, 1, 1, 0)
+	elseif data.PrevColor then
+		player.Color = data.PrevColor
+		data.PrevColor = nil
+	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, SoulOfEdith.StatueJumping)
+EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, SoulOfEdith.PlayerVisible, CacheFlag.CACHE_COLOR)
+
+function SoulOfEdith:StatueCollisionWithPickups(player, collider)
+	if EdithRestored:GetData(player).Statue and collider and (collider:ToPickup() or collider:ToNPC()) then
+		return true
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, SoulOfEdith.StatueCollisionWithPickups)
+
+function SoulOfEdith:PickupsCollisionWithStatue(pickup, collider)
+	if collider and collider:ToPlayer() and EdithRestored:GetData(collider).Statue then
+		return true
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, SoulOfEdith.PickupsCollisionWithStatue)
 
 function SoulOfEdith:NoStatueInput(entity, hook, button)
-    if entity and entity:ToPlayer() then
-        local player = entity:ToPlayer()
-        local data = EdithRestored:GetData(player)
-        if data.StoneJumps then
-            if hook == InputHook.GET_ACTION_VALUE then
-                return 0
-            else
-                return false
-            end
-        end
-    end
+	if entity and entity:ToPlayer() then
+		local player = entity:ToPlayer()
+		local data = EdithRestored:GetData(player)
+		if data.Statue then
+			if hook == InputHook.GET_ACTION_VALUE then
+				return 0
+			else
+				return false
+			end
+		end
+	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_INPUT_ACTION, SoulOfEdith.NoStatueInput)
-

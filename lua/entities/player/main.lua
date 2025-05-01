@@ -754,7 +754,6 @@ function Player:NewRoom()
 			data.TrapDoorFall = nil
 		end
 		Helpers.ChangeSprite(player)
-		data.StoneJumps = nil
 		data.TargetJumpPos = nil
 	end
 end

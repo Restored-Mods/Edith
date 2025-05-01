@@ -70,4 +70,4 @@ if StageAPI and StageAPI.Loaded then
     })]]
 end
 
-print("Edith Restored loaded'")
+print("Edith Restored loaded")
