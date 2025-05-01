@@ -165,13 +165,10 @@ end
 ---@param player EntityPlayer
 ---@param useflags integer | UseFlag
 function SoulOfEdith:UseSoulEdith(soe, player, useflags)
-	Helpers.PlaySND(EdithRestored.Enums.SFX.Cards.CARD_SOUL_EDITH)
 	local data = EdithRestored:GetData(player)
-	local sprite = player:GetSprite()
 	if player:GetPlayerType() == PlayerType.PLAYER_THESOUL then
 		player:SwapForgottenForm(true, false)
 	end
-	SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
 	if useflags & UseFlag.USE_NOANIM == 0 then
 		player:AnimateCard(-1, "HideItem")
 	end
@@ -187,10 +184,16 @@ function SoulOfEdith:UseSoulEdith(soe, player, useflags)
 		data.Statue:FollowParent(player)
 	end
 	local statueData = EdithRestored:GetData(data.Statue)
-	statueData.StoneJumps = 4
-	JumpInit(player, data.Statue)
+	if useflags & UseFlag.USE_CARBATTERY > 0 then
+		statueData.StoneJumps = (statueData.StoneJumps or 0) + 1
+	else
+		Helpers.PlaySND(EdithRestored.Enums.SFX.Cards.CARD_SOUL_EDITH)
+		SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
+		statueData.StoneJumps = 4
+		JumpInit(player, data.Statue)
+		player:AddCacheFlags(CacheFlag.CACHE_COLOR, true)
+	end
 	data.EdithTargetMovementPosition = nil
-	player:AddCacheFlags(CacheFlag.CACHE_COLOR, true)
 end
 EdithRestored:AddCallback(
 	ModCallbacks.MC_USE_CARD,
@@ -207,7 +210,7 @@ EdithRestored:AddCallback(
 ---@return boolean | table?
 function SoulOfEdith:UseSoulEdithWithClearRune(collectible, rng, player, useflags, slot, vardata)
 	if player:GetCard(0) == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH then
-		player:UseCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, UseFlag.USE_NOANIM)
+		player:UseCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, useflags | UseFlag.USE_NOANIM)
 		return true
 	end
 end
