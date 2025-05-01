@@ -31,15 +31,21 @@ function Sodom:DontLookBack(player)
     if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM) then
         local data = EdithRestored:GetData(player)
         data.SodomFireCountdown = data.SodomFireCountdown or 30
-        if not Helpers.VectorEquals(player:GetMovementVector(), Vector.Zero) then
+        data.SodomEdithResetPause = data.SodomEdithResetPause or 0
+        if not Helpers.VectorEquals(player:GetMovementVector(), Vector.Zero)
+        or Helpers.IsPlayerEdith(player, true, false) and data.EdithTargetMovementPosition
+        and not Helpers.VectorEquals(player.Velocity, Vector.Zero) then
             data.SodomFireCountdown = data.SodomFireCountdown - 1
+            data.SodomEdithResetPause = Helpers.IsPlayerEdith(player, true, false) and 10 or 0
             if data.SodomFireCountdown <= 0 then
-                local vel = player:GetMovementVector()
+                local vel = Helpers.IsPlayerEdith(player, true, false) and player.Velocity:Normalized() or player:GetMovementVector()
                 SpawnSodomFlame(player.Position, vel * -10, player, 30)
                 data.SodomFireCountdown = 30
             end
-        else
+        elseif data.SodomEdithResetPause == 0 then
             data.SodomFireCountdown = 30
+        else
+            data.SodomEdithResetPause = math.max(data.SodomEdithResetPause - 1, 0)
         end
     end
 end
@@ -78,7 +84,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Sodom.AcumulateFire)
 function Sodom:SpreadFire(ent)
     local data = EdithRestored:GetData(ent)
     if data.ExplodeInFlames then
-        for _, angle in ipairs({0, 45, 90, 135, 180, 225, 270, 315}) do
+        for _, angle in ipairs({TSIL.Random.GetRandomInt(1, 120), TSIL.Random.GetRandomInt(121, 240), TSIL.Random.GetRandomInt(241, 360)}) do
             SpawnSodomFlame(ent.Position, Vector.FromAngle(angle):Resized(10), GetRandomPlayerWithSodom(), 90)
         end
     end

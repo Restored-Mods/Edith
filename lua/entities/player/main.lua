@@ -6,8 +6,8 @@ if CustomHealthAPI then
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithRestored.Enums.PlayerType.EDITH_B] = true
 	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithRestored.Enums.PlayerType.EDITH] = "SOUL_HEART"
 	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithRestored.Enums.PlayerType.EDITH_B] = "BLACK_HEART"
-	CustomHealthAPI.Library.AddCallback("EdithTC", CustomHealthAPI.Enums.Callbacks.CAN_PICK_HEALTH, 0, function (player,key)
-		if Helpers.IsPlayerEdith(player, true, true) and key == "RED_HEART" then
+	CustomHealthAPI.Library.AddCallback("EdithRestored", CustomHealthAPI.Enums.Callbacks.CAN_PICK_HEALTH, 0, function (player,key)
+		if Helpers.IsPlayerEdith(player, true, true) and CustomHealthAPI.Library.GetInfoOfKey(key, 'Type') == CustomHealthAPI.Enums.HealthTypes.RED then
 			return false
 		end
 	end)
@@ -527,11 +527,17 @@ function Player:OnUpdatePlayer(player)
 		player:ChangePlayerType(EdithRestored.Enums.PlayerType.EDITH)
 		player:EvaluateItems()
 	end
-	-- If the player is Edith it will apply the hood
+	local data = EdithRestored:GetData(player)
+	if data.PostLanding then
+		data.PostLanding = data.PostLanding - 1
+		if data.PostLanding <= 0 then
+			data.PostLanding = nil
+		end
+	end
+	
 	local dataP = EdithRestored:RunSave(player)
 	if not dataP then return end
 
-	local data = EdithRestored:GetData(player)
 	if Helpers.IsPlayerEdith(player, true, false) then
 		local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
 		if Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex) then
@@ -672,6 +678,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePla
 function Player:Landing(player, jumpData, inPit)
 	if not inPit then
 		local data = EdithRestored:GetData(player)
+		data.PostLanding = 10
 		Helpers.Stomp(player)
 		for _, pickup in ipairs(Isaac.FindInRadius(player.Position, 30, EntityPartition.PICKUP)) do
 			pickup.Velocity = Vector.Zero
@@ -695,6 +702,12 @@ function Player:Landing(player, jumpData, inPit)
 end
 EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_LAND, Player.Landing, {tag = "EdithJump", type = EntityType.ENTITY_PLAYER})
 
+---@param entity Entity
+---@param amount number
+---@param flags DamageFlag | integer
+---@param source EntityRef
+---@param cd integer
+---@return boolean?
 function Player:DamageHandling(entity, amount, flags, source, cd)
 	if entity and entity:ToPlayer() and Helpers.IsPlayerEdith(entity:ToPlayer(), true, false) then
 		local sprite = entity:GetSprite()
@@ -711,6 +724,24 @@ function Player:DamageHandling(entity, amount, flags, source, cd)
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Player.DamageHandling, EntityType.ENTITY_PLAYER)
+
+---@param entity Entity
+---@param amount number
+---@param flags DamageFlag | integer
+---@param source EntityRef
+---@param cd integer
+function Player:IFAfterFromJump(entity, amount, flags, source, cd)
+	if Helpers.IsEnemy(entity, true) and entity:HasMortalDamage() and source.Entity and source.Entity:ToPlayer() and
+	flags == DamageFlag.DAMAGE_EXPLOSION | DamageFlag.DAMAGE_CRUSH then
+		local player = source.Entity:ToPlayer()
+		---@cast player EntityPlayer
+		local data = EdithRestored:GetData(player)
+		if data.PostLanding then
+			player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, false, 45, false)
+		end
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Player.IFAfterFromJump)
 
 function Player:edith_Stats(player, cacheFlag)
 	if Helpers.IsPlayerEdith(player, true, false) then -- If the player is Edith it will apply her specific stats

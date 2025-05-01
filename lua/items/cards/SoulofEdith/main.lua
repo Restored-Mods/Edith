@@ -213,6 +213,7 @@ function SoulOfEdith:Landing(player, jumpData, inPit)
 		local statueData = EdithRestored:GetData(data.Statue)
 		if statueData.StoneJumps then
 			statueData.StoneJumps = math.max(statueData.StoneJumps - 1, 0)
+			data.PostLanding = 10
 			Helpers.Stomp(player, statueData.StoneJumps == 0)
 			if statueData.StoneJumps == 0 then
 				SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
