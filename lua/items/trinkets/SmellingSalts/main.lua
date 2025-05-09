@@ -1,18 +1,20 @@
-local SmellingSalts = {}
+ local SmellingSalts = {}
 
-function SmellingSalts:KeeperDamage(entity, damage, flags, source, cd)
-    if entity and entity:ToPlayer() then
-        local player = entity:ToPlayer()
-        ---@cast player EntityPlayer
-        if flags & DamageFlag.DAMAGE_FAKE ~= DamageFlag.DAMAGE_FAKE then
-            local normalHP = player:GetHearts() + player:GetSoulHearts() + player:GetEternalHearts() - player:GetRottenHearts()
-            local boneHp = player:GetBoneHearts()
-            if (normalHP == 0 and boneHp < 2 or boneHp == 0 and normalHP <= damage) and player:HasTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS) then
-                player:TryRemoveTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS)
-                return {Damage = 0, DamageFlags = flags, DamageCountdown = cd}
-            end
+function SmellingSalts:NPCUpdate(npc)
+    if PlayerManager.AnyoneHasTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS) and npc:IsVulnerableEnemy()
+    and not npc:HasEntityFlags(EntityFlag.FLAG_NO_STATUS_EFFECTS) then
+        if npc:GetSlowingCountdown() > 0 or npc:GetFreezeCountdown() > 0 then
+            Isaac.CreateTimer(function()
+                npc:ClearEntityFlags(EntityFlag.FLAG_NO_STATUS_EFFECTS)
+            end, math.max(npc:GetSlowingCountdown() + npc:GetFreezeCountdown(),60) + npc:GetWeaknessCountdown(), 1, false)
+            
+            npc:ClearEntityFlags(EntityFlag.FLAG_FREEZE)
+            npc:ClearEntityFlags(EntityFlag.FLAG_SLOW)
+            npc:AddEntityFlags(EntityFlag.FLAG_NO_STATUS_EFFECTS)
+            npc:AddWeakness(EntityRef(nil), math.max(npc:GetSlowingCountdown() + npc:GetFreezeCountdown(),60 ))
+            npc:SetSlowingCountdown(0)
+            npc:SetFreezeCountdown(0)
         end
-    end
+      end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, SmellingSalts.KeeperDamage, EntityType.ENTITY_PLAYER)
-
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_RENDER, SmellingSalts.NPCUpdate)
