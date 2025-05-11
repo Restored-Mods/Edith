@@ -22,20 +22,20 @@ function Unlock:DataMinerUse(collectible, rng, player, flags, slot, vardata)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_USE_ITEM, Unlock.DataMinerUse, CollectibleType.COLLECTIBLE_DATAMINER)
 
----@param grid GridEntity
----@param gridType GridEntityType
----@param immediate boolean
-function Unlock:OnKillSaltRock(grid, gridType, immediate)
-	if grid:GetVariant() == 683 and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) 
-    and EdithRestored.Game:GetItemPool():HasTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK) then
-        local rng = grid:GetRNG()
-        local vel = EntityPickup.GetRandomPickupVelocity(grid.Position, rng, 0)
-        Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, grid.Position, vel, nil):ToPickup()
-        EdithRestored.Game:GetItemPool():RemoveTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK)
-        SFXManager():Play(SoundEffect.SOUND_MAGGOT_ENTER_GROUND)
-    end
-end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_GRID_ROCK_DESTROY, Unlock.OnKillSaltRock, GridEntityType.GRID_ROCK)
+-- ---@param grid GridEntity
+-- ---@param gridType GridEntityType
+-- ---@param immediate boolean
+-- function Unlock:OnKillSaltRock(grid, gridType, immediate)
+-- 	if grid:GetVariant() == 683 and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) 
+--     and EdithRestored.Game:GetItemPool():HasTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK) then
+--         local rng = grid:GetRNG()
+--         local vel = EntityPickup.GetRandomPickupVelocity(grid.Position, rng, 0)
+--         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, grid.Position, vel, nil):ToPickup()
+--         EdithRestored.Game:GetItemPool():RemoveTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK)
+--         SFXManager():Play(SoundEffect.SOUND_MAGGOT_ENTER_GROUND)
+--     end
+-- end
+-- EdithRestored:AddCallback(ModCallbacks.MC_POST_GRID_ROCK_DESTROY, Unlock.OnKillSaltRock, GridEntityType.GRID_ROCK)
 
 ---@param player EntityPlayer
 ---@return boolean
