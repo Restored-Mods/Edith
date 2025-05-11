@@ -40,11 +40,11 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, 
 
 --Lithium Salts
 --EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Todas las píldoras reducirán el daño y las lágrimas, pero aumentarán el tiempo de invencibilidad", "Sales de litio", "spa")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Adds extra lithium pill that has 10% replace normal pill", "​Lithium Salts")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Pills have a 10% chance to be replaced by Lithium Pills#Lithium Pills grant a random stat down, but increase Isaac's invincibility frames after getting hit", "​Lithium Salts")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Добовляет дополнительную пилюлю, которая может с шансом в 10% заменить обычную", "Литивые соли", "ru")
 
 --Thunder Bombs
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Fully recharges active items#{{Battery}} When Isaac has no bombs, one can be placed at the cost of a charge#Bombs make electricity that spreads to nearby enemies#Electricity deals half of the bomb's damage", "​Thunder Bombs", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Fully recharges active items#{{Battery}} When Isaac has no bombs, one can be placed at the cost of three charges#Bombs make electricity that spreads to nearby enemies#Electricity deals half of the bomb's damage", "​Thunder Bombs", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Полностью заряжает активные предметы#{{Battery}} Когда у Айзека нет бомб, одна может быть использована взамен на заряд#Бомбы создают электричество, которое распространяется на близлежащих врагов#Електричество наносит половину урона от бомб", "Громовые бомбы", "ru")
 
 --Blasting Boots
@@ -56,11 +56,11 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY, "B
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY, "Фамильяр, cхожий c братиком Бобби#{{Fear}} 20% шанс выстрелить слезой с эффектом страха#Если враг рядом, прыгает на него#Обычные враги убиваются мгновенно#Боссы получают урон, равный 20% от максимального здоровья", "Малыш-пешка", "ru")
 
 --Salty Baby
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "{{Chargeable}} Charges attack that spawns a ring of salt creep#{{Fear}} Creep fears nearby enemies", "​Salty Baby", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "Familiar that fires salt rock projectiles when getting hit by an enemy tear# After blocking 6 enemy tears, loses the ability to block shots and leaves a trail of fearing salt creep instead#Returns to its original state at the start of every floor", "​Salty Baby", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "{{Chargeable}} Заряжающаяся атака, которая создает круг из соли#{{Fear}} Соль дает близлежащим врагам эффект страха", "Малыш-солонка", "ru")
 
 --Sodom
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots opposite his movement direction a red flame#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 8 directions#These flames can also apply same effect#!!! Effect can be applied on enemy only one time", "​Sodom", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots opposite his movement direction a red flame#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 3 directions#These flames can also apply same effect#!!! Effect can be applied on enemy only one time", "​Sodom", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#При смерти с эффектом враг выстреливает пламя в 8 направлениях#Это пламя может наложить этот же эффект#!!! Эффект можно наложить на врага только один раз", "Содом", "ru")
 
 -- Trinkets
@@ -70,7 +70,7 @@ EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER, "Кажд
 EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER, "Cada vez que mates a un enemigo, tiene un 33% de posibilidad de explotar en una nube de pimienta, la cual dejará una mancha de pimienta en el suelo, hace daño por contacto", "Molinillo de pimienta", "spa")
 
 --Smelling Salts
-EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "Ignores fatal damage on hit#Destroyed after triggering effect", "Smelling Salts", "en_us")
+EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "All instances of slow and petrify inflicted onto enemies is instead converted into weakness#Weakness decreases enemy speed and increases damage dealt to them", "Smelling Salts", "en_us")
 EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "Игнорирует смертельный урон#Уничтожается после срабатывания эффекта", "Нюхательная соль", "ru")
 
 --Salt Rock
@@ -88,9 +88,9 @@ local Lithium = {
     FALSEPHD_IFRAME_INCREASE_AMOUNT = 5,
 }
 
-EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT Damage for every consumed pill#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT Tear rate for every consumed pill#{{ArrowUp}} IFRAME_INCREASE_AMOUNT frames of invinsibility for every consumed pill", "Lithium")
+EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} Decreases one random stat#{{ArrowUp}} IFRAME_INCREASE_AMOUNT invinsibility frames", "Lithium")
 EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT к скорострельности за каждую использованную пилюлю#{{ArrowUp}} IFRAME_INCREASE_AMOUNT кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")
-EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT Damage for every consumed pill#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT Tears for every consumed pill#{{ArrowUp}} IFRAME_INCREASE_AMOUNT frames of invinsibility for every consumed pill", "Lithium")
+EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} Decreases one random stat#{{ArrowUp}} IFRAME_INCREASE_AMOUNT invinsibility frames", "Lithium")
 EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT к скорострельности за каждую использованную пилюлю#{{ArrowUp}} IFRAME_INCREASE_AMOUNT кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")
 
 local function LithiumCondition(descObj)
