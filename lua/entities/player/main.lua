@@ -1032,33 +1032,27 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, Player.OnMontezumaL
 
 ---@param effect EntityEffect
 function Player:OnCustomDustInit(effect)
-	if effect.Variant ~= EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant then return end
-
 	local dustData = effect:GetData()
-	if math.random(2) == 1 then
-		dustData.RotationDir = 1
-	else
-		dustData.RotationDir = -1
-	end
-	dustData.RotationDir = dustData.RotationDir * (math.random() + 0.7) * 3
-
+	local Rotation = math.random(2) == 2 and 1 or -1
+	local color = effect.Color
+	
+	dustData.RotationDir = Rotation * (math.random() + 0.7) * 3
 	dustData.AnimFrame = math.random(8) - 1
-
 	effect:GetSprite():SetFrame("Clouds", dustData.AnimFrame)
-
-	effect.Color = Color(1, 1, 1, 0.7)
+	
+	color:SetTint(1, 1, 1, 0.7)
+	effect.Color = color
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, Player.OnCustomDustInit)
-
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, Player.OnCustomDustInit, EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant)
 
 ---@param effect EntityEffect
 function Player:OnCustomDustCloudUpdate(effect)
-	if effect.Variant ~= EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant then return end
-
 	local data = effect:GetData()
 	effect.SpriteRotation = effect.SpriteRotation + data.RotationDir
 	effect.SpriteScale = effect.SpriteScale + Vector.One * 0.05
-	effect.Color = Color(1, 1, 1, effect.Color.A - 0.1)
+	local color = effect.Color
+	color:SetTint(1, 1, 1, color.A - 0.1)
+	effect.Color = color
 
 	effect:GetSprite():SetFrame("Clouds", data.AnimFrame)
 
@@ -1066,7 +1060,7 @@ function Player:OnCustomDustCloudUpdate(effect)
 		effect:Remove()
 	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.OnCustomDustCloudUpdate)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.OnCustomDustCloudUpdate, EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant)
 
 function Player:AccessToMirrorWorld(p)
 	if Helpers.IsPlayerEdith(p,true,false) and p:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) then
@@ -1122,7 +1116,6 @@ local function drawLine(fx, from, to, frame)
 	targetSprite.Rotation = 0
 	targetSprite:SetFrame("Idle", 0)
 	targetSprite:Render(Isaac.WorldToScreen(to))
-	
 end
 
 function Player:RenderTargetLine(fx)
