@@ -66,6 +66,12 @@ function SaltyBaby:OnSaltyBabyUpdate(familiar)
 
     famData.CurrentBlocks = famData.CurrentBlocks or 0
     famData.IsShattered = famData.IsShattered or false
+    local bffsBuff = 0
+    if familiar.Player then
+        if familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) then
+            bffsBuff = 2
+        end
+    end
 
     for _, proj in ipairs(Isaac.FindInCapsule(colCapsule, EntityPartition.BULLET)) do
         if not famData.IsShattered then 
@@ -75,7 +81,7 @@ function SaltyBaby:OnSaltyBabyUpdate(familiar)
             
             sprite:Play("FloatChargedDown", false)
 
-            if famData.CurrentBlocks >= maxBlocks then
+            if famData.CurrentBlocks >= maxBlocks + bffsBuff then
                 famData.IsShattered = true
                 SFXManager():Play(SoundEffect.SOUND_GLASS_BREAK)
                 sprite:Play("BrokenDown", true)

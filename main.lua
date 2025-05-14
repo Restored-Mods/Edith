@@ -40,7 +40,7 @@ include("lua.items.passive.RedHood.main")
 include("lua.items.passive.ShrapnelBombs.main")
 
 -- trinkets
-include("lua.items.trinkets.PepperGrinder.main")
+--include("lua.items.trinkets.PepperGrinder.main")
 include("lua.items.trinkets.SaltRock.main")
 include("lua.items.trinkets.SmellingSalts.main")
 include("lua.items.trinkets.ChunkOfAmber.main")

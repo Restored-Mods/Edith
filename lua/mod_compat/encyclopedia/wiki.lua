@@ -97,7 +97,7 @@ local Wiki = {
 			{str = ""},
 		},]]
 	},
-	LotBaby = {
+	--[[LotBaby = {
 		{ -- Effect
 			{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
 			{ str = "Familiar that mimics Isaac's movement on a 0.66 second delay." },
@@ -118,7 +118,7 @@ local Wiki = {
 				str = "Originally was supposed to be a co-op baby, but because of modding API limitations and true co-op being in the Repentance, it was made as familiar.",
 			},
 		},
-	},
+	},]]
 	PawnBaby = {
 		{ -- Effect
 			{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
@@ -143,16 +143,14 @@ local Wiki = {
 	SaltyBaby = {
 		{ -- Effect
 			{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
-			{ str = "Familiar that shoots salt creep circle." },
-			{ str = "Nearby enemies get fear effect near salt creep." },
+			{ str = "Familiar that fires salt rock projectiles when getting hit by an enemy tear." },
+			{ str = "After blocking 6 enemy tears, loses the ability to block shots and leaves a trail of fearing salt creep instead." },
+			{ str = "Returns to its original state at the start of every floor." },
 		},
 		{ -- Synergies
 			{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
-			{ str = "BFFS! - salt creep size increased by 30%." },
-		},
-		{ -- Notes
-			{ str = "Notes", fsize = 2, clr = 3, halign = 0 },
-			{ str = "Effect is similar to Salt Shaker." },
+			{ str = "BFFS! - slaty rock projectiles deal x1.25 more damage and needs 8 hits to break." },
+			{ str = "BFFS! - can block 8 enemy tears." },
 		},
 		{ -- Trivia
 			{ str = "Trivia", fsize = 2, clr = 3, halign = 0 },

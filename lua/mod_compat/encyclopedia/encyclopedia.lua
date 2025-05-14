@@ -153,12 +153,12 @@ Encyclopedia.AddItem({
 
 -- Trinkets
 --Pepper grinder
-Encyclopedia.AddTrinket({
+--[[Encyclopedia.AddTrinket({
 	ModName = "RestoredEdith",
 	Class = classname,
 	ID = EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER,
 	WikiDesc = Wiki.PepperGrinder,
-})
+})]]
 
 --Smelling Salts
 Encyclopedia.AddTrinket({

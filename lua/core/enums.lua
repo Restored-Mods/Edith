@@ -96,7 +96,7 @@ Enums.CollectibleType =
 
 Enums.TrinketType =
 					{
-						TRINKET_PEPPER_GRINDER = Isaac.GetTrinketIdByName("Pepper Grinder"),
+						--TRINKET_PEPPER_GRINDER = Isaac.GetTrinketIdByName("Pepper Grinder"),
 						TRINKET_SALT_ROCK = Isaac.GetTrinketIdByName("Salt Rock"),
 						TRINKET_SMELLING_SALTS = Isaac.GetTrinketIdByName("Smelling Salts"),
 						TRINKET_CHUNK_OF_AMBER = Isaac.GetTrinketIdByName("Chunk of Amber"),
@@ -116,8 +116,8 @@ Enums.Pickups =
 				{
 					Cards  = 
 							{
-								CARD_PRUDENCE = Isaac.GetCardIdByName("Prudence"),
-								CARD_REVERSE_PRUDENCE = Isaac.GetCardIdByName("Prudence?"),
+								--CARD_PRUDENCE = Isaac.GetCardIdByName("Prudence"),
+								--CARD_REVERSE_PRUDENCE = Isaac.GetCardIdByName("Prudence?"),
 								CARD_SOUL_EDITH = Isaac.GetCardIdByName("Soul of Edith"),
 							},
 					Pills  =
@@ -134,8 +134,8 @@ Enums.SFX =
 				{
 					Cards  = 
 							{
-								CARD_PRUDENCE = Isaac.GetSoundIdByName("Prudence"),
-								CARD_REVERSE_PRUDENCE = Isaac.GetSoundIdByName("Reverse Prudence"),
+								--CARD_PRUDENCE = Isaac.GetSoundIdByName("Prudence"),
+								--CARD_REVERSE_PRUDENCE = Isaac.GetSoundIdByName("Reverse Prudence"),
 								CARD_SOUL_EDITH = Isaac.GetSoundIdByName("Soul Of Edith"),
 							},
 					SaltShaker =
@@ -153,8 +153,8 @@ Enums.GFX =
 {
 	Cards 	=
 			{
-				CARD_PRUDENCE = "Prudence.png",
-				CARD_REVERSE_PRUDENCE = "PrudenceReverse.png",
+				--CARD_PRUDENCE = "Prudence.png",
+				--CARD_REVERSE_PRUDENCE = "PrudenceReverse.png",
 				CARD_SOUL_EDITH = "SoulOfEdith.png",
 			},
 }
