@@ -15,7 +15,7 @@
     </entity>
 
     <!--Pawn Baby-->
-    <entity anm2path="pawn_baby.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" collisionInterval="8" friction="1" id="3" name="​Salt Pawns" numGridCollisionPoints="12" shadowSize="13" stageHP="0" tags="cansacrifice" variant="5874">
+    <entity anm2path="salt_pawns.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="13" collisionInterval="8" friction="1" id="3" name="​Salt Pawns" numGridCollisionPoints="12" shadowSize="13" stageHP="0" tags="cansacrifice" variant="5874">
         <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
     </entity>
 
