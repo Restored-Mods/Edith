@@ -109,7 +109,9 @@ end
 ---@return boolean
 function Helpers.IsEnemy(enemy, allEnemies)
 	allEnemies = allEnemies or false
-	return enemy and ((enemy:IsVulnerableEnemy() or allEnemies) and enemy:IsActiveEnemy() and enemy:IsEnemy()
+	return enemy and ((enemy:IsVulnerableEnemy() or allEnemies) and (enemy:IsActiveEnemy()
+	or enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4)
+	and enemy:IsEnemy()
 	and not EntityRef(enemy).IsFriendly or enemy.Type == EntityType.ENTITY_DUMMY)
 end
 
@@ -122,9 +124,9 @@ function Helpers.GetEnemies(allEnemies, noBosses)
 		enemy = enemy:ToNPC()
 		if Helpers.IsEnemy(enemy, allEnemies) then
 			if not enemy:IsBoss() or (enemy:IsBoss() and not noBosses) then
-				if enemy.Type == EntityType.ENTITY_ETERNALFLY then
+				--[[if enemy.Type == EntityType.ENTITY_ETERNALFLY then
 					enemy:Morph(EntityType.ENTITY_ATTACKFLY,0,0,-1)
-				end
+				end]]
 				if not Helpers.HereticBattle(enemy) and not Helpers.IsTurret(enemy) and enemy.Type ~= EntityType.ENTITY_BLOOD_PUPPY then
 					table.insert(enemies,enemy)
 				end
@@ -133,7 +135,6 @@ function Helpers.GetEnemies(allEnemies, noBosses)
 	end
 	return enemies
 end
-
 
 function Helpers.Lerp(a, b, t, speed)
 	speed = speed or 1
@@ -689,13 +690,25 @@ end
 ---@param player EntityPlayer
 ---@param doBombStomp boolean
 local function NewStompFunction(radius, damage, bombDamage, knockback, player, doBombStomp) -- well its name is clear
-	local enemiesInRadius = Helpers.Filter(Helpers.GetEnemies(), function(_, enemy) return enemy.Position:Distance(player.Position) <= radius end)
+	local enemiesInRadius = Helpers.Filter(Helpers.GetEnemies(true), function(_, enemy) return enemy.Position:Distance(player.Position) <= radius end)
 	for _,enemy in pairs(enemiesInRadius) do
 		--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
 		enemy:AddKnockback(EntityRef(player), (enemy.Position - player.Position):Resized(knockback), 5, Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT))
+		if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
+			enemy:TakeDamage(damage, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, EntityRef(player), 30)
+		end
+		if enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 then
+			enemy:Die()
+		end
 	end
-	EdithRestored.Game:BombDamage(player.Position, damage, radius, true, player, TearFlags.TEAR_NORMAL, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
-
+	local poop = EdithRestored.Room():GetGridEntityFromPos(player.Position)
+	if poop and poop:ToPoop() then
+		if poop.State ~= 1000 then
+			print(poop.State)
+			poop:Destroy()
+		end
+	end
+	--EdithRestored.Game:BombDamage(player.Position, damage, radius, true, player, TearFlags.TEAR_NORMAL, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
 	local bombEffectTriggered = bombDamage > 0
 
 	if not bombEffectTriggered and doBombStomp then

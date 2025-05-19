@@ -159,8 +159,15 @@ local function InitDisableMenu()
         return ""
     end
 
+    local function RemoveZeroWidthSpace(str)
+        if str:sub(1, 3) == "​" then
+            str = str:sub(4, str:len())
+        end
+        return str
+    end
+
     for _, collectible in pairs(orderedItems) do
-        local split = SplitStr(string.lower(collectible.Name))
+        local split = SplitStr(string.lower(RemoveZeroWidthSpace(collectible.Name)))
 
         local tooltipStr = {"enable", ""}
         for _, word in ipairs(split) do
@@ -180,7 +187,7 @@ local function InitDisableMenu()
         itemSprite:SetFrame("Idle", 0)
         
         local collectibleOption = {
-            str = string.lower(collectible.Name),
+            str = string.lower(RemoveZeroWidthSpace(collectible.Name)),
 
             -- The "choices" tag on a button allows you to create a multiple-choice setting
             choices = {'enabled', 'disabled'},

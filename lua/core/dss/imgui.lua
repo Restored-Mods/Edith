@@ -5,6 +5,13 @@ local orderedItems = {}
 local itemConfig = Isaac.GetItemConfig()
 ---@type ItemConfigItem[]
 
+local function RemoveZeroWidthSpace(str)
+	if str:sub(1, 3) == "​" then
+		str = str:sub(4, str:len())
+	end
+	return str
+end
+
 for idx, collectible in pairs(EdithRestored.Enums.CollectibleType) do
 	local collectibleConf = itemConfig:GetCollectible(collectible)
 	orderedItems[#orderedItems + 1] = collectibleConf
@@ -50,7 +57,7 @@ local function ReOrederItems()
 		local elemName = string.gsub(collectible.Name, " ", "") .. "BlackList"
 		if pgd:Unlocked(collectible.AchievementID) then
 			i = i + 1
-			ImGui.AddCheckbox("edithWindowBlacklistItems", elemName, collectible.Name, function(val)
+			ImGui.AddCheckbox("edithWindowBlacklistItems", elemName, RemoveZeroWidthSpace(collectible.Name), function(val)
 				local disabledItems = EdithRestored:GetDefaultFileSave("DisabledItems")
 				for indexItem, disabledItem in ipairs(disabledItems) do
 					if disabledItem == GetItemsEnum(collectible.ID) then
@@ -345,3 +352,8 @@ local function UpdateImGuiOnRender()
 end
 EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_RENDER, CallbackPriority.LATE, UpdateImGuiOnRender)
 EdithRestored:AddPriorityCallback(ModCallbacks.MC_MAIN_MENU_RENDER, CallbackPriority.LATE, UpdateImGuiOnRender)
+
+---@param completion CompletionType
+EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, completion)
+	UpdateBlackListMenu(Isaac.IsInGame())
+end)

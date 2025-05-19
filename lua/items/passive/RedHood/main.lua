@@ -74,7 +74,6 @@ local function PlayNewMoonPhase(Animation)
 	SetRedMoonPhaseSprites()
 	moonPhaseSprite:Play(Animation, true)
 	moonPhaseSpriteStatic:SetFrame(Animation, 15)
-    print(Animation)
 end
 
 ---@param player EntityPlayer

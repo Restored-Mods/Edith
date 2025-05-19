@@ -24,12 +24,7 @@ function ShrapnelBombs:BombInit(bomb)
 			and not Helpers.IsItemDisabled(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS)
 
 		if stoneChance or nancyChance then
-			if bomb.Variant > BombVariant.BOMB_SUPERTROLL or bomb.Variant < BombVariant.BOMB_TROLL then
-				if bomb.Variant == 0 then
-					bomb.Variant = EdithRestored.Enums.BombVariant.BOMB_SHRAPNEL
-				end
-			end
-			BombFlagsAPI.AddCustomBombFlag(bomb, "SHRAPNEL_BOMB")
+			BombFlagsAPI.AddCustomBombFlag(bomb, "SHRAPNEL_BOMB", EdithRestored.Enums.BombVariant.BOMB_SHRAPNEL)
 		end
 	end
 end

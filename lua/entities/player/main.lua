@@ -495,7 +495,13 @@ function Player:TargetJumpUpdate(target)
 		return
 	end
 
-	target.Velocity = player:GetShootingInput():Resized(12)
+	if Input.IsMouseBtnPressed(Mouse.MOUSE_BUTTON_LEFT) and Options.MouseControl
+	and Input.GetDeviceNameByIdx(player.ControllerIndex) == "Keyboard" then
+		target.Position = Input.GetMousePosition(true)
+	else
+		target.Velocity = player:GetShootingInput():Resized(12)
+	end
+	
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, Player.TargetJumpUpdate, EdithRestored.Enums.Entities.EDITH_TARGET.Variant)
 
@@ -681,7 +687,7 @@ function Player:Landing(player, jumpData, inPit)
 		data.PostLanding = 10
 		Helpers.Stomp(player)
 		for _, pickup in ipairs(Isaac.FindInRadius(player.Position, 30, EntityPartition.PICKUP)) do
-			pickup.Velocity = Vector.Zero
+			--pickup.Velocity = Vector.Zero
 		end
 		player.Velocity = Vector.Zero
 		if data.EdithJumpTarget then
@@ -697,6 +703,13 @@ function Player:Landing(player, jumpData, inPit)
 			projectile.Velocity = Vector.FromAngle(angle):Resized(10)
 			projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
 			projectile:AddProjectileFlags(ProjectileFlags.HIT_ENEMIES)
+		end
+		if EdithRestored.Room():GetGridCollisionAtPos(player.Position) == GridCollisionClass.COLLISION_SOLID
+		and not player.CanFly then
+			player:PlayExtraAnimation("EdithJump")
+			data.TargetJumpPos = EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 0, false, false)
+			data.EdithJumpCharge = 0
+			data.EdithTargetMovementPosition = nil
 		end
 	end
 end
@@ -912,7 +925,7 @@ function Player:EdithMovement(entity, hook, button)
 		end
 	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_INPUT_ACTION, Player.EdithMovement)
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_INPUT_ACTION, CallbackPriority.EARLY, Player.EdithMovement)
 
 function Player:PreUsePony(item, _, player)
 	if item ~= CollectibleType.COLLECTIBLE_PONY and item ~= CollectibleType.COLLECTIBLE_WHITE_PONY then return end
