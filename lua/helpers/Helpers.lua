@@ -727,9 +727,12 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 
 	if bombEffectTriggered then
 		EdithRestored.Game:BombExplosionEffects(player.Position, bombDamage, player:GetBombFlags(), Color.Default, player)
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_BOBS_CURSE) then
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_BOBS_CURSE) or player:GetBombFlags() & TearFlags.TEAR_POISON > 0 then
 			local poisonCloud = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SMOKE_CLOUD, 0, player.Position, Vector.Zero, player):ToEffect()
 			poisonCloud:SetTimeout(150)
+			if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then
+				poisonCloud.SpriteScale = Vector(1.75, 1.75)
+			end
 		end
 				
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
