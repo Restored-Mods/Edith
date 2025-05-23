@@ -184,7 +184,8 @@ function Helpers.CanMove(player, allowJump)
 		"SuperLeapDown",
 		"ForgottenDeath",
 		"DeathTeleport",
-		"EdithJump"
+		"EdithJump",
+		"EdithJumpQuick"
 	}
 	local playerSpr = player:GetSprite()
 	for _, anim in ipairs(forbiddenExtraAnimations) do
@@ -749,6 +750,12 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 			local creep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_GREEN, 0, player.Position, Vector.Zero, player):ToEffect()
 			creep.Timeout = 60
 		end
+		if player:HasTrinket(TrinketType.TRINKET_BLASTING_CAP) and data.BombStomp ~= nil then
+			local rng = player:GetTrinketRNG(TrinketType.TRINKET_BLASTING_CAP)
+			if rng:RandomFloat() <= 0.1 then
+				Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, 0, player.Position, Vector.Zero, player)
+			end
+		end
 		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
 		for _,callback in ipairs(callbacks) do
 			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
@@ -757,6 +764,10 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 		end
 	end
 
+end
+
+function Helpers.HasBombs(player)
+	return player:GetNumBombs() > 0 or player:HasGoldenBomb()
 end
 
 function Helpers.Stomp(player, force)
@@ -768,12 +779,12 @@ function Helpers.Stomp(player, force)
 	
 	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5)
 	local bombDamage = 0
-	local radius = 35
+	local radius = 45
 	local knockbackFormula = 15 * ((Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)) and 2 or 1)
 
 	-- yeah the en of that stuff
 	if data.BombStomp ~= nil or force then
-		if player:GetNumBombs() > 0 or player:HasGoldenBomb() or force then
+		if Helpers.HasBombs(player) or force then
 		-- Check if edith has a golden bomb cause well using a golden bomb doesn't substract your bomb count
 			if not player:HasGoldenBomb() and not force then
 				player:AddBombs(-1)

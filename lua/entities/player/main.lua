@@ -24,6 +24,18 @@ local function IsPlayerOnGravityGrid(player, position)
 	return not player.CanFly and grid and grid:GetType() == GridEntityType.GRID_GRAVITY
 end
 
+local function EdithJump(player, pos)
+	local data = EdithRestored:GetData(player)
+	local anim = "EdithJump"
+	if data.BombStomp ~= nil and player:HasCollectible(CollectibleType.COLLECTIBLE_FAST_BOMBS) then
+		anim = anim.."Quick"
+	end
+	player:PlayExtraAnimation(anim)
+	data.TargetJumpPos = pos
+	data.EdithJumpCharge = 0
+	data.EdithTargetMovementPosition = nil
+end
+
 local function ChangeToEdithTear(tear)
 	tear:ChangeVariant(TearVariant.ROCK)
 	tear.Color = Color(
@@ -145,12 +157,12 @@ local function EdithGridMovement(player, data)
 	local hasMarsEffect = effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)
 	local hasMegaMush = effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
 	
-	if player:GetSprite():IsPlaying("EdithJump") then return end
+	local playerSprite = player:GetSprite()
+	if playerSprite:IsPlaying("EdithJump") or playerSprite:IsPlaying("EdithJumpQuick") then return end
 
 	if not data.EdithTargetMovementPosition and Helpers.CanMove(player) and not hasMegaMush then
 		--If EdithTargetMovementPosition is nil, it means we are not moving
 		--Calculate movement direction
-		local playerSprite = player:GetSprite()
 		local controllerIndex = player.ControllerIndex
 
 		local isPressingLeft
@@ -568,7 +580,8 @@ function Player:OnUpdatePlayer(player)
 			local room = EdithRestored.Room()
 			local MinJumpCharge = MinJumpVal
 			data.EdithJumpCharge = data.EdithJumpCharge or 0
-			if sprite:GetAnimation() ~= "EdithJump" and not Helpers.IsMenuing() and not EdithRestored.Game:IsPaused() then
+			if sprite:GetAnimation():sub(1, 9) ~= "EdithJump" and not Helpers.IsMenuing() and not EdithRestored.Game:IsPaused()
+			and EdithRestored.Game:GetFrameCount() > 1 then
 				data.EdithJumpCharge = math.max(0, math.min(data.EdithJumpCharge + JumpCharge * (player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and 2 or 1), 100 * JumpChargeMul + MinJumpCharge))
 			end
 			local hasMegaMush = player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
@@ -580,10 +593,8 @@ function Player:OnUpdatePlayer(player)
 			if Helpers.CanMove(player) and not hasMegaMush then
 				if data.EdithJumpTarget and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
 				and JumpLib:CanJump(player) then
-					player:PlayExtraAnimation("EdithJump")
-					data.TargetJumpPos = data.EdithJumpTarget.Position
-					data.EdithJumpCharge = 0
-					data.EdithTargetMovementPosition = nil
+					EdithJump(player, data.EdithJumpTarget.Position)
+					
 				end
 				if data.EdithJumpCharge >= (100 * JumpChargeMul + MinJumpCharge) then
 					data.LockBombs = true
@@ -619,8 +630,9 @@ function Player:OnUpdatePlayer(player)
 				end
 			end
 
-			if sprite:GetAnimation() == "EdithJump" and sprite:GetFrame() < 17 then
-				if sprite:GetFrame() == 5 then
+			if sprite:GetAnimation() == "EdithJump" and not sprite:IsEventTriggered("EdithLanding")
+			or sprite:GetAnimation() == "EdithJumpQuick" then
+				if sprite:IsEventTriggered("EdithJumpStart") and JumpLib:CanJump(player) then
 					JumpLib:Jump(player, {
 						Height = 4,
 						Speed = 0.7,
@@ -628,7 +640,7 @@ function Player:OnUpdatePlayer(player)
 						Tags = {"EdithJump"}
 					})
 				end
-				if data.TargetJumpPos and sprite:GetFrame() > 5 then
+				if data.TargetJumpPos and sprite:IsEventTriggered("EdithJumpStart") then
 					player.Velocity = (data.TargetJumpPos - player.Position):Normalized() * (data.TargetJumpPos - player.Position):Length() / 7
 				end
 				--[[for i = 0, room:GetGridSize() do
@@ -706,11 +718,8 @@ function Player:Landing(player, jumpData, inPit)
 		end
 		if EdithRestored.Room():GetGridCollisionAtPos(player.Position) == GridCollisionClass.COLLISION_SOLID
 		and not player.CanFly then
-			player:PlayExtraAnimation("EdithJump")
-			data.TargetJumpPos = EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 0, false, false)
-			data.EdithJumpCharge = 0
-			data.EdithTargetMovementPosition = nil
-		end
+			EdithJump(player, EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 0, false, false))
+		end	
 	end
 end
 EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_LAND, Player.Landing, {tag = "EdithJump", type = EntityType.ENTITY_PLAYER})
@@ -1179,7 +1188,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_UPDATE, Player.TargetCamera)
 
 function Player:OnStompBloodBombs(player)
-	if player:GetNumBombs() <= 0 and not player:HasGoldenBomb() then
+	if not Helpers.HasBombs(player) then
 		player:TakeDamage(1, DamageFlag.DAMAGE_IV_BAG | DamageFlag.DAMAGE_INVINCIBLE, EntityRef(nil), 60)
 		return true
 	end
