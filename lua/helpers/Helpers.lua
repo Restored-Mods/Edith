@@ -800,7 +800,7 @@ function Helpers.Stomp(player, force)
 			end
 		end
 	end
-	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player, force or data.BombStomp, bombs > 0)
+	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player, force or data.BombStomp, bombs > 0 or force)
 	
 	EdithRestored.Game:ShakeScreen(10)
 	
