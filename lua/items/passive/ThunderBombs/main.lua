@@ -37,7 +37,7 @@ local function DoesPlayerHaveCharge(player, neededCharge)
 	return charge >= neededCharge
 end
 
-local function CanPlayerPlaceThunderBomb(player)
+local function DoChargeThunderBomb(player)
 	return player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and
 	not Helpers.HasBombs(player) and DoesPlayerHaveCharge(player, 1)
 end
@@ -102,23 +102,20 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpd
 
 function ThunderBombs:EdithStompThunderBombProc(player)
 	local data = EdithRestored:GetData(player)
-	return CanPlayerPlaceThunderBomb(player) and not data.LockBombs
+	return DoChargeThunderBomb(player) and not data.LockBombs
 end
 EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, ThunderBombs.EdithStompThunderBombProc, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
 ---@param player EntityPlayer
-function ThunderBombs:EdithStompThunderBomb(player, damage, radius, forced)
-	local data = EdithRestored:GetData(player)
-	if CanPlayerPlaceThunderBomb(player) and not data.LockBombs then
+function ThunderBombs:EdithStompThunderBomb(player, damage, radius, hasBombs)
+	if not hasBombs then
 		local charge = GetFullThunderBombCharge(player)
-		local doThunderLaser = false
 		local usedCharges = 3
 		for i = 0,2 do
 			if charge <= 0 then
 				break
 			end
 			if DoesItemSlotHaveCharge(player, i) then
-				doThunderLaser = true
 				local prevCharge = Helpers.GetCharge(player, i)
 				player:AddActiveCharge(-math.min(usedCharges, 3), i)
 				Game():GetHUD():FlashChargeBar(player, i)
@@ -129,12 +126,11 @@ function ThunderBombs:EdithStompThunderBomb(player, damage, radius, forced)
 				end
 			end
 		end
-		if doThunderLaser then
-			SFXManager():Play(SoundEffect.SOUND_BATTERYDISCHARGE, 1 , 0)
-			player:SetMinDamageCooldown(60)
-			SpawnThunderBombLaser(player, player, damage / 2)
-		end
+		SFXManager():Play(SoundEffect.SOUND_BATTERYDISCHARGE, 1 , 0)
 	end
+	player:SetMinDamageCooldown(60)
+	SpawnThunderBombLaser(player, player, damage / 2)
+
 end
 EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBomb, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
@@ -216,8 +212,8 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, ThunderBombs.Add
 ---@param player EntityPlayer
 function ThunderBombs:TryPlaceBomb(player)
 	if Helpers.CanMove(player, true) then
-		if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and player:GetBombPlaceDelay() <= 0 and not Helpers.HasBombs(player) 
-		and CanPlayerPlaceThunderBomb(player) then
+		if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS) and player:GetBombPlaceDelay() <= 0
+		and DoChargeThunderBomb(player) then
 			local bombButton = Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
 			local data = EdithRestored:GetData(player)
 			if bombButton and not (Helpers.IsPlayerEdith(player, true, false) and data.LockBombs) then
@@ -261,7 +257,7 @@ function ThunderBombs:TryPlaceBombInput(entity, hook, button)
 	if entity and entity:ToPlayer() and hook ~= InputHook.GET_ACTION_VALUE then
 		local player = entity:ToPlayer()
 		if Helpers.CanMove(player, true) then
-			if button == ButtonAction.ACTION_BOMB and CanPlayerPlaceThunderBomb(player) then
+			if button == ButtonAction.ACTION_BOMB and DoChargeThunderBomb(player) then
 				return false
 			end
 		end

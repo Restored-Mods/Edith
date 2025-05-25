@@ -690,7 +690,8 @@ end
 ---@param knockback number
 ---@param player EntityPlayer
 ---@param doBombStomp boolean
-local function NewStompFunction(radius, damage, bombDamage, knockback, player, doBombStomp) -- well its name is clear
+---@param hasBombs boolean
+local function NewStompFunction(radius, damage, bombDamage, knockback, player, doBombStomp, hasBombs) -- well its name is clear
 	local enemiesInRadius = Helpers.Filter(Helpers.GetEnemies(true), function(_, enemy) return enemy.Position:Distance(player.Position) <= radius end)
 	for _,enemy in pairs(enemiesInRadius) do
 		--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
@@ -705,7 +706,6 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 	local poop = EdithRestored.Room():GetGridEntityFromPos(player.Position)
 	if poop and poop:ToPoop() then
 		if poop.State ~= 1000 then
-			print(poop.State)
 			poop:Destroy()
 		end
 	end
@@ -759,7 +759,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
 		for _,callback in ipairs(callbacks) do
 			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
-				callback.Function(callback.Mod, player, bombDamage, radius)
+				callback.Function(callback.Mod, player, bombDamage, radius, hasBombs)
 			end
 		end
 	end
@@ -770,6 +770,8 @@ function Helpers.HasBombs(player)
 	return player:GetNumBombs() > 0 or player:HasGoldenBomb()
 end
 
+---@param player EntityPlayer
+---@param force boolean
 function Helpers.Stomp(player, force)
 	local data = EdithRestored:GetData(player)
 	local room = EdithRestored.Room()
@@ -783,6 +785,7 @@ function Helpers.Stomp(player, force)
 	local knockbackFormula = 15 * ((Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)) and 2 or 1)
 
 	-- yeah the en of that stuff
+	local bombs = player:GetNumBombs()
 	if data.BombStomp ~= nil or force then
 		if Helpers.HasBombs(player) or force then
 		-- Check if edith has a golden bomb cause well using a golden bomb doesn't substract your bomb count
@@ -797,7 +800,7 @@ function Helpers.Stomp(player, force)
 			end
 		end
 	end
-	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player, force or data.BombStomp)
+	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player, force or data.BombStomp, bombs > 0)
 	
 	EdithRestored.Game:ShakeScreen(10)
 	
