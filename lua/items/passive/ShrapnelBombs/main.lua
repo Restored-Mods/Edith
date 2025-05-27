@@ -30,6 +30,31 @@ function ShrapnelBombs:BombInit(bomb)
 end
 --EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_INIT, ShrapnelBombs.BombInit)
 
+---@param player EntityPlayer
+---@param position Vector
+---@param rng RNG
+local function FireShrapnel(player, position, rng)
+	for _ = 1, (12 + rng:RandomInt(5)) do
+		local params = player:GetTearHitParams(WeaponType.WEAPON_TEARS, 1, 1, nil)
+		local tear = Isaac.Spawn(
+			EntityType.ENTITY_TEAR,
+			TearVariant.NAIL,
+			0,
+			position,
+			Vector.FromAngle(rng:RandomInt(360)) * (15 + rng:RandomInt(8)),
+			player
+		):ToTear()
+		tear.CollisionDamage = 1.5 + player.Damage
+		tear.TearFlags = params.TearFlags
+		if params.TearVariant ~= 0 and params.TearVariant ~= 1 then
+			tear:ChangeVariant(params.TearVariant)
+		end
+		tear.Scale = 0.5
+		tear:AddTearFlags(TearFlags.TEAR_PIERCING)
+		EdithRestored:GetData(tear).Shrapnel = true
+	end
+end
+
 function ShrapnelBombs:BombUpdate(bomb)
 	local player = Helpers.GetPlayerFromTear(bomb)
 	if not player then
@@ -54,25 +79,7 @@ function ShrapnelBombs:BombUpdate(bomb)
 		rng:SetSeed(bomb.InitSeed)
 
 		if sprite:IsPlaying("Explode") then
-			for i = 1, (12 + rng:RandomInt(5)) do
-				local params = player:GetTearHitParams(WeaponType.WEAPON_TEARS, 1, 1, nil)
-				local tear = Isaac.Spawn(
-					EntityType.ENTITY_TEAR,
-					TearVariant.NAIL,
-					0,
-					bomb.Position,
-					Vector.FromAngle(rng:RandomInt(360)) * (15 + rng:RandomInt(8)),
-					player
-				):ToTear()
-				tear.CollisionDamage = 1.5 + player.Damage
-				tear.TearFlags = params.TearFlags
-				if params.TearVariant ~= 0 and params.TearVariant ~= 1 then
-					tear:ChangeVariant(params.TearVariant)
-				end
-				tear.Scale = 0.5
-				tear:AddTearFlags(TearFlags.TEAR_PIERCING)
-				EdithRestored:GetData(tear).Shrapnel = true
-			end
+			FireShrapnel(player, bomb.Position, rng)
 		end
 	end
 end
@@ -86,3 +93,9 @@ function ShrapnelBombs:TearCollision(tear, colider, low)
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_TEAR_COLLISION, ShrapnelBombs.TearCollision, TearVariant.NAIL)
+
+---@param player EntityPlayer
+function ShrapnelBombs:EdithStompShrapnelBomb(player, damage, radius, hasBombs)
+	FireShrapnel(player, player.Position, player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS))
+end
+EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ShrapnelBombs.EdithStompShrapnelBomb, EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS)
