@@ -179,6 +179,10 @@ Enums.BombVariant = {
 	BOMB_SHRAPNEL = Isaac.GetEntityVariantByName("Shrapnel Bomb")
 }
 
+Enums.RockVariant = {
+	ROCK_SALT = 683
+}
+
 BombFlagsAPI.AddNewCustomBombFlag("THUNDER_BOMB", Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 BombFlagsAPI.AddNewCustomBombFlag("SHRAPNEL_BOMB", Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS)
 

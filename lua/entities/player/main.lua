@@ -273,7 +273,7 @@ local function EdithGridMovement(player, data)
 
 	if data.EdithTargetMovementPosition then
 		if not player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and not EdithRestored.Game:IsPaused() then
-			data.EdithJumpCharge = math.max(0,data.EdithJumpCharge - JumpCharge)
+			data.EdithJumpCharge = math.max(0,data.EdithJumpCharge - JumpCharge / 2)
 		end
 		--[[if data.EdithJumpTarget then
 			data.EdithJumpTarget:Remove()
@@ -718,6 +718,7 @@ function Player:Landing(player, jumpData, inPit)
 		end
 		if EdithRestored.Room():GetGridCollisionAtPos(player.Position) == GridCollisionClass.COLLISION_SOLID
 		and not player.CanFly then
+			data.BombStomp = nil
 			EdithJump(player, EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 0, false, false))
 		end	
 	end
