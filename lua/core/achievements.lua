@@ -23,7 +23,7 @@ for challenge, achievement in pairs(EdithRestored.Enums.Challenges) do
 	end, challenge)
 end
 
-EdithRestored:AddCallback(ModCallbacks.MC_PRE_COMPLETION_EVENT, function(_, mark)	
+EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mark)	
 	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH) then
 		if mark == CompletionType.ULTRA_GREEDIER and marksA[CompletionType.ULTRA_GREED] then -- make damn sure greedier unlocks greed too
 			Helpers.UnlockAchievement(marksA[CompletionType.ULTRA_GREED])
@@ -34,6 +34,9 @@ EdithRestored:AddCallback(ModCallbacks.MC_PRE_COMPLETION_EVENT, function(_, mark
 		if Isaac.AllMarksFilled(EdithRestored.Enums.PlayerType.EDITH) == 2 then
 			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
 		end
+	end
+	if mark == CompletionType.BEAST then
+		Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH)
 	end
 end)
 
