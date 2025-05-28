@@ -2,22 +2,41 @@ EdithRestored.HiddenItemManager = include("lua.extraLibs.hidden_item_manager")
 EdithRestored.HiddenItemManager:Init(EdithRestored)
 
 EdithRestored.Game = Game()
-EdithRestored.Room = function() return EdithRestored.Game:GetRoom() end
-EdithRestored.Level = function() return EdithRestored.Game:GetLevel() end
+EdithRestored.Room = function()
+	return EdithRestored.Game:GetRoom()
+end
+EdithRestored.Level = function()
+	return EdithRestored.Game:GetLevel()
+end
 
 local runData = {
-    ["UsedDataMiner"] = false,
-    ["MoonPhase"] = 1,
-    ["MoonPhaseWolf"] = false
+	["UsedDataMiner"] = false,
+	["MoonPhase"] = 1,
+	["MoonPhaseWolf"] = false
+}
+
+EdithRestored.DebugMode = EdithRestored.DebugMode or false
+local DebugModeValues = {
+	StompRadius = 50,
+	InstantJumpCharge = false
 }
 
 EdithRestored.SaveManager.Utility.AddDefaultRunData(EdithRestored.SaveManager.DefaultSaveKeys.GLOBAL, runData)
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, function()
-    for _, bomb in ipairs(Isaac.FindByType(EntityType.ENTITY_BOMB)) do
-        EdithRestored:GetData(bomb).BombInit = true
-    end
+	for _, bomb in ipairs(Isaac.FindByType(EntityType.ENTITY_BOMB)) do
+		EdithRestored:GetData(bomb).BombInit = true
+	end
 end)
+
+---@param message string
+---@param logFile boolean?
+function EdithRestored:Log(message, logFile)
+	print(message)
+	if type(logFile) == "boolean" and logFile == true then
+		Isaac.DebugString(message)
+	end
+end
 
 ---@type table[]
 local getData = {}
@@ -28,7 +47,9 @@ local getData = {}
 ---@param ent Entity
 ---@return table
 function EdithRestored:GetData(ent)
-	if not ent then return {} end
+	if not ent then
+		return {}
+	end
 	local ptrHash = GetPtrHash(ent)
 	local data = getData[ptrHash]
 	if not data then
@@ -50,3 +71,23 @@ end
 EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, CallbackPriority.LATE, function(_, ent)
 	getData[GetPtrHash(ent)] = nil
 end)
+
+---@param key string
+---@return integer?
+function EdithRestored:GetDebugValue(key)
+	if EdithRestored.DebugMode then
+		if DebugModeValues[key] ~= nil then
+			return DebugModeValues[key]
+		else
+			EdithRestored:Log("Value "..key.." doesn't exist.")
+		end
+	end
+end
+
+---@param key string
+---@return integer?
+function EdithRestored:SetDebugValue(key, value)
+	if EdithRestored.DebugMode then
+		DebugModeValues[key] = value
+	end
+end

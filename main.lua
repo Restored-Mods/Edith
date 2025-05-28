@@ -70,4 +70,4 @@ if StageAPI and StageAPI.Loaded then
     })]]
 end
 
-print("Edith Restored loaded")
+EdithRestored:Log("Edith Restored loaded.")

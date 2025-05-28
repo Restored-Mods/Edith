@@ -662,6 +662,8 @@ function Helpers.GetPlayersByNullEffect(nullItemId)
 end
 
 --returns a list of all players of certain type
+---@param playerType PlayerType | integer
+---@return EntityPlayer[]
 function Helpers.GetPlayersByType(playerType)
 	local players = Helpers.GetPlayers()
 	if not playerType or type(playerType) ~= "number" or playerType < 0 then return players end
@@ -781,7 +783,7 @@ function Helpers.Stomp(player, force)
 	
 	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5)
 	local bombDamage = 0
-	local radius = 50
+	local radius = EdithRestored.DebugMode and EdithRestored:GetDebugValue("StompRadius") or 50
 	local knockbackFormula = 15 * ((Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)) and 2 or 1)
 
 	-- yeah the en of that stuff

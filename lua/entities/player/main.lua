@@ -467,6 +467,16 @@ function Player:ChargeBarRender(player)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBarRender, 0)
 
+if EdithRestored.DebugMode then
+	function Player:StompRadiusRender()
+		for _, player in ipairs(Helpers.GetPlayersByType(EdithRestored.Enums.PlayerType.EDITH)) do
+			local shape = player:GetDebugShape(true)
+			shape:Circle(player.Position, EdithRestored:GetDebugValue("StompRadius"))
+		end
+	end
+	EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Player.StompRadiusRender)
+end
+
 ---@param target EntityEffect
 function Player:TargetJumpRender(target)
 	if EdithRestored.Game:IsPaused() then return end
@@ -582,7 +592,11 @@ function Player:OnUpdatePlayer(player)
 			data.EdithJumpCharge = data.EdithJumpCharge or 0
 			if sprite:GetAnimation():sub(1, 9) ~= "EdithJump" and not Helpers.IsMenuing() and not EdithRestored.Game:IsPaused()
 			and EdithRestored.Game:GetFrameCount() > 1 then
-				data.EdithJumpCharge = math.max(0, math.min(data.EdithJumpCharge + JumpCharge * (player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and 2 or 1), 100 * JumpChargeMul + MinJumpCharge))
+				if EdithRestored.DebugMode and EdithRestored:GetDebugValue("InstantJumpCharge") then
+					data.EdithJumpCharge = 100 * JumpChargeMul + MinJumpCharge
+				else
+					data.EdithJumpCharge = math.max(0, math.min(data.EdithJumpCharge + JumpCharge * (player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and 2 or 1), 100 * JumpChargeMul + MinJumpCharge))
+				end
 			end
 			local hasMegaMush = player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
 			if player:GetSprite():GetAnimation():find("Teleport") then

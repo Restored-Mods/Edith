@@ -221,6 +221,47 @@ end
 local function UpdateImGuiMenu(IsDataInitialized)
 	UpdateSettingsMenu(IsDataInitialized)
 	UpdateBlackListMenu(IsDataInitialized)
+	
+end
+
+local function UpdateDebugMode()
+	if EdithRestored.DebugMode then
+		if not ImGui.ElementExists("edithDebugModeSettings") then
+			ImGui.AddElement("EdithRestored", "edithDebugModeSettings", ImGuiElement.MenuItem, "\u{f188} Debug Mode Settings")
+		end
+
+		if not ImGui.ElementExists("edithWindowDebugModeSettings") then
+			ImGui.CreateWindow("edithWindowDebugModeSettings", "Debug Mode Settings")
+			ImGui.LinkWindowToElement("edithWindowDebugModeSettings", "edithDebugModeSettings")
+			ImGui.SetWindowSize("edithWindowDebugModeSettings", 800, 350)
+		end
+
+		if ImGui.ElementExists("edithDebugModeStompRadius") then
+			ImGui.RemoveElement("edithDebugModeStompRadius")
+		end
+
+		ImGui.AddSliderInteger("edithWindowDebugModeSettings", "edithDebugModeStompRadius", "Stomp radius", function(newVal)
+			EdithRestored:SetDebugValue("StompRadius", newVal)
+		end, 50, 30, 100)
+
+		if ImGui.ElementExists("edithDebugModeInstaJumpCharge") then
+			ImGui.RemoveElement("edithDebugModeInstaJumpCharge")
+		end
+
+		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeInstaJumpCharge", "Instant Jump Charge", function(newVal)
+			EdithRestored:SetDebugValue("InstantJumpCharge", newVal)
+		end, false)
+
+		ImGui.UpdateData("edithDebugModeStompRadius", ImGuiData.Value, EdithRestored:GetDebugValue("StompRadius"))
+		ImGui.UpdateData("edithDebugModeInstaJumpCharge", ImGuiData.Value, EdithRestored:GetDebugValue("InstantJumpCharge"))
+	else
+		if ImGui.ElementExists("edithDebugModeSettings") then
+			ImGui.RemoveElement("edithDebugModeSettings")
+		end
+		if ImGui.ElementExists("edithWindowDebugModeSettings") then
+			ImGui.RemoveWindow("edithWindowDebugModeSettings")
+		end
+	end
 end
 
 local function InitImGuiMenu()
@@ -338,6 +379,7 @@ end, EdithRestored.Enums.PlayerType.EDITH)
 
 InitImGuiMenu()
 UpdateImGuiMenu()
+UpdateDebugMode()
 
 local InGame = false
 
@@ -356,4 +398,18 @@ EdithRestored:AddPriorityCallback(ModCallbacks.MC_MAIN_MENU_RENDER, CallbackPrio
 ---@param completion CompletionType
 EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, completion)
 	UpdateBlackListMenu(Isaac.IsInGame())
+end)
+
+EdithRestored:AddCallback(ModCallbacks.MC_EXECUTE_CMD, function(_, cmd, args)
+	if cmd == "edithdebug" then
+		if args == "enable" then
+			EdithRestored.DebugMode = true
+			EdithRestored:Log("Edith Debug Mode is enabled.", true)
+			UpdateDebugMode()
+		elseif args == "disable" then
+			EdithRestored.DebugMode = false
+			EdithRestored:Log("Edith Debug Mode is disabled.", true)
+			UpdateDebugMode()
+		end
+	end
 end)
