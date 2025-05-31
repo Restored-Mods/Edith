@@ -774,7 +774,7 @@ function Player:IFAfterFromJump(entity, amount, flags, source, cd)
 		---@cast player EntityPlayer
 		local data = EdithRestored:GetData(player)
 		if data.PostLanding then
-			player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, false, 45, false)
+			player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, false, 45, true)
 		end
 	end
 end
