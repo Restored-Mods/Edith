@@ -729,7 +729,18 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 	end
 
 	if bombEffectTriggered then
+
+		if player:HasTrinket(TrinketType.TRINKET_SHORT_FUSE) then
+			bombDamage = bombDamage * 1.15
+		end
+
 		EdithRestored.Game:BombExplosionEffects(player.Position, bombDamage, player:GetBombFlags(), Color.Default, player)
+		if player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) > 0 then
+			for i = 1, player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) do
+				local rng = player:GetTrinketRNG(TrinketType.TRINKET_RING_CAP)
+				EdithRestored.Game:BombExplosionEffects(player.Position + Vector.FromAngle(rng:RandomInt(1, 360)):Resized(rng:RandomInt(100) * 0.015), bombDamage, player:GetBombFlags(), Color.Default, player)
+			end
+		end
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_BOBS_CURSE) or player:GetBombFlags() & TearFlags.TEAR_POISON > 0 then
 			local poisonCloud = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SMOKE_CLOUD, 0, player.Position, Vector.Zero, player):ToEffect()
 			poisonCloud:SetTimeout(150)
