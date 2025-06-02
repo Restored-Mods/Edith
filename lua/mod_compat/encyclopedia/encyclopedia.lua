@@ -101,7 +101,7 @@ Encyclopedia.AddItem({
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
 	Class = classname,
-	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY,
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS,
 	WikiDesc = Wiki.PawnBaby,
 	Pools = {
 		Encyclopedia.ItemPools.POOL_SHOP,

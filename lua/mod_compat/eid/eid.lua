@@ -52,8 +52,8 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOT
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "+5 бомб#Дает устойчивость ко взрывам#Взрыв подбрасывет Айзека в воздух", "Взрывостойкие сапоги", "ru")
 
 --Pawn Baby
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY, "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 10 damage#Respawns at a random door after reaching a wall", "​Salt Pawns", "en_us")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY, "Фамильяр, cхожий c братиком Бобби#{{Fear}} 20% шанс выстрелить слезой с эффектом страха#Если враг рядом, прыгает на него#Обычные враги убиваются мгновенно#Боссы получают урон, равный 20% от максимального здоровья", "Малыш-пешка", "ru")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 10 damage#Respawns at a random door after reaching a wall", "​Salt Pawns", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Фамильяр, cхожий c братиком Бобби#{{Fear}} 20% шанс выстрелить слезой с эффектом страха#Если враг рядом, прыгает на него#Обычные враги убиваются мгновенно#Боссы получают урон, равный 20% от максимального здоровья", "Малыш-пешка", "ru")
 
 --Salty Baby
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "Familiar that fires salt rock projectiles when getting hit by an enemy tear# After blocking 6 enemy tears, loses the ability to block shots and leaves a trail of fearing salt creep instead#Returns to its original state at the start of every floor", "Salty Baby", "en_us")

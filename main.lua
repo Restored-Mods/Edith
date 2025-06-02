@@ -33,7 +33,7 @@ include("lua.items.passive.Lithium.main")
 include("lua.items.passive.Sodom.main")
 include("lua.items.passive.BlastingBoots.main")
 include("lua.items.passive.SaltyBaby.main")
-include("lua.items.passive.PawnBaby.main")
+include("lua.items.passive.SaltPawns.main")
 include("lua.items.passive.ThunderBombs.main")
 
 include("lua.items.passive.RedHood.main")

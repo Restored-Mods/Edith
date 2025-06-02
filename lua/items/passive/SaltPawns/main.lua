@@ -1,7 +1,7 @@
 local SaltPawns = {}
 local Helpers = include("lua.helpers.Helpers")
 
-local SaltPawnsDesc = Isaac.GetItemConfig():GetCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY)
+local SaltPawnsDesc = Isaac.GetItemConfig():GetCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS)
 local sfx = SFXManager()
 
 local Settings = {
@@ -22,8 +22,8 @@ local States = {
 ---@param player EntityPlayer
 ---@param cache CacheFlag | integer
 function SaltPawns:Cache(player, cache)
-    local numFamiliars = player:GetCollectibleNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY) + player:GetEffects():GetCollectibleEffectNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY)
-	player:CheckFamiliar(EdithRestored.Enums.Familiars.PAWN_BABY.Variant, numFamiliars, player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PAWN_BABY), SaltPawnsDesc)
+    local numFamiliars = player:GetCollectibleNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS) + player:GetEffects():GetCollectibleEffectNum(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS)
+	player:CheckFamiliar(EdithRestored.Enums.Familiars.SALT_PAWNS.Variant, numFamiliars, player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS), SaltPawnsDesc)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, SaltPawns.Cache, CacheFlag.CACHE_FAMILIARS)
 
@@ -41,7 +41,7 @@ function SaltPawns:Init(familiar)
 			familiar.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ENEMIES
 			familiar.GridCollisionClass = GridCollisionClass.COLLISION_SOLID
 end
-EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, SaltPawns.Init, EdithRestored.Enums.Familiars.PAWN_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, SaltPawns.Init, EdithRestored.Enums.Familiars.SALT_PAWNS.Variant)
 
 
 ---@param familiar EntityFamiliar
@@ -252,11 +252,11 @@ elseif familiar.State == States.Land then
 	end
 
 end
-EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, SaltPawns.Update, EdithRestored.Enums.Familiars.PAWN_BABY.Variant)
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, SaltPawns.Update, EdithRestored.Enums.Familiars.SALT_PAWNS.Variant)
 
 function SaltPawns:NewRoom()
 	for i, f in pairs(Isaac.GetRoomEntities()) do
-		if f.Type == EntityType.ENTITY_FAMILIAR and f.Variant == EdithRestored.Enums.Familiars.PAWN_BABY.Variant then
+		if f.Type == EntityType.ENTITY_FAMILIAR and f.Variant == EdithRestored.Enums.Familiars.SALT_PAWNS.Variant then
 			local room = Game():GetRoom()
       local data = EdithRestored:GetData(f)
 			f.Position = room:GetGridPosition(room:GetGridIndex(f:ToFamiliar().Player.Position))
