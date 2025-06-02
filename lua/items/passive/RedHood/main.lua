@@ -403,10 +403,8 @@ function RedHoodLocal:Cache(player, cache)
 		player.Damage = player.Damage + 5 * mul
 	elseif cache == CacheFlag.CACHE_FIREDELAY then
 		player.MaxFireDelay = Helpers.tearsUp(player.MaxFireDelay, 2.5 * mul)
-	elseif cache == CacheFlag.CACHE_RANGE then
-		player.TearRange = Helpers.rangeUp(player.TearRange, 5 * mul)
 	elseif cache == CacheFlag.CACHE_SPEED then
-		player.MoveSpeed = math.max(1, player.MoveSpeed + 0.8 * mul)
+		player.MoveSpeed = math.max(1, player.MoveSpeed + 0.4 * mul)
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, RedHoodLocal.Cache)

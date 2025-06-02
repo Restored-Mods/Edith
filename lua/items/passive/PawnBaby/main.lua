@@ -6,7 +6,7 @@ local sfx = SFXManager()
 
 local Settings = {
 	Cooldown = 3,
-	Damage = 5,
+	Damage = 30,
   Range = 50,
 }
 
