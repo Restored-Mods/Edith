@@ -5,9 +5,9 @@ local SaltPawnsDesc = Isaac.GetItemConfig():GetCollectible(EdithRestored.Enums.C
 local sfx = SFXManager()
 
 local Settings = {
-	Cooldown = 5,
-	Damage = 10,
-  Range = 60,
+	Cooldown = 3,
+	Damage = 5,
+  Range = 50,
 }
 
 local States = {
@@ -31,19 +31,12 @@ EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, SaltPawns.Cache, Cache
 function SaltPawns:Init(familiar)
   local room = Game():GetRoom()
       local data = EdithRestored:GetData(familiar)
-			familiar.Position = room:GetGridPosition(room:GetGridIndex(familiar:ToFamiliar().Player.Position))
-      
-      local door = SaltPawns.GetClosestDoor(familiar.Position)
-      if door then
-        data.Direction = door:ToDoor().Direction
-      else
-        data.Direction = 0
-      end
-      
+      familiar:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+		--	familiar.Position = room:GetGridPosition(room:GetGridIndex(familiar:ToFamiliar().Player.Position))
       data.rng = RNG()
       data.rng:SetSeed(familiar.InitSeed)
       
-			familiar.State = States.Idle
+      familiar.State = States.Appear
       familiar.FireCooldown = Settings.Cooldown
 			familiar.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ENEMIES
 			familiar.GridCollisionClass = GridCollisionClass.COLLISION_SOLID
@@ -59,6 +52,7 @@ function SaltPawns:Update(familiar)
     local room = Game():GetRoom()
     local bff = familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS)
     
+    familiar.Velocity = Vector(0,0)
     -- Cooldown
 	if familiar.State == States.Idle then
 		if not sprite:IsPlaying("Idle") then
@@ -96,7 +90,7 @@ elseif familiar.State == States.Jump then
 		if sprite:IsEventTriggered("Jump") then
 			familiar.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
 			familiar.GridCollisionClass = GridCollisionClass.COLLISION_NONE
-			sfx:Play(SoundEffect.SOUND_SCAMPER, 0.9)
+			sfx:Play(SoundEffect.SOUND_SCAMPER, 0.9,0,false,1.2)
 
 		elseif sprite:IsEventTriggered("Move") then
 			familiar.State = States.Moving
@@ -122,7 +116,8 @@ elseif familiar.State == States.Jump then
 
 
 	-- Land
-	elseif familiar.State == States.Land then
+elseif familiar.State == States.Land then
+  
 		if not sprite:IsPlaying("Land") then
 			sprite:Play("Land", true)
 		end
@@ -130,7 +125,7 @@ elseif familiar.State == States.Jump then
 		if sprite:IsEventTriggered("Land") then
 			familiar.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ENEMIES
 			familiar.GridCollisionClass = GridCollisionClass.COLLISION_SOLID
-			sfx:Play(SoundEffect.SOUND_FETUS_FEET, 1.2, 0, false, 0.8, 0)
+			sfx:Play(SoundEffect.SOUND_FETUS_FEET, 0.9, 0, false, 1.2, 0)
 
 			-- Stomp
 			local range = Settings.Range
@@ -161,9 +156,6 @@ elseif familiar.State == States.Jump then
 					end
 
 					v:TakeDamage(damage * multiplier, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_IGNORE_ARMOR, EntityRef(familiar), 0)
-					if v:HasMortalDamage() then
-						v:AddEntityFlags(EntityFlag.FLAG_EXTRA_GORE)
-					end
 				end
 			end
 
@@ -172,6 +164,16 @@ elseif familiar.State == States.Jump then
 			familiar.FireCooldown = Settings.Cooldown
 		end
   elseif familiar.State == States.Crumble then
+    
+    if sprite:IsEventTriggered("Crumble") then
+     local particleNum = data.rng:RandomInt(2) + 1
+			for _ = 1, particleNum, 1 do
+     local effect = Isaac.Spawn(1000, EffectVariant.TOOTH_PARTICLE, 1, familiar.Position, Vector.FromAngle(data.rng:RandomInt(360)) * (data.rng:RandomInt(4) + 1), nil)
+      effect:GetSprite().Offset = Vector(0,10)
+      effect.SpriteScale = Vector(0.8,0.8)
+      effect:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+      end
+    end
     
     if sprite:IsFinished("Crumble") then
       local door = SaltPawns.GetRandomDoor(data.rng)
@@ -192,6 +194,17 @@ elseif familiar.State == States.Jump then
     if not sprite:IsPlaying("Appear") then
 			sprite:Play("Appear", true)
 		end
+    
+    if data.Direction == nil then
+      local door = SaltPawns.GetRandomDoor(data.rng)
+      if door then
+        data.Direction = door:ToDoor().Direction
+        familiar.Position = door.Position
+      else
+        data.Direction = data.rng:RandomInt(4)
+        familiar.Position = room:GetGridPosition(room:GetGridIndex(familiar:ToFamiliar().Player.Position))
+      end
+    end
     
     if sprite:IsEventTriggered("Land") then
 			familiar.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ENEMIES
@@ -227,9 +240,7 @@ elseif familiar.State == States.Jump then
 					end
 
 					v:TakeDamage(damage * multiplier, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_IGNORE_ARMOR, EntityRef(familiar), 0)
-					if v:HasMortalDamage() then
-						v:AddEntityFlags(EntityFlag.FLAG_EXTRA_GORE)
-					end
+
 				end
 			end
 
@@ -257,7 +268,7 @@ function SaltPawns:NewRoom()
       end
       
 			f:ToFamiliar().State = States.Idle
-			f:ToFamiliar().FireCooldown = 0
+			f:ToFamiliar().FireCooldown = data.rng:RandomInt(0,5)
 			f.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ENEMIES
 			f.GridCollisionClass = GridCollisionClass.COLLISION_SOLID
 		end
@@ -313,14 +324,3 @@ else
   return nil
 end
 end
-
----@param familiar EntityFamiliar
----@param collider Entity
----@param low boolean
-function SaltPawns:Colliding(familiar, collider, low)    
-    if familiar.State ~= 0 then return end
-    local sprite = familiar:GetSprite()
-    local data = EdithRestored:GetData(familiar)
-   
-end
-EdithRestored:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_COLLISION, SaltPawns.Colliding, EdithRestored.Enums.Familiars.PAWN_BABY.Variant)
