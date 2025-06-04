@@ -425,7 +425,7 @@ local function EdithGridMovement(player, data)
 			--Also check if we moved
 			if player.Position:DistanceSquared(data.LastEdithPosition) <= 0.1 or
 			(data.PreLastEdithPosition and (player.Position:DistanceSquared(data.PreLastEdithPosition) <= 0.1
-			or data.LastEdithPosition:DistanceSquared(data.PreLastEdithPosition) < 2)) then
+			or data.LastEdithPosition:DistanceSquared(data.PreLastEdithPosition) <= math.min(player.MoveSpeed * 2.5, 2))) then
 				--If we barely moved between 2 frames, cancel the movement
 				data.EdithTargetMovementPosition = nil
 			end
