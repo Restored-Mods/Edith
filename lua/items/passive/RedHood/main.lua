@@ -404,7 +404,11 @@ function RedHoodLocal:Cache(player, cache)
 	elseif cache == CacheFlag.CACHE_FIREDELAY then
 		player.MaxFireDelay = Helpers.tearsUp(player.MaxFireDelay, 2.5 * mul)
 	elseif cache == CacheFlag.CACHE_SPEED then
-		player.MoveSpeed = math.max(1, player.MoveSpeed + 0.4 * mul)
+		local speed = player.MoveSpeed + 0.4 * mul
+		if IsRedMoonPhase() then
+			speed = math.max(1, speed)
+		end
+		player.MoveSpeed = speed
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, RedHoodLocal.Cache)
