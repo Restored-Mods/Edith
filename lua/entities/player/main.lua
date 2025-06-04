@@ -590,7 +590,15 @@ function Player:OnUpdatePlayer(player)
 			local room = EdithRestored.Room()
 			local MinJumpCharge = MinJumpVal
 			data.EdithJumpCharge = data.EdithJumpCharge or 0
-			if sprite:GetAnimation():sub(1, 9) ~= "EdithJump" and not Helpers.IsMenuing() and not EdithRestored.Game:IsPaused()
+			local isJumping = JumpLib:GetData(player).Jumping
+			if isJumping and player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB)
+			and data.BombStomp then
+				for _, enemy in ipairs(Helpers.Filter(Helpers.GetEnemies(), function(_, enemy) return enemy.Position:Distance(player.Position) <= Helpers.GetStompRadius() end)) do
+					enemy.Velocity = enemy.Velocity + (player.Position - enemy.Position):Resized(2)
+				end
+			end
+			if sprite:GetAnimation():sub(1, 9) ~= "EdithJump" and
+			not isJumping and not Helpers.IsMenuing() and not EdithRestored.Game:IsPaused()
 			and EdithRestored.Game:GetFrameCount() > 1 then
 				if EdithRestored.DebugMode and EdithRestored:GetDebugValue("InstantJumpCharge") then
 					data.EdithJumpCharge = 100 * JumpChargeMul + MinJumpCharge

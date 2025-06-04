@@ -783,6 +783,10 @@ function Helpers.HasBombs(player)
 	return player:GetNumBombs() > 0 or player:HasGoldenBomb()
 end
 
+function Helpers.GetStompRadius()
+	return EdithRestored.DebugMode and EdithRestored:GetDebugValue("StompRadius") or 65
+end
+
 ---@param player EntityPlayer
 ---@param force boolean
 function Helpers.Stomp(player, force)
@@ -794,7 +798,7 @@ function Helpers.Stomp(player, force)
 	
 	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5)
 	local bombDamage = 0
-	local radius = EdithRestored.DebugMode and EdithRestored:GetDebugValue("StompRadius") or 65
+	local radius = Helpers.GetStompRadius()
 	local knockbackFormula = 15 * ((Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)) and 2 or 1)
 
 	-- yeah the en of that stuff
