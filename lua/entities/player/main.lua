@@ -72,11 +72,10 @@ local function CheckEdithsCollisionWithGrid(player, data)
 		--And if we're moving it it's direction
 		--TODO: Maybe it'd be better to check for collission with the grid entity twice?
 		if gridEntity.CollisionClass ~= 0 and gridEntity.CollisionClass ~= 5 and
-		(gridEntity.Position - player.Position):Normalized():DistanceSquared(player.Velocity:Normalized()) < 0.1 then
+		(gridEntity.Position - player.Position):Normalized():DistanceSquared(player.Velocity:Normalized() + room:GetWaterCurrent()) < 0.1 then
 			--Check if player is intersecting with the gridEntity
 			--From https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
 			local isIntersecting
-
 			local circleDistanceX = math.abs(player.Position.X - gridEntity.Position.X)
 			local circleDistanceY = math.abs(player.Position.Y - gridEntity.Position.Y)
 
@@ -424,8 +423,9 @@ local function EdithGridMovement(player, data)
 			end
 
 			--Also check if we moved
-			if player.Position:DistanceSquared(data.LastEdithPosition) <= 0.07 or
-			(data.PreLastEdithPosition and player.Position:DistanceSquared(data.PreLastEdithPosition) <= 0.07) then
+			if player.Position:DistanceSquared(data.LastEdithPosition) <= 0.1 or
+			(data.PreLastEdithPosition and (player.Position:DistanceSquared(data.PreLastEdithPosition) <= 0.1
+			or data.LastEdithPosition:DistanceSquared(data.PreLastEdithPosition) < 2)) then
 				--If we barely moved between 2 frames, cancel the movement
 				data.EdithTargetMovementPosition = nil
 			end
