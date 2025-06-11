@@ -13,10 +13,10 @@ local classname = "Restored Edith"
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS,
 	WikiDesc = Wiki.Peppermint,
 })]]
-
+--[[
 --Salt Shaker
 Encyclopedia.AddItem({
-	ModName = "RestoredEdith",
+	ModName = "Restored Edith",
 	Class = classname,
 	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER,
 	WikiDesc = Wiki.SaltShaker,
@@ -24,6 +24,12 @@ Encyclopedia.AddItem({
 		Encyclopedia.ItemPools.POOL_TREASURE,
 		Encyclopedia.ItemPools.POOL_GREED_TREASURE,
 	},
+	UnlockFunc = function(self)
+		if not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SALT_SHAKER) then
+			self.Desc = "Defeat Isaac as Edith"
+			return self
+		end
+	end
 })
 
 --Gorgon Mask
@@ -84,19 +90,6 @@ Encyclopedia.AddItem({
 	},
 })
 
---Lot Baby
---[[Encyclopedia.AddItem({
-	ModName = "RestoredEdith",
-	Class = classname,
-	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_LOT_BABY,
-	WikiDesc = Wiki.LotBaby,
-	Pools = {
-		Encyclopedia.ItemPools.POOL_TREASURE,
-		Encyclopedia.ItemPools.POOL_SHOP,
-		Encyclopedia.ItemPools.POOL_BABY_SHOP
-	},
-})]]
-
 --Pawn Baby
 Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
@@ -139,26 +132,7 @@ Encyclopedia.AddItem({
 	},
 })
 
---[[Encyclopedia.AddItem({
-	ModName = "RestoredEdith",
-	Class = classname,
-	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL,
-	WikiDesc = Wiki.TheChisel,
-	Pools = {
-		Encyclopedia.ItemPools.POOL_TREASURE,
-		Encyclopedia.ItemPools.POOL_GREED_TREASURE,
-		Encyclopedia.ItemPools.POOL_GREED_SHOP,
-	},
-})]]
-
 -- Trinkets
---Pepper grinder
---[[Encyclopedia.AddTrinket({
-	ModName = "RestoredEdith",
-	Class = classname,
-	ID = EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER,
-	WikiDesc = Wiki.PepperGrinder,
-})]]
 
 --Smelling Salts
 Encyclopedia.AddTrinket({
@@ -194,5 +168,19 @@ Encyclopedia.AddCharacter({
 	Sprite = Encyclopedia.RegisterSprite(EdithRestored.path .. "content/gfx/characterportraitsalt.anm2", "Edith", 0, EdithRestored.path .. "content/gfx/charactermenu_edithb.png"),
 	WikiDesc = Wiki.TaintedEdith,
 })]]
+
+for fn, tp in pairs(Wiki) do
+	for k, v in pairs(tp) do
+		Encyclopedia["Add" .. fn](v)
+	end
+end
+
+function EdithRestored:UpdateEncyclopedia()
+	for fn, tp in pairs(Wiki) do
+		for k, v in pairs(tp) do
+			Encyclopedia["Update" .. fn](v)
+		end
+	end
+end
 
 EdithRestored.Enums.Wiki = Wiki
