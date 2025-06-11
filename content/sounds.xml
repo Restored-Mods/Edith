@@ -39,10 +39,10 @@
 	<sound name="Gorgon Mask">
 		<sample weight="1" path="redith/funny/Gorgon Mask.wav" />
 	</sound>
-	<sound name="​Lithium Salts">
+	<sound name="Lithium Salts">
 		<sample weight="1" path="redith/funny/Lithium Salts.wav" />
 	</sound>
-	<sound name="​Salt Pawns">
+	<sound name="Salt Pawns">
 		<sample weight="1" path="redith/funny/Pawn Baby.wav" />
 	</sound>
 	<sound name="​Red Hood">

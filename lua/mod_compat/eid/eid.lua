@@ -52,7 +52,7 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOT
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "+5 бомб#Дает устойчивость ко взрывам#Взрыв подбрасывет Айзека в воздух", "Взрывостойкие сапоги", "ru")
 
 --Pawn Baby
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 10 damage#Respawns at a random door after reaching a wall", "​Salt Pawns", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 30 damage#Respawns at a random door after reaching a wall", "Salt Pawns", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Фамильяр, cхожий c братиком Бобби#{{Fear}} 20% шанс выстрелить слезой с эффектом страха#Если враг рядом, прыгает на него#Обычные враги убиваются мгновенно#Боссы получают урон, равный 20% от максимального здоровья", "Малыш-пешка", "ru")
 
 --Salty Baby
@@ -60,7 +60,7 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "Фамильяр, котрый стреляет соляными снарядами при получении урона от слез врага# Заблокировав 6 слез врагов перестает блокировать снаряды и вместо этого оставляет следы отпугивающей соли#Возвращается в исходное состояние при старте каждого этажа", "Малыш-солонка", "ru")
 
 --Sodom
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots a red flame opposite of his movement direction#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 3 directions#These flames can also apply same effect#!!! Effect can be applied on enemy only one time", "Sodom", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots a red flame opposite of his movement direction#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 3 directions#!!! Effect can be applied on enemy only one time", "Sodom", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#При смерти с эффектом враг выстреливает пламя в 8 направлениях#Это пламя может наложить этот же эффект#!!! Эффект можно наложить на врага только один раз", "Содом", "ru")
 
 -- Trinkets
@@ -74,7 +74,7 @@ EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "All inst
 EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "Игнорирует смертельный урон#Уничтожается после срабатывания эффекта", "Нюхательная соль", "ru")
 
 --Salt Rock
-EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "Entering new room has 10% chance for rock to become salt rock#Destroying salt rock spawns mini Edith statue that stomp enemies#If there are no enemies left, stomp randrom rock/poop", "Salt Rock", "en_us")
+EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "Rocks have a chance to emit a pool of salt creep upon entering an uncleared room.#Salt Rocks fire rock tears in all directions upon being destroyed", "Salt Rock", "en_us")
 EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "При входе в новую комнату 10% шанс камень может превратиться в соляной камень#Уничтожение соляного камня создает мини-статую Эдит, которая прыгает на врагов#Если врагов не осталось, прыгает на случайные камни/какашки", "Соляной камень", "ru")
 
 -- Cards/Runes/Pills

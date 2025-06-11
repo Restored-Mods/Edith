@@ -5,25 +5,25 @@
 		<Item Name="​Red Hood" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Blasting Boots" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="​Salty Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="​Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Shrapnel Bombs" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="shop">
-		<Item Name="​Lithium Salts" Weight="0.5" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Lithium Salts" Weight="0.5" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="​Salt Shaker" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="devil">
 		<Item Name="​Sodom" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="curse">
-		<Item Name="​Lithium Salts" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Lithium Salts" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Gorgon Mask" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="angel">
 	</Pool>
 	<Pool Name="secret">
 		<Item Name="​Red Hood" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="​Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="ultraSecret">
 		<Item Name="​Red Hood" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
@@ -37,19 +37,19 @@
 		<Item Name="​Red Hood" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Gorgon Mask" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="​Salty Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="​Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Shrapnel Bombs" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="greedShop">
 		<Item Name="Blasting Boots" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="​Lithium Salts" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Lithium Salts" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="​Salty Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="​Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="​Salt Shaker" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Shrapnel Bombs" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="greedCurse">
-		<Item Name="​Lithium Salts" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Lithium Salts" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Gorgon Mask" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="greedDevil">
@@ -59,11 +59,11 @@
 	</Pool>
 	<Pool Name="greedSecret">
 		<Item Name="​Red Hood" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="​Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="craneGame">
 		<Item Name="Blasting Boots" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="​Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="bombBum">
 		<Item Name="​Thunder Bombs" Weight="1" DecreaseBy="0.5" RemoveOn="0.1"/>
@@ -76,10 +76,10 @@
 	<Pool Name="woodenChest">
 	</Pool>
 	<Pool Name="demonBeggar">
-		<Item Name="​Lithium Salts" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Lithium Salts" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="babyShop">
 		<Item Name="​Salty Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
-		<Item Name="​Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
+		<Item Name="Salt Pawns" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 </ItemPools>

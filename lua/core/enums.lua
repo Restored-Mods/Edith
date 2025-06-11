@@ -65,8 +65,8 @@ Enums.Familiars =
 									SubType = Isaac.GetEntitySubTypeByName("Lot Baby")
 								},
 					SALT_PAWNS = {
-									Type = Isaac.GetEntityTypeByName("​Salt Pawns"),
-									Variant = Isaac.GetEntityVariantByName("​Salt Pawns"),
+									Type = Isaac.GetEntityTypeByName("Salt Pawns"),
+									Variant = Isaac.GetEntityVariantByName("Salt Pawns"),
 									SubType = 0
 								},
 				}
@@ -80,13 +80,13 @@ Enums.PlayerType =
 Enums.CollectibleType = 
 					{
 						--COLLECTIBLE_BREATH_MINTS = Isaac.GetItemIdByName("Breath Mints"),
-						COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("​Lithium Salts"),
+						COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("Lithium Salts"),
 						COLLECTIBLE_SODOM = Isaac.GetItemIdByName("​Sodom"),
 						COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),
 						COLLECTIBLE_THUNDER_BOMBS = Isaac.GetItemIdByName("​Thunder Bombs"),
 						COLLECTIBLE_LOT_BABY = Isaac.GetItemIdByName("Lot Baby"),
 						COLLECTIBLE_SALTY_BABY = Isaac.GetItemIdByName("​Salty Baby"),
-						COLLECTIBLE_SALT_PAWNS = Isaac.GetItemIdByName("​Salt Pawns"),
+						COLLECTIBLE_SALT_PAWNS = Isaac.GetItemIdByName("Salt Pawns"),
 						COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("​Salt Shaker"),					
 						COLLECTIBLE_GORGON_MASK = Isaac.GetItemIdByName("Gorgon Mask"),
 						COLLECTIBLE_RED_HOOD = Isaac.GetItemIdByName("​Red Hood"),
@@ -203,10 +203,10 @@ Enums.Achievements.CompletionMarks = {
 	CHUNK_OF_AMBER =  Isaac.GetAchievementIdByName("Chunk of Amber"),
 	THUNDER_BOMBS =  Isaac.GetAchievementIdByName("​Thunder Bombs"),
 	SMELLING_SALTS =  Isaac.GetAchievementIdByName("Smelling Salts"),
-	SALT_PAWNS =  Isaac.GetAchievementIdByName("​Salt Pawns"),
+	SALT_PAWNS =  Isaac.GetAchievementIdByName("Salt Pawns"),
 	GORGON_MASK =  Isaac.GetAchievementIdByName("Gorgon Mask"),
 	RED_HOOD =  Isaac.GetAchievementIdByName("​Red Hood"),
-	LITHIUM =  Isaac.GetAchievementIdByName("​Lithium Salts"),
+	LITHIUM =  Isaac.GetAchievementIdByName("Lithium Salts"),
 	SHRAPNEL_BOMBS = Isaac.GetAchievementIdByName("Shrapnel Bombs"),
 	SODOM =  Isaac.GetAchievementIdByName("​Sodom"),
 	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),

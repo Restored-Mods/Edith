@@ -1,11 +1,11 @@
 <items gfxroot="gfx/items/" deathanm2="gfx/death items.anm2" version="1">
 	<!-- Passive Items -->
-	<passive id="0" name="​Lithium Salts" achievement="​Lithium Salts" description="Numbed emotions" gfx="collectibles_002_lithium.png" quality="1" craftquality="1" cache="damage firedelay" tags="summonable"/>
+	<passive id="0" name="Lithium Salts" achievement="Lithium Salts" description="Numbed emotions" gfx="collectibles_002_lithium.png" quality="1" craftquality="1" cache="damage firedelay" tags="summonable"/>
 	<passive id="1" name="​Sodom" achievement="​Sodom" description="Don't look back" gfx="collectibles_003_sodom.png" quality="2" craftquality="2" tags="summonable offensive"/>
 	<passive id="2" name="Blasting Boots" achievement="Blasting Boots" description="Blast off! +5 Bombs" bombs="5" gfx="collectibles_004_blasting_boots.png" quality="3" craftquality="3" tags="offensive"/>
 	<passive id="3" name="​Thunder Bombs" achievement="​Thunder Bombs" description="Shocking blast + full charge" gfx="collectibles_005_thunder_bombs.png" quality="2" craftquality="3" tags="offensive"/>
 	<familiar id="4" name="​Salty Baby" achievement="​Salty Baby" description="Shaky friend" gfx="collectibles_007_salty_baby.png" quality="0" craftquality="0" tags="baby summonable monstermanual offensive"/>
-	<familiar id="5" name="​Salt Pawns" achievement="​Salt Pawns" description="Peasent Infantry" gfx="collectibles_008_salt_pawns.png" quality="1" craftquality="1" tags="baby summonable monstermanual offensive"/>
+	<familiar id="5" name="Salt Pawns" achievement="Salt Pawns" description="Peasent Infantry" gfx="collectibles_008_salt_pawns.png" quality="1" craftquality="1" tags="baby summonable monstermanual offensive"/>
     <passive id="6" name="​Red Hood" achievement="​Red Hood" description="Lycanthropy" gfx="collectibles_009_red_hood.png" quality="3" craftquality="3" tags="offensive"/>
     <passive id="9" name="Shrapnel Bombs" achievement="Shrapnel Bombs" description="Fragging blasts +5 bombs" bombs="5" gfx="collectibles_015_shrapnel_bombs.png" quality="2" craftquality="2" tags="offensive"/>
 
