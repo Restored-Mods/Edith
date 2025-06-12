@@ -175,12 +175,4 @@ for fn, tp in pairs(Wiki) do
 	end
 end
 
-function EdithRestored:UpdateEncyclopedia()
-	for fn, tp in pairs(Wiki) do
-		for k, v in pairs(tp) do
-			Encyclopedia["Update" .. fn](v)
-		end
-	end
-end
-
 EdithRestored.Enums.Wiki = Wiki
