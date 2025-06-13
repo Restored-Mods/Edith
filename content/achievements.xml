@@ -3,7 +3,7 @@
 	<!-- characters -->
 	<achievement name="Edith" text="" gfx="achievement_edith.png" />
 	<achievement name="Salt Rock" text="Edith" gfx="achievement_saltrock.png" />
-	<achievement name="Tainted Edith" text="" gfx="achievement_taintededith.png" />
+	<!-- <achievement name="Tainted Edith" text="" gfx="achievement_taintededith.png" /> -->
 	<!-- a side unlocks -->
 	<achievement name="​Red Hood" text="Edith Boss Rush" gfx="achievement_redhood.png" />
 	<achievement name="​Salty Baby" text="Edith Mom's Heart" gfx="achievement_saltybaby.png" />
