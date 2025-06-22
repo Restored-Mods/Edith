@@ -106,23 +106,27 @@ end
 	
 ---@param enemy Entity
 ---@param allEnemies boolean?
+---@param ignoreFires boolean?
+---@param ignoreDummy boolean?
 ---@return boolean
-function Helpers.IsEnemy(enemy, allEnemies)
+function Helpers.IsEnemy(enemy, allEnemies, ignoreFires, ignoreDummy)
 	allEnemies = allEnemies or false
+	ignoreFires = ignoreFires or false
+	ignoreDummy = ignoreDummy or false
 	return enemy and ((enemy:IsVulnerableEnemy() or allEnemies) and (enemy:IsActiveEnemy()
-	or enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4)
+	or enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 and not ignoreFires)
 	and enemy:IsEnemy()
-	and not EntityRef(enemy).IsFriendly or enemy.Type == EntityType.ENTITY_DUMMY)
+	and not EntityRef(enemy).IsFriendly or (enemy.Type == EntityType.ENTITY_DUMMY and not ignoreDummy))
 end
 
 ---@param allEnemies boolean | nil
 ---@param noBosses boolean | nil
 ---@return EntityNPC[]
-function Helpers.GetEnemies(allEnemies, noBosses)
+function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy)
 	local enemies = {}
 	for _,enemy in ipairs(Isaac.GetRoomEntities()) do
 		enemy = enemy:ToNPC()
-		if Helpers.IsEnemy(enemy, allEnemies) then
+		if Helpers.IsEnemy(enemy, allEnemies, ignoreFires, ignoreDummy) then
 			if not enemy:IsBoss() or (enemy:IsBoss() and not noBosses) then
 				--[[if enemy.Type == EntityType.ENTITY_ETERNALFLY then
 					enemy:Morph(EntityType.ENTITY_ATTACKFLY,0,0,-1)

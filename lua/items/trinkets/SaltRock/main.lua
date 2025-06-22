@@ -3,6 +3,7 @@ local SaltCreepVar = EdithRestored.Enums.Entities.SALT_CREEP.Variant
 local SaltCreepSubtype = EdithRestored.Enums.Entities.SALT_CREEP.SubType
 local SaltQuantity = 4
 local spawnDegree = 360 / SaltQuantity
+local Helpers = include("lua.helpers.Helpers")
 
 local function ChangeToEdithTear(tear)
 	tear:ChangeVariant(TearVariant.ROCK)
@@ -81,11 +82,20 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_SPAWN, SaltRock.Spawn
 
 ---@param grid GridEntity
 function SaltRock:UpdateRockSprite(grid)
-	if IsGridSaltRock(grid) and EdithRestored.Room():GetFrameCount() < 1 then
-		UpdateRock(grid)
+	if IsGridSaltRock(grid) then
+		if EdithRestored.Room():GetFrameCount() < 1 then
+			UpdateRock(grid)
+		end
+		if grid.State ~= 2 then
+			for _, ent in ipairs(Helpers.Filter(Helpers.GetEnemies(false, false, true, true), function(index, ent) return ent.Position:Distance(grid.Position) <= 20 end)) do
+				---@cast ent Entity
+				ent:TakeDamage(1, DamageFlag.DAMAGE_SPIKES | DamageFlag.DAMAGE_COUNTDOWN, EntityRef(nil), 5)
+				ent:AddKnockback(EntityRef(nil), (ent.Position - grid.Position):Resized(5), 5, false)
+			end
+		end
 	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_ROCK_UPDATE, SaltRock.UpdateRockSprite)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_ROCK_UPDATE, SaltRock.UpdateRockSprite, GridEntityType.GRID_ROCK)
 
 ---@param grid GridEntity
 function SaltRock:OnKillSaltRock(grid)
@@ -112,7 +122,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_GRID_ROCK_DESTROY, SaltRock.OnKil
 function SaltRock:SaltTimeout(salt)
     if salt.SubType ~= SaltCreepSubtype then return end
 	local data = EdithRestored:GetData(salt)
-    if data.GridParent and data.GridParent:ToRock() then
+    if data.GridParent and data.GridParent:ToRock() then		
 		if data.GridParent.State == 2 then
 			data.GridParent = nil
 			salt:SetTimeout(60)
