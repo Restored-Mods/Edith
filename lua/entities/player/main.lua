@@ -555,14 +555,7 @@ function Player:OnUpdatePlayer(player)
 		player:ChangePlayerType(EdithRestored.Enums.PlayerType.EDITH)
 		player:EvaluateItems()
 	end
-	local data = EdithRestored:GetData(player)
-	if data.PostLanding then
-		data.PostLanding = data.PostLanding - 1
-		if data.PostLanding <= 0 then
-			data.PostLanding = nil
-		end
-	end
-	
+	local data = EdithRestored:GetData(player)	
 	local dataP = EdithRestored:RunSave(player)
 	if not dataP then return end
 
@@ -651,13 +644,31 @@ function Player:OnUpdatePlayer(player)
 					end
 				end
 			end
-
+			if sprite:IsEventTriggered("EdithJumpFinish") and sprite:GetAnimation():match("EdithJump") and data.Landed then
+				local IFrames = data.PostLandingKill and 25 or 10
+				for _, callback in ipairs(Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_LANDING_IFRAMES)) do
+					local ret = callback.Function(callback.Mod, player, IFrames, data.BombStomp or false, data.PostLandingKill or false)
+					if type(ret) == "number" then
+						IFrames = Helpers.Round(ret, 0)
+					end
+				end
+				if EdithRestored.DebugMode then
+					if EdithRestored:GetDebugValue("UseIFrames") then
+						IFrames = EdithRestored:GetDebugValue("IFrames")
+					end
+				end
+				if IFrames > 0 then
+					player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, EdithRestored:GetDebugValue("ShowBoSEffect"), IFrames, true)
+				end
+				data.Landed = nil
+				data.PostLandingKill = nil
+			end
 			if sprite:GetAnimation() == "EdithJump" and not sprite:IsEventTriggered("EdithLanding")
 			or sprite:GetAnimation() == "EdithJumpQuick" then
 				if sprite:IsEventTriggered("EdithJumpStart") and JumpLib:CanJump(player) then
 					JumpLib:Jump(player, {
-						Height = 4,
-						Speed = 0.7,
+						Height = Helpers.GetJumpHeight(),
+						Speed = Helpers.GetJumpGravity(),
 						Flags = JumpLib.Flags.NO_HURT_PITFALL | JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS | JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING,
 						Tags = {"EdithJump"}
 					})
@@ -715,11 +726,12 @@ function Player:OnUpdatePlayer(player)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePlayer, 0)
 
+---@param jumpData JumpData
 function Player:Landing(player, jumpData, inPit)
 	if not inPit then
 		local data = EdithRestored:GetData(player)
-		data.PostLanding = 10
 		Helpers.Stomp(player)
+		data.Landed = true
 		for _, pickup in ipairs(Isaac.FindInRadius(player.Position, 30, EntityPartition.PICKUP)) do
 			--pickup.Velocity = Vector.Zero
 		end
@@ -742,7 +754,7 @@ function Player:Landing(player, jumpData, inPit)
 		and not player.CanFly then
 			data.BombStomp = nil
 			EdithJump(player, EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 0, false, false))
-		end	
+		end
 	end
 end
 EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_LAND, Player.Landing, {tag = "EdithJump", type = EntityType.ENTITY_PLAYER})
@@ -755,20 +767,33 @@ EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_LAND, Player.Landing, {tag = 
 ---@return boolean?
 function Player:DamageHandling(entity, amount, flags, source, cd)
 	if entity and entity:ToPlayer() and Helpers.IsPlayerEdith(entity:ToPlayer(), true, false) then
-		local sprite = entity:GetSprite()
 		local player = entity:ToPlayer()
 		local data = EdithRestored:GetData(player)
-		if sprite:GetAnimation():match("Edith")  then
-			if not (flags & DamageFlag.DAMAGE_INVINCIBLE > 0 or flags & DamageFlag.DAMAGE_RED_HEARTS > 0) then
-				return false
-			end
-		end
 		if flags & DamageFlag.DAMAGE_PITFALL > 0 then
 			data.EdithTargetMovementPosition = nil
 		end
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Player.DamageHandling, EntityType.ENTITY_PLAYER)
+
+
+---@param player EntityPlayer
+---@param amount number
+---@param flags DamageFlag | integer
+---@param source EntityRef
+---@param cd integer
+---@return boolean?
+function Player:DamageHandling2(player, amount, flags, source, cd)
+	if Helpers.IsPlayerEdith(player, true, false) then
+		local sprite = player:GetSprite()
+		if sprite:GetAnimation():match("Edith") and sprite:WasEventTriggered("EdithLanding") then
+			if not (flags & DamageFlag.DAMAGE_INVINCIBLE > 0 or flags & DamageFlag.DAMAGE_RED_HEARTS > 0) then
+				return false
+			end
+		end
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, Player.DamageHandling2)
 
 ---@param entity Entity
 ---@param amount number
@@ -781,9 +806,7 @@ function Player:IFAfterFromJump(entity, amount, flags, source, cd)
 		local player = source.Entity:ToPlayer()
 		---@cast player EntityPlayer
 		local data = EdithRestored:GetData(player)
-		if data.PostLanding then
-			player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, false, 45, true)
-		end
+		data.PostLandingKill = true
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Player.IFAfterFromJump)
@@ -831,6 +854,8 @@ function Player:NewRoom()
 		end
 		Helpers.ChangeSprite(player)
 		data.TargetJumpPos = nil
+		data.PostLandingKill = nil
+		data.Landed = nil
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.NewRoom)

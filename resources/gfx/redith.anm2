@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="23.05.2025 14:30:24" Version="246" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="23.06.2025 12:03:28" Version="250" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="characters\costumes\Character_001_Redith.png" Id="0"/>
@@ -39,6 +39,7 @@
 			<Event Name="Hit" Id="3"/>
 			<Event Name="EdithLanding" Id="4"/>
 			<Event Name="EdithJumpStart" Id="5"/>
+			<Event Name="EdithJumpFinish" Id="6"/>
 		</Events>
 	</Content>
 	<Animations DefaultAnimation="WalkDown">
@@ -2255,6 +2256,7 @@
 			<Triggers>
 				<Trigger EventId="5" AtFrame="5"/>
 				<Trigger EventId="4" AtFrame="16"/>
+				<Trigger EventId="6" AtFrame="28"/>
 			</Triggers>
 		</Animation>
 		<Animation Name="EdithTrapdoor" FrameNum="12" Loop="false">
@@ -2480,6 +2482,7 @@
 			<Triggers>
 				<Trigger EventId="5" AtFrame="4"/>
 				<Trigger EventId="4" AtFrame="15"/>
+				<Trigger EventId="6" AtFrame="19"/>
 			</Triggers>
 		</Animation>
 	</Animations>

@@ -17,8 +17,23 @@ local runData = {
 
 EdithRestored.DebugMode = EdithRestored.DebugMode or false
 local DebugModeValues = {
-	StompRadius = 50,
-	InstantJumpCharge = false
+	StompRadius = 65,
+	InstantJumpCharge = false,
+	JumpHeight = 4,
+	Gravity = 0.7,
+	ShowBoSEffect = false,
+	IFrames = 30,
+	UseIFrames = false,
+}
+
+local DebugModeValuesDefault = {
+	StompRadius = 65,
+	InstantJumpCharge = false,
+	JumpHeight = 4,
+	Gravity = 0.7,
+	ShowBoSEffect = false,
+	IFrames = 30,
+	UseIFrames = false,
 }
 
 EdithRestored.SaveManager.Utility.AddDefaultRunData(EdithRestored.SaveManager.DefaultSaveKeys.GLOBAL, runData)
@@ -73,7 +88,7 @@ EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, CallbackPr
 end)
 
 ---@param key string
----@return integer?
+---@return integer | boolean?
 function EdithRestored:GetDebugValue(key)
 	if EdithRestored.DebugMode then
 		if DebugModeValues[key] ~= nil then
@@ -85,9 +100,24 @@ function EdithRestored:GetDebugValue(key)
 end
 
 ---@param key string
----@return integer?
+---@param value number | boolean
 function EdithRestored:SetDebugValue(key, value)
 	if EdithRestored.DebugMode then
-		DebugModeValues[key] = value
+		if DebugModeValues[key] ~= nil then
+			DebugModeValues[key] = value
+		else
+			EdithRestored:Log("Value "..key.." doesn't exist.")
+		end
+	end
+end
+
+---@param key string
+function EdithRestored:SetDefaultDebugValue(key)
+	if EdithRestored.DebugMode then
+		if DebugModeValues[key] ~= nil then
+			DebugModeValues[key] = DebugModeValuesDefault[key]
+		else
+			EdithRestored:Log("Value "..key.." doesn't exist.")
+		end
 	end
 end

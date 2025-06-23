@@ -242,7 +242,75 @@ local function UpdateDebugMode()
 
 		ImGui.AddSliderInteger("edithWindowDebugModeSettings", "edithDebugModeStompRadius", "Stomp radius", function(newVal)
 			EdithRestored:SetDebugValue("StompRadius", newVal)
-		end, 50, 30, 100)
+		end, EdithRestored:GetDebugValue("StompRadius"), 30, 100)
+
+		if ImGui.ElementExists("edithDebugModeStompRadiusButtonReset") then
+			ImGui.RemoveElement("edithDebugModeStompRadiusButtonReset")
+		end
+
+		ImGui.AddButton("edithWindowDebugModeSettings", "edithDebugModeStompRadiusButtonReset", "Reset", function(newVal)
+			EdithRestored:SetDefaultDebugValue("StompRadius")
+			ImGui.UpdateData("edithDebugModeStompRadius", ImGuiData.Value, EdithRestored:GetDebugValue("StompRadius"))
+		end, false)
+
+		if ImGui.ElementExists("edithDebugModeJumpHeight") then
+			ImGui.RemoveElement("edithDebugModeJumpHeight")
+		end
+
+		ImGui.AddSliderFloat("edithWindowDebugModeSettings", "edithDebugModeJumpHeight", "Jump Height", function(newVal)
+			EdithRestored:SetDebugValue("JumpHeight", newVal)
+		end, EdithRestored:GetDebugValue("JumpHeight"), 1, 10, "%.2f")
+
+		if ImGui.ElementExists("edithDebugModeJumpHeightButtonReset") then
+			ImGui.RemoveElement("edithDebugModeJumpHeightButtonReset")
+		end
+
+		ImGui.AddButton("edithWindowDebugModeSettings", "edithDebugModeJumpHeightButtonReset", "Reset", function(newVal)
+			EdithRestored:SetDefaultDebugValue("JumpHeight")
+			ImGui.UpdateData("edithDebugModeJumpHeight", ImGuiData.Value, EdithRestored:GetDebugValue("JumpHeight"))
+		end, false)
+
+		if ImGui.ElementExists("edithDebugModeJumpGravity") then
+			ImGui.RemoveElement("edithDebugModeJumpGravity")
+		end
+
+		ImGui.AddSliderFloat("edithWindowDebugModeSettings", "edithDebugModeJumpGravity", "Jump Gravity", function(newVal)
+			EdithRestored:SetDebugValue("Gravity", newVal)
+		end, EdithRestored:GetDebugValue("Gravity"), 0.1, 5, "%.2f")
+
+		if ImGui.ElementExists("edithDebugModeJumpGravityButtonReset") then
+			ImGui.RemoveElement("edithDebugModeJumpGravityButtonReset")
+		end
+
+		ImGui.AddButton("edithWindowDebugModeSettings", "edithDebugModeJumpGravityButtonReset", "Reset", function(newVal)
+			EdithRestored:SetDefaultDebugValue("Gravity")
+			ImGui.UpdateData("edithDebugModeJumpGravity", ImGuiData.Value, EdithRestored:GetDebugValue("Gravity"))
+		end, false)
+
+		if ImGui.ElementExists("edithDebugModeJumpLandingIFrames") then
+			ImGui.RemoveElement("edithDebugModeJumpLandingIFrames")
+		end
+
+		ImGui.AddSliderInteger("edithWindowDebugModeSettings", "edithDebugModeJumpLandingIFrames", "Post-landing i-frames", function(newVal)
+			EdithRestored:SetDebugValue("IFrames", newVal)
+		end, EdithRestored:GetDebugValue("IFrames"), 1, 300)
+
+		if ImGui.ElementExists("edithDebugModeJumpLandingIFramesButtonReset") then
+			ImGui.RemoveElement("edithDebugModeJumpLandingIFramesButtonReset")
+		end
+
+		ImGui.AddButton("edithWindowDebugModeSettings", "edithDebugModeJumpLandingIFramesButtonReset", "Reset", function(newVal)
+			EdithRestored:SetDefaultDebugValue("IFrames")
+			ImGui.UpdateData("edithDebugModeJumpLandingIFrames", ImGuiData.Value, EdithRestored:GetDebugValue("IFrames"))
+		end, false)
+
+		if ImGui.ElementExists("edithDebugModeJumpLandingIFramesCheck") then
+			ImGui.RemoveElement("edithDebugModeJumpLandingIFramesCheck")
+		end
+
+		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeJumpLandingIFramesCheck", "Use debug i-frames", function(newVal)
+			EdithRestored:SetDebugValue("UseIFrames", newVal)
+		end, EdithRestored:GetDebugValue("UseIFrames"))
 
 		if ImGui.ElementExists("edithDebugModeInstaJumpCharge") then
 			ImGui.RemoveElement("edithDebugModeInstaJumpCharge")
@@ -250,10 +318,22 @@ local function UpdateDebugMode()
 
 		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeInstaJumpCharge", "Instant Jump Charge", function(newVal)
 			EdithRestored:SetDebugValue("InstantJumpCharge", newVal)
-		end, false)
+		end, EdithRestored:GetDebugValue("InstantJumpCharge"))
+
+		if ImGui.ElementExists("edithDebugModeShowBoSEffect") then
+			ImGui.RemoveElement("edithDebugModeShowBoSEffect")
+		end
+
+		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeShowBoSEffect", "Show Boof of Shadows I-Frames on landing", function(newVal)
+			EdithRestored:SetDebugValue("ShowBoSEffect", newVal)
+		end, EdithRestored:GetDebugValue("ShowBoSEffect"))
 
 		ImGui.UpdateData("edithDebugModeStompRadius", ImGuiData.Value, EdithRestored:GetDebugValue("StompRadius"))
 		ImGui.UpdateData("edithDebugModeInstaJumpCharge", ImGuiData.Value, EdithRestored:GetDebugValue("InstantJumpCharge"))
+		ImGui.UpdateData("edithDebugModeJumpHeight", ImGuiData.Value, EdithRestored:GetDebugValue("JumpHeight"))
+		ImGui.UpdateData("edithDebugModeJumpGravity", ImGuiData.Value, EdithRestored:GetDebugValue("Gravity"))
+		ImGui.UpdateData("edithDebugModeShowBoSEffect", ImGuiData.Value, EdithRestored:GetDebugValue("ShowBoSEffect"))
+		ImGui.SetVisible("edithWindowDebugModeSettings", true)
 	else
 		if ImGui.ElementExists("edithDebugModeSettings") then
 			ImGui.RemoveElement("edithDebugModeSettings")

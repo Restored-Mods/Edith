@@ -233,16 +233,17 @@ function SoulOfEdith:NoStatueDamage(entity, damage, flags, source, cd)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, SoulOfEdith.NoStatueDamage, EntityType.ENTITY_PLAYER)
 
+---@param player EntityPlayer
 function SoulOfEdith:Landing(player, jumpData, inPit)
 	if not inPit then
 		local data = EdithRestored:GetData(player)
 		local statueData = EdithRestored:GetData(data.Statue)
 		if statueData.StoneJumps then
 			statueData.StoneJumps = math.max(statueData.StoneJumps - 1, 0)
-			data.PostLanding = 10
 			Helpers.Stomp(player, statueData.StoneJumps == 0)
 			if statueData.StoneJumps == 0 then
 				SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
+				player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, false, 45, true)
 			end
 			for _, pickup in ipairs(Isaac.FindInRadius(player.Position, 30, EntityPartition.PICKUP)) do
 				pickup.Velocity = Vector.Zero
@@ -310,8 +311,8 @@ function SoulOfEdith:StatueJumping(statue)
 		if sprite:GetAnimation() == "EdithJump" and sprite:GetFrame() < 17 then
 			if sprite:GetFrame() == 5 then
 				JumpLib:Jump(player, {
-					Height = 4,
-					Speed = 0.7,
+					Height = Helpers.GetJumpHeight(),
+					Speed = Helpers.GetJumpGravity(),
 					Flags = JumpLib.Flags.NO_PITFALL
 						| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
 						| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING,

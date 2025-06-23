@@ -787,8 +787,19 @@ function Helpers.HasBombs(player)
 	return player:GetNumBombs() > 0 or player:HasGoldenBomb()
 end
 
-function Helpers.GetStompRadius()
-	return EdithRestored.DebugMode and EdithRestored:GetDebugValue("StompRadius") or 65
+function Helpers.GetStompRadius(default)
+	default = type(default) == "boolean" and default or false
+	return (EdithRestored.DebugMode and not default) and EdithRestored:GetDebugValue("StompRadius") or 65
+end
+
+function Helpers.GetJumpHeight(default)
+	default = type(default) == "boolean" and default or false
+	return (EdithRestored.DebugMode and not default) and EdithRestored:GetDebugValue("JumpHeight") or 4
+end
+
+function Helpers.GetJumpGravity(default)
+	default = type(default) == "boolean" and default or false
+	return (EdithRestored.DebugMode and not default) and EdithRestored:GetDebugValue("Gravity") or 0.7
 end
 
 ---@param player EntityPlayer
