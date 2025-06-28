@@ -89,7 +89,7 @@ function SaltRock:UpdateRockSprite(grid)
 		if grid.State ~= 2 then
 			for _, ent in ipairs(Helpers.Filter(Helpers.GetEnemies(false, false, true, true), function(index, ent) return ent.Position:Distance(grid.Position) <= 20 end)) do
 				---@cast ent Entity
-				ent:TakeDamage(1, DamageFlag.DAMAGE_SPIKES | DamageFlag.DAMAGE_COUNTDOWN, EntityRef(nil), 5)
+				ent:TakeDamage(20, DamageFlag.DAMAGE_SPIKES | DamageFlag.DAMAGE_COUNTDOWN, EntityRef(nil), 5)
 				ent:AddKnockback(EntityRef(nil), (ent.Position - grid.Position):Resized(5), 5, false)
 			end
 		end

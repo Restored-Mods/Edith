@@ -12,7 +12,7 @@
 	<!-- Active Items -->
 	<active id="7" name="​Salt Shaker" achievement="​Salt Shaker" description="Keeps evil away" gfx="collectibles_010_salt_shaker.png" shopprice="10" quality="1" craftquality="1" maxcharges="2" tags="offensive"/>
 	<!--active id="99" cache="speed damage" name="The Chisel" description="Flesh scraper" gfx="collectibles_014_thechisel.png" chargetype="timed" maxcharges="90" quality="1" /-->
-	<active id="8" name="Gorgon Mask" gfx="collectibles_011_gorgonmask.png" achievement="Gorgon Mask" description="Stone faced glare" shopprice="10" quality="2" craftquality="2" maxcharges="0" tags="offensive" />
+	<active id="8" name="Gorgon Mask" gfx="collectibles_011_gorgonmask.png" achievement="Gorgon Mask" description="Stone faced glare" shopprice="10" quality="2" craftquality="2" maxcharges="100" tags="offensive" chargetype="timed" />
 	
 	<!-- Trinkets -->
 	<!-- <trinket id="0" name="Pepper Grinder" description="Achoo!" gfx="pepper_grinder.png" /> -->
