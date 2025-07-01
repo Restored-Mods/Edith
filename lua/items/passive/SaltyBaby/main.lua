@@ -1,5 +1,4 @@
 local SaltyBaby = {}
-local Helpers = include("lua.helpers.Helpers")
 
 local saltyBabyDesc = Isaac.GetItemConfig():GetCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY)
 
@@ -17,12 +16,19 @@ local function ChangeToEdithTear(tear)
 end
 
 local baseRange = 6.5
-local baseHeight = -23.45	
+local baseHeight = -23.45
 local maxBlocks = 6
 
 local SaltCreepVar = EdithRestored.Enums.Entities.SALT_CREEP.Variant
 local SaltCreepSubtype = EdithRestored.Enums.Entities.SALT_CREEP.SubType
 local SaltyBabyVariant = EdithRestored.Enums.Familiars.SALTY_BABY.Variant
+
+---@param familiar EntityFamiliar
+---@param bffsBuff number
+---@return boolean
+local function SaltyBabyShattered(familiar, bffsBuff)
+    return familiar.State >= maxBlocks + bffsBuff
+end
 
 ---@param familiar EntityFamiliar
 local function ShootSaltyBabyTear(familiar, minTears, maxTears)
@@ -53,6 +59,8 @@ end
 ---@param familiar EntityFamiliar
 function SaltyBaby:OnSaltyBabyInit(familiar)
     familiar:AddToFollowers()
+    familiar.FireCooldown = familiar:GetDropRNG():RandomInt(150, 210)
+    familiar.State = 0
 end
 EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, SaltyBaby.OnSaltyBabyInit, SaltyBabyVariant)
 
@@ -61,28 +69,27 @@ function SaltyBaby:OnSaltyBabyUpdate(familiar)
     familiar:FollowParent()
 
     local colCapsule = familiar:GetCollisionCapsule()
-    local famData = EdithRestored:GetData(familiar)
     local sprite = familiar:GetSprite()
 
-    famData.CurrentBlocks = famData.CurrentBlocks or 0
-    famData.IsShattered = famData.IsShattered or false
     local bffsBuff = 0
+    local hasBffs = false
     if familiar.Player then
-        if familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) then
+        hasBffs = familiar.Player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS)
+        if hasBffs then
             bffsBuff = 2
         end
     end
 
     for _, proj in ipairs(Isaac.FindInCapsule(colCapsule, EntityPartition.BULLET)) do
-        if not famData.IsShattered then 
+        if not SaltyBabyShattered(familiar, bffsBuff) then 
             ShootSaltyBabyTear(familiar, 3, 6)
             proj:Die()
-            famData.CurrentBlocks = famData.CurrentBlocks + 1
+            familiar.State  = familiar.State  + 1
             
             sprite:Play("FloatChargedDown", false)
 
-            if famData.CurrentBlocks >= maxBlocks + bffsBuff then
-                famData.IsShattered = true
+            if SaltyBabyShattered(familiar, bffsBuff) then
+                familiar.State = familiar.State * 2
                 SFXManager():Play(SoundEffect.SOUND_GLASS_BREAK)
                 sprite:Play("BrokenDown", true)
             end
@@ -95,9 +102,17 @@ function SaltyBaby:OnSaltyBabyUpdate(familiar)
         end
     end
 
-    if famData.IsShattered then
-        if familiar.FrameCount % 10 == 0 then
-            Isaac.Spawn(EntityType.ENTITY_EFFECT, SaltCreepVar, SaltCreepSubtype, familiar.Position, Vector.Zero, familiar):ToEffect() 
+    if SaltyBabyShattered(familiar, bffsBuff) then
+        if familiar.FrameCount % 6 == 0 then
+            local saltcreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, SaltCreepVar, SaltCreepSubtype, familiar.Position, Vector.Zero, familiar):ToEffect()
+            if hasBffs then
+                saltcreep.Scale = saltcreep.Scale * 1.2
+            end
+        end
+        familiar.FireCooldown = familiar.FireCooldown - 1
+        if familiar.FireCooldown <= 0 then
+            ShootSaltyBabyTear(familiar, 3, 6)
+            familiar.FireCooldown = familiar:GetDropRNG():RandomInt(150, 210)
         end
     end
 end
@@ -109,11 +124,10 @@ function SaltyBaby:RestoreSaltyBabyState()
     for _, saltybaby in ipairs(saltyBabies) do
         local sprite = saltybaby:GetSprite()
 
-        local famData = EdithRestored:GetData(saltybaby)
-        famData.IsShattered = false
-        famData.CurrentBlocks = 0
+        saltybaby:ToFamiliar().State = 0
 
         sprite:Play("FloatDown", true)
+        saltybaby:ToFamiliar().FireCooldown = saltybaby:GetDropRNG():RandomInt(150, 210)
     end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, SaltyBaby.RestoreSaltyBabyState)
@@ -132,7 +146,13 @@ function EdithRestored:OnSaltyBabyTearDeath(tear)
 
     local salt = Isaac.Spawn(EntityType.ENTITY_EFFECT, SaltCreepVar, SaltCreepSubtype, tear.Position, Vector.Zero, tear):ToEffect()
     if not salt then return end
-
-    salt:SetTimeout(30)
+    local timeoutBuff = 0
+    if tearParent:ToFamiliar().Player then
+        local player = tearParent:ToFamiliar().Player
+        if player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) then
+            salt.Scale = salt.Scale * 1.2
+        end
+    end
+    salt:SetTimeout(salt.Scale > 1 and 60 or 30)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_TEAR_DEATH, EdithRestored.OnSaltyBabyTearDeath)
