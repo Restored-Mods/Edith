@@ -144,7 +144,6 @@ local Wiki = {
 					{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
 					{ str = "PHD - no negative effects when using Lithium pills." },
 					{ str = "False PHD:" },
-					{ str = "- no negative effects when using Lithium pills" },
 					{ str = "- -0.05 extra damage per use." },
 					{ str = "- -0.01 extratear rate per use." },
 					{ str = "- +5 extra frames of invincibility per use when taking damage." },
@@ -268,12 +267,14 @@ local Wiki = {
 					{
 						str = "After blocking 6 enemy tears, loses the ability to block shots and leaves a trail of fearing salt creep instead.",
 					},
+					{ str = "In broken state shoots projectiles every 5-7 seconds." },
 					{ str = "Returns to its original state at the start of every floor." },
 				},
 				{ -- Synergies
 					{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
-					{ str = "BFFS! - slaty rock projectiles deal x1.25 more damage and needs 8 hits to break." },
+					{ str = "BFFS! - slaty rock projectiles deal x1.25 more damage." },
 					{ str = "BFFS! - can block 8 enemy tears." },
+					{ str = "BFFS! - salt creep is larger." },
 				},
 				{ -- Trivia
 					{ str = "Trivia", fsize = 2, clr = 3, halign = 0 },
@@ -343,7 +344,7 @@ local Wiki = {
 			WikiDesc = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
-					{ str = "Ignores fatal damage after whitch trinket is destroyed." },
+					{ str = "Ignores fatal damage after which trinket is destroyed." },
 				},
 			},
 		},
