@@ -146,7 +146,6 @@ function EdithRestored:OnSaltyBabyTearDeath(tear)
 
     local salt = Isaac.Spawn(EntityType.ENTITY_EFFECT, SaltCreepVar, SaltCreepSubtype, tear.Position, Vector.Zero, tear):ToEffect()
     if not salt then return end
-    local timeoutBuff = 0
     if tearParent:ToFamiliar().Player then
         local player = tearParent:ToFamiliar().Player
         if player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) then

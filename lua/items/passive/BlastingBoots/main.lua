@@ -2,6 +2,7 @@ local BlastBoots = {}
 local sfx = SFXManager()
 local timerColor = Color(1, 1, 1, 1, 0.5)
 local BlastBootsID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS
+local Helpers = EdithRestored.Helpers
 
 local BootsJumpInfo = {
     Height = 13,
@@ -45,6 +46,23 @@ function BlastBoots:AntiSoftlock(player)
     JumpLib:Jump(player, BootsJumpInfo)
 
 ---@diagnostic disable-next-line: param-type-mismatch
-    EdithRestored.Game:BombExplosionEffects(player.Position, 0, 0, Color.Default, player, 1, false, false, 0)
+    local explosion = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BOMB_EXPLOSION, 0, player.Position, Vector.Zero, nil):ToEffect()
+    explosion.SpriteScale = Vector.One:Resized(player.Size) / 20
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, BlastBoots.AntiSoftlock)
+
+---@param jumpData JumpData
+function BlastBoots:Landing(player, jumpData, inPit)
+	if not inPit then
+		Helpers.Stomp(player, false, false)
+
+		for _, v in pairs(Isaac.FindInRadius(player.Position, 55, EntityPartition.BULLET)) do
+			local projectile = v:ToProjectile() ---@cast projectile EntityProjectile
+			local angle = ((player.Position - projectile.Position) * -1):GetAngleDegrees()
+			projectile.Velocity = Vector.FromAngle(angle):Resized(10)
+			projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
+			projectile:AddProjectileFlags(ProjectileFlags.HIT_ENEMIES)
+		end
+	end
+end
+EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_LAND, BlastBoots.Landing, {tag = "BlastingBootsJump", type = EntityType.ENTITY_PLAYER})

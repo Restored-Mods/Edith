@@ -804,7 +804,7 @@ end
 
 ---@param player EntityPlayer
 ---@param force boolean
-function Helpers.Stomp(player, force)
+function Helpers.Stomp(player, force, doBombStomp)
 	local data = EdithRestored:GetData(player)
 	local room = EdithRestored.Room()
 	local bdType = room:GetBackdropType()
@@ -817,22 +817,28 @@ function Helpers.Stomp(player, force)
 	local knockbackFormula = 15 * ((Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)) and 2 or 1)
 
 	-- yeah the en of that stuff
+
 	local bombs = player:GetNumBombs()
-	if data.BombStomp ~= nil or force then
-		if Helpers.HasBombs(player) or force then
-		-- Check if edith has a golden bomb cause well using a golden bomb doesn't substract your bomb count
-			if not player:HasGoldenBomb() and not force then
-				player:AddBombs(-1)
-			end
-			bombDamage = 100
-			if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then -- Mr. Mega
-				stompDamage = stompDamage * 1.15
-				bombDamage = 185
-				radius = radius * 1.3
+	if doBombStomp ~= false then
+		if data.BombStomp ~= nil or force then
+			if Helpers.HasBombs(player) or force then
+			-- Check if edith has a golden bomb cause well using a golden bomb doesn't substract your bomb count
+				if not player:HasGoldenBomb() and not force then
+					player:AddBombs(-1)
+				end
+				bombDamage = 100
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then -- Mr. Mega
+					stompDamage = stompDamage * 1.15
+					bombDamage = 185
+					radius = radius * 1.3
+				end
 			end
 		end
+		if doBombStomp == nil then
+			doBombStomp = force or data.BombStomp
+		end
 	end
-	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player, force or data.BombStomp, bombs > 0 or force)
+	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player, doBombStomp, bombs > 0 or force)
 	
 	EdithRestored.Game:ShakeScreen(10)
 	
