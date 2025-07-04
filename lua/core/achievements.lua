@@ -17,6 +17,23 @@ EdithRestored:AddCallback(ModCallbacks.MC_PRE_RENDER_CUSTOM_CHARACTER_MENU, func
 	end
 end)
 
+local function UnlockEdith(doUnlock)
+	if doUnlock then
+		local pgd = Isaac.GetPersistentGameData()
+		if pgd:IsBossKilled(BossType.BEAST) and not pgd:Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) then
+			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH)
+		end
+	end
+end
+
+EdithRestored:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, function(_, slot, selected, raw)
+	UnlockEdith(selected)
+end)
+
+EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function(_, load)
+	UnlockEdith(true)
+end)
+
 for challenge, achievement in pairs(EdithRestored.Enums.Challenges) do
 	EdithRestored:AddCallback(ModCallbacks.MC_POST_CHALLENGE_DONE, function(_ , id)	
 		Helpers.UnlockAchievement(achievement)

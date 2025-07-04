@@ -1,5 +1,4 @@
 local Helpers = include("lua.helpers.Helpers")
-include("lua.entities.player.unlock")
 
 if CustomHealthAPI then
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithRestored.Enums.PlayerType.EDITH] = true
@@ -652,13 +651,15 @@ function Player:OnUpdatePlayer(player)
 						IFrames = Helpers.Round(ret, 0)
 					end
 				end
+				local showBOS = false
 				if EdithRestored.DebugMode then
 					if EdithRestored:GetDebugValue("UseIFrames") then
 						IFrames = EdithRestored:GetDebugValue("IFrames")
 					end
+					showBOS = EdithRestored:GetDebugValue("ShowBoSEffect")
 				end
 				if IFrames > 0 then
-					player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, EdithRestored:GetDebugValue("ShowBoSEffect"), IFrames, true)
+					player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, showBOS, IFrames, true)
 				end
 				data.Landed = nil
 				data.PostLandingKill = nil

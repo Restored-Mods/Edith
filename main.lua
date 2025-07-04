@@ -14,7 +14,7 @@ include("lua.core.saving_system")
 --core
 include("lua.core.enums")
 include("lua.core.globals")
-require("lua.core.achievements")
+include("lua.core.achievements")
 include("lua.core.dss.deadseascrolls")
 include("lua.core.dss.imgui")
 include("lua.core.BlockDisabledItems")
