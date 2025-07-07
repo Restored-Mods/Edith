@@ -28,7 +28,7 @@ function BlastBoots:AntiSoftlock(player)
 
     playerData.Antisoftlocktimer = playerData.Antisoftlocktimer or 150
 
-    if not (movDir == Direction.NO_DIRECTION and not JumpLib:GetData(player).Jumping) then
+    if not (movDir == Direction.NO_DIRECTION and not JumpLib:GetData(player).Jumping and not playerData.EdithTargetMovementPosition) then
         playerData.Antisoftlocktimer = 150
         return
     end
