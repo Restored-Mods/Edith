@@ -803,7 +803,8 @@ function Helpers.GetJumpGravity(default)
 end
 
 ---@param player EntityPlayer
----@param force boolean
+---@param force boolean?
+---@param doBombStomp boolean?
 function Helpers.Stomp(player, force, doBombStomp)
 	local data = EdithRestored:GetData(player)
 	local room = EdithRestored.Room()
