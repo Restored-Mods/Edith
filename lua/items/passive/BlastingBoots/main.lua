@@ -51,7 +51,9 @@ function BlastBoots:AntiSoftlock(player)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, BlastBoots.AntiSoftlock)
 
+---@param player EntityPlayer
 ---@param jumpData JumpData
+---@param inPit boolean
 function BlastBoots:Landing(player, jumpData, inPit)
 	if not inPit then
 		Helpers.Stomp(player, false, false)
@@ -66,3 +68,15 @@ function BlastBoots:Landing(player, jumpData, inPit)
 	end
 end
 EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_LAND, BlastBoots.Landing, {tag = "BlastingBootsJump", type = EntityType.ENTITY_PLAYER})
+
+---@param player EntityPlayer
+---@param jumpData JumpData
+function BlastBoots:EdithMidAir(player, jumpData)
+	if Helpers.CantMove(player) and player.ControlsEnabled then
+        local vec = Helpers.GetMovementActionVector(player)
+        if vec:Length() > 0 then
+            player.Velocity = Helpers.Lerp(player.Velocity, vec:Resized(8*player.MoveSpeed), 0.2)
+        end
+    end
+end
+EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_UPDATE_30, BlastBoots.EdithMidAir, {tag = "BlastingBootsJump", type = EntityType.ENTITY_PLAYER, player = EdithRestored.Enums.PlayerType.EDITH})

@@ -271,6 +271,17 @@ function Helpers.BatteryChargeMult(player)
 	return player:HasCollectible(CollectibleType.COLLECTIBLE_BATTERY) and 2 or 1
 end
 
+---@param player EntityPlayer
+---@return Vector
+function Helpers.GetMovementActionVector(player)
+	local down = Input.GetActionValue(ButtonAction.ACTION_DOWN, player.ControllerIndex)
+	local up = Input.GetActionValue(ButtonAction.ACTION_UP, player.ControllerIndex)
+	local left = Input.GetActionValue(ButtonAction.ACTION_LEFT, player.ControllerIndex)
+	local right = Input.GetActionValue(ButtonAction.ACTION_RIGHT, player.ControllerIndex)
+
+	return Vector(right - left, down - up):Normalized()
+end
+
 function Helpers.GetUnchargedSlot(player,slot)
 	local charge = Helpers.GetCharge(player, slot)
 	local battery = Helpers.BatteryChargeMult(player)

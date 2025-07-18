@@ -1243,3 +1243,10 @@ function Player:OnStompBloodBombs(player)
 	end
 end
 EdithRestored:AddPriorityCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, CallbackPriority.LATE, Player.OnStompBloodBombs, CollectibleType.COLLECTIBLE_BLOOD_BOMBS)
+
+---@param player EntityPlayer
+---@param config PassedJumpConfig
+function Player:PreJump(player, config)
+	EdithRestored:GetData(player).EdithTargetMovementPosition = nil
+end
+EdithRestored:AddCallback(JumpLib.Callbacks.PRE_ENTITY_JUMP, Player.PreJump, {type = EntityType.ENTITY_PLAYER, player = EdithRestored.Enums.PlayerType.EDITH})
