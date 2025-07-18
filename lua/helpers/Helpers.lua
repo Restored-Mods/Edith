@@ -754,8 +754,11 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 		end
 				
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
-			for _, enemies in pairs(enemiesInRadius) do
-				EdithRestored.Game:BombExplosionEffects(enemies.Position, bombDamage, 0, Color.Default, player, 0.5, true, player, 0)
+			for i = 1, TSIL.Random.GetRandomInt(4,5) do
+				Isaac.CreateTimer(function()
+					local explosionPosition = Vector.FromAngle(TSIL.Random.GetRandomInt(1, 360)):Resized(TSIL.Random.GetRandomFloat(0.1, radius / 2))
+					EdithRestored.Game:BombExplosionEffects(player.Position + explosionPosition, bombDamage, player:GetBombFlags(), Color.Default, player, 0.5, true, false)
+				end, TSIL.Random.GetRandomInt(5, 10), 1, false)
 			end
 		end
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_GHOST_BOMBS) then

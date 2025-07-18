@@ -324,7 +324,7 @@ local function UpdateDebugMode()
 			ImGui.RemoveElement("edithDebugModeShowBoSEffect")
 		end
 
-		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeShowBoSEffect", "Show Boof of Shadows I-Frames on landing", function(newVal)
+		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeShowBoSEffect", "Show Book of Shadows I-Frames on landing", function(newVal)
 			EdithRestored:SetDebugValue("ShowBoSEffect", newVal)
 		end, EdithRestored:GetDebugValue("ShowBoSEffect"))
 
