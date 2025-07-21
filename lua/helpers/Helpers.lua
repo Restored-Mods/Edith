@@ -700,6 +700,9 @@ function Helpers.UnlockAchievement(achievement, force) -- from Community Remix
 	end
 end
 
+local function GetBombDamage(player)
+	return player:GetNumGigaBombs() > 0 and 300 or (player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) and 185 or 100)
+end
 
 ---@param radius number
 ---@param damage number
@@ -730,13 +733,13 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 	local bombEffectTriggered = bombDamage > 0
 
 	if not bombEffectTriggered and doBombStomp then
-		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT)
+		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION)
 		for _,callback in ipairs(callbacks) do
 			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
 				local ret = callback.Function(callback.Mod, player)
 				if ret == true then
 					bombEffectTriggered = true
-					bombDamage = player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) and 185 or 100
+					bombDamage = GetBombDamage(player)
 					break
 				end
 			end
@@ -745,11 +748,23 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 
 	if bombEffectTriggered then
 
+		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
+		for _,callback in ipairs(callbacks) do
+			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
+				local ret = callback.Function(callback.Mod, player, bombDamage, radius, hasBombs)
+				if type(ret) == "table" then
+					bombDamage = ret.BombDamage or bombDamage
+					radius = ret.Radius or radius
+				end
+			end
+		end
+
 		if player:HasTrinket(TrinketType.TRINKET_SHORT_FUSE) then
 			bombDamage = bombDamage * 1.15
 		end
 
 		EdithRestored.Game:BombExplosionEffects(player.Position, bombDamage, player:GetBombFlags(), Color.Default, player)
+		
 		if player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) > 0 then
 			for i = 1, player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) do
 				local rng = player:GetTrinketRNG(TrinketType.TRINKET_RING_CAP)
@@ -787,14 +802,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 				Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, 0, player.Position, Vector.Zero, player)
 			end
 		end
-		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
-		for _,callback in ipairs(callbacks) do
-			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
-				callback.Function(callback.Mod, player, bombDamage, radius, hasBombs)
-			end
-		end
 	end
-
 end
 
 function Helpers.HasBombs(player)
@@ -817,6 +825,42 @@ function Helpers.GetJumpGravity(default)
 end
 
 ---@param player EntityPlayer
+function Helpers.SpawnEdithTarget(player)
+	if Helpers.GetEdithTarget(player) == nil and Helpers.IsPlayerEdith(player, true, false) then
+		local data = EdithRestored:GetData(player)
+		local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
+		data.EdithJumpTarget = Isaac.Spawn(1000, EdithRestored.Enums.Entities.EDITH_TARGET.Variant, 0, player.Position, Vector(0, 0), player):ToEffect()
+		data.EdithJumpTarget.Parent = player
+		data.EdithJumpTarget.SpawnerEntity = player
+		data.EdithJumpTarget.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
+		data.EdithJumpTarget:GetSprite():Play("Blink", true)
+		
+		-- target.Color = Color(1, 1, 1, 0, 0, 0, 0)
+		if TargetColor then
+			data.EdithJumpTarget.Color = Color(TargetColor.R/255, TargetColor.G/255, TargetColor.B/255, 1, 0, 0, 0)
+		else
+			data.EdithJumpTarget.Color = Color(155/255, 0, 0, 1, 0, 0, 0)
+		end
+	end
+end
+
+---@param player EntityPlayer
+---@return EntityEffect?
+function Helpers.GetEdithTarget(player)
+	local data = EdithRestored:GetData(player)
+	return data.EdithJumpTarget
+end
+
+---@param player EntityPlayer
+function Helpers.RemoveEdithTarget(player)
+	local data = EdithRestored:GetData(player)
+	if data.EdithJumpTarget then
+		data.EdithJumpTarget:Remove()
+		data.EdithJumpTarget = nil
+	end
+end
+
+---@param player EntityPlayer
 ---@param force boolean?
 ---@param doBombStomp boolean?
 function Helpers.Stomp(player, force, doBombStomp)
@@ -834,19 +878,28 @@ function Helpers.Stomp(player, force, doBombStomp)
 	-- yeah the en of that stuff
 
 	local bombs = player:GetNumBombs()
+	local isGigaBomb = false
 	if doBombStomp ~= false then
 		if data.BombStomp ~= nil or force then
 			if Helpers.HasBombs(player) or force then
 			-- Check if edith has a golden bomb cause well using a golden bomb doesn't substract your bomb count
 				if not player:HasGoldenBomb() and not force then
-					player:AddBombs(-1)
+					if player:GetNumGigaBombs() > 0 then
+						player:AddGigaBombs(-1)
+						isGigaBomb = true
+					else
+						player:AddBombs(-1)
+					end
 				end
-				bombDamage = 100
+				local oldRadius = radius
 				if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then -- Mr. Mega
 					stompDamage = stompDamage * 1.15
-					bombDamage = 185
-					radius = radius * 1.3
+					radius = oldRadius * 1.3
 				end
+				if isGigaBomb then
+					radius = oldRadius * 2
+				end
+				bombDamage = GetBombDamage(player)
 			end
 		end
 		if doBombStomp == nil then

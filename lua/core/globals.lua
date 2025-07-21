@@ -18,7 +18,7 @@ local runData = {
 EdithRestored.DebugMode = EdithRestored.DebugMode or false
 local DebugModeValues = {
 	StompRadius = 65,
-	InstantJumpCharge = false,
+	InstantJumpCharge = true,
 	JumpHeight = 4,
 	Gravity = 0.7,
 	ShowBoSEffect = false,
@@ -28,7 +28,7 @@ local DebugModeValues = {
 
 local DebugModeValuesDefault = {
 	StompRadius = 65,
-	InstantJumpCharge = false,
+	InstantJumpCharge = true,
 	JumpHeight = 4,
 	Gravity = 0.7,
 	ShowBoSEffect = false,

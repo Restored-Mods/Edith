@@ -104,7 +104,7 @@ function ThunderBombs:EdithStompThunderBombProc(player)
 	local data = EdithRestored:GetData(player)
 	return DoChargeThunderBomb(player) and not data.LockBombs
 end
-EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION_EFFECT, ThunderBombs.EdithStompThunderBombProc, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBombProc, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
 
 ---@param player EntityPlayer
 function ThunderBombs:EdithStompThunderBomb(player, damage, radius, hasBombs)
