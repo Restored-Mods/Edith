@@ -803,8 +803,10 @@ function Player:OnUpdatePlayer(player)
 			then
 				if sprite:IsEventTriggered("EdithJumpStart") and JumpLib:CanJump(player) then
 					local jumpTag = (
-						data.BombStomp ~= nil and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
-					 and player:GetNumBombs() > 0)
+						data.BombStomp ~= nil
+						and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
+						and (player:GetNumBombs() > 0 or player:HasGoldenBomb())
+					)
 							and "EdithRocketJump"
 						or "EdithJump"
 					JumpLib:Jump(player, {
@@ -917,6 +919,7 @@ function Player:Pitfall(player, jumpData)
 	local data = EdithRestored:GetData(player)
 	Helpers.RemoveEdithTarget(player)
 	data.TargetJumpPos = nil
+	JumpLib.Internal:GetData(player).JumpPos = EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 0, false, false)
 end
 EdithRestored:AddCallback(
 	JumpLib.Callbacks.PRE_PITFALL_HURT,
@@ -930,13 +933,12 @@ function Player:RocketJump(player, jumpData)
 	local data = EdithRestored:GetData(player)
 	local target = Helpers.GetEdithTarget(player)
 	local jump = JumpLib.Internal:GetData(player)
-	if target and jumpData.Height <= 15 and jumpData.Fallspeed > 2.5
-	and jump.Tags and jump.Tags["EdithRocketJump"] then
+	if target and jumpData.Height <= 15 and jumpData.Fallspeed > 2.5 and jump.Tags and jump.Tags["EdithRocketJump"] then
 		local rocketVariant = BombVariant.BOMB_ROCKET
 		if player:GetNumGigaBombs() > 0 then
 			rocketVariant = BombVariant.BOMB_ROCKET_GIGA
 			player:AddGigaBombs(-1)
-		else
+		elseif not player:HasGoldenBomb() then
 			player:AddBombs(-1)
 		end
 		local rocket = Isaac.Spawn(EntityType.ENTITY_BOMB, rocketVariant, 0, player.Position, Vector.Zero, player)
@@ -951,14 +953,14 @@ function Player:RocketJump(player, jumpData)
 		EdithRestored:GetData(rocket).ExplosionTarget = target.Position
 		JumpLib:QuitJump(player)
 		JumpLib:SetHeight(player, 15, {
-						Height = 0,
-						Speed = jump.StaticJumpSpeed,
-						Flags = JumpLib.Flags.NO_HURT_PITFALL
-							| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
-							| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING
-							| JumpLib.Flags.DISABLE_COOL_BOMBS,
-						Tags = { "EdithRocketRiding" },
-					})
+			Height = 0,
+			Speed = jump.StaticJumpSpeed,
+			Flags = JumpLib.Flags.NO_HURT_PITFALL
+				| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
+				| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING
+				| JumpLib.Flags.DISABLE_COOL_BOMBS,
+			Tags = { "EdithRocketRiding" },
+		})
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
 	end
@@ -993,16 +995,20 @@ function Player:RocketTarget(bomb)
 		if bombData.ExplosionTarget then
 			local player = TSIL.Players.GetPlayerFromEntity(bomb)
 			local pData = EdithRestored:GetData(player)
-			if player and Helpers.IsPlayerEdith(player:ToPlayer(), true, false)
-			and pData.Rocket and GetPtrHash(pData.Rocket) == GetPtrHash(bomb)	 then
-				if bomb.Position:DistanceSquared(bombData.ExplosionTarget) <= 40 then
+			if
+				player
+				and Helpers.IsPlayerEdith(player:ToPlayer(), true, false)
+				and pData.Rocket
+				and GetPtrHash(pData.Rocket) == GetPtrHash(bomb)
+			then
+				if (bomb.Position - bombData.ExplosionTarget):Length() <= bomb.Velocity:Length() then
 					bomb:SetExplosionCountdown(0)
 				end
-				
+
 				if bomb:GetSprite():IsPlaying("Explode") then
 					pData.PostRocketRide = true
 					JumpLib:QuitJump(player)
-					EdithJump(player, bomb.Position - (bomb.Velocity:Resized(20)), true)
+					EdithJump(player, EdithRestored.Room():FindFreePickupSpawnPosition(bomb.Position - bomb.Velocity:Resized(20), 0, false, false), true)
 					player:GetSprite():SetFrame(3)
 					JumpLib:SetHeight(player, 15, {
 						Height = Helpers.GetJumpHeight() / 2,
@@ -1020,7 +1026,6 @@ function Player:RocketTarget(bomb)
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, Player.RocketTarget)
-
 
 ---@param entity Entity
 ---@param amount number

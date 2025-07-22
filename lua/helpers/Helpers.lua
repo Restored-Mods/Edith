@@ -782,7 +782,7 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
 			for i = 1, TSIL.Random.GetRandomInt(4,5) do
 				Isaac.CreateTimer(function()
-					local explosionPosition = Vector.FromAngle(TSIL.Random.GetRandomInt(1, 360)):Resized(TSIL.Random.GetRandomFloat(0.1, radius / 2))
+					local explosionPosition = Vector.FromAngle(TSIL.Random.GetRandomInt(1, 360)):Resized(TSIL.Random.GetRandomFloat(0.1, radius * 1.5))
 					EdithRestored.Game:BombExplosionEffects(player.Position + explosionPosition, bombDamage, player:GetBombFlags(), Color.Default, player, 0.5, true, false)
 				end, TSIL.Random.GetRandomInt(5, 10), 1, false)
 			end
@@ -883,11 +883,13 @@ function Helpers.Stomp(player, force, doBombStomp)
 		if data.BombStomp ~= nil or force then
 			if Helpers.HasBombs(player) or force then
 			-- Check if edith has a golden bomb cause well using a golden bomb doesn't substract your bomb count
-				if not player:HasGoldenBomb() and not force then
+				if player:GetNumGigaBombs() > 0 then
+					isGigaBomb = true
+				end
+				if not force then
 					if player:GetNumGigaBombs() > 0 then
 						player:AddGigaBombs(-1)
-						isGigaBomb = true
-					else
+					elseif not player:HasGoldenBomb() then
 						player:AddBombs(-1)
 					end
 				end
