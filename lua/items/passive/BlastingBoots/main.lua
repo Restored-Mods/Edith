@@ -72,10 +72,10 @@ EdithRestored:AddCallback(JumpLib.Callbacks.ENTITY_LAND, BlastBoots.Landing, {ta
 ---@param player EntityPlayer
 ---@param jumpData JumpData
 function BlastBoots:EdithMidAir(player, jumpData)
-	if Helpers.CantMove(player) and player.ControlsEnabled then
+	if Helpers.CantMove(player) and player.ControlsEnabled and not player:IsDead() and not player:IsCoopGhost() then
         local vec = Helpers.GetMovementActionVector(player)
         if vec:Length() > 0 then
-            player.Velocity = Helpers.Lerp(player.Velocity, vec:Resized(8*player.MoveSpeed), 0.2)
+            player.Velocity = Helpers.Lerp(player.Velocity, vec:Resized(8*player.MoveSpeed), 0.08)
         end
     end
 end
