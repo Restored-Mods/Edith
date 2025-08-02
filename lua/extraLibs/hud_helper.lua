@@ -1,7 +1,7 @@
-local Mod = EdithRestored
-local emptyShaderName = ""
+local Mod = HudHelperExample
+local emptyShaderName = "HudHelperEmptyShader"
 
-local VERSION = 1.13 -- (v1.1.3) do not modify
+local VERSION = 1.15 -- (v1.1.5) do not modify
 local game = Game()
 local itemConfig = Isaac.GetItemConfig()
 
@@ -1631,6 +1631,14 @@ local function InitFunctions()
 		local scale = 1
 		local alpha = 1
 
+		if hudLayout == HudHelper.HUDLayout.P1 and not condensedCoopHUD then
+			pos = HudHelper.GetHUDPosition(4)
+		end
+		if i == 2 then
+			pos = pos + TWIN_COOP_OFFSET
+		end
+		pos = pos + HudHelper.GetPocketHUDOffset(player)
+
 		if hudLayout == HudHelper.HUDLayout.P1_MAIN_TWIN
 			or hudLayout == HudHelper.HUDLayout.P1_OTHER_TWIN
 			or hudLayout == HudHelper.HUDLayout.TWIN_COOP
@@ -1662,7 +1670,7 @@ local function InitFunctions()
 		elseif isPill and player:GetPill(0) == hud.ItemID then
 			hud.OnRender(player, playerHUDIndex, hudLayout, pos, alpha, scale)
 			HudHelper.LastAppliedHUD[HudHelper.HUDType.PILL_ID][playerHUDIndex] = hud
-		else
+		elseif not isCard and not isPill then
 			hud.OnRender(player, playerHUDIndex, hudLayout, pos, alpha, scale)
 			HudHelper.LastAppliedHUD[HudHelper.HUDType.POCKET][playerHUDIndex] = hud
 		end
@@ -1857,13 +1865,6 @@ local function InitFunctions()
 								end
 							elseif hudType == HudHelper.HUDType.POCKET then
 								---@cast hud HUDInfo_Pocket
-								if hudLayout == HudHelper.HUDLayout.P1 and not condensedCoopHUD then
-									pos = HudHelper.GetHUDPosition(4)
-								end
-								if i == 2 then
-									pos = pos + TWIN_COOP_OFFSET
-								end
-								pos = pos + HudHelper.GetPocketHUDOffset(player)
 								renderPocketItemHUDs(player, playerHUDIndex, hudLayout, pos, hud, i)
 							elseif hudType == HudHelper.HUDType.TRINKET then
 								---@cast hud HUDInfo_Trinket
@@ -2005,9 +2006,9 @@ local function InitFunctions()
 						and HudHelper.LastAppliedHUD[HudHelper.HUDType.EXTRA][1].Name ~= "Reset EID"
 						and HudHelper.LastAppliedHUD[HudHelper.HUDType.EXTRA][1].Priority ~= HudHelper.Priority.VANILLA
 				end,
-				OnRender = function(_, _, _, position)
+				OnRender = function(_, playerHUDIndex, _, position)
 					local posYModifier = 0
-					local offset = -40
+					local offset = -30
 					local vanillaOffsets = {
 						"Tainted HUD",
 						"J&E HUD",
@@ -2020,7 +2021,7 @@ local function InitFunctions()
 						end
 					end
 
-					posYModifier = position.Y + offset
+					posYModifier = position.Y + offset - HudHelper.GetHUDPosition(playerHUDIndex).Y
 
 					EID:addTextPosModifier(
 						"HudHelper",
