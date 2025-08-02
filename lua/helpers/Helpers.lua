@@ -920,7 +920,7 @@ function Helpers.Stomp(player, force, doBombStomp)
 	
 	for i = 1, TSIL.Random.GetRandomInt(6, 9) do
 		local randRockVel = Vector(TSIL.Random.GetRandomInt(-3, 3), TSIL.Random.GetRandomInt(-3, 3))
-		Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 0, player.Position, randRockVel, nil)
+		Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 1, player.Position, randRockVel, nil)
 	end
 	if room:HasWater() then
 		-- if not chap4 then
