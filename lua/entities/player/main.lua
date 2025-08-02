@@ -666,7 +666,8 @@ function Player:OnUpdatePlayer(player)
 	end
 
 	if Helpers.IsPlayerEdith(player, true, false) then
-		if Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex) then
+		if Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex)
+		and JumpLib:CanJump(player) and Helpers.CanMove(player) then
 			if not data.BombStomp then
 				data.BombStomp = true
 			else
@@ -919,7 +920,8 @@ function Player:Pitfall(player, jumpData)
 	local data = EdithRestored:GetData(player)
 	Helpers.RemoveEdithTarget(player)
 	data.TargetJumpPos = nil
-	JumpLib.Internal:GetData(player).JumpPos = EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 0, false, false)
+	JumpLib.Internal:GetData(player).JumpPos = EdithRestored.Room()
+		:FindFreePickupSpawnPosition(player.Position, 0, false, false)
 end
 EdithRestored:AddCallback(
 	JumpLib.Callbacks.PRE_PITFALL_HURT,
@@ -1008,7 +1010,12 @@ function Player:RocketTarget(bomb)
 				if bomb:GetSprite():IsPlaying("Explode") then
 					pData.PostRocketRide = true
 					JumpLib:QuitJump(player)
-					EdithJump(player, EdithRestored.Room():FindFreePickupSpawnPosition(bomb.Position - bomb.Velocity:Resized(20), 0, false, false), true)
+					EdithJump(
+						player,
+						EdithRestored.Room()
+							:FindFreePickupSpawnPosition(bomb.Position - bomb.Velocity:Resized(20), 0, false, false),
+						true
+					)
 					player:GetSprite():SetFrame(3)
 					JumpLib:SetHeight(player, 15, {
 						Height = Helpers.GetJumpHeight() / 2,

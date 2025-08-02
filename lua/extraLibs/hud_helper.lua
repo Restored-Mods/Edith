@@ -1,4 +1,4 @@
-local Mod = HudHelperExample
+local Mod = EdithRestored
 local emptyShaderName = "HudHelperEmptyShader"
 
 local VERSION = 1.15 -- (v1.1.5) do not modify
