@@ -37,8 +37,8 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Полностью заряжает активные предметы#{{Battery}} Когда у Айзека нет бомб, одна может быть использована взамен на заряд#Бомбы создают электричество, которое распространяется на близлежащих врагов#Електричество наносит половину урона от бомб", "Громовые бомбы", "ru")
 
 --Blasting Boots
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "+5 bombs#Gives explosion immunity#Explosion launches Isaac in the air", "Blasting Boots", "en")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "+5 бомб#Дает устойчивость ко взрывам#Взрыв подбрасывет Айзека в воздух", "Взрывостойкие сапоги", "ru")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "{{Bomb}} +5 bombs#Gives explosion immunity#Explosion launches Isaac in the air", "Blasting Boots", "en")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "{{Bomb}} +5 бомб#Дает устойчивость ко взрывам#Взрыв подбрасывет Айзека в воздух", "Взрывостойкие сапоги", "ru")
 
 --Pawn Baby
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 30 damage#Respawns at a random door after reaching a wall", "Salt Pawns", "en")
@@ -51,6 +51,12 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "
 --Sodom
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots a red flame opposite of his movement direction#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 3 directions#!!! Effect can be applied on enemy only one time", "Sodom", "en")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#При смерти с эффектом враг выстреливает пламя в 8 направлениях#Это пламя может наложить этот же эффект#!!! Эффект можно наложить на врага только один раз", "Содом", "ru")
+
+--Shrapnel Bombs
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS, "{{Bomb}} +5 bombs#Isaac's bombs fire high velocity nails in random directions upon detonating#{{BleedingOut}} Nails pierce enemies and inflict bleeding", "Shrapnel Bombs", "en")
+
+--Red Hood
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD, "Cycle between moon phases on room clear#Increased stats the closer the phase is to a full moon#On full moon, gain extra stat boosts, contact damage, and stompy effect", "Red Hood", "en")
 
 -- Trinkets
 

@@ -16,7 +16,6 @@
 		<Item Name="​Sodom" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="curse">
-		<Item Name="Lithium Salts" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 		<Item Name="Gorgon Mask" Weight="1" DecreaseBy="1" RemoveOn="0.1"/>
 	</Pool>
 	<Pool Name="angel">
