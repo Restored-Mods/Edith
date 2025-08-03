@@ -131,7 +131,7 @@ function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy)
 				--[[if enemy.Type == EntityType.ENTITY_ETERNALFLY then
 					enemy:Morph(EntityType.ENTITY_ATTACKFLY,0,0,-1)
 				end]]
-				if not Helpers.HereticBattle(enemy) and not Helpers.IsTurret(enemy) and enemy.Type ~= EntityType.ENTITY_BLOOD_PUPPY then
+				if not Helpers.HereticBattle(enemy) and not Helpers.IsTurret(enemy) then
 					table.insert(enemies,enemy)
 				end
 			end
