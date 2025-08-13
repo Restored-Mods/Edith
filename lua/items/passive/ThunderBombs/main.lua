@@ -279,17 +279,29 @@ function ThunderBombs:ReplaceCostume(bomb)
 
 	if not bomb:HasTearFlags(TearFlags.TEAR_GOLDEN_BOMB) then
 		local layer = sprite:GetLayer("body")
-
+		local applyColor = false
 		if bomb.Variant ~= BombVariant.BOMB_TROLL and bomb.Variant ~= BombVariant.BOMB_SUPERTROLL then
-			local path = string.sub(layer:GetSpritesheetPath(), 1, string.len(layer:GetSpritesheetPath())-4) .. "_gold.png"
-			sprite:ReplaceSpritesheet(0, path, true)
+			if layer:GetSpritesheetPath() == "gfx/items/pick ups/bombs/costumes/bomb.png" then
+				sprite:ReplaceSpritesheet(0, "gfx/items/pick ups/bombs/thunder/costumes/elektrik_bomb.png", true)
+			else
+				local path = string.sub(layer:GetSpritesheetPath(), 1, string.len(layer:GetSpritesheetPath())-4) .. "_gold.png"
+				sprite:ReplaceSpritesheet(0, path, true)
+				applyColor = true
+			end
 		end
 
-		local color = sprite:GetLayer("body"):GetColor()
-		color:SetColorize(1, 1, 2.5, 2.5)
-		color:SetTint(255/255, 255/255, 800/255, 1)
-		color:SetOffset(-100/255, -100/255, -100/255)
-		layer:SetColor(color)
+		if applyColor then
+			local color = sprite:GetLayer("body"):GetColor()
+			color:SetColorize(1, 1, 2.5, 2.5)
+			color:SetTint(255/255, 255/255, 800/255, 1)
+			color:SetOffset(-100/255, -100/255, -100/255)
+			layer:SetColor(color)
+		end
+	elseif bomb.Variant ~= BombVariant.BOMB_TROLL and bomb.Variant ~= BombVariant.BOMB_SUPERTROLL then
+		local layer = sprite:GetLayer("body")
+		if layer:GetSpritesheetPath() == "gfx/items/pick ups/bombs/costumes/bomb_gold.png" then
+			sprite:ReplaceSpritesheet(0, "gfx/items/pick ups/bombs/thunder/costumes/elektrik_bomb_gold.png", true)
+		end
 	end
 
 	local overlay = Sprite()
