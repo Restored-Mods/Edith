@@ -552,15 +552,15 @@ function Player:ChargeBarRender(player)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBarRender, 0)
 
-if EdithRestored.DebugMode then
-	function Player:StompRadiusRender()
+function Player:StompRadiusRender()
+	if EdithRestored.DebugMode then
 		for _, player in ipairs(Helpers.GetPlayersByType(EdithRestored.Enums.PlayerType.EDITH)) do
 			local shape = player:GetDebugShape(true)
 			shape:Circle(player.Position, EdithRestored:GetDebugValue("StompRadius"))
 		end
 	end
-	EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Player.StompRadiusRender)
 end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Player.StompRadiusRender)
 
 ---@param target EntityEffect
 function Player:TargetJumpRender(target)
@@ -666,8 +666,11 @@ function Player:OnUpdatePlayer(player)
 	end
 
 	if Helpers.IsPlayerEdith(player, true, false) then
-		if Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex)
-		and JumpLib:CanJump(player) and Helpers.CanMove(player) then
+		if
+			Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex)
+			and JumpLib:CanJump(player)
+			and Helpers.CanMove(player)
+		then
 			if not data.BombStomp then
 				data.BombStomp = true
 			else

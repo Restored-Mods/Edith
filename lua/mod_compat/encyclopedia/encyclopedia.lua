@@ -10,7 +10,7 @@ local classname = "Restored Edith"
 --[[Encyclopedia.AddItem({
 	ModName = "RestoredEdith",
 	Class = classname,
-	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_BREATH_MINTS,
+	ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT,
 	WikiDesc = Wiki.Peppermint,
 })]]
 --[[

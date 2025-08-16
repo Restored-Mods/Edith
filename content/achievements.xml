@@ -18,6 +18,9 @@
 	<achievement name="Shrapnel Bombs" text="Edith Mother Witness" gfx="achievement_shrapnel_bombs.png" />
 	<achievement name="​Sodom" text="Edith Beast" gfx="achievement_sodom.png" />
 	<achievement name="Soul of Edith" text="Edith Full Completion" gfx="achievement_soul_of_edith.png" />
+
+	<!-- challenges -->
+	<achievement name="Peppermint" text="Edith Rocket Laces" gfx="achievement_peppermint.png" />
 	<!-- Unused
 	<achievement name="Lot Baby" text="Edith Full Completion" gfx="achievement_lotbaby.png" />
 	<achievement name="Reverse Prudence" text="Edith Ultra Greedier" gfx="achievement_revprudence.png" />

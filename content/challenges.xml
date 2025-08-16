@@ -1,0 +1,3 @@
+<challenges version="1">
+    <challenge name="Rocket Laces" achievements="Blasting Boots" lockeddesc="Rocket Laces" unlockachievement="Peppermint" endstage="8" altpath="false" difficulty="0" startingitems="Blasting Boots, 52" playertype="0" canshoot="true" />
+</challenges>
