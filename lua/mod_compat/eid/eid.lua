@@ -8,9 +8,18 @@ EID:addIcon("Edith Icon", "EdithIcon", 0, 15, 24, 6, 6, iconSprite)
 EID:setModIndicatorIcon("Edith Icon")
 
 -- Birthright Icons
-PlayerIconSprite = Sprite()
+local PlayerIconSprite = Sprite()
 PlayerIconSprite:Load("gfx/ui/eid_edith_players_icons.anm2", true)
 EID:addIcon("Player"..EdithRestored.Enums.PlayerType.EDITH, "Edith", 0, 12, 12, -1, 1, PlayerIconSprite)
+
+local CardsPillsIconsSprite = Sprite()
+CardsPillsIconsSprite:Load("gfx/ui/eid_edith_cardspills_icons.anm2", true)
+EID:addIcon("SoulEdith", "Cards", 0, 12, 12, 0, 0, CardsPillsIconsSprite)
+EID:addIcon("LithiumPill", "Pills", 0, 12, 12, 0, 0, CardsPillsIconsSprite)
+
+EID:AddIconToObject(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "SoulEdith")
+EID:AddIconToObject(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM, "LithiumPill")
+EID:AddIconToObject(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, EdithRestored.Enums.Pickups.Pills.PILL_HORSE_LITHIUM, "LithiumPill")
 
 -- Edith
 EID:addBirthright(EdithRestored.Enums.PlayerType.EDITH, "Jump charges faster and not stops charging when moving#Stomp has increased knockback that damages enemies when they collide with obstacles", "Edith", "en")
@@ -70,19 +79,46 @@ EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "При вхо
 
 -- Cards/Runes/Pills
 
+--Soul of Edith
+EID:addCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "Turn Isaac into statue that stomps enemies 4 times#If no enemies in a room then jumps in place", "Soul of Edith")
+EID:addCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "Превращает Айзека в статую, которая прыгает на врагов 4 раза#Если нет врагов в комнате, то прыгает на месте", "Душа Эдит", "ru")
+
+local soulEdithSynergy = {
+    en_us = "Isaac stomps 5 times",
+    ru = "Айзек прыгает 5 раз"
+}
+
+local function SoulEdithCondition(descObj)
+    if descObj.ObjType == 5 and descObj.ObjVariant == 300 and descObj.ObjSubType == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH then
+        return true
+    end
+    return false
+end
+
+local function SoulEdithCallback(descObj)
+    local player = EdithRestored.Game:GetNearestPlayer(descObj.Entity.Position)
+    if player:HasCollectible(CollectibleType.COLLECTIBLE_CLEAR_RUNE) and player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+        local synergy = soulEdithSynergy[EID:getLanguage()] or soulEdithSynergy["en_us"]
+        descObj.Description = descObj.Description.."#{{Collectible263}} + {{Collectible356}} "..synergy
+    end
+    return descObj
+end
+
+EID:addDescriptionModifier("SoulEdithClearRuneCarBattery", SoulEdithCondition, SoulEdithCallback)
+
+--Lithium Pill
 local Lithium = {
-    DAMAGE_DECREASE_AMOUNT = -0.20,
-    FALSEPHD_DAMAGE_DECREASE_AMOUNT = -0.05,
-    TEARS_DECREASE_AMOUNT = -0.12,
-    FALSEPHD_TEARS_DECREASE_AMOUNT = -0.01,
     IFRAME_INCREASE_AMOUNT = 20,
     FALSEPHD_IFRAME_INCREASE_AMOUNT = 5,
 }
 
-EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} Decreases one random stat#{{ArrowUp}} IFRAME_INCREASE_AMOUNT invinsibility frames", "Lithium")
-EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT к скорострельности за каждую использованную пилюлю#{{ArrowUp}} IFRAME_INCREASE_AMOUNT кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")
-EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "{{ArrowDown}} Decreases one random stat#{{ArrowUp}} IFRAME_INCREASE_AMOUNT invinsibility frames", "Lithium")
-EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, "#{{ArrowDown}} {{Blank}}{{Damage}} DAMAGE_DECREASE_AMOUNT к урону за каждую использованную пилюлю#{{ArrowDown}} {{Blank}}{{Tears}} TEARS_DECREASE_AMOUNT к скорострельности за каждую использованную пилюлю#{{ArrowUp}} IFRAME_INCREASE_AMOUNT кадров неуязвимости за каждую использованную пилюлю", "Литий", "ru")
+local lithiumEN = "#{{ArrowDown}} Decreases one random stat#{{ArrowUp}} IFRAME_INCREASE_AMOUNT invinsibility frames"
+local lithiumRU = "#{{ArrowDown}} Уменьшает случайную характеристику#{{ArrowUp}} IFRAME_INCREASE_AMOUNT кадров неуязвимости"
+
+EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, lithiumEN, "Lithium")
+EID:addPill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, lithiumRU, "Литий", "ru")
+EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, lithiumEN, "Lithium")
+EID:addHorsePill(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM, lithiumRU, "Литий", "ru")
 
 local function LithiumCondition(descObj)
     if descObj.ObjType == 5 and descObj.ObjVariant == 70 and descObj.ObjSubType % 2048 == EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM then

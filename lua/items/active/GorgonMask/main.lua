@@ -29,13 +29,16 @@ function GorgonMask:UpdateCanShoot(player)
 		player:SetCanShoot(data.CouldShoot)
 		data.CouldShoot = nil
 	end
-	if not GorgonMask:HasGorgonMaskEffects(player) and player:GetEffects():HasNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK) then
+	if
+		not GorgonMask:HasGorgonMaskEffects(player)
+		and player:GetEffects():HasNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK)
+	then
 		player:GetEffects():RemoveNullEffect(EdithRestored.Enums.NullItems.GORGON_MASK, -1)
 	end
 end
 
 ---@param player EntityPlayer
-function GorgonMask:UseMask(_, _, player, flags)
+function GorgonMask:UseMask(collectible, _, player, flags)
 	if flags & UseFlag.USE_CARBATTERY ~= 0 then
 		return
 	end
@@ -55,13 +58,41 @@ function GorgonMask:UseMask(_, _, player, flags)
 
 	GorgonMask:UpdateCanShoot(player)
 
-	return true
+	return { ShowAnim = true, Remove = false, Discharge = true }
 end
 EdithRestored:AddCallback(
 	ModCallbacks.MC_USE_ITEM,
 	GorgonMask.UseMask,
 	EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK
 )
+
+function GorgonMask:RemoveGorgonWisps(wisp)
+	if wisp.SubType == EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK 
+	and wisp.FrameCount >= 360 then
+		wisp:Kill()
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, GorgonMask.RemoveGorgonWisps, FamiliarVariant.WISP)
+
+---@param wisp EntityFamiliar
+function GorgonMask:WispDeath(wisp)
+	if
+		wisp.Variant == FamiliarVariant.WISP
+		and wisp.SubType == EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK
+	then
+		local poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 1, wisp.Position, Vector.Zero, wisp)
+			:ToEffect()
+		poof.SpriteScale = poof.SpriteScale * 0.5
+		for _, enemy in
+			ipairs(Helpers.Filter(Helpers.GetEnemies(), function(idx, enemy)
+				return wisp.Position:Distance(enemy.Position) <= 40
+			end))
+		do
+			enemy:AddFreeze(EntityRef(wisp), 120)
+		end
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, GorgonMask.WispDeath, EntityType.ENTITY_FAMILIAR)
 
 function GorgonMask:BlockShootDelayed(player)
 	GorgonMask:UpdateCanShoot(player)

@@ -194,7 +194,7 @@ Enums.Challenges = {
 Enums.Achievements = {}
 Enums.Achievements.Characters = {
 	EDITH =  Isaac.GetAchievementIdByName("Edith"),
-	TAINTED =  Isaac.GetAchievementIdByName("Tainted Edith"),
+	--TAINTED =  Isaac.GetAchievementIdByName("Tainted Edith"),
 }
 Enums.Achievements.CompletionMarks = {
 	-- A-side Unlicks
