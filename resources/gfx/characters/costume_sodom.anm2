@@ -1,12 +1,12 @@
 <AnimatedActor>
-	<Info CreatedBy="trtv" CreatedOn="7/11/2025 5:14:32 PM" Version="9" Fps="30"/>
+	<Info CreatedBy="trtv" CreatedOn="8/17/2025 1:16:32 AM" Version="14" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="costumes\costume_sodom.png" Id="0"/>
 			<Spritesheet Path="costumes\costume_sodom_body.png" Id="1"/>
 		</Spritesheets>
 		<Layers>
-			<Layer Name="head" Id="0" SpritesheetId="0"/>
+			<Layer Name="head0" Id="0" SpritesheetId="0"/>
 			<Layer Name="body0" Id="1" SpritesheetId="1"/>
 		</Layers>
 		<Nulls/>
