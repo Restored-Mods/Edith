@@ -2,7 +2,8 @@ local modname = "Restored Edith"
 local classname = "Restored Mods"
 
 local function Edith()
-	return Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) and "Edith" or "?????"
+	return Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) and "Edith"
+		or "?????"
 end
 
 local Wiki = {
@@ -21,7 +22,7 @@ local Wiki = {
 					not Isaac.GetPersistentGameData()
 						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SALT_SHAKER)
 				then
-					self.Desc = "Unlocked by beating Isaac as "..Edith()
+					self.Desc = "Unlocked by beating Isaac as " .. Edith()
 					return self
 				end
 			end,
@@ -59,7 +60,7 @@ local Wiki = {
 					not Isaac.GetPersistentGameData()
 						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.GORGON_MASK)
 				then
-					self.Desc = "Unlocked by beating Ultra Greedier as "..Edith()
+					self.Desc = "Unlocked by beating Ultra Greedier as " .. Edith()
 					return self
 				end
 			end,
@@ -93,7 +94,7 @@ local Wiki = {
 					not Isaac.GetPersistentGameData()
 						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.THUNDER_BOMBS)
 				then
-					self.Desc = "Unlocked by beating ??? as "..Edith()
+					self.Desc = "Unlocked by beating ??? as " .. Edith()
 					return self
 				end
 			end,
@@ -119,7 +120,7 @@ local Wiki = {
 				if
 					not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.LITHIUM)
 				then
-					self.Desc = "Unlocked by beating Delirium as "..Edith()
+					self.Desc = "Unlocked by beating Delirium as " .. Edith()
 					return self
 				end
 			end,
@@ -170,7 +171,7 @@ local Wiki = {
 					not Isaac.GetPersistentGameData()
 						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.BLASTING_BOOTS)
 				then
-					self.Desc = "Unlocked by beating Hush as "..Edith()
+					self.Desc = "Unlocked by beating Hush as " .. Edith()
 					return self
 				end
 			end,
@@ -214,7 +215,7 @@ local Wiki = {
 					not Isaac.GetPersistentGameData()
 						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SALT_PAWNS)
 				then
-					self.Desc = "Unlocked by beating Ultra Greed as "..Edith()
+					self.Desc = "Unlocked by beating Ultra Greed as " .. Edith()
 					return self
 				end
 			end,
@@ -256,7 +257,7 @@ local Wiki = {
 					not Isaac.GetPersistentGameData()
 						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SALTY_BABY)
 				then
-					self.Desc = "Unlocked by beating Mom's Heart/It Lives as "..Edith()
+					self.Desc = "Unlocked by beating Mom's Heart/It Lives as " .. Edith()
 					return self
 				end
 			end,
@@ -301,7 +302,7 @@ local Wiki = {
 					if Isaac.GetPersistentGameData():GetBestiaryEncounterCount(EntityType.ENTITY_BEAST, -1) == 0 then
 						line = "??? ?????"
 					end
-					self.Desc = "Unlocked by beating "..line.." as "..Edith()
+					self.Desc = "Unlocked by beating " .. line .. " as " .. Edith()
 					return self
 				end
 			end,
@@ -337,7 +338,7 @@ local Wiki = {
 					not Isaac.GetPersistentGameData()
 						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SMELLING_SALTS)
 				then
-					self.Desc = "Unlocked by beating the Lamb as "..Edith()
+					self.Desc = "Unlocked by beating the Lamb as " .. Edith()
 					return self
 				end
 			end,
@@ -372,6 +373,61 @@ local Wiki = {
 				},
 			},
 		},
+	},
+	Pill = {
+		Lithium = {
+			ModName = modname,
+			Class = classname,
+			Spr = Encyclopedia.RegisterSprite("gfx/ui/encyclopedia_edith_cardspills.anm2", "Pills", 0),
+			ID = EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM,
+			WikiDesc = {
+				{ -- Effect
+					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
+					{ str = "Decreases one random stat." },
+					{ str = "Gives additional 20 invincibility frames." },
+				},
+				{ -- Synergies
+					{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
+					{ str = "False PHD! - increases damage." },
+					{ str = "False PHD! - extra 5 invincibility frames." },
+				},
+			},
+			UnlockFunc = function(self)
+				if
+					not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.LITHIUM)
+				then
+					self.Desc = "Unlocked by beating Delirium as " .. Edith()
+					return self
+				end
+			end,
+			Description = "Negative?"
+		},
+	},
+	Soul = {
+		SoulOfEdith = {
+			ModName = modname,
+			Class = classname,
+			ID = EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH,
+			WikiDesc = {
+				{ -- Effect
+					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
+					{ str = "Turn Isaac into statue that stomps enemies 4 times." },
+					{ str = "If no enemies in a room then jumps in place." },
+				},
+				{ -- Synergies
+					{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
+					{ str = "Clear Rune + Car Battery - Isaac stomps 5 times instead of 4." },
+				},
+			},
+			UnlockFunc = function(self)
+				if
+					not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+				then
+					self.Desc = "Unlocked by getting all completion marks as " .. Edith()
+					return self
+				end
+			end,
+		}
 	},
 	Character = {
 		Edith = {

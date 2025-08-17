@@ -6,7 +6,7 @@
 	<!-- Shrapnel Bombs -->
 	<costume id="9" anm2path="shrapnel_bombs.anm2" type="passive" />
 	<!-- Gorgon Mask -->
-	<costume id="10" anm2path="gorgon_mask.anm2" type="none" />
+	<costume id="1" anm2path="gorgon_mask.anm2" type="none" />
 	<!-- Sodom -->
 	<costume id="1" anm2path="costume_sodom.anm2" type="passive" />
 	<!-- Lithium Salts -->
