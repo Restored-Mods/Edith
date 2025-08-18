@@ -77,6 +77,9 @@ EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "Игно
 EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "Rocks have a chance to emit a pool of salt creep upon entering an uncleared room.#Salt Rocks fire rock tears in all directions upon being destroyed", "Salt Rock", "en")
 EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "При входе в новую комнату 10% шанс камень может превратиться в соляной камень#Уничтожение соляного камня создает мини-статую Эдит, которая прыгает на врагов#Если врагов не осталось, прыгает на случайные камни/какашки", "Соляной камень", "ru")
 
+--Chunk of Amber
+EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_CHUNK_OF_AMBER, "Petrified enemies spawn either a random pickup, blue spider, or blue fly on death", "Chunk of Amber", "en")
+
 -- Cards/Runes/Pills
 
 --Soul of Edith

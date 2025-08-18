@@ -30,7 +30,7 @@ local Wiki = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
 					{ str = "On use spawns a ring of salt creep near Isaac." },
-					{ str = "Touching creep enemies get scared." },
+					{ str = "Touching creep enemies are feared." },
 				},
 				--[[{ -- Notes
 			{str = "Notes", fsize = 2, clr = 3, halign = 0},
@@ -73,7 +73,7 @@ local Wiki = {
 				},
 				{ -- Trivia
 					{ str = "Trivia", fsize = 2, clr = 3, halign = 0 },
-					{ str = "Gorgon Mask is based on head of Medusa, Greek mythological character." },
+					{ str = "Gorgon Mask is based on head of Medusa, a character in Greek mythological." },
 				},
 			},
 		},
@@ -135,8 +135,7 @@ local Wiki = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
 					{ str = "Adds extra Lithium pill that can with 10% chance replace normal pills." },
-					{ str = "-0.2 damage per use." },
-					{ str = "-0.12 tear rate per use." },
+					{ str = "Decreases one random stat." },
 					{ str = "+20 frames of invincibility per use when taking damage." },
 				},
 				{ -- Synergies
@@ -179,7 +178,7 @@ local Wiki = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
 					{ str = "Gives explosion immunity." },
-					{ str = "Explosion launches Isaac in the air." },
+					{ str = "Explosions launches Isaac in the air." },
 				},
 				{ -- Synergies
 					{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
@@ -222,21 +221,17 @@ local Wiki = {
 			WikiDesc = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
-					{ str = "Familiar like Brother Bobby that has 20% chance to shoot fear tears." },
-					{ str = "Nearby enemies has chance to get stomped." },
+					{ str = "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 30 damage." },
+					{ str = "Respawns at a random door after reaching a wall" },
 				},
 				{ -- Synergies
 					{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
 					{ str = "BFFS! - damage is doubled." },
 				},
-				{ -- Notes
-					{ str = "Notes", fsize = 2, clr = 3, halign = 0 },
-					{ str = "Stomping kills regular enemies and deals 20% maximum boss health damage." },
-				},
 				{ -- Trivia
 					{ str = "Trivia", fsize = 2, clr = 3, halign = 0 },
 					{
-						str = "Originally was supposed to be a co-op baby, but because of modding API limitations and true co-op being in the Repentance, it was made as familiar.",
+						str = "This item's effects are based off of the Checked Mate item from Antibirth.",
 					},
 				},
 			},
@@ -280,7 +275,7 @@ local Wiki = {
 				{ -- Trivia
 					{ str = "Trivia", fsize = 2, clr = 3, halign = 0 },
 					{
-						str = "Originally was supposed to be a co-op baby, but because of modding API limitations and true co-op being in the Repentance, it was made as familiar.",
+						str = "Originally was supposed to be a co-op baby, but was made as familiar instead.",
 					},
 				},
 			},
@@ -345,7 +340,7 @@ local Wiki = {
 			WikiDesc = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
-					{ str = "Ignores fatal damage after which trinket is destroyed." },
+					{ str = "Enemies inflicted with slow or petrified are instantly cleansed of the debuff, and are instead given the weakness debuff (from reverse strength)" },
 				},
 			},
 		},
@@ -367,9 +362,30 @@ local Wiki = {
 			WikiDesc = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
-					{ str = "Entering new room has 10% to make rock a salt rock." },
-					{ str = "Destroing spawns mini Edith statue." },
-					{ str = "Statue jumps on enemies. If no enemy left, on random rock/poop." },
+					{ str = "Rocks have a chance to emit a pool of salt creep upon entering an uncleared room." },
+					{ str = "Salt Rocks fire rock tears in all directions upon being destroyed." },
+				},
+			},
+		},
+		--Chunk of Amber
+		ChunkOfAmber = {
+			ModName = modname,
+			Class = classname,
+			Name = "Chunk of Amber",
+			ID = EdithRestored.Enums.TrinketType.TRINKET_CHUNK_OF_AMBER,
+			UnlockFunc = function(self)
+				if
+					not Isaac.GetPersistentGameData()
+						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.CHUNK_OF_AMBER)
+				then
+					self.Desc = "Unlocked by beating Satan as " .. Edith()
+					return self
+				end
+			end,
+			WikiDesc = {
+				{ -- Effect
+					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
+					{ str = "Petrified enemies spawn either a random pickup, blue spider, or blue fly on death." },
 				},
 			},
 		},
