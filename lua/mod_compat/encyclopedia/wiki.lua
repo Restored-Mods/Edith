@@ -221,8 +221,11 @@ local Wiki = {
 			WikiDesc = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
-					{ str = "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 30 damage." },
-					{ str = "Respawns at a random door after reaching a wall" },
+					{
+						str = "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from.",
+					},
+					{ str = "Stomps on nearby enemies for 30 damage." },
+					{ str = "Respawns at a random door after reaching a wall." },
 				},
 				{ -- Synergies
 					{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
@@ -340,7 +343,9 @@ local Wiki = {
 			WikiDesc = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
-					{ str = "Enemies inflicted with slow or petrified are instantly cleansed of the debuff, and are instead given the weakness debuff (from reverse strength)" },
+					{
+						str = "Enemies inflicted with slow or petrified are instantly cleansed of the debuff, and are instead given the weakness debuff (from reverse strength)",
+					},
 				},
 			},
 		},
@@ -416,7 +421,7 @@ local Wiki = {
 					return self
 				end
 			end,
-			Description = "Negative?"
+			Description = "Negative?",
 		},
 	},
 	Soul = {
@@ -437,13 +442,14 @@ local Wiki = {
 			},
 			UnlockFunc = function(self)
 				if
-					not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+					not Isaac.GetPersistentGameData()
+						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
 				then
 					self.Desc = "Unlocked by getting all completion marks as " .. Edith()
 					return self
 				end
 			end,
-		}
+		},
 	},
 	Character = {
 		Edith = {
@@ -494,7 +500,9 @@ local Wiki = {
 				},
 				{ -- Birthright
 					{ str = "Birthright", fsize = 2, clr = 3, halign = 0 },
-					{ str = "Charging jump is faster." },
+					{ str = "Jump charges faster." },
+					{ str = "Moving doesn't slow jump charging." },
+					{ str = "Increases knockback. Knockbacked enemies take damage when collide with obstacles." },
 				},
 				{ -- Notes
 					{ str = "Notes", fsize = 2, clr = 3, halign = 0 },
