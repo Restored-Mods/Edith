@@ -22,8 +22,8 @@ EID:AddIconToObject(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, EdithRe
 EID:AddIconToObject(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, EdithRestored.Enums.Pickups.Pills.PILL_HORSE_LITHIUM, "LithiumPill")
 
 -- Edith
-EID:addBirthright(EdithRestored.Enums.PlayerType.EDITH, "Jump charges faster and not stops charging when moving#Stomp has increased knockback that damages enemies when they collide with obstacles", "Edith", "en")
-EID:addBirthright(EdithRestored.Enums.PlayerType.EDITH, "Прыжок заряжается быстрее и также заряжатеся при движении#Отбрасывание от презимления увеличено и наносит урон врагам, когда они сталкиваются со стеной/препятствием", "Эдит", "ru")
+EID:addBirthright(EdithRestored.Enums.PlayerType.EDITH, "{{Charge}} Jump charges faster#Moving doesn't slow jump charging#Stomp has increased knockback that damages enemies when they collide with obstacles", "Edith", "en_us")
+EID:addBirthright(EdithRestored.Enums.PlayerType.EDITH, "{{Charge}} Прыжок заряжается быстрее#Передвигаясь заряд прыжка не замедляется#Отбрасывание от презимления увеличено и наносит урон врагам, когда они сталкиваются со стеной/препятствием", "Эдит", "ru")
 --EID:addBirthright(EdithRestored.Enums.PlayerType.EDITH, "La carga del salto será más rápida y no se detendrá al moverse", "Edith", "es")
 
 -- Items
@@ -33,49 +33,55 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER, 
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER, "При использовании создает круг из соли рядом с Айзеком#Враги, приближающиеся к нему, получают {{Fear}} эффект страха", "Солонка", "ru")
 
 --Gorgon Mask
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, "On use puts on/off Gorgon mask#When mask is on, Isaac can't shoot#{{Freezing}} Looking at enemies, when Isaac has mask on, freezes them", "Gorgon Mask")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, "При использовании одевает/снимает маску Горгоны#Когда маска одета, Айзек не может стрелять#{{Freezing}} Глядя на врагов, когда Айзек в маске, они каменеют", "Маска Горгоны", "ru")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, "On use puts on/off Gorgon mask#When mask is on, Isaac can't shoot#{{Petrify}} Looking at enemies, when Isaac has mask on, freezes them", "Gorgon Mask")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, "При использовании одевает/снимает маску Горгоны#Когда маска одета, Айзек не может стрелять#{{Petrify}} Глядя на врагов, когда Айзек в маске, они каменеют", "Маска Горгоны", "ru")
 
 --Lithium Salts
 --EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Todas las píldoras reducirán el daño y las lágrimas, pero aumentarán el tiempo de invencibilidad", "Sales de litio", "es")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Pills have a 10% chance to be replaced by Lithium Pills#Lithium Pills grant a random stat down, but increase Isaac's invincibility frames after getting hit", "Lithium Salts")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Добовляет дополнительную пилюлю, которая может с шансом в 10% заменить обычную", "Литивые соли", "ru")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "Pills have a 10% chance to be replaced by Lithium Pills#{{LithiumPill}} Lithium Pills grant a random stat down, but increase Isaac's invincibility frames after getting hit", "Lithium Salts")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM, "10% шанс пилюли заменятся литийными таблетками#{{LithiumPill}} Литийные таблетки понижают случайную статистику, но увеличивают кадры неуязвимости Айзека после получения удара", "Литивые соли", "ru")
 
 --Thunder Bombs
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Fully recharges active items#{{Battery}} When Isaac has no bombs, one can be placed at the cost of three charges#Bombs make electricity that spreads to nearby enemies#Electricity deals half of the bomb's damage", "Thunder Bombs", "en")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Fully recharges active items#{{Battery}} When Isaac has no bombs, one can be placed at the cost of three charges#Bombs make electricity that spreads to nearby enemies#Electricity deals half of the bomb's damage", "Thunder Bombs", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS, "{{Battery}} Полностью заряжает активные предметы#{{Battery}} Когда у Айзека нет бомб, одна может быть использована взамен на заряд#Бомбы создают электричество, которое распространяется на близлежащих врагов#Електричество наносит половину урона от бомб", "Громовые бомбы", "ru")
 
 --Blasting Boots
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "{{Bomb}} +5 bombs#Gives explosion immunity#Explosion launches Isaac in the air", "Blasting Boots", "en")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "{{Bomb}} +5 bombs#Gives explosion immunity#Explosion launches Isaac in the air", "Blasting Boots", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "{{Bomb}} +5 бомб#Дает устойчивость ко взрывам#Взрыв подбрасывет Айзека в воздух", "Взрывостойкие сапоги", "ru")
 
 --Pawn Baby
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 30 damage#Respawns at a random door after reaching a wall", "Salt Pawns", "en")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Фамильяр, cхожий c братиком Бобби#{{Fear}} 20% шанс выстрелить слезой с эффектом страха#Если враг рядом, прыгает на него#Обычные враги убиваются мгновенно#Боссы получают урон, равный 20% от максимального здоровья", "Малыш-пешка", "ru")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 30 damage#Respawns at a random door after reaching a wall", "Salt Pawns", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Дает пешку-фамильяра, которая передвигается вперед на один тайл за раз, начиная с двери, с которой вошли в комнату#Прыгает на ближайших врагов, нанося 30 единиц урона#Появляется у случайной двери после столкновения со стеной", "Соленая пешка", "ru")
 
 --Salty Baby
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "Familiar that fires salt rock projectiles when getting hit by an enemy tear# After blocking 6 enemy tears, loses the ability to block shots and leaves a trail of fearing salt creep instead#Returns to its original state at the start of every floor", "Salty Baby", "en")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "Familiar that fires salt rock projectiles when getting hit by an enemy tear# After blocking 6 enemy tears, loses the ability to block shots and leaves a trail of fearing salt creep instead#Returns to its original state at the start of every floor", "Salty Baby", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "Фамильяр, котрый стреляет соляными снарядами при получении урона от слез врага# Заблокировав 6 слез врагов перестает блокировать снаряды и вместо этого оставляет следы отпугивающей соли#Возвращается в исходное состояние при старте каждого этажа", "Малыш-солонка", "ru")
 
 --Sodom
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots a red flame opposite of his movement direction#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 3 directions#!!! Effect can be applied on enemy only one time", "Sodom", "en")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#При смерти с эффектом враг выстреливает пламя в 8 направлениях#Это пламя может наложить этот же эффект#!!! Эффект можно наложить на врага только один раз", "Содом", "ru")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots a red flame opposite of his movement direction#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 3 directions#!!! Effect can be applied on enemy only one time", "Sodom", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#При смерти с эффектом враг выстреливает пламя в 3 направлениях#!!! Эффект можно наложить на врага только один раз", "Содом", "ru")
 
 --Shrapnel Bombs
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS, "{{Bomb}} +5 bombs#Isaac's bombs fire high velocity nails in random directions upon detonating#{{BleedingOut}} Nails pierce enemies and inflict bleeding", "Shrapnel Bombs", "en")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS, "{{Bomb}} +5 bombs#Isaac's bombs fire high velocity nails in random directions upon detonating#{{BleedingOut}} Nails pierce enemies and inflict bleeding", "Shrapnel Bombs", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS, "{{Bomb}} +5 бомб#Бомбы Айзека выстреливают высокоскоростными гвоздями в случайных направлениях при детонировании#{{BleedingOut}} Гвозди проходят сквозь врагов и накладывают эффект кровотечения", "Шрапнельные бомбы", "ru")
 
 --Red Hood
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD, "Cycle between moon phases on room clear#Increased stats the closer the phase is to a full moon#On full moon, gain extra stat boosts, contact damage, and stompy effect", "Red Hood", "en")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD, "Cycles between moon phases on room clear#Increased stats the closer the phase is to a full moon#On full moon, gain extra stat boosts, contact damage, and {{Stompy}} Stompy effect", "Red Hood", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD, "Меняет фазы луны при зачистке комнаты#Увеличивает характеристики, чем ближе к фаза полнолуния#При полной луне получает сильное увеличение характеристик, контактный урон и {{Stompy}} эффект Топтуна", "Красная шапочка", "ru")
 
 -- Trinkets
 
 --Smelling Salts
-EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "All instances of slow and petrify inflicted onto enemies is instead converted into weakness#Weakness decreases enemy speed and increases damage dealt to them", "Smelling Salts", "en")
-EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "Игнорирует смертельный урон#Уничтожается после срабатывания эффекта", "Нюхательная соль", "ru")
+EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "All instances of {{Slow}} slow and {{Petrify}} petrify inflicted onto enemies is instead converted into weakness#{{Weakness}} Weakness decreases enemy speed and increases damage dealt to them", "Smelling Salts", "en_us")
+EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SMELLING_SALTS, "Эффекты {{Slow}} замедления и {{Petrify}} окменения, наложенные на врагов, вместо этого преобразуются в слабость#{{Weakness}} Слабость снижает скорость врагов и увеличивает урон, наносимый им", "Нюхательная соль", "ru")
 
 --Salt Rock
-EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "Rocks have a chance to emit a pool of salt creep upon entering an uncleared room.#Salt Rocks fire rock tears in all directions upon being destroyed", "Salt Rock", "en")
-EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "При входе в новую комнату 10% шанс камень может превратиться в соляной камень#Уничтожение соляного камня создает мини-статую Эдит, которая прыгает на врагов#Если врагов не осталось, прыгает на случайные камни/какашки", "Соляной камень", "ru")
+EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "Rocks have a chance to emit a pool of salt creep upon entering an uncleared room#Salt Rocks fire rock tears in all directions upon being destroyed", "Salt Rock", "en_us")
+EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK, "У камней есть шанс создать бассейн из соляной лужи при входе в незачищенную комнату#Соляные камни выстреливают соляными снарядами во всех нарпавлениях после уничтожения", "Соляной камень", "ru")
+
+--Chunk of Amber
+EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_CHUNK_OF_AMBER, "Petrified enemies spawn either a random pickup, blue spider, or blue fly on death", "Chunk of Amber")
+EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_CHUNK_OF_AMBER, "Закаменевшие враги создают при смерти случайный пикап, синиего паука или синию муху при смерти", "Кусок янтаря", "ru")
 
 -- Cards/Runes/Pills
 
