@@ -33,9 +33,6 @@
 	<sound name="Blasting Boots">
 		<sample weight="1" path="redith/funny/Blasting Boots.wav" />
 	</sound>
-	<sound name="Breath Mints">
-		<sample weight="1" path="redith/funny/Breath Mints.wav" />
-	</sound>
 	<sound name="Gorgon Mask">
 		<sample weight="1" path="redith/funny/Gorgon Mask.wav" />
 	</sound>
@@ -59,5 +56,8 @@
 	</sound>
 	<sound name="​Thunder Bombs">
 		<sample weight="1" path="redith/funny/Thunder Bombs.wav" />
+	</sound>
+	<sound name="Shrapnel Bombs">
+		<sample weight="1" path="redith/funny/Shrapnel Bombs.wav" />
 	</sound>
 </sounds>
