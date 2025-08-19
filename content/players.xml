@@ -10,6 +10,7 @@
           items="​Salt Shaker"
           speedmodifier="-0.15"
           rangemodifier="-0.45"
+          noshake="true"
           />
        <player name ="Redith" skin="tedith_phase1.png" armor="6"
           nameimage="playername_Edith.png" modcostume="151"
