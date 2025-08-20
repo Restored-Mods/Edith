@@ -1145,7 +1145,10 @@ function Player:NewRoom()
 			data.TrapDoorFall = nil
 		end
 		Helpers.ChangeSprite(player)
+		
+		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
+		
 		data.PostLandingKill = nil
 		data.Landed = nil
 	end
