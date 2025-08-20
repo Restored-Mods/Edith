@@ -16,16 +16,16 @@ The unused secret character from Antibirth has been restored and improved, with 
 Edith is a soul heart character that moves via sliding along the room's grid, moving one tile at a time. 
 She is only able to move in cardinal directions, but is able to perform an omni-directional jump that can be aimed with the bomb button.
 
-[img]https://i.imgur.com/SWgmjPv.gifv[/img]
+[img]https://i.imgur.com/SWgmjPv.gif[/img]
 
 The stomp deals damage and knockback to nearby enemies. Killing an enemy with a stomp grants a short moment of invincibility.
 Edith's stomp recharges in 3 seconds, charging faster while standing still. Bombs can be placed normally while the stomp is not charged (Configurable).
 
-[img]https://i.imgur.com/xivZL4Q.gifv[/img]
+[img]https://i.imgur.com/xivZL4Q.gif[/img]
 
 Pressing the swap key (Control on keyboard) will toggle Edith's stomp to consume a bomb, causing an explosion upon landing. This explosion inherits all bomb effects.
 
-[img]https://i.imgur.com/PlLhZLK.gifv[/img]
+[img]https://i.imgur.com/PlLhZLK.gif[/img]
 
 
 [h2]Caution![/h2]
@@ -37,12 +37,15 @@ BrakeDude, Pandora, Akad, Sillst, fly_6, im_tem, Thicco Catto, Kotry, Aceolotl, 
 
 [h2]Special thanks to[/h2] 
 [code][u]Public Entertainment Networked Interactive Software[/u] - For the original Antibirth mod as well as the content and concepts that this mod builds off of
-[u]DoodleDude[/u] - For JumpAPI and Edith Rocket In a Jar synergy
+[u]DoodleDude[/u] - For Edith Rocket In a Jar synergy
+[u]Kerkel[/u] - For JumpLib
 [u]Kattack[/u] - For Kattack
 [/code]
 
 [h2]Restored Hub Discord Link[h2]
 https://discord.gg/BYGmAhgG8k
+
+
 
 </description>
     <version>1.0</version>
