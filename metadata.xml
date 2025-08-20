@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-<name>Edith Restored</name>
-<directory>edith</directory>
-<description>
-[b]"But Lot's wife looked back, and she became a pillar of salt." - Genesis 19:26[/b]
+    <name>Edith Restored</name>
+    <directory>edith</directory>
+    <id>3552120418</id>
+    <description>
+[b]&quot;But Lot's wife looked back, and she became a pillar of salt.&quot; - Genesis 19:26[/b]
 
 The unused secret character from Antibirth has been restored and improved, with updated gameplay for Repentance!
 
@@ -45,13 +46,17 @@ BrakeDude, Pandora, Akad, Sillst, fly_6, im_tem, Thicco Catto, Kotry, Aceolotl, 
 [h2]Restored Hub Discord Link[h2]
 https://discord.gg/BYGmAhgG8k
 
-
-
 </description>
-    <version>1.0</version>
+    <version>1.0.1</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
+    <tag id="Items"/>
+    <tag id="Active Items"/>
+    <tag id="Trinkets"/>
+    <tag id="Pills"/>
+    <tag id="Pickups"/>
     <tag id="Player Characters"/>
+    <tag id="Familiars"/>
     <tag id="Tweaks"/>
     <tag id="Graphics"/>
 </metadata>
