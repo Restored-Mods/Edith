@@ -87,7 +87,7 @@
 	<color name="tear_vengeful" r="380" g="380" b="380" or="200"/>
 	
 	<!-- Salt Shaker -->
-	<wisp id="7" hp="1" damage="4" flameColor="flame_white" coreColor="core_white" tearColor="tear_white" tearColor2="tear_beige" tearFlags2="5" procChance="0.33" />
+	<wisp id="7" hp="1" damage="3" flameColor="flame_white" coreColor="core_white" tearColor="tear_white" tearColor2="tear_purple" tearFlags2="20" procChance="0.15" />
 	<!-- Gorgon Mask -->
 	<wisp id="8" hp="1" canShoot="false" damage="0" flameColor="flame_grey" coreColor="core_grey" tearColor="tear_grey" />
 	<!-- The Chisel >
