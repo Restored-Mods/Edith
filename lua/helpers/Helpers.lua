@@ -893,13 +893,15 @@ function Helpers.Stomp(player, force, doBombStomp)
 						player:AddBombs(-1)
 					end
 				end
-				local oldRadius = radius
 				if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then -- Mr. Mega
 					stompDamage = stompDamage * 1.15
-					radius = oldRadius * 1.3
+					radius = radius * 1.3
 				end
 				if isGigaBomb then
-					radius = oldRadius * 2
+					radius = radius * 2
+				end
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_PUPULA_DUPLEX) then
+					radius = radius * 1.2
 				end
 				bombDamage = GetBombDamage(player)
 			end
@@ -908,16 +910,34 @@ function Helpers.Stomp(player, force, doBombStomp)
 			doBombStomp = force or data.BombStomp
 		end
 	end
+
+	if player:HasCollectible(CollectibleType.COLLECTIBLE_TOUGH_LOVE) then
+		local TLRNG = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_TOUGH_LOVE)
+		
+		local ToughLoveChance = TLRNG:RandomInt(1, 100)
+		local maxChance = math.min(10 + (player.Luck * 10), 100)
+		if ToughLoveChance <= maxChance then
+			stompDamage = stompDamage * 3.2
+		end
+	end
+
+	-- On hold until i find a better way
+	--[[
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_LUMP_OF_COAL) and data.LastEdithPosition ~= nil then
+			local LandPos = data.TargetLandPos 
+			local JumpPos = data.LastEdithPosition 
+
+			print((LandPos - JumpPos):Length()/40)
+		end
+	]]
+	
+
 	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player, doBombStomp, bombs > 0 or force)
 	
 	EdithRestored.Game:ShakeScreen(10)
 	
-	if chap4 then	
-		SFXManager():Play(SoundEffect.SOUND_MEATY_DEATHS, 1, 0, false, 1, 0)
-	else
-		SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT, 1, 0)
-	end
-	
+	local sound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or SoundEffect.SOUND_STONE_IMPACT		SFXManager():Play(sound, 1, 0)
+
 	for i = 1, TSIL.Random.GetRandomInt(6, 9) do
 		local randRockVel = Vector(TSIL.Random.GetRandomInt(-3, 3), TSIL.Random.GetRandomInt(-3, 3))
 		Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 1, player.Position, randRockVel, nil)

@@ -394,11 +394,9 @@ local function EdithGridMovement(player, data)
 					or bdType == 44
 				)
 
-				if chap4 then
-					SFXManager():Play(SoundEffect.SOUND_MEAT_JUMPS)
-				else
-					SFXManager():Play(EdithRestored.Enums.SFX.Edith.ROCK_SLIDE)
-				end
+				local slideSound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or EdithRestored.Enums.SFX.Edith.ROCK_SLIDE
+
+				SFXManager():Play(slideSound)
 
 				if EdithRestored.Room():HasWater() then
 					local waterStart = Isaac.Spawn(
@@ -411,9 +409,11 @@ local function EdithGridMovement(player, data)
 					):ToEffect()
 					waterStart.SpriteScale = (Vector(1 * directionStuff, 1))
 					if bdType == 44 then
-						waterStart.Color = Color(1, 0.2, 0.2, 1, 0, 0, 0)
+						waterStart.Color = Color(1, 0.2, 0.2)
 					elseif bdType == 45 then
-						waterStart.Color = Color(92 / 255, 81 / 255, 71 / 255, 1, 0, 0, 0)
+						waterStart.Color = Color(92 / 255, 81 / 255, 71 / 255)
+					else
+						waterStart.Color = Color(0.7, 0.75, 1)
 					end
 				else
 					if not chap4 then
@@ -576,12 +576,9 @@ function Player:TargetJumpRender(target)
 
 		target.Color = Color(1, 1, 1, 0, 0, 0, 0)
 
-		if data.BombStomp ~= nil then
-			target:GetSprite():ReplaceSpritesheet(0, "gfx/effects/target_edith_bomb.png")
-		elseif data.BombStomp ~= true then
-			target:GetSprite():ReplaceSpritesheet(0, "gfx/effects/target_edith.png")
-		end
-		target:GetSprite():LoadGraphics()
+		local targetSprite = data.BombStomp and "gfx/effects/target_edith_bomb.png" or "gfx/effects/target_edith.png"
+
+		target:GetSprite():ReplaceSpritesheet(0, targetSprite, true)
 
 		local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
 
@@ -889,8 +886,9 @@ function Player:Landing(player, jumpData, inPit)
 		Helpers.Stomp(player, nil, not data.PostRocketRide)
 		data.Landed = true
 		data.PostRocketRide = nil
+		data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
 		player.Velocity = Vector.Zero
-		Helpers.RemoveEdithTarget(player)
+		Helpers.RemoveEdithTarget(player)	
 		data.TargetJumpPos = nil
 		for _, v in pairs(Isaac.FindInRadius(player.Position, 55, EntityPartition.BULLET)) do
 			local projectile = v:ToProjectile() ---@cast projectile EntityProjectile
