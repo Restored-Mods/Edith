@@ -60,6 +60,12 @@ include("lua.mod_compat.MiniMapiItems.MiniMapiItems")
 --misc
 include("lua.items.funny")
 
+--stomp synergies
+include("lua.entities.player.StompSynergies.Brimstone")
+include("lua.entities.player.StompSynergies.TechX")
+include("lua.entities.player.StompSynergies.Technology")
+include("lua.entities.player.StompSynergies.DrFetus")
+
 if StageAPI and StageAPI.Loaded then
     StageAPI.AddPlayerGraphicsInfo(EdithRestored.Enums.PlayerType.EDITH, {
         Name = "gfx/ui/boss/playername_Edith.png",
