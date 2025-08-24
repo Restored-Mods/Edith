@@ -605,7 +605,11 @@ function Player:TargetJumpUpdate(target)
 	end
 
 	if EdithRestored:GetData(player).TargetJumpPos == nil then
-		if
+		local marked = player:GetMarkedTarget()
+		if marked then
+			target.Position = marked.Position
+			target.Velocity = marked.Velocity
+		elseif
 			Input.IsMouseBtnPressed(Mouse.MOUSE_BUTTON_LEFT)
 			and Options.MouseControl
 			and Input.GetDeviceNameByIdx(player.ControllerIndex) == "Keyboard"

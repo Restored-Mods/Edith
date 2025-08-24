@@ -1,15 +1,14 @@
-local mod = EdithRestored
+local TechX = {}
 
 ---@param player EntityPlayer
----@param inPit boolean
-function mod:OnTechXStomp(player, _, inPit)
-    if not player:HasCollectible(CollectibleType.COLLECTIBLE_TECH_X) then return end
-    if inPit then return end    
+---@param bombLanding boolean
+---@param isDollarBill boolean
+function TechX:OnTechXStomp(player, bombLanding, isDollarBill)
 	local techLaser = player:FireTechXLaser(player.Position, Vector.Zero, 30, player, 1)
-    techLaser:SetTimeout(30)
+	techLaser:SetTimeout(30)
 end
-mod:AddCallback(
-	JumpLib.Callbacks.ENTITY_LAND,
-	mod.OnTechXStomp,
-	{ tag = "EdithJump", type = EntityType.ENTITY_PLAYER }
+EdithRestored:AddCallback(
+	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
+	TechX.OnTechXStomp,
+	CollectibleType.COLLECTIBLE_TECH_X
 )
