@@ -2,7 +2,7 @@ local Helpers = {}
 
 local turretList = {{831,10,-1}, {835,10,-1}, {887,-1,-1}, {951,-1,-1}, {815,-1,-1}, {306,-1,-1}, {837,-1,-1}, {42,-1,-1}, {201,-1,-1}, 
 {202,-1,-1}, {203,-1,-1}, {235,-1,-1}, {236,-1,-1}, {804,-1,-1}, {809,-1,-1}, {68,-1,-1}, {864,-1,-1}, {44,-1,-1}, {218,-1,-1}, {877,-1,-1},
-{893,-1,-1}, {915,-1,-1}, {291,-1,-1}, {295,-1,-1}, {404,-1,-1}, {409,-1,-1}, {903,-1,-1}, {293,-1,-1}, {964,-1,-1},}
+{893,-1,-1}, {915,-1,-1}, {291,-1,-1}, {295,-1,-1}, {404,-1,-1}, {409,-1,-1}, {903,-1,-1}, {293,-1,-1}}
 
 
 local function RemoveStoreCreditFromPlayer(player) -- Partially from FF
@@ -121,6 +121,8 @@ end
 
 ---@param allEnemies boolean | nil
 ---@param noBosses boolean | nil
+---@param ignoreFires boolean | nil
+---@param ignoreDummy boolean | nil
 ---@return EntityNPC[]
 function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy)
 	local enemies = {}
@@ -138,6 +140,17 @@ function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy)
 		end
 	end
 	return enemies
+end
+
+---@param position Vector
+---@param radius number
+---@param allEnemies boolean | nil
+---@param noBosses boolean | nil
+---@param ignoreFires boolean | nil
+---@param ignoreDummy boolean | nil
+---@return EntityNPC[]
+function Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, ignoreFires, ignoreDummy)
+	return Helpers.Filter(Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy), function(idx, enemy) return enemy.Position:Distance(position) <= radius end)
 end
 
 function Helpers.Lerp(a, b, t, speed)
@@ -448,7 +461,7 @@ function Helpers.tearsUp(firedelay, val)
 end
 
 function Helpers.GetTrueRange(player)
-    return player.Range / 40.0
+    return player.TearRange / 40.0
 end
 
 function Helpers.rangeUp(range, val)
@@ -712,21 +725,27 @@ end
 ---@param doBombStomp boolean
 ---@param hasBombs boolean
 local function NewStompFunction(radius, damage, bombDamage, knockback, player, doBombStomp, hasBombs) -- well its name is clear
-	local enemiesInRadius = Helpers.Filter(Helpers.GetEnemies(true), function(_, enemy) return enemy.Position:Distance(player.Position) <= radius end)
-	for _,enemy in pairs(enemiesInRadius) do
-		--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
-		enemy:AddKnockback(EntityRef(player), (enemy.Position - player.Position):Resized(knockback), 5, Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT))
-		if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
-			enemy:TakeDamage(damage, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, EntityRef(player), 30)
+	local enemiesInRadius = Helpers.GetEnemiesInRadius(player.Position, radius, true)
+	if not (EdithRestored.DebugMode and EdithRestored:GetDebugValue("IgnoreStompDamage")) then
+		for _,enemy in pairs(enemiesInRadius) do
+			--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
+			enemy:AddKnockback(EntityRef(player), (enemy.Position - player.Position):Resized(knockback), 5, Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT))
+			if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
+				local newDamage = damage
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_PROPTOSIS) then
+					newDamage = newDamage * (1.5 - player.Position:Distance(enemy.Position) / radius)
+				end
+				enemy:TakeDamage(newDamage, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, EntityRef(player), 30)
+			end
+			if enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 then
+				enemy:Die()
+			end
 		end
-		if enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 then
-			enemy:Die()
-		end
-	end
-	local poop = EdithRestored.Room():GetGridEntityFromPos(player.Position)
-	if poop and poop:ToPoop() then
-		if poop.State ~= 1000 then
-			poop:Destroy()
+		local poop = EdithRestored.Room():GetGridEntityFromPos(player.Position)
+		if poop and poop:ToPoop() then
+			if poop.State ~= 1000 then
+				poop:Destroy()
+			end
 		end
 	end
 	--EdithRestored.Game:BombDamage(player.Position, damage, radius, true, player, TearFlags.TEAR_NORMAL, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
@@ -865,6 +884,7 @@ end
 ---@param doBombStomp boolean?
 function Helpers.Stomp(player, force, doBombStomp)
 	local data = EdithRestored:GetData(player)
+	local pData = EdithRestored:RunSave(player)
 	local room = EdithRestored.Room()
 	local bdType = room:GetBackdropType()
 	local chap4 = (bdType == 10 or bdType == 11 or bdType == 12 or bdType == 13 or bdType == 34 or bdType == 43 or bdType == 44)
@@ -873,7 +893,18 @@ function Helpers.Stomp(player, force, doBombStomp)
 	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5)
 	local bombDamage = 0
 	local radius = Helpers.GetStompRadius()
-	local knockbackFormula = 15 * ((Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)) and 2 or 1)
+	local knockbackFormula = 15 
+	if Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) then
+		knockbackFormula = knockbackFormula * 2
+	end
+
+	if player:HasCollectible(CollectibleType.COLLECTIBLE_PISCES) then
+		knockbackFormula = knockbackFormula + 10
+	end
+
+	if player:HasCollectible(CollectibleType.COLLECTIBLE_8_INCH_NAILS) then
+		knockbackFormula = knockbackFormula + 8
+	end
 
 	-- yeah the en of that stuff
 
@@ -908,6 +939,20 @@ function Helpers.Stomp(player, force, doBombStomp)
 		end
 		if doBombStomp == nil then
 			doBombStomp = force or data.BombStomp
+		end
+	end
+	pData.StompCount = pData.StompCount and ((pData.StompCount + 1) % 2) or 1
+
+	if pData.StompCount % 2 == 0 then
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_CHEMICAL_PEEL) then
+			stompDamage = stompDamage + 2
+		end
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_PEEPER) then
+			stompDamage = stompDamage * 1.35
+		end
+	else
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_CLOT) then
+			stompDamage = stompDamage + 1
 		end
 	end
 

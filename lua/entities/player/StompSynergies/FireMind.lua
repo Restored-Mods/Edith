@@ -1,0 +1,21 @@
+local FireMind = {}
+local Helpers = EdithRestored.Helpers
+
+---@param player EntityPlayer
+---@param bombLanding boolean
+---@param isDollarBill boolean
+function FireMind:OnFireMindStomp(player, bombLanding, isDollarBill)
+	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_FIRE_MIND)
+	local chance = 1 / (10 - (Helpers.Clamp(player.Luck, 0, 13) * 0.7))
+	for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
+		enemy:AddBurn(EntityRef(player), 40, player.Damage)
+	end
+	if rng:RandomFloat() <= chance or isDollarBill then
+		EdithRestored.Game:BombExplosionEffects(player.Position, player.Damage, TearFlags.TEAR_BURN, Color.Default, player)
+	end
+end
+EdithRestored:AddCallback(
+	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
+	FireMind.OnFireMindStomp,
+	CollectibleType.COLLECTIBLE_FIRE_MIND
+)

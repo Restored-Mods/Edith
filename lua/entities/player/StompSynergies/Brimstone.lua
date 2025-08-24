@@ -1,14 +1,13 @@
-local mod = EdithRestored
+local Brimstone = {}
 
 ---@param player EntityPlayer
----@param inPit boolean
-function mod:OnBrimStomp(player, _, inPit)
-    if not player:HasCollectible(CollectibleType.COLLECTIBLE_BRIMSTONE) then return end
-    if inPit then return end    
+---@param bombLanding boolean
+---@param isDollarBill boolean
+function Brimstone:OnBrimStomp(player, bombLanding, isDollarBill)
 	player:FireBrimstoneBall(player.Position, Vector.Zero, Vector.Zero)
 end
-mod:AddCallback(
-	JumpLib.Callbacks.ENTITY_LAND,
-	mod.OnBrimStomp,
-	{ tag = "EdithJump", type = EntityType.ENTITY_PLAYER }
+EdithRestored:AddCallback(
+	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
+	Brimstone.OnBrimStomp,
+	CollectibleType.COLLECTIBLE_BRIMSTONE
 )

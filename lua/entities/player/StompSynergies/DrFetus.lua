@@ -1,17 +1,15 @@
-local mod = EdithRestored
-local game = Game()
+local DrFetus = {}
+local game = EdithRestored.Game
 
 ---@param player EntityPlayer
----@param inPit boolean
-function mod:OnDrFetusStomp(player, _, inPit)
-    if not player:HasCollectible(CollectibleType.COLLECTIBLE_DR_FETUS) then return end
-    if inPit then return end    
-    if mod:GetData(player).BombStomp then return end
-
+---@param bombLanding boolean
+---@param isDollarBill boolean
+function DrFetus:OnDrFetusStomp(player, bombLanding, isDollarBill)
+    if bombLanding then return end
     game:BombExplosionEffects(player.Position, player.Damage * 5, player.TearFlags, Color.Default, player, 1, true, false)
 end
-mod:AddCallback(
-	JumpLib.Callbacks.ENTITY_LAND,
-	mod.OnDrFetusStomp,
-	{ tag = "EdithJump", type = EntityType.ENTITY_PLAYER }
+EdithRestored:AddCallback(
+	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
+	DrFetus.OnDrFetusStomp,
+	CollectibleType.COLLECTIBLE_DR_FETUS
 )

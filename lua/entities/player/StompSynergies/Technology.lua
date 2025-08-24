@@ -1,11 +1,10 @@
-local mod = EdithRestored
+local Technology = {}
+local Helpers = EdithRestored.Helpers
 
 ---@param player EntityPlayer
-function mod:OnTechStomp(player)
-    if not player:HasCollectible(CollectibleType.COLLECTIBLE_TECHNOLOGY) then return end
-    
-    local LandPos = mod.Helpers.GetEdithTarget(player).Position --[[@as Vector]]
-    local JumpPos = player.Position --[[@as Vector]]
+function Technology:OnTechStomp(player)
+    local LandPos = Helpers.GetEdithTarget(player).Position --[[@as Vector]]
+    local JumpPos = player.Position
 
     if not LandPos and not JumpPos then return end
 
@@ -15,8 +14,8 @@ function mod:OnTechStomp(player)
     local laser = player:FireTechLaser(JumpPos, LaserOffset.LASER_TECH1_OFFSET, dir)
     laser:SetMaxDistance(len)
 end
-mod:AddCallback(
-	JumpLib.Callbacks.POST_ENTITY_JUMP,
-	mod.OnTechStomp,
-	{ tag = "EdithJump", type = EntityType.ENTITY_PLAYER }
+EdithRestored:AddCallback(
+	EdithRestored.Enums.Callbacks.ON_EDITH_JUMPING,
+	Technology.OnTechStomp,
+	CollectibleType.COLLECTIBLE_TECHNOLOGY
 )

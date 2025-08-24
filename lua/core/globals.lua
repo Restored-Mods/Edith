@@ -24,6 +24,7 @@ local DebugModeValues = {
 	ShowBoSEffect = false,
 	IFrames = 30,
 	UseIFrames = false,
+	IgnoreStompDamage = false,
 }
 
 local DebugModeValuesDefault = {
@@ -34,6 +35,7 @@ local DebugModeValuesDefault = {
 	ShowBoSEffect = false,
 	IFrames = 30,
 	UseIFrames = false,
+	IgnoreStompDamage = false,
 }
 
 EdithRestored.SaveManager.Utility.AddDefaultRunData(EdithRestored.SaveManager.DefaultSaveKeys.GLOBAL, runData)
