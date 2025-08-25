@@ -3,7 +3,7 @@ local TechX = {}
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function TechX:OnTechXStomp(player, bombLanding, isDollarBill)
+function TechX:OnTechXStomp(player, bombLanding, isDollarBill, isFruitCake)
 	local techLaser = player:FireTechXLaser(player.Position, Vector.Zero, 30, player, 1)
 	techLaser:SetTimeout(30)
 end

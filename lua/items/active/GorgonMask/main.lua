@@ -84,9 +84,7 @@ function GorgonMask:WispDeath(wisp)
 			:ToEffect()
 		poof.SpriteScale = poof.SpriteScale * 0.5
 		for _, enemy in
-			ipairs(Helpers.Filter(Helpers.GetEnemies(), function(idx, enemy)
-				return wisp.Position:Distance(enemy.Position) <= 40
-			end))
+			ipairs(Helpers.GetEnemiesInRadius(wisp.Position, 40))
 		do
 			enemy:AddFreeze(EntityRef(wisp), 120)
 		end

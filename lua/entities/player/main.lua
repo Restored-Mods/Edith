@@ -550,8 +550,6 @@ function Player:StompRadiusRender()
 			shape:Circle(player.Position, EdithRestored:GetDebugValue("StompRadius"))
 		end
 	end
-
-	EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Player.StompRadiusRender)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Player.StompRadiusRender)
 
@@ -724,9 +722,7 @@ function Player:OnUpdatePlayer(player)
 			local isJumping = jumpData.Jumping
 			if isJumping and player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB) and data.BombStomp then
 				for _, enemy in
-				ipairs(Helpers.Filter(Helpers.GetEnemies(), function(_, enemy)
-					return enemy.Position:Distance(player.Position) <= Helpers.GetStompRadius()
-				end))
+				ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius()))
 				do
 					enemy.Velocity = enemy.Velocity + (player.Position - enemy.Position):Resized(2)
 				end
@@ -915,12 +911,13 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePla
 
 ---@param jumpData JumpData
 function Player:Landing(player, jumpData, inPit)
+	local data = EdithRestored:GetData(player)
 	if not inPit then
 		local data = EdithRestored:GetData(player)
 		Helpers.Stomp(player, nil, not data.PostRocketRide)
 		data.Landed = true
 		data.PostRocketRide = nil
-		data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
+		--data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
 		player.Velocity = Vector.Zero
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
@@ -931,13 +928,21 @@ function Player:Landing(player, jumpData, inPit)
 			projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
 			projectile:AddProjectileFlags(ProjectileFlags.HIT_ENEMIES)
 		end
-		if
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_HOW_TO_JUMP) and not data.HTJ then
+			data.BombStomp = nil
+			EdithJump(player, player.Position, true)
+			data.HTJ = true
+		elseif
 			EdithRestored.Room():GetGridCollisionAtPos(player.Position) == GridCollisionClass.COLLISION_SOLID
 			and not player.CanFly
 		then
 			data.BombStomp = nil
 			EdithJump(player, EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 0, false, false), true)
+		else
+			data.HTJ = nil
 		end
+	else
+		data.HTJ = nil
 	end
 end
 
@@ -1084,6 +1089,11 @@ function Player:DamageHandling(entity, amount, flags, source, cd)
 		if flags & DamageFlag.DAMAGE_PITFALL > 0 then
 			data.EdithTargetMovementPosition = nil
 		end
+		data.TargetJumpPos = nil
+
+		data.HTJ = nil
+		data.PostLandingKill = nil
+		data.Landed = nil
 	end
 end
 
@@ -1188,6 +1198,7 @@ function Player:NewRoom()
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
 
+		data.HTJ = nil
 		data.PostLandingKill = nil
 		data.Landed = nil
 	end
@@ -1280,12 +1291,55 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, Player.OnNPCCollision)
 
+local tearsToNotChange = {
+    TearVariant.TOOTH,
+    TearVariant.BOBS_HEAD,
+    TearVariant.SCHYTHE,
+    TearVariant.CHAOS_CARD,
+    TearVariant.NAIL,
+    TearVariant.DIAMOND,
+    TearVariant.MULTIDIMENSIONAL,
+    TearVariant.STONE,
+    TearVariant.BOOGER,
+    TearVariant.EGG,
+    TearVariant.RAZOR,
+    TearVariant.BONE,
+    TearVariant.BLACK_TOOTH,
+    TearVariant.NEEDLE,
+    TearVariant.BELIAL,
+    TearVariant.EYE,
+    TearVariant.EYE_BLOOD,
+    TearVariant.BALLOON,
+    TearVariant.BALLOON_BRIMSTONE,
+    TearVariant.BALLOON_BOMB,
+    TearVariant.FIST,
+    TearVariant.KEY,
+    TearVariant.KEY_BLOOD,
+    TearVariant.ERASER,
+    TearVariant.FIRE,
+    TearVariant.SWORD_BEAM,
+    TearVariant.SPORE,
+    TearVariant.TECH_SWORD_BEAM,
+    TearVariant.FETUS,
+}
+
+---@param tear EntityTear
+---@return boolean
+local function TearsToNotChange(tear)
+	for _, variant in pairs(tearsToNotChange) do
+		if variant == tear.Variant then
+			return true
+		end
+	end
+	return false
+end
+
 ---@param tear EntityTear
 function Player:OnEdithFireTear(tear)
 	local player = TSIL.Players.GetPlayerFromEntity(tear)
 
 	if not player then return end
-	if not Helpers.IsPlayerEdith(player, true, false) or player:HasCurseMistEffect() or tear.Variant == TearVariant.FETUS then return end
+	if not Helpers.IsPlayerEdith(player, true, false) or player:HasCurseMistEffect() or TearsToNotChange(tear) then return end
 
 	ChangeToEdithTear(tear)
 	tear.Scale = tear.Scale * 0.9

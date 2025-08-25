@@ -125,9 +125,20 @@ end
 ---@param ignoreDummy boolean | nil
 ---@return EntityNPC[]
 function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy)
+	return Helpers.GetEnemiesInRadius(EdithRestored.Room():GetCenterPos(), 99999, allEnemies, noBosses, ignoreFires, ignoreDummy)
+end
+
+---@param position Vector
+---@param radius number
+---@param allEnemies boolean | nil
+---@param noBosses boolean | nil
+---@param ignoreFires boolean | nil
+---@param ignoreDummy boolean | nil
+---@return EntityNPC[]
+function Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, ignoreFires, ignoreDummy)
+	local cap = Capsule(position, position, radius)
 	local enemies = {}
-	for _,enemy in ipairs(Isaac.GetRoomEntities()) do
-		enemy = enemy:ToNPC()
+	for _, enemy in ipairs(Isaac.FindInCapsule(cap, EntityPartition.ENEMY)) do
 		if Helpers.IsEnemy(enemy, allEnemies, ignoreFires, ignoreDummy) then
 			if not enemy:IsBoss() or (enemy:IsBoss() and not noBosses) then
 				--[[if enemy.Type == EntityType.ENTITY_ETERNALFLY then
@@ -140,17 +151,6 @@ function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy)
 		end
 	end
 	return enemies
-end
-
----@param position Vector
----@param radius number
----@param allEnemies boolean | nil
----@param noBosses boolean | nil
----@param ignoreFires boolean | nil
----@param ignoreDummy boolean | nil
----@return EntityNPC[]
-function Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, ignoreFires, ignoreDummy)
-	return Helpers.Filter(Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy), function(idx, enemy) return enemy.Position:Distance(position) <= radius end)
 end
 
 function Helpers.Lerp(a, b, t, speed)
@@ -730,21 +730,31 @@ local function NewStompFunction(radius, damage, bombDamage, knockback, player, d
 		for _,enemy in pairs(enemiesInRadius) do
 			--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
 			enemy:AddKnockback(EntityRef(player), (enemy.Position - player.Position):Resized(knockback), 5, Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT))
-			if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
-				local newDamage = damage
-				if player:HasCollectible(CollectibleType.COLLECTIBLE_PROPTOSIS) then
-					newDamage = newDamage * (1.5 - player.Position:Distance(enemy.Position) / radius)
+			if not player:HasCollectible(CollectibleType.COLLECTIBLE_SULFURIC_ACID) then
+				if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
+					local newDamage = damage
+					if player:HasCollectible(CollectibleType.COLLECTIBLE_PROPTOSIS) then
+						newDamage = newDamage * (1.5 - player.Position:Distance(enemy.Position) / radius)
+					end
+					enemy:TakeDamage(newDamage, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, EntityRef(player), 30)
 				end
-				enemy:TakeDamage(newDamage, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, EntityRef(player), 30)
-			end
-			if enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 then
-				enemy:Die()
+				if enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 then
+					enemy:Die()
+				end
 			end
 		end
-		local poop = EdithRestored.Room():GetGridEntityFromPos(player.Position)
-		if poop and poop:ToPoop() then
-			if poop.State ~= 1000 then
-				poop:Destroy()
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_SULFURIC_ACID) then
+			local newDamage = damage
+			if player:HasCollectible(CollectibleType.COLLECTIBLE_PROPTOSIS) then
+				newDamage = newDamage * (1.5 - player.Position:Distance(enemy.Position) / radius)
+			end
+			EdithRestored.Game:BombDamage(player.Position, newDamage, radius, true, player, player.TearFlags, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
+		else
+			local poop = EdithRestored.Room():GetGridEntityFromPos(player.Position)
+			if poop and poop:ToPoop() then
+				if poop.State ~= 1000 then
+					poop:Destroy()
+				end
 			end
 		end
 	end
@@ -931,7 +941,7 @@ function Helpers.Stomp(player, force, doBombStomp)
 				if isGigaBomb then
 					radius = radius * 2
 				end
-				if player:HasCollectible(CollectibleType.COLLECTIBLE_PUPULA_DUPLEX) then
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_PUPULA_DUPLEX)  then
 					radius = radius * 1.2
 				end
 				bombDamage = GetBombDamage(player)
@@ -957,12 +967,21 @@ function Helpers.Stomp(player, force, doBombStomp)
 	end
 
 	if player:HasCollectible(CollectibleType.COLLECTIBLE_TOUGH_LOVE) then
-		local TLRNG = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_TOUGH_LOVE)
+		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_TOUGH_LOVE)
 		
-		local ToughLoveChance = TLRNG:RandomInt(1, 100)
-		local maxChance = math.min(10 + (player.Luck * 10), 100)
+		local ToughLoveChance = rng:RandomInt(1, 100)
+		local maxChance = 1 / (10 - Helpers.Clamp(player.Luck, 0, 9))
 		if ToughLoveChance <= maxChance then
 			stompDamage = stompDamage * 3.2
+		end
+	end
+
+	if player:HasCollectible(CollectibleType.COLLECTIBLE_APPLE) then
+		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_APPLE)
+		local AppleChance = rng:RandomInt(1, 100)
+		local maxChance = 1 / (15 - Helpers.Clamp(player.Luck, 0 , 14))
+		if AppleChance <= maxChance then
+			stompDamage = stompDamage * 4
 		end
 	end
 

@@ -4,10 +4,10 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function SpiderBite:OnSpiderBiteStomp(player, bombLanding, isDollarBill)
+function SpiderBite:OnSpiderBiteStomp(player, bombLanding, isDollarBill, isFruitCake)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SPIDER_BITE)
     local chance = 1 / (4 - (Helpers.Clamp(player.Luck, 0, 15) / 5))
-	if rng:RandomFloat() <= chance or isDollarBill then
+	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
             enemy:AddSlowing(EntityRef(player), 75, 1, Color(1,1,1.3, 1, 0.156863, 0.156863, 0.156863))
         end
@@ -16,5 +16,5 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
 	SpiderBite.OnSpiderBiteStomp,
-	CollectibleType.COLLECTIBLE_SPIDER_BITE
+	{ Item = CollectibleType.COLLECTIBLE_SPIDER_BITE, PoolFruitCake = true }
 )
