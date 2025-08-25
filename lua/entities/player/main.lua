@@ -1,11 +1,44 @@
 local Helpers = include("lua.helpers.Helpers")
+local game = EdithRestored.Game
+local level = EdithRestored.Level
+local sfx = SFXManager()
+
+local SlideColors = {
+	Water = {
+		[BackdropType.CORPSE3] = Color(1, 0.2, 0.2),
+		[BackdropType.DROSS] = Color(92 / 255, 81 / 255, 71 / 255),
+		Default = Color(0.7, 0.75, 1),
+	},
+	Flesh = {
+		[BackdropType.BLUE_WOMB] = Color(0, 0, 0, 1, 0.3, 0.4, 0.6),
+		[BackdropType.CORPSE] = Color(0, 0, 0, 1, 0.62, 0.65, 0.62),
+		[BackdropType.CORPSE2] = Color(0, 0, 0, 1, 0.55, 0.57, 0.55),
+		Default = Color.Default
+	}
+}
+
+local Chap4Backdrops = {
+	[BackdropType.WOMB] = true,
+	[BackdropType.UTERO] = true,
+	[BackdropType.SCARRED_WOMB] = true,
+	[BackdropType.BLUE_WOMB] = true,
+	[BackdropType.CORPSE] = true,
+	[BackdropType.CORPSE2] = true,
+	[BackdropType.CORPSE3] = true,
+	[BackdropType.MORTIS] = true, --- Who knows
+}
+
+local function IsChap4()
+	local backdrop = EdithRestored.Room():GetBackdropType()
+	return Chap4Backdrops[backdrop] or false 
+end
 
 if CustomHealthAPI then
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithRestored.Enums.PlayerType.EDITH] = true
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithRestored.Enums.PlayerType.EDITH_B] = true
 	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithRestored.Enums.PlayerType.EDITH] = "SOUL_HEART"
 	CustomHealthAPI.PersistentData.CharactersThatConvertMaxHealth[EdithRestored.Enums.PlayerType.EDITH_B] =
-		"BLACK_HEART"
+	"BLACK_HEART"
 	CustomHealthAPI.Library.AddCallback(
 		"EdithRestored",
 		CustomHealthAPI.Enums.Callbacks.CAN_PICK_HEALTH,
@@ -37,9 +70,9 @@ local function EdithJump(player, pos, force)
 	local anim = "EdithJump"
 	if
 		data.BombStomp ~= nil
-			and (player:HasCollectible(CollectibleType.COLLECTIBLE_FAST_BOMBS) or player:HasCollectible(
-				CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR
-			))
+		and (player:HasCollectible(CollectibleType.COLLECTIBLE_FAST_BOMBS) or player:HasCollectible(
+			CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR
+		))
 		or force
 	then
 		anim = anim .. "Quick"
@@ -89,9 +122,9 @@ local function CheckEdithsCollisionWithGrid(player, data)
 			gridEntity.CollisionClass ~= 0
 			and gridEntity.CollisionClass ~= 5
 			and (gridEntity.Position - player.Position)
-					:Normalized()
-					:DistanceSquared(player.Velocity:Normalized() + room:GetWaterCurrent())
-				< 0.1
+			:Normalized()
+			:DistanceSquared(player.Velocity:Normalized() + room:GetWaterCurrent())
+			< 0.1
 		then
 			--Check if player is intersecting with the gridEntity
 			--From https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
@@ -234,13 +267,7 @@ local function EdithGridMovement(player, data)
 		local clampedPlayerPos = room:GetGridPosition(room:GetGridIndex(player.Position))
 		local targetMovementPosition
 		local targetMovementDirection
-
-		local mirrorWorldReverser
-		if Helpers.InMirrorWorld() then
-			mirrorWorldReverser = -1
-		else
-			mirrorWorldReverser = 1
-		end
+		local mirrorWorldReverser = Helpers.InMirrorWorld() and -1 or 1
 
 		if isPressingLeft then
 			targetMovementPosition = clampedPlayerPos + Vector(-40, 0) * mirrorWorldReverser
@@ -311,7 +338,7 @@ local function EdithGridMovement(player, data)
 				waterParticle:GetSprite().Color = Color(0.3, 0.42, 0.25)
 			end
 
-			SFXManager():Play(SoundEffect.SOUND_FART)
+			sfx:Play(SoundEffect.SOUND_FART)
 		end
 
 		firstFrameOfMovement = true
@@ -336,7 +363,7 @@ local function EdithGridMovement(player, data)
 		--Handle her velocity
 		local velocityMagnitude = 5 * player.MoveSpeed
 		if hasMarsEffect then
-			velocityMagnitude = velocityMagnitude * 2
+			velocityMagnitude = velocityMagnitude * 3
 			local velocityDirection = (data.EdithTargetMovementDirection):Normalized()
 			local vel = velocityDirection * velocityMagnitude
 			if IsPlayerOnGravityGrid(player) then
@@ -371,81 +398,48 @@ local function EdithGridMovement(player, data)
 			CheckEdithsCollisionWithSlots(player, data)
 		end
 
-		local directionStuff
-		if data.EdithTargetMovementDirection.X == 1 or data.EdithTargetMovementDirection.Y == 1 then
-			directionStuff = 1
-		elseif data.EdithTargetMovementDirection.X == -1 or data.EdithTargetMovementDirection.Y == -1 then
-			directionStuff = -1
-		else
-			directionStuff = 1
-		end
+		local MovementDir = data.EdithTargetMovementDirection
+		local directionStuff = (MovementDir.X == -1 or MovementDir.Y == -1) and -1 or 1
 
 		if data.EdithTargetMovementPosition and not player:IsFlying() then
 			if firstFrameOfMovement then
 				local dustVelocity = (-player.Velocity):Normalized() * 10
 				local bdType = EdithRestored.Room():GetBackdropType()
-				local chap4 = (
-					bdType == 10
-					or bdType == 11
-					or bdType == 12
-					or bdType == 13
-					or bdType == 34
-					or bdType == 43
-					or bdType == 44
+				local chap4 = IsChap4()
+				local slideSound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or EdithRestored.Enums.SFX.Edith.ROCK_SLIDE
+				local HasWater = EdithRestored.Room():HasWater()
+				local variant = HasWater and EffectVariant.BIG_SPLASH or (
+					chap4 and EffectVariant.POOF02 or EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant
+				)
+				local subtype = HasWater and 1 or (chap4 and 3 or 0)
+				local scale = {
+					X = (((not HasWater and chap4) and 0.4) or 1) * directionStuff,
+					Y = ((not HasWater and chap4) and 0.25) or 1
+				}
+
+				local slideGFX = Isaac.Spawn(
+					EntityType.ENTITY_EFFECT,
+					variant,
+					subtype,
+					player.Position,
+					Vector.Zero,
+					nil
 				)
 
-				local slideSound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or EdithRestored.Enums.SFX.Edith.ROCK_SLIDE
+				slideGFX.SpriteScale = Vector(scale.X, scale.Y) * player.SpriteScale.X
 
-				SFXManager():Play(slideSound)
-
-				if EdithRestored.Room():HasWater() then
-					local waterStart = Isaac.Spawn(
-						EntityType.ENTITY_EFFECT,
-						EffectVariant.BIG_SPLASH,
-						1,
-						player.Position,
-						Vector(0, 0),
-						nil
-					):ToEffect()
-					waterStart.SpriteScale = (Vector(1 * directionStuff, 1))
-					if bdType == 44 then
-						waterStart.Color = Color(1, 0.2, 0.2)
-					elseif bdType == 45 then
-						waterStart.Color = Color(92 / 255, 81 / 255, 71 / 255)
-					else
-						waterStart.Color = Color(0.7, 0.75, 1)
-					end
-				else
-					if not chap4 then
-						Isaac.Spawn(
-							EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Type,
-							EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant,
-							0,
-							player.Position,
-							dustVelocity,
-							nil
-						)
-					else
-						local bloodCloud = Isaac.Spawn(
-							EntityType.ENTITY_EFFECT,
-							EffectVariant.POOF02,
-							3,
-							player.Position,
-							Vector.Zero,
-							nil
-						):ToEffect()
-						bloodCloud.SpriteScale = Vector(0.4 * directionStuff, 0.25)
-						if bdType == 13 then
-							bloodCloud.Color = Color(0, 0, 0, 1, 0.3, 0.4, 0.6)
-						elseif bdType == 34 then
-							bloodCloud.Color = Color(0, 0, 0, 1, 0.62, 0.65, 0.62)
-						elseif bdType == 43 then
-							bloodCloud.Color = Color(0, 0, 0, 1, 0.55, 0.57, 0.55)
-						end
-					end
+				if not HasWater and not chap4 then
+					slideGFX.Velocity = dustVelocity
 				end
 
-				EdithRestored.Game:ShakeScreen(1)
+				local tableColorTarget = HasWater and SlideColors.Water or (chap4 and SlideColors.Flesh)
+
+				if tableColorTarget then
+					slideGFX.Color = (tableColorTarget[bdType] or tableColorTarget.Default)
+				end
+
+				sfx:Play(slideSound)
+				game:ShakeScreen(1)
 			end
 
 			-- if EdithRestored.Game:GetFrameCount() % 6 == 0 then
@@ -502,7 +496,7 @@ local function EdithGridMovement(player, data)
 					and (
 						player.Position:DistanceSquared(data.PreLastEdithPosition) <= 0.1
 						or data.LastEdithPosition:DistanceSquared(data.PreLastEdithPosition)
-							<= math.min(player.MoveSpeed * 2.5, 2)
+						<= math.min(player.MoveSpeed * 2.5, 2)
 					)
 				)
 			then
@@ -522,26 +516,22 @@ local function EdithGridMovement(player, data)
 	data.HadMarsEffect = hasMarsEffect
 end
 
+--- Is this a Tainted Edith function??
 function Player:LoadUpdate(isLoading)
 	for _, player in ipairs(Helpers.GetPlayers()) do
-		player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
-		player:AddCacheFlags(CacheFlag.CACHE_SPEED)
-		player:EvaluateItems()
+		player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_SPEED, true)
 		Helpers.ChangeSprite(player, true)
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Player.LoadUpdate)
 
 function Player:ChargeBarRender(player)
 	local data = EdithRestored:GetData(player)
-	if not Helpers.IsPlayerEdith(player, true, false) then
-		return
-	end
+	if not Helpers.IsPlayerEdith(player, true, false) then return end
 
 	data.EdithJumpCharge = data.EdithJumpCharge or 0
-	if not data.ChargeBar then
-		data.ChargeBar = Sprite("gfx/chargebar.anm2", true)
-	end
+	data.ChargeBar = data.ChargeBar or Sprite("gfx/chargebar.anm2", true)
 	data.ChargeBar.Offset = Vector(-12 * player.SpriteScale.X, -35 * player.SpriteScale.Y)
 	HudHelper.RenderChargeBar(
 		data.ChargeBar,
@@ -550,6 +540,7 @@ function Player:ChargeBarRender(player)
 		EdithRestored.Room():WorldToScreenPosition(player.Position)
 	)
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBarRender, 0)
 
 function Player:StompRadiusRender()
@@ -559,36 +550,71 @@ function Player:StompRadiusRender()
 			shape:Circle(player.Position, EdithRestored:GetDebugValue("StompRadius"))
 		end
 	end
+
+	EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Player.StompRadiusRender)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Player.StompRadiusRender)
 
----@param target EntityEffect
-function Player:TargetJumpRender(target)
-	if EdithRestored.Game:IsPaused() then
-		return
-	end
-	target:GetSprite().PlaybackSpeed = 0.05
-	target:GetSprite():Update()
 
-	local player = target.Parent or target.SpawnerEntity
-	if player and player:ToPlayer() and Helpers.IsPlayerEdith(player:ToPlayer(), true, false) then
-		local data = EdithRestored:GetData(player)
 
-		target.Color = Color(1, 1, 1, 0, 0, 0, 0)
 
-		local targetSprite = data.BombStomp and "gfx/effects/target_edith_bomb.png" or "gfx/effects/target_edith.png"
+---Draws a line between from `from` position to `to` position
+---@param effect EntityEffect
+---@param from Vector
+---@param to Vector
+---@param color Color
+---@param isObscure? boolean
+local function drawLine(effect, from, to, color, isObscure)
+	local effectData = EdithRestored:GetData(effect)
+	effectData.Line = effectData.Line or Sprite("gfx/edith line.anm2", true)
+	if not effectData.Line:IsLoaded() then return end
 
-		target:GetSprite():ReplaceSpritesheet(0, targetSprite, true)
+	local targetSprite = effectData.Line
+	local diffVector = to - from
+	local angle = diffVector:GetAngleDegrees()
+	local sectionCount = math.floor(diffVector:Length() / 16) - 1
+	local direction = Vector.FromAngle(angle)
 
-		local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
+	targetSprite:SetFrame("Line", isObscure and 1 or 0)
+	targetSprite.Color = color
+	targetSprite.Rotation = angle
 
-		if TargetColor then
-			target.Color = Color(TargetColor.R / 255, TargetColor.G / 255, TargetColor.B / 255, 1, 0, 0, 0)
-		else
-			target.Color = Color(155 / 255, 0, 0, 1, 0, 0, 0)
-		end
+	local currentPos
+	for i = 0, sectionCount do
+		currentPos = from + direction * (i * 16)
+		targetSprite:Render(Isaac.WorldToScreen(currentPos))
 	end
 end
+
+local spritePrefix = "gfx/effects/"
+---@param target EntityEffect
+function Player:TargetJumpRender(target)
+	if EdithRestored.Room():GetRenderMode() == RenderMode.RENDER_WATER_REFLECT then return end
+
+	local sprite = target:GetSprite()
+	local player = TSIL.Players.GetPlayerFromEntity(target)
+
+	drawLine(target, player.Position, target.Position, target.Color, sprite:GetFrame() == 1)
+
+	if EdithRestored.Game:IsPaused() then return end
+	if not player then return end
+	if not Helpers.IsPlayerEdith(player, true, false) then return end
+
+	local data = EdithRestored:GetData(player)
+	local targetSprite = data.BombStomp and "target_edith_bomb.png" or "target_edith.png"
+	local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
+
+	sprite.PlaybackSpeed = 0.05
+	sprite:Update()
+	sprite:ReplaceSpritesheet(0, spritePrefix .. targetSprite, true)
+	
+	if TargetColor then
+		target.Color = Color(TargetColor.R / 255, TargetColor.G / 255, TargetColor.B / 255, 1, 0, 0, 0)
+	else
+		target.Color = Color(155 / 255, 0, 0, 1, 0, 0, 0)
+	end
+end
+
 EdithRestored:AddCallback(
 	ModCallbacks.MC_POST_EFFECT_RENDER,
 	Player.TargetJumpRender,
@@ -597,14 +623,16 @@ EdithRestored:AddCallback(
 
 ---@param target EntityEffect
 function Player:TargetJumpUpdate(target)
-	local player = TSIL.Players.GetPlayerFromEntity(target)
+	local player = TSIL.Players.GetPlayerFromEntity(target) ---@cast player EntityPlayer
 
-	if not player or not Helpers.IsPlayerEdith(player:ToPlayer(), true, false) then
+	if not player or not Helpers.IsPlayerEdith(player, true, false) then
 		target:Remove()
 		return
 	end
 
-	if EdithRestored:GetData(player).TargetJumpPos == nil then
+	if EdithRestored:GetData(player).TargetJumpPos then
+		target.Velocity = Vector.Zero
+	else
 		local marked = player:GetMarkedTarget()
 		if marked then
 			target.Position = marked.Position
@@ -616,12 +644,12 @@ function Player:TargetJumpUpdate(target)
 		then
 			target.Position = Input.GetMousePosition(true)
 		else
-			target.Velocity = player:GetShootingInput():Resized(12)
+			target.Velocity = target.Velocity + player:GetShootingInput():Resized(12)
+			target:MultiplyFriction(0.5)
 		end
-	else
-		target.Velocity = Vector.Zero
 	end
 end
+
 EdithRestored:AddCallback(
 	ModCallbacks.MC_POST_EFFECT_UPDATE,
 	Player.TargetJumpUpdate,
@@ -652,6 +680,7 @@ function Player:OnInitPlayer(player)
 		)
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, Player.OnInitPlayer)
 
 ---@param player EntityPlayer
@@ -667,11 +696,8 @@ function Player:OnUpdatePlayer(player)
 	end
 
 	if Helpers.IsPlayerEdith(player, true, false) then
-		if
-			Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex)
-			and JumpLib:CanJump(player)
-			and Helpers.CanMove(player)
-		then
+		if Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex)
+			and JumpLib:CanJump(player) and Helpers.CanMove(player) then
 			if not data.BombStomp then
 				data.BombStomp = true
 			else
@@ -698,9 +724,9 @@ function Player:OnUpdatePlayer(player)
 			local isJumping = jumpData.Jumping
 			if isJumping and player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB) and data.BombStomp then
 				for _, enemy in
-					ipairs(Helpers.Filter(Helpers.GetEnemies(), function(_, enemy)
-						return enemy.Position:Distance(player.Position) <= Helpers.GetStompRadius()
-					end))
+				ipairs(Helpers.Filter(Helpers.GetEnemies(), function(_, enemy)
+					return enemy.Position:Distance(player.Position) <= Helpers.GetStompRadius()
+				end))
 				do
 					enemy.Velocity = enemy.Velocity + (player.Position - enemy.Position):Resized(2)
 				end
@@ -719,8 +745,8 @@ function Player:OnUpdatePlayer(player)
 						0,
 						math.min(
 							data.EdithJumpCharge
-								+ JumpCharge
-									* (player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and 2 or 1),
+							+ JumpCharge
+							* (player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and 2 or 1),
 							100 * JumpChargeMul + MinJumpCharge
 						)
 					)
@@ -776,7 +802,7 @@ function Player:OnUpdatePlayer(player)
 			then
 				local IFrames = data.PostLandingKill and 25 or 10
 				for _, callback in
-					ipairs(Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_LANDING_IFRAMES))
+				ipairs(Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_LANDING_IFRAMES))
 				do
 					local ret = callback.Function(
 						callback.Mod,
@@ -808,11 +834,11 @@ function Player:OnUpdatePlayer(player)
 			then
 				if sprite:IsEventTriggered("EdithJumpStart") and JumpLib:CanJump(player) then
 					local jumpTag = (
-						data.BombStomp ~= nil
-						and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
-						and (player:GetNumBombs() > 0 or player:HasGoldenBomb())
-					)
-							and "EdithRocketJump"
+							data.BombStomp ~= nil
+							and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
+							and (player:GetNumBombs() > 0 or player:HasGoldenBomb())
+						)
+						and "EdithRocketJump"
 						or "EdithJump"
 					JumpLib:Jump(player, {
 						Height = Helpers.GetJumpHeight(),
@@ -884,6 +910,7 @@ function Player:OnUpdatePlayer(player)
 		end
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePlayer, 0)
 
 ---@param jumpData JumpData
@@ -895,7 +922,7 @@ function Player:Landing(player, jumpData, inPit)
 		data.PostRocketRide = nil
 		data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
 		player.Velocity = Vector.Zero
-		Helpers.RemoveEdithTarget(player)	
+		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
 		for _, v in pairs(Isaac.FindInRadius(player.Position, 55, EntityPartition.BULLET)) do
 			local projectile = v:ToProjectile() ---@cast projectile EntityProjectile
@@ -913,6 +940,7 @@ function Player:Landing(player, jumpData, inPit)
 		end
 	end
 end
+
 EdithRestored:AddCallback(
 	JumpLib.Callbacks.ENTITY_LAND,
 	Player.Landing,
@@ -928,6 +956,7 @@ function Player:Pitfall(player, jumpData)
 	JumpLib.Internal:GetData(player).JumpPos = EdithRestored.Room()
 		:FindFreePickupSpawnPosition(player.Position, 0, false, false)
 end
+
 EdithRestored:AddCallback(
 	JumpLib.Callbacks.PRE_PITFALL_HURT,
 	Player.Pitfall,
@@ -972,6 +1001,7 @@ function Player:RocketJump(player, jumpData)
 		data.TargetJumpPos = nil
 	end
 end
+
 EdithRestored:AddCallback(
 	JumpLib.Callbacks.ENTITY_UPDATE_60,
 	Player.RocketJump,
@@ -989,6 +1019,7 @@ function Player:RocketRide(player, jumpData)
 		player.Position = data.Rocket.Position
 	end
 end
+
 EdithRestored:AddCallback(
 	JumpLib.Callbacks.ENTITY_UPDATE_60,
 	Player.RocketRide,
@@ -1018,7 +1049,7 @@ function Player:RocketTarget(bomb)
 					EdithJump(
 						player,
 						EdithRestored.Room()
-							:FindFreePickupSpawnPosition(bomb.Position - bomb.Velocity:Resized(20), 0, false, false),
+						:FindFreePickupSpawnPosition(bomb.Position - bomb.Velocity:Resized(20), 0, false, false),
 						true
 					)
 					player:GetSprite():SetFrame(3)
@@ -1037,6 +1068,7 @@ function Player:RocketTarget(bomb)
 		end
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, Player.RocketTarget)
 
 ---@param entity Entity
@@ -1054,6 +1086,7 @@ function Player:DamageHandling(entity, amount, flags, source, cd)
 		end
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Player.DamageHandling, EntityType.ENTITY_PLAYER)
 
 ---@param player EntityPlayer
@@ -1072,6 +1105,7 @@ function Player:DamageHandling2(player, amount, flags, source, cd)
 		end
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, Player.DamageHandling2)
 
 ---@param entity Entity
@@ -1093,6 +1127,7 @@ function Player:IFAfterFromJump(entity, amount, flags, source, cd)
 		data.PostLandingKill = true
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Player.IFAfterFromJump)
 
 function Player:edith_Stats(player, cacheFlag)
@@ -1105,6 +1140,7 @@ function Player:edith_Stats(player, cacheFlag)
 		Helpers.ChangePepperValue(player)
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Player.edith_Stats)
 
 function Player:Home()
@@ -1132,6 +1168,7 @@ function Player:Home()
 		end
 	end
 end
+
 --EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.Home)
 
 function Player:NewRoom()
@@ -1147,14 +1184,15 @@ function Player:NewRoom()
 			data.TrapDoorFall = nil
 		end
 		Helpers.ChangeSprite(player)
-		
+
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
-		
+
 		data.PostLandingKill = nil
 		data.Landed = nil
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.NewRoom)
 
 ---@param pickup EntityPickup
@@ -1180,6 +1218,7 @@ function Player:OnCollectibleCollission(pickup, collider)
 	player.Velocity = Vector.Zero
 	data.EdithTargetMovementPosition = nil
 end
+
 EdithRestored:AddCallback(
 	ModCallbacks.MC_PRE_PICKUP_COLLISION,
 	Player.OnCollectibleCollission,
@@ -1207,6 +1246,7 @@ function Player:OnMegaChestCollision(pickup, collider)
 	player.Velocity = Vector.Zero
 	data.EdithTargetMovementPosition = nil
 end
+
 EdithRestored:AddCallback(
 	ModCallbacks.MC_PRE_PICKUP_COLLISION,
 	Player.OnMegaChestCollision,
@@ -1237,26 +1277,21 @@ function Player:OnNPCCollision(entity, collider)
 	player.Velocity = Vector.Zero
 	data.EdithTargetMovementPosition = nil
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, Player.OnNPCCollision)
 
 ---@param tear EntityTear
 function Player:OnEdithFireTear(tear)
-	if not tear.SpawnerEntity:ToPlayer() then
-		return
-	end
+	local player = TSIL.Players.GetPlayerFromEntity(tear)
 
-	local player = tear.SpawnerEntity:ToPlayer()
-	if
-		not Helpers.IsPlayerEdith(player, true, false)
-		or player:HasCurseMistEffect()
-		or tear.Variant == TearVariant.FETUS
-	then
-		return
-	end
+	if not player then return end
+	if not Helpers.IsPlayerEdith(player, true, false) or player:HasCurseMistEffect() or tear.Variant == TearVariant.FETUS then return end
+
 	ChangeToEdithTear(tear)
 	tear.Scale = tear.Scale * 0.9
 	tear.SpriteScale = tear.SpriteScale * 0.9
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_FIRE_TEAR, Player.OnEdithFireTear)
 
 ---@param entity Entity
@@ -1332,6 +1367,7 @@ function Player:EdithMovement(entity, hook, button)
 		end
 	end
 end
+
 EdithRestored:AddPriorityCallback(ModCallbacks.MC_INPUT_ACTION, CallbackPriority.EARLY, Player.EdithMovement)
 
 function Player:PreUsePony(item, _, player)
@@ -1350,6 +1386,7 @@ function Player:PreUsePony(item, _, player)
 		return true
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, Player.PreUsePony)
 
 ---@param laser EntityLaser
@@ -1358,6 +1395,7 @@ function Player:OnMontezumaLaserInit(laser)
 		laser.Visible = false
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, Player.OnMontezumaLaserInit, LaserVariant.THICK_BROWN)
 
 ---@param laser EntityLaser
@@ -1390,8 +1428,7 @@ function Player:OnMontezumaLaserUpdate(laser)
 			spawningRotation = (-data.EdithTargetMovementDirection):GetAngleDegrees()
 		end
 
-		local newLaser =
-			EntityLaser.ShootAngle(12, player.Position, spawningRotation, laser.Timeout, Vector.Zero, player)
+		local newLaser = EntityLaser.ShootAngle(12, player.Position, spawningRotation, laser.Timeout, Vector.Zero, player)
 		newLaser:SetMaxDistance(laser.MaxDistance)
 
 		newLaser:GetData().IsFakeMontezumaLaserEdith = true
@@ -1472,6 +1509,7 @@ function Player:OnMontezumaLaserUpdate(laser)
 		laser:GetData().TargetRotation = trueRotation
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, Player.OnMontezumaLaserUpdate, LaserVariant.THICK_BROWN)
 
 ---@param effect EntityEffect
@@ -1479,14 +1517,16 @@ function Player:OnCustomDustInit(effect)
 	local dustData = effect:GetData()
 	local Rotation = math.random(2) == 2 and 1 or -1
 	local color = effect.Color
+	local rng = effect:GetDropRNG()
 
-	dustData.RotationDir = Rotation * (math.random() + 0.7) * 3
-	dustData.AnimFrame = math.random(8) - 1
+	dustData.RotationDir = Rotation * (rng:RandomFloat() + 0.7) * 3
+	dustData.AnimFrame = rng:RandomInt(8) - 1
 	effect:GetSprite():SetFrame("Clouds", dustData.AnimFrame)
 
 	color:SetTint(1, 1, 1, 0.7)
 	effect.Color = color
 end
+
 EdithRestored:AddCallback(
 	ModCallbacks.MC_POST_EFFECT_INIT,
 	Player.OnCustomDustInit,
@@ -1508,113 +1548,35 @@ function Player:OnCustomDustCloudUpdate(effect)
 		effect:Remove()
 	end
 end
+
 EdithRestored:AddCallback(
 	ModCallbacks.MC_POST_EFFECT_UPDATE,
 	Player.OnCustomDustCloudUpdate,
 	EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant
 )
 
+---@param p EntityPlayer
 function Player:AccessToMirrorWorld(p)
-	if Helpers.IsPlayerEdith(p, true, false) and p:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) then
-		for _, Door in ipairs(TSIL.Doors.GetDoorsToRoomIndex(-100)) do
-			if Door.State == 1 then
-				if (p.Position - Door.Position):Length() <= 30 then
-					if not EdithRestored.Room():IsMirrorWorld() then
-						EdithRestored.Game:StartRoomTransition(
-							EdithRestored.Level():GetCurrentRoomIndex(),
-							Door.Slot % 4,
-							RoomTransitionAnim.FADE_MIRROR,
-							p,
-							1
-						)
-					else
-						EdithRestored.Game:StartRoomTransition(
-							EdithRestored.Level():GetCurrentRoomIndex(),
-							Door.Slot % 4,
-							RoomTransitionAnim.FADE_MIRROR,
-							p,
-							0
-						)
-					end
-					level.LeaveDoor = Door.Slot
-				end
-			end
-		end
+	if not Helpers.IsPlayerEdith(p, true, false) and p:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) then return end
+
+	local dimension = Helpers.InMirrorWorld() and 0 or 1
+
+	for _, Door in ipairs(TSIL.Doors.GetDoorsToRoomIndex(-100)) do
+		if Door.State ~= 1 then goto continue end
+		if p.Position:Distance(Door.Position) > 30 then goto continue end
+
+		EdithRestored.Game:StartRoomTransition(
+			EdithRestored.Level():GetCurrentRoomIndex(),
+			Door.Slot % 4,
+			RoomTransitionAnim.FADE_MIRROR,
+			p,
+			dimension
+		)
+		level().LeaveDoor = Door.Slot
+		::continue::
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.AccessToMirrorWorld)
-
-local function drawLine(fx, from, to, frame)
-	local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
-	if not fx:GetData().Line then
-		fx:GetData().Line = Sprite()
-		fx:GetData().Line:Load("gfx/edith line.anm2", true)
-	end
-	if not fx:GetData().Line:IsLoaded() then
-		return
-	end
-
-	local targetSprite = fx:GetData().Line
-
-	local diffVector = to - from
-	local angle = diffVector:GetAngleDegrees()
-	local sectionCount = diffVector:Length() / 16
-
-	if TargetColor then
-		targetSprite.Color = Color(TargetColor.R / 255, TargetColor.G / 255, TargetColor.B / 255, 1, 0, 0, 0)
-	else
-		targetSprite.Color = Color(155 / 255, 0, 0, 1, 0, 0, 0)
-	end
-
-	local fxSprite = fx:GetSprite()
-
-	if fxSprite:GetAnimation() == "Blink" and fxSprite:GetFrame() >= 1 then
-		targetSprite.Color = Color(
-			targetSprite.Color.R * 0.606451613,
-			targetSprite.Color.G * 0.60784313725,
-			targetSprite.Color.B * 0.60784313725,
-			fx.Color.A,
-			0,
-			0,
-			0
-		)
-	end
-
-	targetSprite.Rotation = angle
-	targetSprite:SetFrame("Line", 0)
-	for i = 1, sectionCount do
-		targetSprite:Render(Isaac.WorldToScreen(from))
-		from = from + Vector.One * 16 * Vector.FromAngle(angle)
-	end
-
-	targetSprite.Rotation = 0
-	targetSprite:SetFrame("Idle", 0)
-	targetSprite:Render(Isaac.WorldToScreen(to))
-end
-
-function Player:RenderTargetLine(fx)
-	local room = EdithRestored.Room()
-	if room:GetRenderMode() == RenderMode.RENDER_WATER_REFLECT then
-		return
-	end
-
-	local p = fx.SpawnerEntity
-	if not p or p and not p:ToPlayer() then
-		fx:Remove()
-		return
-	end
-	p = p:ToPlayer()
-	if Helpers.IsPlayerEdith(p, true, false) then
-		drawLine(fx, p.Position, fx.Position, 0)
-	else
-		fx:Remove()
-	end
-end
-EdithRestored:AddCallback(
-	ModCallbacks.MC_POST_EFFECT_RENDER,
-	Player.RenderTargetLine,
-	EdithRestored.Enums.Entities.EDITH_TARGET.Variant
-)
 
 ---@param player EntityPlayer
 function Player:OnInitPlayerWithShaker(player)
@@ -1622,6 +1584,7 @@ function Player:OnInitPlayerWithShaker(player)
 		player:RemoveCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER)
 	end
 end
+
 EdithRestored:AddCallback(
 	ModCallbacks.MC_PLAYER_INIT_POST_LEVEL_INIT_STATS,
 	Player.OnInitPlayerWithShaker,
@@ -1631,12 +1594,12 @@ EdithRestored:AddCallback(
 function Player:TargetCamera()
 	local list = {}
 	for _, entity in
-		ipairs(
-			Isaac.FindByType(
-				EdithRestored.Enums.Entities.EDITH_TARGET.Type,
-				EdithRestored.Enums.Entities.EDITH_TARGET.Variant
-			)
+	ipairs(
+		Isaac.FindByType(
+			EdithRestored.Enums.Entities.EDITH_TARGET.Type,
+			EdithRestored.Enums.Entities.EDITH_TARGET.Variant
 		)
+	)
 	do
 		list[#list + 1] = entity
 	end
@@ -1658,6 +1621,7 @@ function Player:TargetCamera()
 		camera:SetFocusPosition(Vector((maxx + minx), (maxy + miny)) / 2)
 	end
 end
+
 EdithRestored:AddCallback(ModCallbacks.MC_POST_UPDATE, Player.TargetCamera)
 
 function Player:OnStompBloodBombs(player)
@@ -1666,6 +1630,7 @@ function Player:OnStompBloodBombs(player)
 		return true
 	end
 end
+
 EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION,
 	CallbackPriority.LATE,
@@ -1678,6 +1643,7 @@ EdithRestored:AddPriorityCallback(
 function Player:PreJump(player, config)
 	EdithRestored:GetData(player).EdithTargetMovementPosition = nil
 end
+
 EdithRestored:AddCallback(
 	JumpLib.Callbacks.PRE_ENTITY_JUMP,
 	Player.PreJump,
