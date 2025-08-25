@@ -911,12 +911,13 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePla
 
 ---@param jumpData JumpData
 function Player:Landing(player, jumpData, inPit)
+	local data = EdithRestored:GetData(player)
 	if not inPit then
 		local data = EdithRestored:GetData(player)
 		Helpers.Stomp(player, nil, not data.PostRocketRide)
 		data.Landed = true
 		data.PostRocketRide = nil
-		data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
+		--data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
 		player.Velocity = Vector.Zero
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
@@ -927,13 +928,21 @@ function Player:Landing(player, jumpData, inPit)
 			projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
 			projectile:AddProjectileFlags(ProjectileFlags.HIT_ENEMIES)
 		end
-		if
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_HOW_TO_JUMP) and not data.HTJ then
+			data.BombStomp = nil
+			EdithJump(player, player.Position, true)
+			data.HTJ = true
+		elseif
 			EdithRestored.Room():GetGridCollisionAtPos(player.Position) == GridCollisionClass.COLLISION_SOLID
 			and not player.CanFly
 		then
 			data.BombStomp = nil
 			EdithJump(player, EdithRestored.Room():FindFreePickupSpawnPosition(player.Position, 0, false, false), true)
+		else
+			data.HTJ = nil
 		end
+	else
+		data.HTJ = nil
 	end
 end
 
@@ -1080,6 +1089,11 @@ function Player:DamageHandling(entity, amount, flags, source, cd)
 		if flags & DamageFlag.DAMAGE_PITFALL > 0 then
 			data.EdithTargetMovementPosition = nil
 		end
+		data.TargetJumpPos = nil
+
+		data.HTJ = nil
+		data.PostLandingKill = nil
+		data.Landed = nil
 	end
 end
 
@@ -1184,6 +1198,7 @@ function Player:NewRoom()
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
 
+		data.HTJ = nil
 		data.PostLandingKill = nil
 		data.Landed = nil
 	end
