@@ -3,7 +3,7 @@ local MysteriousLiquid = {}
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function MysteriousLiquid:OnMysteriousLiquidStomp(player, bombLanding, isDollarBill)
+function MysteriousLiquid:OnMysteriousLiquidStomp(player, bombLanding, isDollarBill, isFruitCake)
     local creep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.PLAYER_CREEP_GREEN, 0, player.Position, Vector.Zero, player):ToEffect()
     creep:SetTimeout(25)
     creep.Timeout = 25
@@ -12,5 +12,5 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
 	MysteriousLiquid.OnMysteriousLiquidStomp,
-	CollectibleType.COLLECTIBLE_MYSTERIOUS_LIQUID
+	{ Item = CollectibleType.COLLECTIBLE_MYSTERIOUS_LIQUID, Pool3DollarBill = true, PoolFruitCake = true }
 )

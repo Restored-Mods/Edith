@@ -59,13 +59,11 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, SaltShakerLocal.Salt
 ---@param creep EntityEffect
 function SaltShakerLocal:CreepUpdate(creep)
     if creep.SubType ~= SaltCreepSubtype then return end
-    local enemies = Helpers.GetEnemies()
-    local threshold = 20 * creep.Scale
+    local enemies = Helpers.GetEnemiesInRadius(creep.Position, 20 * creep.Scale)
 
     for _, enemy in ipairs(enemies) do
-        local distance = enemy.Position - creep.Position
         
-        if (distance:Length() <= threshold and not enemy:HasEntityFlags(EntityFlag.FLAG_FEAR)) then 
+        if (not enemy:HasEntityFlags(EntityFlag.FLAG_FEAR)) then
             enemy:AddFear(EntityRef(creep), 30)
         end           
     end

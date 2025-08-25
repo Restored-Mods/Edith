@@ -293,9 +293,7 @@ function RedHoodLocal:Swipes(effect)
 	if sprite:IsFinished("Swing") or sprite:IsFinished("Swing2") then
 		local closest
 		for _, enemy in
-			pairs(Helpers.Filter(Helpers.GetEnemies(), function(_, enemy)
-				return enemy.Position:Distance(player.Position) <= 60
-			end))
+			pairs(Helpers.GetEnemiesInRadius(player.Position, 60))
 		do
 			if
 				not closest

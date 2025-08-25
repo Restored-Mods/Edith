@@ -543,16 +543,15 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBarRender, 0)
 
-if EdithRestored.DebugMode then
-	function Player:StompRadiusRender()
+function Player:StompRadiusRender()
+	if EdithRestored.DebugMode then
 		for _, player in ipairs(Helpers.GetPlayersByType(EdithRestored.Enums.PlayerType.EDITH)) do
 			local shape = player:GetDebugShape(true)
 			shape:Circle(player.Position, EdithRestored:GetDebugValue("StompRadius"))
 		end
 	end
-
-	EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Player.StompRadiusRender)
 end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, Player.StompRadiusRender)
 
 
 
@@ -723,9 +722,7 @@ function Player:OnUpdatePlayer(player)
 			local isJumping = jumpData.Jumping
 			if isJumping and player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB) and data.BombStomp then
 				for _, enemy in
-				ipairs(Helpers.Filter(Helpers.GetEnemies(), function(_, enemy)
-					return enemy.Position:Distance(player.Position) <= Helpers.GetStompRadius()
-				end))
+				ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius()))
 				do
 					enemy.Velocity = enemy.Velocity + (player.Position - enemy.Position):Resized(2)
 				end
@@ -1279,12 +1276,55 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, Player.OnNPCCollision)
 
+local tearsToNotChange = {
+    TearVariant.TOOTH,
+    TearVariant.BOBS_HEAD,
+    TearVariant.SCHYTHE,
+    TearVariant.CHAOS_CARD,
+    TearVariant.NAIL,
+    TearVariant.DIAMOND,
+    TearVariant.MULTIDIMENSIONAL,
+    TearVariant.STONE,
+    TearVariant.BOOGER,
+    TearVariant.EGG,
+    TearVariant.RAZOR,
+    TearVariant.BONE,
+    TearVariant.BLACK_TOOTH,
+    TearVariant.NEEDLE,
+    TearVariant.BELIAL,
+    TearVariant.EYE,
+    TearVariant.EYE_BLOOD,
+    TearVariant.BALLOON,
+    TearVariant.BALLOON_BRIMSTONE,
+    TearVariant.BALLOON_BOMB,
+    TearVariant.FIST,
+    TearVariant.KEY,
+    TearVariant.KEY_BLOOD,
+    TearVariant.ERASER,
+    TearVariant.FIRE,
+    TearVariant.SWORD_BEAM,
+    TearVariant.SPORE,
+    TearVariant.TECH_SWORD_BEAM,
+    TearVariant.FETUS,
+}
+
+---@param tear EntityTear
+---@return boolean
+local function TearsToNotChange(tear)
+	for _, variant in pairs(tearsToNotChange) do
+		if variant == tear.Variant then
+			return true
+		end
+	end
+	return false
+end
+
 ---@param tear EntityTear
 function Player:OnEdithFireTear(tear)
 	local player = TSIL.Players.GetPlayerFromEntity(tear)
 
 	if not player then return end
-	if not Helpers.IsPlayerEdith(player, true, false) or player:HasCurseMistEffect() or tear.Variant == TearVariant.FETUS then return end
+	if not Helpers.IsPlayerEdith(player, true, false) or player:HasCurseMistEffect() or TearsToNotChange(tear) then return end
 
 	ChangeToEdithTear(tear)
 	tear.Scale = tear.Scale * 0.9
