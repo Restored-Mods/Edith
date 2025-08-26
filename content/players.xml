@@ -19,5 +19,6 @@
           birthright="Reflect their gaze" costumeSuffix="edithb"
           achievement="Tainted Edith"
           speedmodifier="-0.1"
+          achievement="Tainted Edith (Restored Edith)"
           bSkinParent="Redith" /> 
 </players>

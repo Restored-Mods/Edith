@@ -1348,78 +1348,58 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_FIRE_TEAR, Player.OnEdithFireTear)
 
+
+local MovementActions = {
+	[ButtonAction.ACTION_LEFT] = { Direction = Vector(-1, 0), Return = 0 },
+	[ButtonAction.ACTION_RIGHT] = { Direction = Vector(1, 0), Return = 0 },
+	[ButtonAction.ACTION_UP] = { Direction = Vector(0, -1), Return = 0 },
+	[ButtonAction.ACTION_DOWN] = { Direction = Vector(0, 1), Return = 0 },
+}
+
+local function PonyOverride(player, data, actions)
+	local movementDirection = data.EdithTargetMovementDirection
+	local forceInput = movementDirection:DistanceSquared(actions.Direction) == 0
+
+	if not forceInput then return end
+	data.ForceMovementInput = data.ForceMovementInput - 1
+	if data.ForceMovementInput > 0 then return end
+	if data.PonyItem then
+		player:UseActiveItem(data.PonyItem, UseFlag.USE_NOANIM)
+		data.PonyItem = nil
+	end
+
+	data.ForceMovementInput = nil
+
+	return 1
+end
+
+
 ---@param entity Entity
 function Player:EdithMovement(entity, hook, button)
-	if entity and not entity:IsDead() then
-		local player = entity:ToPlayer()
-		if player and Helpers.IsPlayerEdith(player, true, false) then
-			local OnlyStomps = EdithRestored:GetDefaultFileSave("OnlyStomps")
-			if
-				player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
-				or player:HasCurseMistEffect()
-			then
-				return
-			end
-			local data = EdithRestored:GetData(player)
-			if hook == InputHook.GET_ACTION_VALUE then
-				if data.ForceMovementInput then
-					local forceInput = false
-					if
-						data.EdithTargetMovementDirection:DistanceSquared(Vector(-1, 0)) == 0
-						and button == ButtonAction.ACTION_LEFT
-					then
-						forceInput = true
-					elseif
-						data.EdithTargetMovementDirection:DistanceSquared(Vector(1, 0)) == 0
-						and button == ButtonAction.ACTION_RIGHT
-					then
-						forceInput = true
-					elseif
-						data.EdithTargetMovementDirection:DistanceSquared(Vector(0, -1)) == 0
-						and button == ButtonAction.ACTION_UP
-					then
-						forceInput = true
-					elseif
-						data.EdithTargetMovementDirection:DistanceSquared(Vector(0, 1)) == 0
-						and button == ButtonAction.ACTION_DOWN
-					then
-						forceInput = true
-					end
+	if not (entity and not entity:IsDead()) then return end
+	local player = entity:ToPlayer()
 
-					if forceInput then
-						data.ForceMovementInput = data.ForceMovementInput - 1
-						if data.ForceMovementInput == 0 then
-							if data.PonyItem then
-								player:UseActiveItem(data.PonyItem, UseFlag.USE_NOANIM)
-								data.PonyItem = nil
-							end
+	if not player then return end
+	if not Helpers.IsPlayerEdith(player, true, false) then return end
+	if player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) or player:HasCurseMistEffect() then return end
 
-							data.ForceMovementInput = nil
-						end
+	local OnlyStomps = EdithRestored:GetDefaultFileSave("OnlyStomps")
+	local data = EdithRestored:GetData(player)
+	local actions = MovementActions[button]
 
-						return 1
-					end
-				else
-					if
-						button == ButtonAction.ACTION_LEFT
-						or button == ButtonAction.ACTION_RIGHT
-						or button == ButtonAction.ACTION_UP
-						or button == ButtonAction.ACTION_DOWN
-					then
-						return 0
-					end
-				end
-			else
-				if IsEdithExtraAnim(player) then
-					return false
-				end
-				if button == ButtonAction.ACTION_BOMB and (data.LockBombs or OnlyStomps) then
-					data.LockBombs = nil
-					return false
-				end
-			end
-		end
+	if hook == InputHook.GET_ACTION_VALUE and actions then
+		return data.ForceMovementInput and PonyOverride(player, data, actions) or actions.Return
 	end
+
+	if hook == InputHook.GET_ACTION_VALUE then return end
+	if IsEdithExtraAnim(player) then
+		return false
+	end
+	if button == ButtonAction.ACTION_BOMB and (data.LockBombs or not OnlyStomps) then
+		data.LockBombs = nil
+		return false
+	end
+
 end
 
 EdithRestored:AddPriorityCallback(ModCallbacks.MC_INPUT_ACTION, CallbackPriority.EARLY, Player.EdithMovement)
@@ -1703,3 +1683,14 @@ EdithRestored:AddCallback(
 	Player.PreJump,
 	{ type = EntityType.ENTITY_PLAYER, player = EdithRestored.Enums.PlayerType.EDITH }
 )
+
+local TEdithAch = Isaac.GetAchievementIdByName("Tainted Edith (Restored Edith)")
+
+function Player:OnCMD(command, args)
+	if not (command == "achievement" and args == tostring(TEdithAch)) then return end
+	print("Tainted Edith isn't available yet, please wait for a future update")
+	print("Reverting Tainted Edith unlock")
+
+	Isaac.ExecuteCommand("lockachievement " .. tostring(TEdithAch))
+end
+EdithRestored:AddCallback(ModCallbacks.MC_EXECUTE_CMD, Player.OnCMD)
