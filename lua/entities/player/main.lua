@@ -1683,14 +1683,3 @@ EdithRestored:AddCallback(
 	Player.PreJump,
 	{ type = EntityType.ENTITY_PLAYER, player = EdithRestored.Enums.PlayerType.EDITH }
 )
-
-local TEdithAch = Isaac.GetAchievementIdByName("Tainted Edith (Restored Edith)")
-
-function Player:OnCMD(command, args)
-	if not (command == "achievement" and args == tostring(TEdithAch)) then return end
-	print("Tainted Edith isn't available yet, please wait for a future update")
-	print("Reverting Tainted Edith unlock")
-
-	Isaac.ExecuteCommand("lockachievement " .. tostring(TEdithAch))
-end
-EdithRestored:AddCallback(ModCallbacks.MC_EXECUTE_CMD, Player.OnCMD)
