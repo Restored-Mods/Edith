@@ -1,5 +1,5 @@
 local Lithium = {}
-local Helpers = include("lua.helpers.Helpers")
+local itemPool = EdithRestored.Game:GetItemPool()
 
 Lithium.IFRAME_INCREASE_AMOUNT = 20
 Lithium.IFRAME_INCREASE_FALSEPHD_AMOUNT = 5
@@ -9,8 +9,6 @@ local IFRAME_INCREASE_FALSEPHD_AMOUNT = Lithium.IFRAME_INCREASE_FALSEPHD_AMOUNT
 
 local LithiumPill = EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM
 local LithiumHorsePill = EdithRestored.Enums.Pickups.Pills.PILL_HORSE_LITHIUM
-
-local LithiumID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_LITHIUM
 
 local StatsDownPills = {
     PillEffect.PILLEFFECT_LUCK_DOWN,
@@ -27,13 +25,20 @@ function Lithium:InitRNG(isContinue)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Lithium.InitRNG)
 
+function Lithium:PillAlwaysIdentified()
+    if not itemPool:IsPillIdentified(LithiumPill) then
+        itemPool:IdentifyPill(LithiumPill)
+    end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_UPDATE, Lithium.PillAlwaysIdentified)
+
 ---@param pillEffect PillEffect | integer
 ---@param player EntityPlayer
 ---@param flags UseFlag | integer
 ---@param pillColor PillColor
 function Lithium:OnPillUse(pillEffect, player, flags, pillColor)
     if not (pillColor == (LithiumPill) or pillColor == (LithiumHorsePill)) then return end
-    local uses = pillColor & PillColor.PILL_GIANT_FLAG > 0 and 2 or 1    
+    local uses = pillColor & PillColor.PILL_GIANT_FLAG > 0 and 2 or 1
     local effects = player:GetEffects()
 
     effects:AddNullEffect(EdithRestored.Enums.NullItems.LITHIUM_POSITIVE, true, uses)
