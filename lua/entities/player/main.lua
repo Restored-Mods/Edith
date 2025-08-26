@@ -123,7 +123,7 @@ local function CheckEdithsCollisionWithGrid(player, data)
 			and gridEntity.CollisionClass ~= 5
 			and (gridEntity.Position - player.Position)
 			:Normalized()
-			:DistanceSquared(player.Velocity:Normalized() + room:GetWaterCurrent())
+			:DistanceSquared(player.Velocity:Normalized())
 			< 0.1
 		then
 			--Check if player is intersecting with the gridEntity
