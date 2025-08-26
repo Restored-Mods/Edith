@@ -123,9 +123,10 @@ end
 ---@param noBosses boolean | nil
 ---@param ignoreFires boolean | nil
 ---@param ignoreDummy boolean | nil
+---@param includeTurrets boolean | nil
 ---@return EntityNPC[]
-function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy)
-	return Helpers.GetEnemiesInRadius(EdithRestored.Room():GetCenterPos(), 99999, allEnemies, noBosses, ignoreFires, ignoreDummy)
+function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy, includeTurrets)
+	return Helpers.GetEnemiesInRadius(EdithRestored.Room():GetCenterPos(), 99999, allEnemies, noBosses, ignoreFires, ignoreDummy, includeTurrets)
 end
 
 ---@param position Vector
@@ -134,8 +135,9 @@ end
 ---@param noBosses boolean | nil
 ---@param ignoreFires boolean | nil
 ---@param ignoreDummy boolean | nil
+---@param includeTurrets boolean | nil
 ---@return EntityNPC[]
-function Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, ignoreFires, ignoreDummy)
+function Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, ignoreFires, ignoreDummy, includeTurrets)
 	local cap = Capsule(position, position, radius)
 	local enemies = {}
 	for _, enemy in ipairs(Isaac.FindInCapsule(cap, EntityPartition.ENEMY)) do
@@ -144,7 +146,7 @@ function Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, igno
 				--[[if enemy.Type == EntityType.ENTITY_ETERNALFLY then
 					enemy:Morph(EntityType.ENTITY_ATTACKFLY,0,0,-1)
 				end]]
-				if not Helpers.HereticBattle(enemy) and not Helpers.IsTurret(enemy) then
+				if not (Helpers.HereticBattle(enemy) or Helpers.IsTurret(enemy) and not includeTurrets) then
 					table.insert(enemies,enemy)
 				end
 			end
