@@ -973,16 +973,6 @@ function Helpers.Stomp(player, force, doBombStomp)
 
 	pData.StompCount = pData.StompCount and ((pData.StompCount + 1) % 2) or 1
 
-	if player:HasCollectible(CollectibleType.COLLECTIBLE_TOUGH_LOVE) then
-		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_TOUGH_LOVE)
-
-		local ToughLoveChance = rng:RandomInt(1, 100)
-		local maxChance = 1 / (10 - Helpers.Clamp(player.Luck, 0, 9))
-		if ToughLoveChance <= maxChance then
-			stompDamage = stompDamage * 3.2
-		end
-	end
-
 	-- On hold until i find a better way
 	--[[
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_LUMP_OF_COAL) and data.LastEdithPosition ~= nil then
