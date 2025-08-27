@@ -17,7 +17,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_JUMPING,
 	Technology.OnJump,
-	CollectibleType.COLLECTIBLE_TECHNOLOGY
+	{ Item = CollectibleType.COLLECTIBLE_TECHNOLOGY }
 )
 
 return Technology

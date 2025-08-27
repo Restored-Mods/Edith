@@ -12,7 +12,7 @@ EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,
 	CallbackPriority.LATE,
 	Tropicamide.OnStompModify,
-	CollectibleType.COLLECTIBLE_TROPICAMIDE
+	{ Item = CollectibleType.COLLECTIBLE_TROPICAMIDE }
 )
 
 return Tropicamide

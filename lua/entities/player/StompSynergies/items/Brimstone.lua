@@ -10,7 +10,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
 	Brimstone.OnStomp,
-	CollectibleType.COLLECTIBLE_BRIMSTONE
+	{ Item = CollectibleType.COLLECTIBLE_BRIMSTONE }
 )
 
 return Brimstone

@@ -14,7 +14,7 @@ EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,
 	CallbackPriority.LATE - 1,
 	MrMega.OnStompModify,
-	CollectibleType.COLLECTIBLE_MR_MEGA
+	{ Item = CollectibleType.COLLECTIBLE_MR_MEGA }
 )
 
 return MrMega

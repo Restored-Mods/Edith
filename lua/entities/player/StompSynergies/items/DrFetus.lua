@@ -11,7 +11,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
 	DrFetus.OnStomp,
-	CollectibleType.COLLECTIBLE_DR_FETUS
+	{ Item = CollectibleType.COLLECTIBLE_DR_FETUS }
 )
 
 return DrFetus

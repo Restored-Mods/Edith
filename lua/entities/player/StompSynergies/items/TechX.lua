@@ -11,7 +11,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
 	TechX.OnStomp,
-	CollectibleType.COLLECTIBLE_TECH_X
+	{ Item = CollectibleType.COLLECTIBLE_TECH_X }
 )
 
 return TechX

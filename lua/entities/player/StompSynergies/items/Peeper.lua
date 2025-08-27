@@ -15,7 +15,7 @@ EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,
 	CallbackPriority.LATE,
 	Peeper.OnStompModify,
-	CollectibleType.COLLECTIBLE_PEEPER
+	{ Item = CollectibleType.COLLECTIBLE_PEEPER }
 )
 
 return Peeper

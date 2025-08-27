@@ -886,6 +886,9 @@ function Helpers.RemoveEdithTarget(player)
 end
 
 local function InTable(value, tab)
+	if type(value) ~= "number" or type(tab) ~= "table" then
+		return false
+	end
 	for _, v in pairs(tab) do
 		if v == value then
 			return true
@@ -895,19 +898,32 @@ local function InTable(value, tab)
 end
 
 ---@param player EntityPlayer
----@param picker WeightedOutcomePicker
+---@param pickerItem WeightedOutcomePicker
+---@param pickerTrinket WeightedOutcomePicker
 ---@param collectible CollectibleType | integer
 ---@param limit number
 ---@return table
-local function FillWithRandomItems(player, picker, collectible, limit)
+local function FillWithRandomItemsTrinkets(player, pickerItem, pickerTrinket, collectible, limit)
 	local rng = player:GetCollectibleRNG(collectible)
-	local outputTable = {}
-	while player:HasCollectible(collectible) and picker:GetNumOutcomes() > 0 and #outputTable < limit do
-		local outcome = picker:PickOutcome(rng)
-		if rng:RandomInt(8) == 1 then
-			outputTable[#outputTable + 1] = outcome
+	local outputTable = { Items = {}, Trinkets = {} }
+	while
+		player:HasCollectible(collectible)
+		and (pickerItem:GetNumOutcomes() > 0 or pickerTrinket:GetNumOutcomes() > 0)
+		and (#outputTable.Items + #outputTable.Trinkets) < limit
+	do
+		if pickerItem:GetNumOutcomes() > 0 and (rng:RandomInt(2) == 0 or pickerTrinket:GetNumOutcomes() == 0) then
+			local outcome = pickerItem:PickOutcome(rng)
+			if rng:RandomInt(8) == 1 then
+				outputTable.Items[#outputTable.Items + 1] = outcome
+			end
+			pickerItem:RemoveOutcome(outcome)
+		elseif pickerTrinket:GetNumOutcomes() > 0 then
+			local outcome = pickerTrinket:PickOutcome(rng)
+			if rng:RandomInt(8) == 1 then
+				outputTable.Trinkets[#outputTable.Trinkets + 1] = outcome
+			end
+			pickerTrinket:RemoveOutcome(outcome)
 		end
-		picker:RemoveOutcome(outcome)
 	end
 	return outputTable
 end
@@ -981,18 +997,28 @@ function Helpers.Stomp(player, force, doBombStomp)
 
 	local hasBombs = bombs > 0 or force
 
-	local dollarBillPicker = WeightedOutcomePicker()
-	local fruitCakePicker = WeightedOutcomePicker()
+	local dollarBillItemPicker = WeightedOutcomePicker()
+	local fruitCakeItemPicker = WeightedOutcomePicker()
+	local dollarBillTrinketPicker = WeightedOutcomePicker()
+	local fruitCakeTrinketPicker = WeightedOutcomePicker()
 
 	local stompCallbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP)
 	local stompModifyCallback = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP)
-	
-	local allDollarBillItems = 
-	Helpers.Filter(
+
+	local allDollarBillItems = Helpers.Filter(
 		Helpers.MergeTables({}, stompCallbacks, stompModifyCallback),
 		function(index, callback)
 			return type(callback.Param) == "table"
 				and type(callback.Param.Item) == "number"
+				and type(callback.Param.Pool3DollarBill) == "boolean"
+		end
+	)
+
+	local allDollarBillTrinkets = Helpers.Filter(
+		Helpers.MergeTables({}, stompCallbacks, stompModifyCallback),
+		function(index, callback)
+			return type(callback.Param) == "table"
+				and type(callback.Param.Trinket) == "number"
 				and type(callback.Param.Pool3DollarBill) == "boolean"
 		end
 	)
@@ -1006,27 +1032,81 @@ function Helpers.Stomp(player, force, doBombStomp)
 		end
 	)
 
+	local allFruitCakeTrinkets = Helpers.Filter(
+		Helpers.MergeTables({}, stompCallbacks, stompModifyCallback),
+		function(index, callback)
+			return type(callback.Param) == "table"
+				and type(callback.Param.Trinket) == "number"
+				and type(callback.Param.PoolFruitCake) == "boolean"
+		end
+	)
+
 	for _, item in ipairs(allDollarBillItems) do
-		dollarBillPicker:AddOutcomeFloat(item.Param.Item, 1 / #allDollarBillItems)
+		dollarBillItemPicker:AddOutcomeFloat(item.Param.Item, 1 / #allDollarBillItems)
 	end
 
 	for _, item in ipairs(allFruitCakeItems) do
-		fruitCakePicker:AddOutcomeFloat(item.Param.Item, 1 / #allFruitCakeItems)
+		fruitCakeItemPicker:AddOutcomeFloat(item.Param.Item, 1 / #allFruitCakeItems)
 	end
 
-	local dollarBillItems = FillWithRandomItems(player, dollarBillPicker, CollectibleType.COLLECTIBLE_3_DOLLAR_BILL, 3)
-	local fruitCakeItems = FillWithRandomItems(player, fruitCakePicker, CollectibleType.COLLECTIBLE_FRUIT_CAKE, 1)
+	for _, item in ipairs(allDollarBillTrinkets) do
+		dollarBillTrinketPicker:AddOutcomeFloat(item.Param.Trinket, 1 / #allDollarBillTrinkets)
+	end
 
-	local forcedStompCallbacks = {}
+	for _, item in ipairs(allFruitCakeTrinkets) do
+		fruitCakeTrinketPicker:AddOutcomeFloat(item.Param.Trinket, 1 / #allFruitCakeTrinkets)
+	end
+
+	local dollarBill = FillWithRandomItemsTrinkets(
+		player,
+		dollarBillItemPicker,
+		dollarBillTrinketPicker,
+		CollectibleType.COLLECTIBLE_3_DOLLAR_BILL,
+		3
+	)
+	local fruitCake = FillWithRandomItemsTrinkets(
+		player,
+		fruitCakeItemPicker,
+		fruitCakeTrinketPicker,
+		CollectibleType.COLLECTIBLE_FRUIT_CAKE,
+		1
+	)
+
+	local forcedStompCallbacks = { Items = {}, Trinkets = {} }
 	--#region Damage, knockback, knockback time, damage on knockback, radius, breaking rocks, stomp forcing modifications
 	for _, callback in ipairs(stompModifyCallback) do
 		local params = callback.Param
 		local isTbl = type(params) == "table"
-		local item = isTbl and type(params.Item) == "number" and params.Item or type(params) == "number" and params
-		local isDollarBill = isTbl and InTable(params.Item, dollarBillItems) and not player:HasCollectible(params.Item)
-		local isFruitCake = isTbl and InTable(params.Item, fruitCakeItems) and not player:HasCollectible(params.Item)
-		if params == nil or item == nil or player:HasCollectible(item) or isDollarBill or isFruitCake then
-			local ret = callback.Function(EdithRestored, player, stompDamage, radius, knockback, doBombStomp or bombDamage > 0, isDollarBill, isFruitCake)
+		local item = (isTbl and type(params.Item) == "number") and params.Item
+		local trinket = (isTbl and type(params.Trinket) == "number") and params.Trinket
+		local isDollarBill = isTbl
+			and (
+				InTable(item, dollarBill.Items) and not player:HasCollectible(item)
+				or InTable(trinket, dollarBill.Trinkets) and not player:HasTrinket(trinket)
+			)
+		local isFruitCake = isTbl
+			and (
+				InTable(item, fruitCake.Items) and not player:HasCollectible(item)
+				or InTable(trinket, fruitCake.Trinkets) and not player:HasTrinket(trinket)
+			)
+		if
+			params == nil
+			or item == nil and trinket == nil
+			or type(item) == "number" and player:HasCollectible(item)
+			or type(trinket) == "number" and player:HasTrinket(trinket)
+			or isDollarBill
+			or isFruitCake
+		then
+			local ret = callback.Function(
+				EdithRestored,
+				player,
+				stompDamage,
+				radius,
+				knockback,
+				doBombStomp or bombDamage > 0,
+				isDollarBill,
+				isFruitCake
+			)
 			if type(ret) == "table" then
 				stompDamage = type(ret.StompDamage) == "number" and ret.StompDamage or stompDamage
 				knockback = type(ret.Knockback) == "number" and ret.Knockback or knockback
@@ -1040,9 +1120,13 @@ function Helpers.Stomp(player, force, doBombStomp)
 				if type(ret.KnockbackDamage) == "boolean" and ret.KnockbackDamage == true then
 					knockbackDamage = ret.KnockbackDamage
 				end
-				if type(ret.DoStomp) == "boolean" and ret.DoStomp == true
-				and item ~= nil then
-					forcedStompCallbacks[item] = true
+				if type(ret.DoStomp) == "boolean" and ret.DoStomp == true then
+					if item ~= nil then
+						forcedStompCallbacks.Items[item] = true
+					end
+					if trinket ~= nil then
+						forcedStompCallbacks.Trinkets[trinket] = true
+					end
 				end
 			end
 		end
@@ -1057,12 +1141,37 @@ function Helpers.Stomp(player, force, doBombStomp)
 	for _, callback in ipairs(stompCallbacks) do
 		local params = callback.Param
 		local isTbl = type(params) == "table"
-		local item = isTbl and type(params.Item) == "number" and params.Item or type(params) == "number" and params
-		local isDollarBill = isTbl and InTable(params.Item, dollarBillItems) and not player:HasCollectible(params.Item)
-		local isFruitCake = isTbl and InTable(params.Item, fruitCakeItems) and not player:HasCollectible(params.Item)
-		if params == nil or item == nil or player:HasCollectible(item) or isDollarBill or isFruitCake
-		or forcedStompCallbacks[item] == true then
-			callback.Function(EdithRestored, player, EdithRestored:GetData(player).BombStomp, isDollarBill, isFruitCake, forcedStompCallbacks[item])
+		local item = (isTbl and type(params.Item) == "number") and params.Item
+		local trinket = (isTbl and type(params.Trinket) == "number") and params.Trinket
+		local isDollarBill = isTbl
+			and (
+				InTable(item, dollarBill.Items) and not player:HasCollectible(item)
+				or InTable(trinket, dollarBill.Trinkets) and not player:HasTrinket(trinket)
+			)
+		local isFruitCake = isTbl
+			and (
+				InTable(item, fruitCake.Items) and not player:HasCollectible(item)
+				or InTable(params.Trinket, fruitCake.Trinkets) and not player:HasTrinket(trinket)
+			)
+		if
+			params == nil
+			or item == nil and trinket == nil
+			or type(item) == "number" and player:HasCollectible(item)
+			or type(trinket) == "number" and player:HasTrinket(trinket)
+			or isDollarBill
+			or isFruitCake
+			or item ~= nil and forcedStompCallbacks.Items[item]
+			or trinket ~= nil and forcedStompCallbacks.Trinkets[trinket]
+		then
+			callback.Function(
+				EdithRestored,
+				player,
+				EdithRestored:GetData(player).BombStomp,
+				isDollarBill,
+				isFruitCake,
+				item ~= nil and forcedStompCallbacks.Items[item]
+					or trinket ~= nil and forcedStompCallbacks.Trinkets[trinket]
+			)
 		end
 	end
 
@@ -1075,7 +1184,8 @@ function Helpers.Stomp(player, force, doBombStomp)
 				(enemy.Position - player.Position):Resized(knockback),
 				knockbackTime,
 				Helpers.IsPlayerEdith(player, true, false)
-					and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) or knockbackDamage
+						and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)
+					or knockbackDamage
 			)
 			if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
 				local newDamage = stompDamage
@@ -1097,8 +1207,8 @@ function Helpers.Stomp(player, force, doBombStomp)
 			local grid = room:GetGridEntity(i)
 			if grid then
 				if
-					(breakRocks
-					or grid:ToPoop() and grid.State ~= 1000) and player.Position:Distance(grid.Position) <= radius
+					(breakRocks or grid:ToPoop() and grid.State ~= 1000)
+					and player.Position:Distance(grid.Position) <= radius
 				then
 					grid:Destroy()
 				end

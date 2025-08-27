@@ -1,6 +1,9 @@
 local Synergies = {}
 
-local synergiesTable = {
+Synergies.Items = {}
+Synergies.Trinkets = {}
+
+local itemsSynergiesTable = {
 	"Apple",
 	"BallOfTar",
 	"BloodClot",
@@ -50,14 +53,30 @@ local synergiesTable = {
 	"Tropicamide",
 }
 
-for _, item in pairs(synergiesTable) do
-	Synergies[item] = include("lua.entities.player.StompSynergies." .. item)
+local trinketsSynergiesTable = {
+	"Blister",
+	"BlackTooth",
+	"ChewedPen",
+	"Jawbreaker",
+	"NoseGoblin",
+	"PinkyEye",
+}
+
+for _, item in pairs(itemsSynergiesTable) do
+	Synergies.Items[item] = include("lua.entities.player.StompSynergies.items." .. item)
+end
+
+for _, trinket in pairs(trinketsSynergiesTable) do
+	Synergies.Trinkets[trinket] = include("lua.entities.player.StompSynergies.trinkets." .. trinket)
 end
 
 ---@param player EntityPlayer
 local function OnJump(_, player)
 	for _, callback in ipairs(Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_JUMPING)) do
-		if callback.Param == nil or player:HasCollectible(callback.Param) then
+		local params = callback.Param
+		if params == nil or params.Item == nil and params.Trinket == nil
+		or params.Item ~= nil and player:HasCollectible(callback.Param.Item)
+		or params.Trinket ~= nil and player:HasTrinket(params.Trinket) then
 			callback.Function(EdithRestored, player)
 		end
 	end

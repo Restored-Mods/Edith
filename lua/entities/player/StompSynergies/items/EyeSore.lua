@@ -16,7 +16,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
 	EyeSore.OnStomp,
-    CollectibleType.COLLECTIBLE_EYE_SORE
+    { Item = CollectibleType.COLLECTIBLE_EYE_SORE }
 )
 
 return EyeSore
