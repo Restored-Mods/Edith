@@ -75,8 +75,8 @@ local function OnJump(_, player)
 	for _, callback in ipairs(Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_JUMPING)) do
 		local params = callback.Param
 		if params == nil or params.Item == nil and params.Trinket == nil
-		or params.Item ~= nil and player:HasCollectible(callback.Param.Item)
-		or params.Trinket ~= nil and player:HasTrinket(params.Trinket) then
+		or type(params.Item) == "number" and player:HasCollectible(callback.Param.Item)
+		or type(params.Trinket) == "number" and player:HasTrinket(params.Trinket) then
 			callback.Function(EdithRestored, player)
 		end
 	end
