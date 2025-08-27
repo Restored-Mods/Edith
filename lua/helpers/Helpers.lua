@@ -936,14 +936,6 @@ function Helpers.Stomp(player, force, doBombStomp)
 	local radius = Helpers.GetStompRadius()
 	local knockback = 15
 
-	if player:HasCollectible(CollectibleType.COLLECTIBLE_PISCES) then
-		knockback = knockback + 10
-	end
-
-	if player:HasCollectible(CollectibleType.COLLECTIBLE_8_INCH_NAILS) then
-		knockback = knockback + 8
-	end
-
 	-- yeah the en of that stuff
 
 	local bombs = player:GetNumBombs()
@@ -976,6 +968,8 @@ function Helpers.Stomp(player, force, doBombStomp)
 	end
 
 	local breakRocks = not doBombStomp
+	local knockbackTime = 5
+	local knockbackDamage = false
 
 	pData.StompCount = pData.StompCount and ((pData.StompCount + 1) % 2) or 1
 
@@ -1006,17 +1000,19 @@ function Helpers.Stomp(player, force, doBombStomp)
 
 	local stompCallbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP)
 	local stompModifyCallback = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP)
-
-	local allDollarBillItems = Helpers.Filter(
-		Helpers.MergeTables(stompCallbacks, stompModifyCallback),
+	
+	local allDollarBillItems = 
+	Helpers.Filter(
+		Helpers.MergeTables({}, stompCallbacks, stompModifyCallback),
 		function(index, callback)
 			return type(callback.Param) == "table"
 				and type(callback.Param.Item) == "number"
 				and type(callback.Param.Pool3DollarBill) == "boolean"
 		end
 	)
+
 	local allFruitCakeItems = Helpers.Filter(
-		Helpers.MergeTables(stompCallbacks, stompModifyCallback),
+		Helpers.MergeTables({}, stompCallbacks, stompModifyCallback),
 		function(index, callback)
 			return type(callback.Param) == "table"
 				and type(callback.Param.Item) == "number"
@@ -1035,7 +1031,8 @@ function Helpers.Stomp(player, force, doBombStomp)
 	local dollarBillItems = FillWithRandomItems(player, dollarBillPicker, CollectibleType.COLLECTIBLE_3_DOLLAR_BILL, 3)
 	local fruitCakeItems = FillWithRandomItems(player, fruitCakePicker, CollectibleType.COLLECTIBLE_FRUIT_CAKE, 1)
 
-	--#region Damage, knockback, radius modifications
+	local forcedStompCallbacks = {}
+	--#region Damage, knockback, knockback time, damage on knockback, radius, breaking rocks, stomp forcing modifications
 	for _, callback in ipairs(stompModifyCallback) do
 		local params = callback.Param
 		local isTbl = type(params) == "table"
@@ -1043,13 +1040,23 @@ function Helpers.Stomp(player, force, doBombStomp)
 		local isDollarBill = isTbl and InTable(params.Item, dollarBillItems) and not player:HasCollectible(params.Item)
 		local isFruitCake = isTbl and InTable(params.Item, fruitCakeItems) and not player:HasCollectible(params.Item)
 		if params == nil or item == nil or player:HasCollectible(item) or isDollarBill or isFruitCake then
-			local ret = callback.Function(EdithRestored, player, stompDamage, radius, knockback, doBombStomp or bombDamage > 0)
+			local ret = callback.Function(EdithRestored, player, stompDamage, radius, knockback, doBombStomp or bombDamage > 0, isDollarBill, isFruitCake)
 			if type(ret) == "table" then
 				stompDamage = type(ret.StompDamage) == "number" and ret.StompDamage or stompDamage
 				knockback = type(ret.Knockback) == "number" and ret.Knockback or knockback
 				radius = type(ret.Radius) == "number" and ret.Radius or radius
 				if type(ret.BreakRocks) == "boolean" and ret.BreakRocks == true then
 					breakRocks = true
+				end
+				if type(ret.KnockbackTime) == "number" and ret.KnockbackTime > 0 then
+					knockbackTime = ret.KnockbackTime
+				end
+				if type(ret.KnockbackDamage) == "boolean" and ret.KnockbackDamage == true then
+					knockbackDamage = ret.KnockbackDamage
+				end
+				if type(ret.DoStomp) == "boolean" and ret.DoStomp == true
+				and item ~= nil then
+					forcedStompCallbacks[item] = true
 				end
 			end
 		end
@@ -1067,8 +1074,9 @@ function Helpers.Stomp(player, force, doBombStomp)
 		local item = isTbl and type(params.Item) == "number" and params.Item or type(params) == "number" and params
 		local isDollarBill = isTbl and InTable(params.Item, dollarBillItems) and not player:HasCollectible(params.Item)
 		local isFruitCake = isTbl and InTable(params.Item, fruitCakeItems) and not player:HasCollectible(params.Item)
-		if params == nil or item == nil or player:HasCollectible(item) or isDollarBill or isFruitCake then
-			callback.Function(EdithRestored, player, EdithRestored:GetData(player).BombStomp, isDollarBill, isFruitCake)
+		if params == nil or item == nil or player:HasCollectible(item) or isDollarBill or isFruitCake
+		or forcedStompCallbacks[item] == true then
+			callback.Function(EdithRestored, player, EdithRestored:GetData(player).BombStomp, isDollarBill, isFruitCake, forcedStompCallbacks[item])
 		end
 	end
 
@@ -1079,9 +1087,9 @@ function Helpers.Stomp(player, force, doBombStomp)
 			enemy:AddKnockback(
 				EntityRef(player),
 				(enemy.Position - player.Position):Resized(knockback),
-				5,
+				knockbackTime,
 				Helpers.IsPlayerEdith(player, true, false)
-					and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)
+					and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) or knockbackDamage
 			)
 			if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
 				local newDamage = stompDamage
