@@ -59,7 +59,7 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "
 
 --Sodom
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots a red flame opposite of his movement direction#Flame doesn't damage enemies but applies a {{Burning}} burn effect on them that deals 80% of Isaac's damage#Burning enemies shoots flames in 3 directions on death", "Sodom", "en_us")
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#При смерти с эффектом враг выстреливает пламя в 3 направлениях#!!! Эффект можно наложить на врага только один раз", "Содом", "ru")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#Горящие враги выстреливают пламя в 3 направлениях при смерти", "Содом", "ru")
 
 --Shrapnel Bombs
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS, "{{Bomb}} +5 bombs#Isaac's bombs fire high velocity nails in random directions upon detonating#{{BleedingOut}} Nails pierce enemies and inflict bleeding", "Shrapnel Bombs", "en_us")
@@ -86,8 +86,8 @@ EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_CHUNK_OF_AMBER, "Зака
 -- Cards/Runes/Pills
 
 --Soul of Edith
-EID:addCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "Turns Isaac into a statue that stomps enemies 4 times#The fourth stomp causes an explosion that inherits all your bomb effects#Targets rocks instead of there are no enemies in the room", "Soul of Edith")
-EID:addCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "Превращает Айзека в статую, которая прыгает на врагов 4 раза#Если нет врагов в комнате, то прыгает на месте", "Душа Эдит", "ru")
+EID:addCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "Turns Isaac into a statue that stomps enemies 4 times#The fourth stomp causes an explosion that inherits all Isaac's bomb effects#Targets rocks instead of there are no enemies in the room", "Soul of Edith")
+EID:addCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "Превращает Айзека в статую, которая прыгает на врагов 4 раза#Четвертый прыжок создает взрыв, который наследует все эффекты бомб Айзека#Статуя прыгает на камни, если нет врагов в комнате", "Душа Эдит", "ru")
 
 local soulEdithSynergy = {
     en_us = "Isaac stomps 5 times",
