@@ -954,10 +954,6 @@ function Helpers.Stomp(player, force, doBombStomp)
 						player:AddBombs(-1)
 					end
 				end
-				
-				if isGigaBomb then
-					radius = radius * 2
-				end
 
 				bombDamage = GetBombDamage(player)
 			end
@@ -1124,6 +1120,10 @@ function Helpers.Stomp(player, force, doBombStomp)
 				end
 			end
 		end
+	end
+
+	if isGigaBomb then
+		radius = radius * 2
 	end
 
 	if bombEffectTriggered then

@@ -8,8 +8,9 @@ local PupulaDuplex = {}
 function PupulaDuplex:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
 	return { Radius = radius * 1.2 }
 end
-EdithRestored:AddCallback(
+EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,
+	CallbackPriority.LATE,
 	PupulaDuplex.OnStompModify,
 	{ Item = CollectibleType.COLLECTIBLE_PUPULA_DUPLEX, Pool3DollarBill = true }
 )

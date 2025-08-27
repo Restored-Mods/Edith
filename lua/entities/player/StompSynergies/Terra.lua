@@ -11,8 +11,9 @@ function Terra:OnStompModify(player, stompDamage, radius, knockback, doBombStomp
 		return { BreakRocks = true, StompDamage = stompDamage * rng:RandomInt(5, 20) / 10 }
 	end
 end
-EdithRestored:AddCallback(
+EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,
+	CallbackPriority.LATE + 1,
 	Terra.OnStompModify,
 	{ Item = CollectibleType.COLLECTIBLE_TERRA, PoolFruitCake = true }
 )

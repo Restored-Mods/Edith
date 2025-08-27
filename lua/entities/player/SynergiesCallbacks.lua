@@ -40,12 +40,14 @@ local synergiesTable = {
 	"Scorpio",
 	"SinusInfection",
 	"SpiderBite",
+	"Stye",
 	"SulfuricAcid",
 	"Technology",
 	"TechX",
 	"Terra",
 	"TheMulligan",
 	"ToughLove",
+	"Tropicamide",
 }
 
 for _, item in pairs(synergiesTable) do

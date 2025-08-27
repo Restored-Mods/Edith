@@ -15,8 +15,9 @@ function Apple:OnStompModify(player, stompDamage, radius, knockback, doBombStomp
 		return { StompDamage = stompDamage * 4 }
 	end
 end
-EdithRestored:AddCallback(
+EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,
+	CallbackPriority.LATE,
 	Apple.OnStompModify,
 	{ Item = CollectibleType.COLLECTIBLE_APPLE, Pool3DollarBill = true }
 )

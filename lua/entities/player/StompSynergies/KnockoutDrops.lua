@@ -15,8 +15,9 @@ function KnockoutDrops:OnStompModify(player, stompDamage, radius, knockback, doB
 		return { Knockback = knockback * 3, DoStomp = true, KnockbackDamage = true, KnockbackTime = 15 }
 	end
 end
-EdithRestored:AddCallback(
+EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,
+	CallbackPriority.LATE,
 	KnockoutDrops.OnStompModify,
 	{ Item = CollectibleType.COLLECTIBLE_KNOCKOUT_DROPS, PoolFruitCake = true }
 )
