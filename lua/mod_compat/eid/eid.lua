@@ -33,7 +33,7 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER, 
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_SHAKER, "При использовании создает круг из соли рядом с Айзеком#Враги, приближающиеся к нему, получают {{Fear}} эффект страха", "Солонка", "ru")
 
 --Gorgon Mask
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, "On use puts on/off Gorgon mask#When mask is on, Isaac can't shoot#{{Petrify}} Looking at enemies, when Isaac has mask on, freezes them", "Gorgon Mask")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, "On use puts on/off Gorgon mask#When mask is on, Isaac can't shoot#{{Petrify}} Looking at enemies, when Isaac has mask on freezes them", "Gorgon Mask")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_GORGON_MASK, "При использовании одевает/снимает маску Горгоны#Когда маска одета, Айзек не может стрелять#{{Petrify}} Глядя на врагов, когда Айзек в маске, они каменеют", "Маска Горгоны", "ru")
 
 --Lithium Salts
@@ -50,7 +50,7 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOT
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS, "{{Bomb}} +5 бомб#Дает устойчивость ко взрывам#Взрыв подбрасывет Айзека в воздух", "Взрывостойкие сапоги", "ru")
 
 --Pawn Baby
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Spawns a pawn familiar that travels foward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 30 damage#Respawns at a random door after reaching a wall", "Salt Pawns", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Spawns a pawn familiar that travels forward one tile at a time, starting from the door the room was entered from#Stomps on nearby enemies for 30 damage#Respawns at a random door after reaching a wall", "Salt Pawns", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS, "Дает пешку-фамильяра, которая передвигается вперед на один тайл за раз, начиная с двери, с которой вошли в комнату#Прыгает на ближайших врагов, нанося 30 единиц урона#Появляется у случайной двери после столкновения со стеной", "Соленая пешка", "ru")
 
 --Salty Baby
@@ -58,7 +58,7 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY, "Фамильяр, котрый стреляет соляными снарядами при получении урона от слез врага# Заблокировав 6 слез врагов перестает блокировать снаряды и вместо этого оставляет следы отпугивающей соли#Возвращается в исходное состояние при старте каждого этажа", "Малыш-солонка", "ru")
 
 --Sodom
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots a red flame opposite of his movement direction#Flame doesn't damage enemies but applies {{Burning}} burn effect on them that deals 80% Isaac's damage#On death with effect enemy shoots flames in 3 directions#!!! Effect can be applied on enemy only one time", "Sodom", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Every second when Isaac moves he shoots a red flame opposite of his movement direction#Flame doesn't damage enemies but applies a {{Burning}} burn effect on them that deals 80% of Isaac's damage#Burning enemies shoots flames in 3 directions on death", "Sodom", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM, "Каждую секунду Айзек, когда передвигается, выстреливает в противоположном направлении движения красное пламя#Пламя не наносит урона врагам, но накладывает на них эффект {{Burning}} горения, который наносит 80% урона Айзека#При смерти с эффектом враг выстреливает пламя в 3 направлениях#!!! Эффект можно наложить на врага только один раз", "Содом", "ru")
 
 --Shrapnel Bombs
@@ -86,7 +86,7 @@ EID:addTrinket(EdithRestored.Enums.TrinketType.TRINKET_CHUNK_OF_AMBER, "Зака
 -- Cards/Runes/Pills
 
 --Soul of Edith
-EID:addCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "Turn Isaac into statue that stomps enemies 4 times#If no enemies in a room then jumps in place", "Soul of Edith")
+EID:addCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "Turns Isaac into a statue that stomps enemies 4 times#The fourth stomp causes an explosion that inherits all your bomb effects#Targets rocks instead of there are no enemies in the room", "Soul of Edith")
 EID:addCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH, "Превращает Айзека в статую, которая прыгает на врагов 4 раза#Если нет врагов в комнате, то прыгает на месте", "Душа Эдит", "ru")
 
 local soulEdithSynergy = {
