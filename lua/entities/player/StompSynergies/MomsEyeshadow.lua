@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function MomsEyeshadow:OnMomsEyeshadowStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function MomsEyeshadow:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_MOMS_EYESHADOW)
     local chance = 1 / (10 - (Helpers.Clamp(player.Luck, 0, 27) / 3))
 	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
@@ -14,7 +15,9 @@ function MomsEyeshadow:OnMomsEyeshadowStomp(player, bombLanding, isDollarBill, i
     end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	MomsEyeshadow.OnMomsEyeshadowStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	MomsEyeshadow.OnStomp,
     { Item = CollectibleType.COLLECTIBLE_MOMS_EYESHADOW, Pool3DollarBill = true, PoolFruitCake = true }
 )
+
+return MomsEyeshadow

@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function CommonCold:OnCommonColdStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function CommonCold:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_COMMON_COLD)
     local chance = 1 / (4 - Helpers.Clamp(player.Luck * 0.25, 0, 3))
     if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
@@ -14,7 +15,9 @@ function CommonCold:OnCommonColdStomp(player, bombLanding, isDollarBill, isFruit
     end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	CommonCold.OnCommonColdStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	CommonCold.OnStomp,
 	{Item = CollectibleType.COLLECTIBLE_COMMON_COLD, PoolFruitCake = true}
 )
+
+return CommonCold

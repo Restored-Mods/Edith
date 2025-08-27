@@ -2,7 +2,7 @@ local Technology = {}
 local Helpers = EdithRestored.Helpers
 
 ---@param player EntityPlayer
-function Technology:OnTechStomp(player)
+function Technology:OnJump(player)
     local LandPos = Helpers.GetEdithTarget(player).Position --[[@as Vector]]
     local JumpPos = player.Position
 
@@ -16,6 +16,8 @@ function Technology:OnTechStomp(player)
 end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_JUMPING,
-	Technology.OnTechStomp,
+	Technology.OnJump,
 	CollectibleType.COLLECTIBLE_TECHNOLOGY
 )
+
+return Technology

@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function CompoundFracture:OnCompoundFractureStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function CompoundFracture:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_COMPOUND_FRACTURE)
 	for _ = 1, rng:RandomInt(1, 3) do
 		local tear = player:FireTear(player.Position, Vector.FromAngle(rng:RandomInt(1, 360)):Resized(player.ShotSpeed * Helpers.GetTrueRange(player)), false, false, false, player, 0.5)
@@ -15,7 +16,9 @@ function CompoundFracture:OnCompoundFractureStomp(player, bombLanding, isDollarB
 	end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	CompoundFracture.OnCompoundFractureStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	CompoundFracture.OnStomp,
 	{ Item = CollectibleType.COLLECTIBLE_COMPOUND_FRACTURE, PoolFruitCake = true }
 )
+
+return CompoundFracture

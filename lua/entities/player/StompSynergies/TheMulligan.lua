@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function TheMulligan:OnTheMulliganStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function TheMulligan:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_MULLIGAN)
 	if
 		(rng:RandomFloat() <= 0.1667 or isFruitCake)
@@ -22,7 +23,9 @@ function TheMulligan:OnTheMulliganStomp(player, bombLanding, isDollarBill, isFru
 	end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	TheMulligan.OnTheMulliganStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	TheMulligan.OnStomp,
 	{ Item = CollectibleType.COLLECTIBLE_MULLIGAN, PoolFruitCake = true }
 )
+
+return TheMulligan

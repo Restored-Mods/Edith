@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function LittleHorn:OnLittleHornStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function LittleHorn:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_LITTLE_HORN)
 	local chance = math.min(0.25, 1 / (30 - Helpers.Clamp(player.Luck * 2, 0, 29)))
 	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
@@ -17,7 +18,9 @@ function LittleHorn:OnLittleHornStomp(player, bombLanding, isDollarBill, isFruit
 	end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	LittleHorn.OnLittleHornStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	LittleHorn.OnStomp,
 	{ Item = CollectibleType.COLLECTIBLE_LITTLE_HORN, Pool3DollarBill = true, PoolFruitCake = true }
 )
+
+return LittleHorn

@@ -3,12 +3,15 @@ local TechX = {}
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function TechX:OnTechXStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function TechX:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
 	local techLaser = player:FireTechXLaser(player.Position, Vector.Zero, 30, player, 1)
 	techLaser:SetTimeout(30)
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	TechX.OnTechXStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	TechX.OnStomp,
 	CollectibleType.COLLECTIBLE_TECH_X
 )
+
+return TechX

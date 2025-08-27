@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function SpiderBite:OnSpiderBiteStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function SpiderBite:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SPIDER_BITE)
     local chance = 1 / (4 - (Helpers.Clamp(player.Luck, 0, 15) / 5))
 	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
@@ -14,7 +15,9 @@ function SpiderBite:OnSpiderBiteStomp(player, bombLanding, isDollarBill, isFruit
     end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	SpiderBite.OnSpiderBiteStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	SpiderBite.OnStomp,
 	{ Item = CollectibleType.COLLECTIBLE_SPIDER_BITE, PoolFruitCake = true }
 )
+
+return SpiderBite

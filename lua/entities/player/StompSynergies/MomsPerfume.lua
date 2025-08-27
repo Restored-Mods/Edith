@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function MomsPerfume:OnMomsPerfumeStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function MomsPerfume:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_MOMS_PERFUME)
     local chance = 15 / (100 - Helpers.Clamp(player.Luck, 0, 85))
 	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
@@ -14,7 +15,9 @@ function MomsPerfume:OnMomsPerfumeStomp(player, bombLanding, isDollarBill, isFru
     end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	MomsPerfume.OnMomsPerfumeStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	MomsPerfume.OnStomp,
 	{ Item = CollectibleType.COLLECTIBLE_MOMS_PERFUME, Pool3DollarBill = true, PoolFruitCake = true }
 )
+
+return MomsPerfume

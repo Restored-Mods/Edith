@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function MonstrosLung:OnMonstrosLungStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function MonstrosLung:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_MONSTROS_LUNG)
     for _ = 1, 14 do
         local tear = player:FireTear(player.Position, Vector.FromAngle(rng:RandomInt(1, 360)):Resized(player.ShotSpeed * Helpers.GetTrueRange(player)), false, true, false, player)
@@ -15,7 +16,9 @@ function MonstrosLung:OnMonstrosLungStomp(player, bombLanding, isDollarBill, isF
     end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	MonstrosLung.OnMonstrosLungStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	MonstrosLung.OnStomp,
 	CollectibleType.COLLECTIBLE_MONSTROS_LUNG
 )
+
+return MonstrosLung

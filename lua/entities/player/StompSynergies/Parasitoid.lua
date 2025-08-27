@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function Parasitoid:OnParasitoidStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function Parasitoid:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PARASITOID)
 	local chance = math.min(0.5, 1 / (7 - Helpers.Clamp(player.Luck, 0, 6))) + 1
 	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
@@ -17,7 +18,9 @@ function Parasitoid:OnParasitoidStomp(player, bombLanding, isDollarBill, isFruit
 	end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	Parasitoid.OnParasitoidStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	Parasitoid.OnStomp,
 	{ Item = CollectibleType.COLLECTIBLE_PARASITOID, Pool3DollarBill = true, PoolFruitCake = true }
 )
+
+return Parasitoid

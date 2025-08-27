@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function FireMind:OnFireMindStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function FireMind:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_FIRE_MIND)
 	local chance = 1 / (10 - (Helpers.Clamp(player.Luck, 0, 13) * 0.7))
 	for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
@@ -15,7 +16,9 @@ function FireMind:OnFireMindStomp(player, bombLanding, isDollarBill, isFruitCake
 	end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	FireMind.OnFireMindStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	FireMind.OnStomp,
 	{ Item = CollectibleType.COLLECTIBLE_FIRE_MIND, Pool3DollarBill = true, PoolFruitCake = true }
 )
+
+return FireMind

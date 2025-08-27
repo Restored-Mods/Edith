@@ -3,11 +3,14 @@ local Brimstone = {}
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function Brimstone:OnBrimStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function Brimstone:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
 	player:FireBrimstoneBall(player.Position, Vector.Zero, Vector.Zero)
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	Brimstone.OnBrimStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	Brimstone.OnStomp,
 	CollectibleType.COLLECTIBLE_BRIMSTONE
 )
+
+return Brimstone

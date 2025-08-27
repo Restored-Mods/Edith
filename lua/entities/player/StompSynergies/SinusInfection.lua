@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function SinusInfection:OnSinusInfectionStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function SinusInfection:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SINUS_INFECTION)
     if rng:RandomFloat() <= 10.2 then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
@@ -15,7 +16,9 @@ function SinusInfection:OnSinusInfectionStomp(player, bombLanding, isDollarBill,
     end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	SinusInfection.OnSinusInfectionStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	SinusInfection.OnStomp,
 	{ Item = CollectibleType.COLLECTIBLE_SINUS_INFECTION, Pool3DollarBill = true, PoolFruitCake = true }
 )
+
+return SinusInfection

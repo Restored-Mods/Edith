@@ -1,14 +1,40 @@
 local Helpers = {}
 
-local turretList = {{831,10,-1}, {835,10,-1}, {887,-1,-1}, {951,-1,-1}, {815,-1,-1}, {306,-1,-1}, {837,-1,-1}, {42,-1,-1}, {201,-1,-1}, 
-{202,-1,-1}, {203,-1,-1}, {235,-1,-1}, {236,-1,-1}, {804,-1,-1}, {809,-1,-1}, {68,-1,-1}, {864,-1,-1}, {44,-1,-1}, {218,-1,-1}, {877,-1,-1},
-{893,-1,-1}, {915,-1,-1}, {291,-1,-1}, {295,-1,-1}, {404,-1,-1}, {409,-1,-1}, {903,-1,-1}, {293,-1,-1}}
-
+local turretList = {
+	{ 831, 10, -1 },
+	{ 835, 10, -1 },
+	{ 887, -1, -1 },
+	{ 951, -1, -1 },
+	{ 815, -1, -1 },
+	{ 306, -1, -1 },
+	{ 837, -1, -1 },
+	{ 42, -1, -1 },
+	{ 201, -1, -1 },
+	{ 202, -1, -1 },
+	{ 203, -1, -1 },
+	{ 235, -1, -1 },
+	{ 236, -1, -1 },
+	{ 804, -1, -1 },
+	{ 809, -1, -1 },
+	{ 68, -1, -1 },
+	{ 864, -1, -1 },
+	{ 44, -1, -1 },
+	{ 218, -1, -1 },
+	{ 877, -1, -1 },
+	{ 893, -1, -1 },
+	{ 915, -1, -1 },
+	{ 291, -1, -1 },
+	{ 295, -1, -1 },
+	{ 404, -1, -1 },
+	{ 409, -1, -1 },
+	{ 903, -1, -1 },
+	{ 293, -1, -1 },
+}
 
 local function RemoveStoreCreditFromPlayer(player) -- Partially from FF
 	local t0 = player:GetTrinket(0)
 	local t1 = player:GetTrinket(1)
-	
+
 	if t0 & TrinketType.TRINKET_ID_MASK == TrinketType.TRINKET_STORE_CREDIT then
 		player:TryRemoveTrinket(TrinketType.TRINKET_STORE_CREDIT)
 		return
@@ -24,7 +50,11 @@ local function TryRemoveStoreCredit(player)
 		if player:HasTrinket(TrinketType.TRINKET_STORE_CREDIT) then
 			RemoveStoreCreditFromPlayer(player)
 		else
-			for _,player in ipairs(Helpers.Filter(Helpers.GetPlayers(), function(_, player) return player:HasTrinket(TrinketType.TRINKET_STORE_CREDIT) end)) do
+			for _, player in
+				ipairs(Helpers.Filter(Helpers.GetPlayers(), function(_, player)
+					return player:HasTrinket(TrinketType.TRINKET_STORE_CREDIT)
+				end))
+			do
 				RemoveStoreCreditFromPlayer(player)
 				return
 			end
@@ -40,9 +70,8 @@ function Helpers.HereticBattle(enemy)
 	return false
 end
 
-
 function Helpers.IsTurret(enemy)
-	for _,e in ipairs(turretList) do
+	for _, e in ipairs(turretList) do
 		if e[1] == enemy.Type and (e[2] == -1 or e[2] == enemy.Variant) and (e[3] == -1 or e[3] == enemy.SubType) then
 			return true
 		end
@@ -51,22 +80,25 @@ function Helpers.IsTurret(enemy)
 end
 
 function Helpers.IsLost(player)
-    return player:GetHealthType() == HealthType.NO_HEALTH and player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B
+	return player:GetHealthType() == HealthType.NO_HEALTH and player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B
 end
 
 function Helpers.IsGhost(player)
-    return player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) or Helpers.IsLost(player)
+	return player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) or Helpers.IsLost(player)
 end
 
 function Helpers.CanCollectCustomShopPickup(player, pickup)
-	if pickup:IsShopItem() and (pickup.Price > 0 and player:GetNumCoins() < pickup.Price or not player:IsExtraAnimationFinished())
-	or pickup.Wait > 0 then
+	if
+		pickup:IsShopItem()
+			and (pickup.Price > 0 and player:GetNumCoins() < pickup.Price or not player:IsExtraAnimationFinished())
+		or pickup.Wait > 0
+	then
 		return false
 	end
 	return true
 end
 
-function Helpers.CollectCustomPickup(player,pickup)
+function Helpers.CollectCustomPickup(player, pickup)
 	if not Helpers.CanCollectCustomShopPickup(player, pickup) then
 		return pickup:IsShopItem()
 	end
@@ -93,8 +125,9 @@ function Helpers.CollectCustomPickup(player,pickup)
 	if pickup.OptionsPickupIndex ~= 0 then
 		local pickups = Isaac.FindByType(EntityType.ENTITY_PICKUP)
 		for _, entity in ipairs(pickups) do
-			if entity:ToPickup().OptionsPickupIndex == pickup.OptionsPickupIndex and
-			(entity.Index ~= pickup.Index or entity.InitSeed ~= pickup.InitSeed)
+			if
+				entity:ToPickup().OptionsPickupIndex == pickup.OptionsPickupIndex
+				and (entity.Index ~= pickup.Index or entity.InitSeed ~= pickup.InitSeed)
 			then
 				Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, 0, entity.Position, Vector.Zero, nil)
 				entity:Remove()
@@ -103,7 +136,7 @@ function Helpers.CollectCustomPickup(player,pickup)
 	end
 	return nil
 end
-	
+
 ---@param enemy Entity
 ---@param allEnemies boolean?
 ---@param ignoreFires boolean?
@@ -113,10 +146,14 @@ function Helpers.IsEnemy(enemy, allEnemies, ignoreFires, ignoreDummy)
 	allEnemies = allEnemies or false
 	ignoreFires = ignoreFires or false
 	ignoreDummy = ignoreDummy or false
-	return enemy and ((enemy:IsVulnerableEnemy() or allEnemies) and (enemy:IsActiveEnemy()
-	or enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 and not ignoreFires)
-	and enemy:IsEnemy()
-	and not EntityRef(enemy).IsFriendly or (enemy.Type == EntityType.ENTITY_DUMMY and not ignoreDummy))
+	return enemy
+		and (
+			(enemy:IsVulnerableEnemy() or allEnemies)
+				and (enemy:IsActiveEnemy() or enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 and not ignoreFires)
+				and enemy:IsEnemy()
+				and not EntityRef(enemy).IsFriendly
+			or (enemy.Type == EntityType.ENTITY_DUMMY and not ignoreDummy)
+		)
 end
 
 ---@param allEnemies boolean | nil
@@ -126,7 +163,15 @@ end
 ---@param includeTurrets boolean | nil
 ---@return EntityNPC[]
 function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy, includeTurrets)
-	return Helpers.GetEnemiesInRadius(EdithRestored.Room():GetCenterPos(), 99999, allEnemies, noBosses, ignoreFires, ignoreDummy, includeTurrets)
+	return Helpers.GetEnemiesInRadius(
+		EdithRestored.Room():GetCenterPos(),
+		99999,
+		allEnemies,
+		noBosses,
+		ignoreFires,
+		ignoreDummy,
+		includeTurrets
+	)
 end
 
 ---@param position Vector
@@ -147,7 +192,7 @@ function Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, igno
 					enemy:Morph(EntityType.ENTITY_ATTACKFLY,0,0,-1)
 				end]]
 				if not (Helpers.HereticBattle(enemy) or Helpers.IsTurret(enemy) and not includeTurrets) then
-					table.insert(enemies,enemy)
+					table.insert(enemies, enemy)
 				end
 			end
 		end
@@ -157,7 +202,7 @@ end
 
 function Helpers.Lerp(a, b, t, speed)
 	speed = speed or 1
-	return a + (b-a) * speed * t
+	return a + (b - a) * speed * t
 end
 
 function Helpers.Sign(x)
@@ -165,7 +210,9 @@ function Helpers.Sign(x)
 end
 
 function Helpers.IsMenuing()
-	if ModConfigMenu and ModConfigMenu.IsVisible or DeadSeaScrollsMenu and DeadSeaScrollsMenu.OpenedMenu then return true end
+	if ModConfigMenu and ModConfigMenu.IsVisible or DeadSeaScrollsMenu and DeadSeaScrollsMenu.OpenedMenu then
+		return true
+	end
 	return false
 end
 
@@ -204,7 +251,7 @@ function Helpers.CanMove(player, allowJump)
 		"ForgottenDeath",
 		"DeathTeleport",
 		"EdithJump",
-		"EdithJumpQuick"
+		"EdithJumpQuick",
 	}
 	local playerSpr = player:GetSprite()
 	for _, anim in ipairs(forbiddenExtraAnimations) do
@@ -218,7 +265,11 @@ function Helpers.CanMove(player, allowJump)
 end
 
 function Helpers.CantMove(player)
-	return not (player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) or player:IsCoopGhost() or player:HasCurseMistEffect())
+	return not (
+		player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
+		or player:IsCoopGhost()
+		or player:HasCurseMistEffect()
+	)
 end
 
 function Helpers.IsPlayerType(player, type)
@@ -226,7 +277,7 @@ function Helpers.IsPlayerType(player, type)
 end
 
 function Helpers.GetPlayerIndex(player)
-    local id = 1
+	local id = 1
 	if player:GetPlayerType() == PlayerType.PLAYER_LAZARUS2_B then
 		id = 2
 	end
@@ -251,8 +302,7 @@ function Helpers.GetBombExplosionRadius(bomb)
 	return radius * radiusMult
 end
 
-
-function Helpers.GetBombRadiusFromDamage(damage,isBomber)
+function Helpers.GetBombRadiusFromDamage(damage, isBomber)
 	if 300 <= damage then
 		return 300.0
 	elseif isBomber then
@@ -269,16 +319,26 @@ function Helpers.GetBombRadiusFromDamage(damage,isBomber)
 end
 
 function Helpers.IsPlayerEdith(player, includeNormal, includeTainted)
-	if includeNormal == nil then includeNormal = true end
-	if includeTainted == nil then includeTainted = true end
-	if player and ((Helpers.IsPlayerType(player,EdithRestored.Enums.PlayerType.EDITH) and includeNormal) or Helpers.IsPlayerType(player,EdithRestored.Enums.PlayerType.EDITH_B) and includeTainted) then
+	if includeNormal == nil then
+		includeNormal = true
+	end
+	if includeTainted == nil then
+		includeTainted = true
+	end
+	if
+		player
+		and (
+			(Helpers.IsPlayerType(player, EdithRestored.Enums.PlayerType.EDITH) and includeNormal)
+			or Helpers.IsPlayerType(player, EdithRestored.Enums.PlayerType.EDITH_B) and includeTainted
+		)
+	then
 		return true
 	end
 	return false
 end
 
 --self explanatory
-function Helpers.GetCharge(player,slot)
+function Helpers.GetCharge(player, slot)
 	return player:GetActiveCharge(slot) + player:GetBatteryCharge(slot)
 end
 
@@ -297,7 +357,7 @@ function Helpers.GetMovementActionVector(player)
 	return Vector(right - left, down - up):Normalized()
 end
 
-function Helpers.GetUnchargedSlot(player,slot)
+function Helpers.GetUnchargedSlot(player, slot)
 	local charge = Helpers.GetCharge(player, slot)
 	local battery = Helpers.BatteryChargeMult(player)
 	local item = Isaac.GetItemConfig():GetCollectible(player:GetActiveItem(slot))
@@ -305,27 +365,35 @@ function Helpers.GetUnchargedSlot(player,slot)
 		if charge < item.MaxCharges then
 			return slot
 		end
-	elseif player:GetActiveItem(slot) > 0 and charge < item.MaxCharges * battery and player:GetActiveItem(slot) ~= CollectibleType.COLLECTIBLE_ERASER then
+	elseif
+		player:GetActiveItem(slot) > 0
+		and charge < item.MaxCharges * battery
+		and player:GetActiveItem(slot) ~= CollectibleType.COLLECTIBLE_ERASER
+	then
 		return slot
 	elseif slot < ActiveSlot.SLOT_POCKET then
-		slot = Helpers.GetUnchargedSlot(player,slot + 1)
+		slot = Helpers.GetUnchargedSlot(player, slot + 1)
 		return slot
 	end
 	return nil
 end
 
-function Helpers.OverCharge(player,slot,item)
-	local effect = Isaac.Spawn(1000,49,1,player.Position+Vector(0,1),Vector.Zero,nil)
-	effect:GetSprite().Offset = Vector(0,-22)
+function Helpers.OverCharge(player, slot, item)
+	local effect = Isaac.Spawn(1000, 49, 1, player.Position + Vector(0, 1), Vector.Zero, nil)
+	effect:GetSprite().Offset = Vector(0, -22)
 end
 
 function Helpers.GetNearestEnemy(_pos, noPlayer)
 	local distance = 9999999
 	local closestPos = nil
 	local enemies = Isaac.GetRoomEntities()
-	for i=1, #enemies do
+	for i = 1, #enemies do
 		local enemy = enemies[i]:ToNPC()
-		if (enemy) and (enemy:IsVulnerableEnemy()) and (not enemy:HasEntityFlags(EntityFlag.FLAG_FRIENDLY | EntityFlag.FLAG_CHARM)) then
+		if
+			enemy
+			and (enemy:IsVulnerableEnemy())
+			and (not enemy:HasEntityFlags(EntityFlag.FLAG_FRIENDLY | EntityFlag.FLAG_CHARM))
+		then
 			if (_pos - enemy.Position):Length() < distance then
 				closestPos = enemy
 				distance = (_pos - enemy.Position):Length()
@@ -341,11 +409,11 @@ end
 
 function Helpers.VecToDir(_vec)
 	local angle = _vec:GetAngleDegrees()
-	if (angle < 45 and angle >= -45) then
+	if angle < 45 and angle >= -45 then
 		return Direction.RIGHT
-	elseif (angle < -45 and angle >= -135) then
+	elseif angle < -45 and angle >= -135 then
 		return Direction.UP
-	elseif (angle > 45 and angle <= 135) then
+	elseif angle > 45 and angle <= 135 then
 		return Direction.DOWN
 	end
 	return Direction.LEFT
@@ -354,7 +422,12 @@ end
 function Helpers.IsEdithNearEnemy(player) -- Enemy detection
 	local data = EdithRestored:RunSave(player)
 	for _, enemies in pairs(Isaac.FindInRadius(player.Position, 95)) do
-		if enemies:IsVulnerableEnemy() and enemies:IsActiveEnemy() and data.Pepper < 5 and EntityRef(enemies).IsCharmed == false then
+		if
+			enemies:IsVulnerableEnemy()
+			and enemies:IsActiveEnemy()
+			and data.Pepper < 5
+			and EntityRef(enemies).IsCharmed == false
+		then
 			return true
 		end
 	end
@@ -384,20 +457,23 @@ function Helpers.ChangeSprite(player, loading)
 			data.MistCurse = true
 		elseif not player:HasCurseMistEffect() and data.MistCurse then
 			data.MistCurse = nil
-			
 		end
 		if data.MistCurse then
 			human = "_Human"
 		end
-		
+
 		if changeCostume ~= data.MistCurse then
-			for i=0,14 do
+			for i = 0, 14 do
 				if i ~= 13 then
-					sprite:ReplaceSpritesheet(i,"gfx/characters/costumes/Character_001_Redith"..human..".png")
+					sprite:ReplaceSpritesheet(i, "gfx/characters/costumes/Character_001_Redith" .. human .. ".png")
 				end
 			end
-			local hoodSprite = "gfx/characters/costumes/Character_001_Redith_Hood"..human..".png"
-			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithRestored.Enums.Costumes.EDITH_HOOD), hoodSprite, 5)
+			local hoodSprite = "gfx/characters/costumes/Character_001_Redith_Hood" .. human .. ".png"
+			player:ReplaceCostumeSprite(
+				Isaac.GetItemConfig():GetNullItem(EdithRestored.Enums.Costumes.EDITH_HOOD),
+				hoodSprite,
+				5
+			)
 			sprite:LoadGraphics()
 		end
 	elseif Helpers.IsPlayerEdith(player, false, true) then
@@ -413,22 +489,29 @@ function Helpers.ChangeSprite(player, loading)
 		if data.Pepper < 6 and (data.Pepper ~= data.PrevPepper or loading) then
 			local hairSprite = "gfx/characters/costumes/tedithhair_phase"
 			if data.Pepper < 3 then
-				hairSprite = hairSprite.."1"
+				hairSprite = hairSprite .. "1"
 			else
-				hairSprite = hairSprite..tostring(data.Pepper + 1)
+				hairSprite = hairSprite .. tostring(data.Pepper + 1)
 			end
-				--spritesheet stuff
-			for i=0,14 do
+			--spritesheet stuff
+			for i = 0, 14 do
 				if i ~= 13 then
-					sprite:ReplaceSpritesheet(i, "gfx/characters/costumes/tedith_phase"..(data.Pepper+1)..".png")
+					sprite:ReplaceSpritesheet(i, "gfx/characters/costumes/tedith_phase" .. (data.Pepper + 1) .. ".png")
 				end
 			end
 			sprite:LoadGraphics()
-			hairSprite = hairSprite..".png"
-			player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithRestored.Enums.Costumes.EDITH_B_HAIR), hairSprite, 5)
+			hairSprite = hairSprite .. ".png"
+			player:ReplaceCostumeSprite(
+				Isaac.GetItemConfig():GetNullItem(EdithRestored.Enums.Costumes.EDITH_B_HAIR),
+				hairSprite,
+				5
+			)
 			data.PrevPepper = data.Pepper
 		end
-	elseif sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH or sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH_B then
+	elseif
+		sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH
+		or sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH_B
+	then
 		sprite:Load("gfx/001.000_Player.anm2", true)
 		sprite:Update()
 	end
@@ -440,41 +523,45 @@ function Helpers.magicchalk_3f(player)
 end
 
 function Helpers.Shuffle(list)
-	local size, shuffled  = #list, list
-    for i = size, 2, -1 do
+	local size, shuffled = #list, list
+	for i = size, 2, -1 do
 		local j = math.random(i)
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	end
-    return shuffled
+	return shuffled
 end
 
 function Helpers.GetMaxCollectibleID()
-    return Isaac.GetItemConfig():GetCollectibles().Size -1
+	return Isaac.GetItemConfig():GetCollectibles().Size - 1
 end
 
 function Helpers.GetMaxTrinketID()
-    return Isaac.GetItemConfig():GetTrinkets().Size -1
+	return Isaac.GetItemConfig():GetTrinkets().Size - 1
 end
 
 function Helpers.tearsUp(firedelay, val)
-    local currentTears = Helpers.ToTearsPerSecond(firedelay)
-    local newTears = currentTears + val
-    return math.max((30 / newTears) - 1, -0.75)
+	local currentTears = Helpers.ToTearsPerSecond(firedelay)
+	local newTears = currentTears + val
+	return math.max((30 / newTears) - 1, -0.75)
 end
 
 function Helpers.GetTrueRange(player)
-    return player.TearRange / 40.0
+	return player.TearRange / 40.0
 end
 
 function Helpers.rangeUp(range, val)
-    local currentRange = range / 40.0
-    local newRange = currentRange + val
-    return math.max(1.0,newRange) * 40.0
+	local currentRange = range / 40.0
+	local newRange = currentRange + val
+	return math.max(1.0, newRange) * 40.0
 end
 
 function Helpers.PlaySND(sound, alwaysSfx)
-	if (Options.AnnouncerVoiceMode == 2 or Options.AnnouncerVoiceMode == 0 and TSIL.Random.GetRandomInt(0, 3) == 0 or alwaysSfx) then
-		SFXManager():Play(sound,1,0)
+	if
+		Options.AnnouncerVoiceMode == 2
+		or Options.AnnouncerVoiceMode == 0 and TSIL.Random.GetRandomInt(0, 3) == 0
+		or alwaysSfx
+	then
+		SFXManager():Play(sound, 1, 0)
 	end
 end
 
@@ -482,8 +569,8 @@ function Helpers.GridAlignPosition(pos)
 	local x = pos.X
 	local y = pos.Y
 
-	x = 40 * math.floor(x/40 + 0.5)
-	y = 40 * math.floor(y/40 + 0.5)
+	x = 40 * math.floor(x / 40 + 0.5)
+	y = 40 * math.floor(y / 40 + 0.5)
 
 	return Vector(x, y)
 end
@@ -491,94 +578,103 @@ end
 ---@param enemy Entity
 ---@return boolean
 function Helpers.IsTargetableEnemy(enemy)
-    return enemy:IsEnemy() and enemy:IsVulnerableEnemy() and enemy:IsActiveEnemy() and
-    not (enemy:IsBoss() or enemy.Type == EntityType.ENTITY_FIREPLACE or
-    (enemy.Type == EntityType.ENTITY_EVIS and enemy.Variant == 10))
+	return enemy:IsEnemy()
+		and enemy:IsVulnerableEnemy()
+		and enemy:IsActiveEnemy()
+		and not (
+			enemy:IsBoss()
+			or enemy.Type == EntityType.ENTITY_FIREPLACE
+			or (enemy.Type == EntityType.ENTITY_EVIS and enemy.Variant == 10)
+		)
 end
-
 
 ---@param player EntityPlayer
 function Helpers.DoesPlayerHaveRightAmountOfPickups(player)
-    local has7Coins = player:GetNumCoins() % 10 == 7
-    local has7Keys = player:GetNumKeys() % 10 == 7
-    local has7Bombs = player:GetNumBombs() % 10 == 7
-    local has7Poops = player:GetPoopMana() % 10 == 7
+	local has7Coins = player:GetNumCoins() % 10 == 7
+	local has7Keys = player:GetNumKeys() % 10 == 7
+	local has7Bombs = player:GetNumBombs() % 10 == 7
+	local has7Poops = player:GetPoopMana() % 10 == 7
 
-    return has7Bombs or has7Coins or has7Keys or has7Poops
+	return has7Bombs or has7Coins or has7Keys or has7Poops
 end
-
 
 ---@param player EntityPlayer
 function Helpers.GetLuckySevenTearChance(player)
-    local has7Coins = player:GetNumCoins() % 10 == 7
-    local has7Keys = player:GetNumKeys() % 10 == 7
-    local has7Bombs = player:GetNumBombs() % 10 == 7
-    local has7Poops = player:GetPoopMana() % 10 == 7
+	local has7Coins = player:GetNumCoins() % 10 == 7
+	local has7Keys = player:GetNumKeys() % 10 == 7
+	local has7Bombs = player:GetNumBombs() % 10 == 7
+	local has7Poops = player:GetPoopMana() % 10 == 7
 
-    local chance = 0
+	local chance = 0
 
-    if has7Coins then chance = chance + 2 end
-    if has7Keys then chance = chance + 2 end
-    if has7Bombs then chance = chance + 2 end
-    if has7Poops then chance = chance + 2 end
+	if has7Coins then
+		chance = chance + 2
+	end
+	if has7Keys then
+		chance = chance + 2
+	end
+	if has7Bombs then
+		chance = chance + 2
+	end
+	if has7Poops then
+		chance = chance + 2
+	end
 
-    chance = math.max(0, math.min(15, chance + player.Luck))
+	chance = math.max(0, math.min(15, chance + player.Luck))
 
-    local mult = player:HasTrinket(TrinketType.TRINKET_TEARDROP_CHARM) and 3 or 1
+	local mult = player:HasTrinket(TrinketType.TRINKET_TEARDROP_CHARM) and 3 or 1
 
-    return chance * mult
+	return chance * mult
 end
-
 
 ---@param v1 Vector
 ---@param v2 Vector
 ---@return number
 local function ScalarProduct(v1, v2)
-    return v1.X * v2.X + v1.Y * v2.Y
+	return v1.X * v2.X + v1.Y * v2.Y
 end
-
 
 ---@param laser EntityLaser
 ---@param entity Entity
 function Helpers.DoesLaserHitEntity(laser, entity)
-    local targetSamples = {
-        entity.Position,
-        entity.Position + Vector(entity.Size * entity.SizeMulti.X, 0),
-        entity.Position + Vector(-entity.Size * entity.SizeMulti.X, 0),
-        entity.Position + Vector(0, entity.Size * entity.SizeMulti.Y),
-        entity.Position + Vector(0, -entity.Size * entity.SizeMulti.Y),
-    }
-    ---@type VectorList
-    ---@diagnostic disable-next-line: assign-type-mismatch
-    local samplePoints = laser:GetSamples()
-    local laserSize = laser.Size
+	local targetSamples = {
+		entity.Position,
+		entity.Position + Vector(entity.Size * entity.SizeMulti.X, 0),
+		entity.Position + Vector(-entity.Size * entity.SizeMulti.X, 0),
+		entity.Position + Vector(0, entity.Size * entity.SizeMulti.Y),
+		entity.Position + Vector(0, -entity.Size * entity.SizeMulti.Y),
+	}
+	---@type VectorList
+	---@diagnostic disable-next-line: assign-type-mismatch
+	local samplePoints = laser:GetSamples()
+	local laserSize = laser.Size
 
-    --From https://math.stackexchange.com/questions/190111/how-to-check-if-a-point-is-inside-a-rectangle
-    for i = 0, samplePoints.Size-2, 1 do
-        local point1 = samplePoints:Get(i)
-        local point2 = samplePoints:Get(i+1)
+	--From https://math.stackexchange.com/questions/190111/how-to-check-if-a-point-is-inside-a-rectangle
+	for i = 0, samplePoints.Size - 2, 1 do
+		local point1 = samplePoints:Get(i)
+		local point2 = samplePoints:Get(i + 1)
 
-        local side = (point1 - point2):Rotated(90):Resized(laserSize)
+		local side = (point1 - point2):Rotated(90):Resized(laserSize)
 
-        local cornerA = point1 + side
-        local cornerB = point2 + side
-        local cornerD = point1 - side
+		local cornerA = point1 + side
+		local cornerB = point2 + side
+		local cornerD = point1 - side
 
-        for _, targetPos in ipairs(targetSamples) do
-            local AM = targetPos - cornerA
-            local AB = cornerB - cornerA
-            local AD = cornerD - cornerA
-    
-            local AMpAB = ScalarProduct(AM, AB)
-            local ABpAB = ScalarProduct(AB, AB)
-            local AMpAD = ScalarProduct(AM, AD)
-            local ADpAD = ScalarProduct(AD, AD)
-    
-            if 0 < AMpAB and AMpAB < ABpAB and 0 < AMpAD and AMpAD < ADpAD then
-                return true
-            end
-        end
-    end
+		for _, targetPos in ipairs(targetSamples) do
+			local AM = targetPos - cornerA
+			local AB = cornerB - cornerA
+			local AD = cornerD - cornerA
+
+			local AMpAB = ScalarProduct(AM, AB)
+			local ABpAB = ScalarProduct(AB, AB)
+			local AMpAD = ScalarProduct(AM, AD)
+			local ADpAD = ScalarProduct(AD, AD)
+
+			if 0 < AMpAB and AMpAB < ABpAB and 0 < AMpAD and AMpAD < ADpAD then
+				return true
+			end
+		end
+	end
 end
 
 -----------------------------------
@@ -592,7 +688,7 @@ function Helpers.GetPlayers(ignoreCoopBabies)
 end
 
 function Helpers.GetPlayerFromTear(tear)
-	for i=1, 2 do
+	for i = 1, 2 do
 		local check = nil
 		if i == 1 then
 			check = tear.Parent
@@ -628,20 +724,24 @@ end
 
 function Helpers.Contains(list, x)
 	for _, v in pairs(list) do
-		if v == x then return true end
+		if v == x then
+			return true
+		end
 	end
 	return false
 end
 
 --ripairs stuff from revel
-function ripairs_it(t,i)
-	i=i-1
-	local v=t[i]
-	if v==nil then return v end
-	return i,v
+function ripairs_it(t, i)
+	i = i - 1
+	local v = t[i]
+	if v == nil then
+		return v
+	end
+	return i, v
 end
 function ripairs(t)
-	return ripairs_it, t, #t+1
+	return ripairs_it, t, #t + 1
 end
 
 --- Executes a function for each key-value pair of a table
@@ -657,7 +757,7 @@ function Helpers.Filter(toFilter, predicate)
 
 	for index, value in pairs(toFilter) do
 		if predicate(index, value) then
-			filtered[#filtered+1] = value
+			filtered[#filtered + 1] = value
 		end
 	end
 
@@ -696,7 +796,9 @@ end
 ---@return EntityPlayer[]
 function Helpers.GetPlayersByType(playerType)
 	local players = Helpers.GetPlayers()
-	if not playerType or type(playerType) ~= "number" or playerType < 0 then return players end
+	if not playerType or type(playerType) ~= "number" or playerType < 0 then
+		return players
+	end
 
 	return Helpers.Filter(players, function(_, player)
 		return player:GetPlayerType() == playerType
@@ -716,124 +818,8 @@ function Helpers.UnlockAchievement(achievement, force) -- from Community Remix
 end
 
 local function GetBombDamage(player)
-	return player:GetNumGigaBombs() > 0 and 300 or (player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) and 185 or 100)
-end
-
----@param radius number
----@param damage number
----@param bombDamage number
----@param knockback number
----@param player EntityPlayer
----@param doBombStomp boolean
----@param hasBombs boolean
-local function NewStompFunction(radius, damage, bombDamage, knockback, player, doBombStomp, hasBombs) -- well its name is clear
-	local enemiesInRadius = Helpers.GetEnemiesInRadius(player.Position, radius, true)
-	if not (EdithRestored.DebugMode and EdithRestored:GetDebugValue("IgnoreStompDamage")) then
-		for _,enemy in pairs(enemiesInRadius) do
-			--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
-			enemy:AddKnockback(EntityRef(player), (enemy.Position - player.Position):Resized(knockback), 5, Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT))
-			if not player:HasCollectible(CollectibleType.COLLECTIBLE_SULFURIC_ACID) then
-				if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
-					local newDamage = damage
-					if player:HasCollectible(CollectibleType.COLLECTIBLE_PROPTOSIS) then
-						newDamage = newDamage * (1.5 - player.Position:Distance(enemy.Position) / radius)
-					end
-					enemy:TakeDamage(newDamage, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, EntityRef(player), 30)
-				end
-				if enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 then
-					enemy:Die()
-				end
-			end
-		end
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_SULFURIC_ACID) then
-			local newDamage = damage
-			if player:HasCollectible(CollectibleType.COLLECTIBLE_PROPTOSIS) then
-				newDamage = newDamage * (1.5 - player.Position:Distance(enemy.Position) / radius)
-			end
-			EdithRestored.Game:BombDamage(player.Position, newDamage, radius, true, player, player.TearFlags, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
-		else
-			local poop = EdithRestored.Room():GetGridEntityFromPos(player.Position)
-			if poop and poop:ToPoop() then
-				if poop.State ~= 1000 then
-					poop:Destroy()
-				end
-			end
-		end
-	end
-	--EdithRestored.Game:BombDamage(player.Position, damage, radius, true, player, TearFlags.TEAR_NORMAL, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
-	local bombEffectTriggered = bombDamage > 0
-
-	if not bombEffectTriggered and doBombStomp then
-		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION)
-		for _,callback in ipairs(callbacks) do
-			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
-				local ret = callback.Function(callback.Mod, player)
-				if ret == true then
-					bombEffectTriggered = true
-					bombDamage = GetBombDamage(player)
-					break
-				end
-			end
-		end
-	end
-
-	if bombEffectTriggered then
-
-		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
-		for _,callback in ipairs(callbacks) do
-			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
-				local ret = callback.Function(callback.Mod, player, bombDamage, radius, hasBombs)
-				if type(ret) == "table" then
-					bombDamage = ret.BombDamage or bombDamage
-					radius = ret.Radius or radius
-				end
-			end
-		end
-
-		if player:HasTrinket(TrinketType.TRINKET_SHORT_FUSE) then
-			bombDamage = bombDamage * 1.15
-		end
-
-		EdithRestored.Game:BombExplosionEffects(player.Position, bombDamage, player:GetBombFlags(), Color.Default, player)
-		
-		if player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) > 0 then
-			for i = 1, player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) do
-				local rng = player:GetTrinketRNG(TrinketType.TRINKET_RING_CAP)
-				EdithRestored.Game:BombExplosionEffects(player.Position + Vector.FromAngle(rng:RandomInt(1, 360)):Resized(rng:RandomInt(100) * 0.015), bombDamage, player:GetBombFlags(), Color.Default, player)
-			end
-		end
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_BOBS_CURSE) or player:GetBombFlags() & TearFlags.TEAR_POISON > 0 then
-			local poisonCloud = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SMOKE_CLOUD, 0, player.Position, Vector.Zero, player):ToEffect()
-			poisonCloud:SetTimeout(150)
-			if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then
-				poisonCloud.SpriteScale = Vector(1.75, 1.75)
-			end
-		end
-				
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
-			for i = 1, TSIL.Random.GetRandomInt(4,5) do
-				Isaac.CreateTimer(function()
-					local explosionPosition = Vector.FromAngle(TSIL.Random.GetRandomInt(1, 360)):Resized(TSIL.Random.GetRandomFloat(0.1, radius * 1.5))
-					EdithRestored.Game:BombExplosionEffects(player.Position + explosionPosition, bombDamage, player:GetBombFlags(), Color.Default, player, 0.5, true, false)
-				end, TSIL.Random.GetRandomInt(5, 10), 1, false)
-			end
-		end
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_GHOST_BOMBS) then
-			local ghost = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.HUNGRY_SOUL, 1, player.Position, Vector.Zero, player):ToEffect()
-			ghost:SetTimeout(300)
-			SFXManager():Play(SoundEffect.SOUND_FLOATY_BABY_ROAR, 1, 0, false, 1.75, 0)
-		end
-		if player:HasTrinket(TrinketType.TRINKET_BOBS_BLADDER) then
-			local creep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_GREEN, 0, player.Position, Vector.Zero, player):ToEffect()
-			creep.Timeout = 60
-		end
-		if player:HasTrinket(TrinketType.TRINKET_BLASTING_CAP) and data.BombStomp ~= nil then
-			local rng = player:GetTrinketRNG(TrinketType.TRINKET_BLASTING_CAP)
-			if rng:RandomFloat() <= 0.1 then
-				Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_BOMB, 0, player.Position, Vector.Zero, player)
-			end
-		end
-	end
+	return player:GetNumGigaBombs() > 0 and 300
+		or (player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) and 185 or 100)
 end
 
 function Helpers.HasBombs(player)
@@ -860,17 +846,25 @@ function Helpers.SpawnEdithTarget(player)
 	if Helpers.GetEdithTarget(player) == nil and Helpers.IsPlayerEdith(player, true, false) then
 		local data = EdithRestored:GetData(player)
 		local TargetColor = EdithRestored:GetDefaultFileSave("TargetColor")
-		data.EdithJumpTarget = Isaac.Spawn(1000, EdithRestored.Enums.Entities.EDITH_TARGET.Variant, 0, player.Position, Vector(0, 0), player):ToEffect()
+		data.EdithJumpTarget = Isaac.Spawn(
+			1000,
+			EdithRestored.Enums.Entities.EDITH_TARGET.Variant,
+			0,
+			player.Position,
+			Vector(0, 0),
+			player
+		):ToEffect()
 		data.EdithJumpTarget.Parent = player
 		data.EdithJumpTarget.SpawnerEntity = player
 		data.EdithJumpTarget.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
 		data.EdithJumpTarget:GetSprite():Play("Blink", true)
-		
+
 		-- target.Color = Color(1, 1, 1, 0, 0, 0, 0)
 		if TargetColor then
-			data.EdithJumpTarget.Color = Color(TargetColor.R/255, TargetColor.G/255, TargetColor.B/255, 1, 0, 0, 0)
+			data.EdithJumpTarget.Color =
+				Color(TargetColor.R / 255, TargetColor.G / 255, TargetColor.B / 255, 1, 0, 0, 0)
 		else
-			data.EdithJumpTarget.Color = Color(155/255, 0, 0, 1, 0, 0, 0)
+			data.EdithJumpTarget.Color = Color(155 / 255, 0, 0, 1, 0, 0, 0)
 		end
 	end
 end
@@ -891,6 +885,33 @@ function Helpers.RemoveEdithTarget(player)
 	end
 end
 
+local function InTable(value, tab)
+	for _, v in pairs(tab) do
+		if v == value then
+			return true
+		end
+	end
+	return false
+end
+
+---@param player EntityPlayer
+---@param picker WeightedOutcomePicker
+---@param collectible CollectibleType | integer
+---@param limit number
+---@return table
+local function FillWithRandomItems(player, picker, collectible, limit)
+	local rng = player:GetCollectibleRNG(collectible)
+	local outputTable = {}
+	while player:HasCollectible(collectible) and picker:GetNumOutcomes() > 0 and #outputTable < limit do
+		local outcome = picker:PickOutcome(rng)
+		if rng:RandomInt(8) == 1 then
+			outputTable[#outputTable + 1] = outcome
+		end
+		picker:RemoveOutcome(outcome)
+	end
+	return outputTable
+end
+
 ---@param player EntityPlayer
 ---@param force boolean?
 ---@param doBombStomp boolean?
@@ -899,23 +920,28 @@ function Helpers.Stomp(player, force, doBombStomp)
 	local pData = EdithRestored:RunSave(player)
 	local room = EdithRestored.Room()
 	local bdType = room:GetBackdropType()
-	local chap4 = (bdType == 10 or bdType == 11 or bdType == 12 or bdType == 13 or bdType == 34 or bdType == 43 or bdType == 44)
+	local chap4 = (
+		bdType == 10
+		or bdType == 11
+		or bdType == 12
+		or bdType == 13
+		or bdType == 34
+		or bdType == 43
+		or bdType == 44
+	)
 	local level = EdithRestored.Level():GetStage()
-	
+
 	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5)
 	local bombDamage = 0
 	local radius = Helpers.GetStompRadius()
-	local knockbackFormula = 15 
-	if Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) then
-		knockbackFormula = knockbackFormula * 2
-	end
+	local knockback = 15
 
 	if player:HasCollectible(CollectibleType.COLLECTIBLE_PISCES) then
-		knockbackFormula = knockbackFormula + 10
+		knockback = knockback + 10
 	end
 
 	if player:HasCollectible(CollectibleType.COLLECTIBLE_8_INCH_NAILS) then
-		knockbackFormula = knockbackFormula + 8
+		knockback = knockback + 8
 	end
 
 	-- yeah the en of that stuff
@@ -925,7 +951,7 @@ function Helpers.Stomp(player, force, doBombStomp)
 	if doBombStomp ~= false then
 		if data.BombStomp ~= nil or force then
 			if Helpers.HasBombs(player) or force then
-			-- Check if edith has a golden bomb cause well using a golden bomb doesn't substract your bomb count
+				-- Check if edith has a golden bomb cause well using a golden bomb doesn't substract your bomb count
 				if player:GetNumGigaBombs() > 0 then
 					isGigaBomb = true
 				end
@@ -936,16 +962,11 @@ function Helpers.Stomp(player, force, doBombStomp)
 						player:AddBombs(-1)
 					end
 				end
-				if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then -- Mr. Mega
-					stompDamage = stompDamage * 1.15
-					radius = radius * 1.3
-				end
+				
 				if isGigaBomb then
 					radius = radius * 2
 				end
-				if player:HasCollectible(CollectibleType.COLLECTIBLE_PUPULA_DUPLEX)  then
-					radius = radius * 1.2
-				end
+
 				bombDamage = GetBombDamage(player)
 			end
 		end
@@ -953,37 +974,18 @@ function Helpers.Stomp(player, force, doBombStomp)
 			doBombStomp = force or data.BombStomp
 		end
 	end
-	pData.StompCount = pData.StompCount and ((pData.StompCount + 1) % 2) or 1
 
-	if pData.StompCount % 2 == 0 then
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_CHEMICAL_PEEL) then
-			stompDamage = stompDamage + 2
-		end
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_PEEPER) then
-			stompDamage = stompDamage * 1.35
-		end
-	else
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_CLOT) then
-			stompDamage = stompDamage + 1
-		end
-	end
+	local breakRocks = not doBombStomp
+
+	pData.StompCount = pData.StompCount and ((pData.StompCount + 1) % 2) or 1
 
 	if player:HasCollectible(CollectibleType.COLLECTIBLE_TOUGH_LOVE) then
 		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_TOUGH_LOVE)
-		
+
 		local ToughLoveChance = rng:RandomInt(1, 100)
 		local maxChance = 1 / (10 - Helpers.Clamp(player.Luck, 0, 9))
 		if ToughLoveChance <= maxChance then
 			stompDamage = stompDamage * 3.2
-		end
-	end
-
-	if player:HasCollectible(CollectibleType.COLLECTIBLE_APPLE) then
-		local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_APPLE)
-		local AppleChance = rng:RandomInt(1, 100)
-		local maxChance = 1 / (15 - Helpers.Clamp(player.Luck, 0 , 14))
-		if AppleChance <= maxChance then
-			stompDamage = stompDamage * 4
 		end
 	end
 
@@ -996,13 +998,253 @@ function Helpers.Stomp(player, force, doBombStomp)
 			print((LandPos - JumpPos):Length()/40)
 		end
 	]]
-	
 
-	NewStompFunction(radius, stompDamage, bombDamage, knockbackFormula, player, doBombStomp, bombs > 0 or force)
-	
+	local hasBombs = bombs > 0 or force
+
+	local dollarBillPicker = WeightedOutcomePicker()
+	local fruitCakePicker = WeightedOutcomePicker()
+
+	local stompCallbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP)
+	local stompModifyCallback = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP)
+
+	local allDollarBillItems = Helpers.Filter(
+		Helpers.MergeTables(stompCallbacks, stompModifyCallback),
+		function(index, callback)
+			return type(callback.Param) == "table"
+				and type(callback.Param.Item) == "number"
+				and type(callback.Param.Pool3DollarBill) == "boolean"
+		end
+	)
+	local allFruitCakeItems = Helpers.Filter(
+		Helpers.MergeTables(stompCallbacks, stompModifyCallback),
+		function(index, callback)
+			return type(callback.Param) == "table"
+				and type(callback.Param.Item) == "number"
+				and type(callback.Param.PoolFruitCake) == "boolean"
+		end
+	)
+
+	for _, item in ipairs(allDollarBillItems) do
+		dollarBillPicker:AddOutcomeFloat(item.Param.Item, 1 / #allDollarBillItems)
+	end
+
+	for _, item in ipairs(allFruitCakeItems) do
+		fruitCakePicker:AddOutcomeFloat(item.Param.Item, 1 / #allFruitCakeItems)
+	end
+
+	local dollarBillItems = FillWithRandomItems(player, dollarBillPicker, CollectibleType.COLLECTIBLE_3_DOLLAR_BILL, 3)
+	local fruitCakeItems = FillWithRandomItems(player, fruitCakePicker, CollectibleType.COLLECTIBLE_FRUIT_CAKE, 1)
+
+	--#region Damage, knockback, radius modifications
+	for _, callback in ipairs(stompModifyCallback) do
+		local params = callback.Param
+		local isTbl = type(params) == "table"
+		local item = isTbl and type(params.Item) == "number" and params.Item or type(params) == "number" and params
+		local isDollarBill = isTbl and InTable(params.Item, dollarBillItems) and not player:HasCollectible(params.Item)
+		local isFruitCake = isTbl and InTable(params.Item, fruitCakeItems) and not player:HasCollectible(params.Item)
+		if params == nil or item == nil or player:HasCollectible(item) or isDollarBill or isFruitCake then
+			local ret = callback.Function(EdithRestored, player, stompDamage, radius, knockback, doBombStomp or bombDamage > 0)
+			if type(ret) == "table" then
+				stompDamage = type(ret.StompDamage) == "number" and ret.StompDamage or stompDamage
+				knockback = type(ret.Knockback) == "number" and ret.Knockback or knockback
+				radius = type(ret.Radius) == "number" and ret.Radius or radius
+				if type(ret.BreakRocks) == "boolean" and ret.BreakRocks == true then
+					breakRocks = true
+				end
+			end
+		end
+	end
+	--#endregion
+
+	if Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) then
+		knockback = knockback * 2
+	end
+
+	--#region Stomping
+	for _, callback in ipairs(stompCallbacks) do
+		local params = callback.Param
+		local isTbl = type(params) == "table"
+		local item = isTbl and type(params.Item) == "number" and params.Item or type(params) == "number" and params
+		local isDollarBill = isTbl and InTable(params.Item, dollarBillItems) and not player:HasCollectible(params.Item)
+		local isFruitCake = isTbl and InTable(params.Item, fruitCakeItems) and not player:HasCollectible(params.Item)
+		if params == nil or item == nil or player:HasCollectible(item) or isDollarBill or isFruitCake then
+			callback.Function(EdithRestored, player, EdithRestored:GetData(player).BombStomp, isDollarBill, isFruitCake)
+		end
+	end
+
+	local enemiesInRadius = Helpers.GetEnemiesInRadius(player.Position, radius, true)
+	if not (EdithRestored.DebugMode and EdithRestored:GetDebugValue("IgnoreStompDamage")) then
+		for _, enemy in pairs(enemiesInRadius) do
+			--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
+			enemy:AddKnockback(
+				EntityRef(player),
+				(enemy.Position - player.Position):Resized(knockback),
+				5,
+				Helpers.IsPlayerEdith(player, true, false)
+					and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)
+			)
+			if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
+				local newDamage = stompDamage
+				if player:HasCollectible(CollectibleType.COLLECTIBLE_PROPTOSIS) then
+					newDamage = newDamage * (1.5 - player.Position:Distance(enemy.Position) / radius)
+				end
+				enemy:TakeDamage(
+					newDamage,
+					DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION,
+					EntityRef(player),
+					30
+				)
+			end
+			if enemy.Type == EntityType.ENTITY_FIREPLACE and enemy.Variant ~= 4 then
+				enemy:Die()
+			end
+		end
+		for i = 0, room:GetGridSize() - 1 do
+			local grid = room:GetGridEntity(i)
+			if grid then
+				if
+					(breakRocks
+					or grid:ToPoop() and grid.State ~= 1000) and player.Position:Distance(grid.Position) <= radius
+				then
+					grid:Destroy()
+				end
+			end
+		end
+	end
+	--EdithRestored.Game:BombDamage(player.Position, damage, radius, true, player, TearFlags.TEAR_NORMAL, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
+	local bombEffectTriggered = bombDamage > 0
+
+	if not bombEffectTriggered and doBombStomp then
+		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION)
+		for _, callback in ipairs(callbacks) do
+			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
+				local ret = callback.Function(callback.Mod, player)
+				if ret == true then
+					bombEffectTriggered = true
+					bombDamage = GetBombDamage(player)
+					break
+				end
+			end
+		end
+	end
+
+	if bombEffectTriggered then
+		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
+		for _, callback in ipairs(callbacks) do
+			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
+				local ret = callback.Function(callback.Mod, player, bombDamage, radius, hasBombs)
+				if type(ret) == "table" then
+					bombDamage = ret.BombDamage or bombDamage
+					radius = ret.Radius or radius
+				end
+			end
+		end
+
+		if player:HasTrinket(TrinketType.TRINKET_SHORT_FUSE) then
+			bombDamage = bombDamage * 1.15
+		end
+
+		EdithRestored.Game:BombExplosionEffects(
+			player.Position,
+			bombDamage,
+			player:GetBombFlags(),
+			Color.Default,
+			player
+		)
+
+		if player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) > 0 then
+			for i = 1, player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) do
+				local rng = player:GetTrinketRNG(TrinketType.TRINKET_RING_CAP)
+				EdithRestored.Game:BombExplosionEffects(
+					player.Position + Vector.FromAngle(rng:RandomInt(1, 360)):Resized(rng:RandomInt(100) * 0.015),
+					bombDamage,
+					player:GetBombFlags(),
+					Color.Default,
+					player
+				)
+			end
+		end
+		if
+			player:HasCollectible(CollectibleType.COLLECTIBLE_BOBS_CURSE)
+			or player:GetBombFlags() & TearFlags.TEAR_POISON > 0
+		then
+			local poisonCloud = Isaac.Spawn(
+				EntityType.ENTITY_EFFECT,
+				EffectVariant.SMOKE_CLOUD,
+				0,
+				player.Position,
+				Vector.Zero,
+				player
+			):ToEffect()
+			poisonCloud:SetTimeout(150)
+			if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then
+				poisonCloud.SpriteScale = Vector(1.75, 1.75)
+			end
+		end
+
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
+			for i = 1, TSIL.Random.GetRandomInt(4, 5) do
+				Isaac.CreateTimer(function()
+					local explosionPosition = Vector.FromAngle(TSIL.Random.GetRandomInt(1, 360))
+						:Resized(TSIL.Random.GetRandomFloat(0.1, radius * 1.5))
+					EdithRestored.Game:BombExplosionEffects(
+						player.Position + explosionPosition,
+						bombDamage,
+						player:GetBombFlags(),
+						Color.Default,
+						player,
+						0.5,
+						true,
+						false
+					)
+				end, TSIL.Random.GetRandomInt(5, 10), 1, false)
+			end
+		end
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_GHOST_BOMBS) then
+			local ghost = Isaac.Spawn(
+				EntityType.ENTITY_EFFECT,
+				EffectVariant.HUNGRY_SOUL,
+				1,
+				player.Position,
+				Vector.Zero,
+				player
+			)
+				:ToEffect()
+			ghost:SetTimeout(300)
+			SFXManager():Play(SoundEffect.SOUND_FLOATY_BABY_ROAR, 1, 0, false, 1.75, 0)
+		end
+		if player:HasTrinket(TrinketType.TRINKET_BOBS_BLADDER) then
+			local creep = Isaac.Spawn(
+				EntityType.ENTITY_EFFECT,
+				EffectVariant.CREEP_GREEN,
+				0,
+				player.Position,
+				Vector.Zero,
+				player
+			)
+				:ToEffect()
+			creep.Timeout = 60
+		end
+		if player:HasTrinket(TrinketType.TRINKET_BLASTING_CAP) and data.BombStomp ~= nil then
+			local rng = player:GetTrinketRNG(TrinketType.TRINKET_BLASTING_CAP)
+			if rng:RandomFloat() <= 0.1 then
+				Isaac.Spawn(
+					EntityType.ENTITY_PICKUP,
+					PickupVariant.PICKUP_BOMB,
+					0,
+					player.Position,
+					Vector.Zero,
+					player
+				)
+			end
+		end
+	end
+	--#endregion
+
 	EdithRestored.Game:ShakeScreen(10)
-	
-	local sound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or SoundEffect.SOUND_STONE_IMPACT		SFXManager():Play(sound, 1, 0)
+
+	local sound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or SoundEffect.SOUND_STONE_IMPACT
+	SFXManager():Play(sound, 1, 0)
 
 	for i = 1, TSIL.Random.GetRandomInt(6, 9) do
 		local randRockVel = Vector(TSIL.Random.GetRandomInt(-3, 3), TSIL.Random.GetRandomInt(-3, 3))
@@ -1010,15 +1252,23 @@ function Helpers.Stomp(player, force, doBombStomp)
 	end
 	if room:HasWater() then
 		-- if not chap4 then
-			local splashpitch = 0.9 + (TSIL.Random.GetRandomFloat(0, 1) / 10)
-			local waterSplash = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BIG_SPLASH, 0, player.Position + Vector(0, 2), Vector.Zero, player):ToEffect()
-			waterSplash.SpriteScale = waterSplash.SpriteScale * 0.65
-			SFXManager():Play(EdithRestored.Enums.SFX.Edith.WATER_STOMP, 1, 0, false, splashpitch, 0)
+		local splashpitch = 0.9 + (TSIL.Random.GetRandomFloat(0, 1) / 10)
+		local waterSplash = Isaac.Spawn(
+			EntityType.ENTITY_EFFECT,
+			EffectVariant.BIG_SPLASH,
+			0,
+			player.Position + Vector(0, 2),
+			Vector.Zero,
+			player
+		):ToEffect()
+		waterSplash.SpriteScale = waterSplash.SpriteScale * 0.65
+		SFXManager():Play(EdithRestored.Enums.SFX.Edith.WATER_STOMP, 1, 0, false, splashpitch, 0)
 		-- end
 	else
 		local poof
 		if not chap4 then
-			poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 1, player.Position, Vector.Zero, player):ToEffect()
+			poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 1, player.Position, Vector.Zero, player)
+				:ToEffect()
 		else
 			poof = Isaac.Spawn(1000, 16, 3, player.Position, Vector.Zero, nil):ToEffect()
 			if bdType == 13 then
@@ -1037,61 +1287,58 @@ end
 ---@param x number
 ---@return number
 function Helpers.EaseOutBack(x)
-    local c1 = 1.70158
+	local c1 = 1.70158
 	local c3 = c1 + 1
 
-	return 1 + c3 * (x - 1)^3 + c1 * (x - 1)^2
+	return 1 + c3 * (x - 1) ^ 3 + c1 * (x - 1) ^ 2
 end
 
 ---@param player EntityPlayer
 ---@return boolean
 function Helpers.IsPlayingExtraAnimation(player)
-    local sprite = player:GetSprite()
-    local anim = sprite:GetAnimation()
+	local sprite = player:GetSprite()
+	local anim = sprite:GetAnimation()
 
-    local normalAnims = {
-        ["WalkUp"] = true,
-        ["WalkDown"] = true,
-        ["WalkLeft"] = true,
-        ["WalkRight"] = true
-    }
+	local normalAnims = {
+		["WalkUp"] = true,
+		["WalkDown"] = true,
+		["WalkLeft"] = true,
+		["WalkRight"] = true,
+	}
 
-    return not normalAnims[anim]
+	return not normalAnims[anim]
 end
-
 
 ---@param num number
 ---@param dp integer
 ---@return number
 function Helpers.Round(num, dp)
-    local mult = 10^(dp or 0)
-    return math.floor(num * mult + 0.5)/mult
+	local mult = 10 ^ (dp or 0)
+	return math.floor(num * mult + 0.5) / mult
 end
-
 
 ---By catinsurance
 ---@param maxFireDelay number
 ---@return number
 function Helpers.ToTearsPerSecond(maxFireDelay)
-    return 30 / (maxFireDelay + 1)
+	return 30 / (maxFireDelay + 1)
 end
-
 
 ---By catinsurance
 ---@param tearsPerSecond number
 ---@return number
 function Helpers.ToMaxFireDelay(tearsPerSecond)
-    return (30 / tearsPerSecond) - 1
+	return (30 / tearsPerSecond) - 1
 end
 
 ---@param ... table[]
 ---@return table
 function Helpers.MergeTables(...)
-	local tables = {...}
+	local tables = { ... }
 	local t = tables[1]
 	table.remove(tables, 1)
 	for i, tab in ipairs(tables) do
-		for _,v in pairs(tab) do
+		for _, v in pairs(tab) do
 			table.insert(t, v)
 		end
 	end
@@ -1102,39 +1349,39 @@ end
 ---@return table
 function Helpers.MergeiTables(...)
 	local tables = table.unpack(...)
-    local t1 = tables[1]
-    table.remove(tables, 1)
-	for _,tab in ipairs(tables) do
-        for _,v in ipairs(tab) do
-            table.insert(t1, v)
-        end
+	local t1 = tables[1]
+	table.remove(tables, 1)
+	for _, tab in ipairs(tables) do
+		for _, v in ipairs(tab) do
+			table.insert(t1, v)
+		end
 	end
 	return t1
 end
 
 --#region bless Fiend Folio (you read that right)
 local function runUpdates(tab) --This is from Fiend Folio
-    for i = #tab, 1, -1 do
-        local f = tab[i]
-        f.Delay = f.Delay - 1
-        if f.Delay <= 0 then
-            f.Func()
-            table.remove(tab, i)
-        end
-    end
+	for i = #tab, 1, -1 do
+		local f = tab[i]
+		f.Delay = f.Delay - 1
+		if f.Delay <= 0 then
+			f.Func()
+			table.remove(tab, i)
+		end
+	end
 end
 
 local delayedFuncs = {}
 function Helpers.scheduleForUpdate(foo, delay, callback)
-    callback = callback or ModCallbacks.MC_POST_UPDATE
-    if not delayedFuncs[callback] then
-        delayedFuncs[callback] = {}
-        EdithRestored:AddCallback(callback, function()
-            runUpdates(delayedFuncs[callback])
-        end)
-    end
+	callback = callback or ModCallbacks.MC_POST_UPDATE
+	if not delayedFuncs[callback] then
+		delayedFuncs[callback] = {}
+		EdithRestored:AddCallback(callback, function()
+			runUpdates(delayedFuncs[callback])
+		end)
+	end
 
-    table.insert(delayedFuncs[callback], { Func = foo, Delay = delay })
+	table.insert(delayedFuncs[callback], { Func = foo, Delay = delay })
 end
 --#endregion
 
@@ -1142,13 +1389,12 @@ end
 ---@return boolean
 function Helpers.IsItemDisabled(item)
 	for _, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledItems")) do
-        if item == EdithRestored.Enums.CollectibleType[disabledItem] then
-            return true
-        end
-    end
+		if item == EdithRestored.Enums.CollectibleType[disabledItem] then
+			return true
+		end
+	end
 	return false
 end
-
 
 ---@param v1 Vector
 ---@param v2 Vector

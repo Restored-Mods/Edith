@@ -4,7 +4,8 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function MomsContacts:OnMomsContactsStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function MomsContacts:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_MOMS_CONTACTS)
     local chance = math.min(1 / (5 - Helpers.Clamp(player.Luck * 0.15, 0, 4)), 0.5)
     if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
@@ -14,7 +15,9 @@ function MomsContacts:OnMomsContactsStomp(player, bombLanding, isDollarBill, isF
     end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	MomsContacts.OnMomsContactsStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	MomsContacts.OnStomp,
     { Item = CollectibleType.COLLECTIBLE_MOMS_CONTACTS, Pool3DollarBill = true, PoolFruitCake = true }
 )
+
+return MomsContacts

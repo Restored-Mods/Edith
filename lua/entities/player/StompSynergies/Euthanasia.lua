@@ -4,20 +4,24 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param bombLanding boolean
 ---@param isDollarBill boolean
-function Euthanasia:OnEuthanasiaStomp(player, bombLanding, isDollarBill, isFruitCake)
+---@param isFruitCake boolean
+function Euthanasia:OnStomp(player, bombLanding, isDollarBill, isFruitCake)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_EUTHANASIA)
 	local chance = math.min(0.25, 1 / (30 - Helpers.Clamp(player.Luck * 2, 0, 29))) + 1
 	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
-		local outcome = WeightedOutcomePicker()
-		outcome:AddOutcomeWeight(FamiliarVariant.BLUE_FLY, 50)
-		outcome:AddOutcomeWeight(FamiliarVariant.BLUE_SPIDER, 50)
-		for _ = 1, rng:RandomInt(1,2) do
-			Isaac.Spawn(EntityType.ENTITY_FAMILIAR, outcome:PickOutcome(rng), 0, player.Position, Vector.Zero, player)
+		for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
+			if not enemy:IsBoss() then
+				enemy:Kill()
+			else
+				enemy:TakeDamage(player.Damage * 3, 0, EntityRef(player), 0)
+			end
 		end
 	end
 end
 EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_LANDING,
-	Euthanasia.OnEuthanasiaStomp,
+	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
+	Euthanasia.OnStomp,
 	{ Item = CollectibleType.COLLECTIBLE_EUTHANASIA, Pool3DollarBill = true, PoolFruitCake = true }
 )
+
+return Euthanasia
