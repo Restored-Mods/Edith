@@ -1156,12 +1156,10 @@ function Helpers.Stomp(player, force, doBombStomp)
 		if
 			params == nil
 			or item == nil and trinket == nil
-			or type(item) == "number" and player:HasCollectible(item)
-			or type(trinket) == "number" and player:HasTrinket(trinket)
+			or type(item) == "number" and (player:HasCollectible(item) or forcedStompCallbacks.Items[item])
+			or type(trinket) == "number" and (player:HasTrinket(trinket) or forcedStompCallbacks.Trinkets[trinket])
 			or isDollarBill
 			or isFruitCake
-			or item ~= nil and forcedStompCallbacks.Items[item]
-			or trinket ~= nil and forcedStompCallbacks.Trinkets[trinket]
 		then
 			callback.Function(
 				EdithRestored,
@@ -1169,8 +1167,8 @@ function Helpers.Stomp(player, force, doBombStomp)
 				EdithRestored:GetData(player).BombStomp,
 				isDollarBill,
 				isFruitCake,
-				item ~= nil and forcedStompCallbacks.Items[item]
-					or trinket ~= nil and forcedStompCallbacks.Trinkets[trinket]
+				type(item) == "number" and forcedStompCallbacks.Items[item]
+					or type(trinket) == "number" and forcedStompCallbacks.Trinkets[trinket]
 			)
 		end
 	end

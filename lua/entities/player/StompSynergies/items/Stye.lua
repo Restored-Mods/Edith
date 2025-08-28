@@ -15,7 +15,7 @@ EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,
 	CallbackPriority.LATE - 1,
 	Stye.OnStompModify,
-	{ Item = CollectibleType.COLLECTIBLE_BLOOD_CLOT }
+	{ Item = CollectibleType.COLLECTIBLE_STYE }
 )
 
 return Stye
