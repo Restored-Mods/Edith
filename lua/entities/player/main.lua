@@ -1,6 +1,4 @@
 local Helpers = include("lua.helpers.Helpers")
-local game = EdithRestored.Game
-local level = EdithRestored.Level
 local sfx = SFXManager()
 
 local SlideColors = {
@@ -439,7 +437,7 @@ local function EdithGridMovement(player, data)
 				end
 
 				sfx:Play(slideSound)
-				game:ShakeScreen(1)
+				EdithRestored.Game:ShakeScreen(1)
 			end
 
 			-- if EdithRestored.Game:GetFrameCount() % 6 == 0 then
@@ -521,6 +519,9 @@ function Player:LoadUpdate(isLoading)
 	for _, player in ipairs(Helpers.GetPlayers()) do
 		player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_SPEED, true)
 		Helpers.ChangeSprite(player, true)
+	end
+	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH) then
+		EdithRestored.Game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_GNAWED_LEAF)
 	end
 end
 
@@ -1607,7 +1608,7 @@ function Player:AccessToMirrorWorld(p)
 			p,
 			dimension
 		)
-		level().LeaveDoor = Door.Slot
+		EdithRestored.Level().LeaveDoor = Door.Slot
 		::continue::
 	end
 end
