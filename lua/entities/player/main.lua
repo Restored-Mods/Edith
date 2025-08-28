@@ -1321,6 +1321,7 @@ local tearsToNotChange = {
     TearVariant.SPORE,
     TearVariant.TECH_SWORD_BEAM,
     TearVariant.FETUS,
+	TearVariant.ICE
 }
 
 ---@param tear EntityTear

@@ -1164,6 +1164,7 @@ function Helpers.Stomp(player, force, doBombStomp)
 			callback.Function(
 				EdithRestored,
 				player,
+				stompDamage,
 				EdithRestored:GetData(player).BombStomp,
 				isDollarBill,
 				isFruitCake,
