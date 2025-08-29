@@ -175,6 +175,28 @@ function Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy, incl
 end
 
 ---@param position Vector
+---@param radius number?
+---@param allEnemies boolean | nil
+---@param noBosses boolean | nil
+---@param ignoreFires boolean | nil
+---@param ignoreDummy boolean | nil
+---@param includeTurrets boolean | nil
+---@return EntityNPC?
+function Helpers.GetNearestEnemy(position, radius, allEnemies, noBosses, ignoreFires, ignoreDummy, includeTurrets)
+	local enemies = type(radius) ~= "number"
+			and Helpers.GetEnemies(allEnemies, noBosses, ignoreFires, ignoreDummy, includeTurrets)
+		or Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, ignoreFires, ignoreDummy, includeTurrets)
+	
+	local closest = nil
+	for _, enemy in ipairs(enemies) do
+		if closest == nil or position:Distance(closest.Position) > position:Distance(enemy.Position) then
+			closest = enemy
+		end
+	end
+	return closest
+end
+
+---@param position Vector
 ---@param radius number
 ---@param allEnemies boolean | nil
 ---@param noBosses boolean | nil
@@ -252,6 +274,8 @@ function Helpers.CanMove(player, allowJump)
 		"DeathTeleport",
 		"EdithJump",
 		"EdithJumpQuick",
+		"EdithJumpBigUp",
+		"EdithJumpBigDown",
 	}
 	local playerSpr = player:GetSprite()
 	for _, anim in ipairs(forbiddenExtraAnimations) do
@@ -381,30 +405,6 @@ end
 function Helpers.OverCharge(player, slot, item)
 	local effect = Isaac.Spawn(1000, 49, 1, player.Position + Vector(0, 1), Vector.Zero, nil)
 	effect:GetSprite().Offset = Vector(0, -22)
-end
-
-function Helpers.GetNearestEnemy(_pos, noPlayer)
-	local distance = 9999999
-	local closestPos = nil
-	local enemies = Isaac.GetRoomEntities()
-	for i = 1, #enemies do
-		local enemy = enemies[i]:ToNPC()
-		if
-			enemy
-			and (enemy:IsVulnerableEnemy())
-			and (not enemy:HasEntityFlags(EntityFlag.FLAG_FRIENDLY | EntityFlag.FLAG_CHARM))
-		then
-			if (_pos - enemy.Position):Length() < distance then
-				closestPos = enemy
-				distance = (_pos - enemy.Position):Length()
-			end
-		end
-	end
-	if distance == 9999999 and not noPlayer then
-		return EdithRestored.Game:GetNearestPlayer(_pos)
-	else
-		return closestPos
-	end
 end
 
 function Helpers.VecToDir(_vec)

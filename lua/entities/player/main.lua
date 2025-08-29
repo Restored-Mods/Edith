@@ -63,9 +63,9 @@ local function IsPlayerOnGravityGrid(player, position)
 	return not player.CanFly and grid and grid:GetType() == GridEntityType.GRID_GRAVITY
 end
 
-local function EdithJump(player, pos, force)
+local function EdithJump(player, pos, force, bigJump)
 	local data = EdithRestored:GetData(player)
-	local anim = "EdithJump"
+	local anim = bigJump and "EdithJumpBig" or "EdithJump"
 	if
 		data.BombStomp ~= nil
 		and (player:HasCollectible(CollectibleType.COLLECTIBLE_FAST_BOMBS) or player:HasCollectible(
@@ -762,7 +762,8 @@ function Player:OnUpdatePlayer(player)
 					and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
 					and JumpLib:CanJump(player)
 				then
-					EdithJump(player, edithTarget.Position)
+					EdithJump(player, edithTarget.Position, nil, player:HasCollectible(CollectibleType.COLLECTIBLE_EPIC_FETUS)
+					and (data.BombStomp == nil or data.BombStomp ~= nil and not player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)))
 				end
 				if data.EdithJumpCharge >= (100 * JumpChargeMul + MinJumpCharge) then
 					data.LockBombs = true
@@ -782,9 +783,13 @@ function Player:OnUpdatePlayer(player)
 					room:GetGridEntityFromPos(player.Position)
 					and room:GetGridEntityFromPos(player.Position):GetType() == GridEntityType.GRID_TRAPDOOR
 				then
-					if data.TrapDoorFallFrame then
+					if data.TrapDoorFallFrame ~= nil then
 						player:StopExtraAnimation()
-						player:PlayExtraAnimation("EdithTrapdoorFall")
+						local anim = "EdithTrapdoorFall"
+						--[[if data.TrapDoorFallFrame == true then
+							anim = anim.."Big"
+						end]]
+						player:PlayExtraAnimation(anim)
 						data.TrapDoorFallFrame = nil
 					else
 						player:StopExtraAnimation()
@@ -826,7 +831,7 @@ function Player:OnUpdatePlayer(player)
 				data.PostLandingKill = nil
 			end
 			if
-				sprite:GetAnimation() == "EdithJump" and not sprite:IsEventTriggered("EdithLanding")
+				(sprite:GetAnimation() == "EdithJump" or sprite:GetAnimation() == "EdithJumpBig") and not sprite:IsEventTriggered("EdithLanding")
 				or sprite:GetAnimation() == "EdithJumpQuick"
 			then
 				if sprite:IsEventTriggered("EdithJumpStart") and JumpLib:CanJump(player) then
@@ -837,24 +842,33 @@ function Player:OnUpdatePlayer(player)
 						)
 						and "EdithRocketJump"
 						or "EdithJump"
+					local heightMult = sprite:GetAnimation() == "EdithJumpBig" and 2 or 1
+					local gravityMult = sprite:GetAnimation() == "EdithJumpBig" and 6 or 1
 					JumpLib:Jump(player, {
-						Height = Helpers.GetJumpHeight(),
-						Speed = Helpers.GetJumpGravity(),
+						Height = Helpers.GetJumpHeight() * heightMult,
+						Speed = Helpers.GetJumpGravity() * gravityMult,
 						Flags = JumpLib.Flags.NO_HURT_PITFALL
 							| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
 							| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING
-							| JumpLib.Flags.DISABLE_COOL_BOMBS,
+							| JumpLib.Flags.DISABLE_COOL_BOMBS
+							| JumpLib.Flags.KNIFE_DISABLE_ENTCOLL,
 						Tags = { jumpTag },
 					})
 				end
 				if
-					data.TargetJumpPos
-					and sprite:IsEventTriggered("EdithJumpStart")
-					and not (data.BombStomp and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR))
-				then
-					player.Velocity = (data.TargetJumpPos - player.Position):Normalized()
-						* (data.TargetJumpPos - player.Position):Length()
-						/ 7.7
+					data.TargetJumpPos then
+					if
+						sprite:IsEventTriggered("EdithJumpStart")
+						and not (data.BombStomp and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR))
+					then
+						if sprite:GetAnimation() == "EdithJumpBig" then
+							player.Position = data.TargetJumpPos
+						else
+							player.Velocity = (data.TargetJumpPos - player.Position):Normalized()
+								* (data.TargetJumpPos - player.Position):Length()
+								/ 7.7
+						end
+					end
 				end
 				--[[for i = 0, room:GetGridSize() do
 					local grid = room:GetGridEntity(i)]]
@@ -867,7 +881,7 @@ function Player:OnUpdatePlayer(player)
 							and (player.Position - grid.Position):Length() <= 30
 						then
 							player.Position = grid.Position
-							data.TrapDoorFallFrame = true
+							data.TrapDoorFallFrame = sprite:GetAnimation():match("Big") == "Big"
 							player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 							player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS
 								or EntityGridCollisionClass.GRIDCOLL_GROUND
@@ -895,11 +909,7 @@ function Player:OnUpdatePlayer(player)
 		local sprite = player:GetSprite()
 		if sprite:IsPlaying("Death") and dataP.Pepper < 5 then
 			if
-				sprite:GetFrame() == 5
-				or sprite:GetFrame() == 6
-				or sprite:GetFrame() == 7
-				or sprite:GetFrame() == 8
-				or sprite:GetFrame() == 9
+				sprite:GetFrame() >= 5 and sprite:GetFrame() <= 9
 			then
 				dataP.Pepper = dataP.Pepper + 1
 				Helpers.ChangeSprite(player, false)
@@ -1193,6 +1203,7 @@ function Player:NewRoom()
 			player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS
 				or EntityGridCollisionClass.GRIDCOLL_GROUND
 			data.TrapDoorFall = nil
+			JumpLib:QuitJump(player)
 		end
 		Helpers.ChangeSprite(player)
 

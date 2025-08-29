@@ -6,6 +6,7 @@ Synergies.Trinkets = {}
 local itemsSynergiesTable = {
 	vanilla = {
 		"Apple",
+		"ALumpOfCoal",
 		"BallOfTar",
 		"BloodClot",
 		"Brimstone",
@@ -16,6 +17,7 @@ local itemsSynergiesTable = {
 		"DarkMatter",
 		"DrFetus",
 		"EightInchNails",
+		"EpicFetus",
 		"Euthanasia",
 		"Explosivo",
 		"EyeSore",
@@ -33,6 +35,7 @@ local itemsSynergiesTable = {
 		"Lodestone",
 		"MomsContacts",
 		"MomsEyeshadow",
+		--"MomsKnife",
 		"MomsPerfume",
 		"MonstrosLung",
 		"MrMega",

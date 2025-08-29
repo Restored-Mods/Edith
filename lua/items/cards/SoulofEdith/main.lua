@@ -315,7 +315,9 @@ function SoulOfEdith:StatueJumping(statue)
 					Speed = Helpers.GetJumpGravity(),
 					Flags = JumpLib.Flags.NO_PITFALL
 						| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
-						| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING,
+						| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING
+						| JumpLib.Flags.DISABLE_COOL_BOMBS
+						| JumpLib.Flags.KNIFE_DISABLE_ENTCOLL,
 					Tags = { "SoulEdithJump" },
 				})
 			end
@@ -333,7 +335,9 @@ function SoulOfEdith:StatueJumping(statue)
 					Speed = 3,
 					Flags = JumpLib.Flags.NO_PITFALL
 						| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
-						| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING,
+						| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING
+						| JumpLib.Flags.DISABLE_COOL_BOMBS
+						| JumpLib.Flags.KNIFE_DISABLE_ENTCOLL,
 					Tags = { "SoulEdithJump" },
 				})
 			end
