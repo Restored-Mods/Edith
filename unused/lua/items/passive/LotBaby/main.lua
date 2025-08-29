@@ -47,7 +47,7 @@ function LotBaby:Update(familiar)
         end
         data.animDir = fireDir
         local tearTarget = Helpers.GetNearestEnemy(familiar.Position)
-        if tearTarget and (not tearTarget:ToPlayer()) then
+        if tearTarget then
             tearTrajectory = (tearTarget.Position - familiar.Position):Normalized()
             data.animDir = Helpers.VecToDir(tearTrajectory)
         end

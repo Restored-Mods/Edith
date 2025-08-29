@@ -15,7 +15,7 @@ local runData = {
 	["MoonPhaseWolf"] = false
 }
 
-EdithRestored.DebugMode = EdithRestored.DebugMode or false
+EdithRestored.DebugMode = false
 local DebugModeValues = {
 	StompRadius = 65,
 	InstantJumpCharge = true,

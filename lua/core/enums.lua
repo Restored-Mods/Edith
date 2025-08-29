@@ -84,7 +84,7 @@ Enums.CollectibleType =
 						COLLECTIBLE_SODOM = Isaac.GetItemIdByName("​Sodom"),
 						COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),
 						COLLECTIBLE_THUNDER_BOMBS = Isaac.GetItemIdByName("​Thunder Bombs"),
-						COLLECTIBLE_LOT_BABY = Isaac.GetItemIdByName("Lot Baby"),
+						--COLLECTIBLE_LOT_BABY = Isaac.GetItemIdByName("Lot Baby"),
 						COLLECTIBLE_SALTY_BABY = Isaac.GetItemIdByName("​Salty Baby"),
 						COLLECTIBLE_SALT_PAWNS = Isaac.GetItemIdByName("Salt Pawns"),
 						COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("​Salt Shaker"),					
@@ -175,7 +175,8 @@ Enums.Callbacks = {
 	DO_STOMP_EXPLOSION = "DO_STOMP_EXPLOSION",
 	ON_EDITH_STOMP_LANDING_IFRAMES = "ON_EDITH_STOMP_LANDING_IFRAMES",
 	ON_EDITH_JUMPING = "ON_EDITH_JUMPING",
-	ON_EDITH_LANDING = "ON_EDITH_LANDING"
+	ON_EDITH_STOMP = "ON_EDITH_STOMP",
+	ON_EDITH_MODIFY_STOMP = "ON_EDITH_MODIFY_STOMP"
 }
 
 Enums.BombVariant = {

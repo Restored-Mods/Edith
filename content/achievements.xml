@@ -21,6 +21,10 @@
 
 	<!-- challenges -->
 	<achievement name="Peppermint" text="Edith Rocket Laces" gfx="achievement_peppermint.png" />
+
+	
+	<achievement name="Tainted Edith (Restored Edith)" text='You unlocked "Edith"' gfx="achievement_soul_of_edith.png" hidden="true" />
+
 	<!-- Unused
 	<achievement name="Lot Baby" text="Edith Full Completion" gfx="achievement_lotbaby.png" />
 	<achievement name="Reverse Prudence" text="Edith Ultra Greedier" gfx="achievement_revprudence.png" />

@@ -62,3 +62,13 @@ EdithRestored:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playi
         return 0
     end
 end)
+
+local TEdithAch = Isaac.GetAchievementIdByName("Tainted Edith (Restored Edith)")
+
+EdithRestored:AddCallback(ModCallbacks.MC_EXECUTE_CMD, function (_, command, args)
+	if not (command == "achievement" and args == tostring(TEdithAch)) then return end
+	print("Tainted Edith isn't available yet, please wait for a future update")
+	print("Reverting Tainted Edith unlock")
+
+	Isaac.ExecuteCommand("lockachievement " .. tostring(TEdithAch))
+end)

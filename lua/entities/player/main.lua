@@ -1,6 +1,4 @@
 local Helpers = include("lua.helpers.Helpers")
-local game = EdithRestored.Game
-local level = EdithRestored.Level
 local sfx = SFXManager()
 
 local SlideColors = {
@@ -65,9 +63,9 @@ local function IsPlayerOnGravityGrid(player, position)
 	return not player.CanFly and grid and grid:GetType() == GridEntityType.GRID_GRAVITY
 end
 
-local function EdithJump(player, pos, force)
+local function EdithJump(player, pos, force, bigJump)
 	local data = EdithRestored:GetData(player)
-	local anim = "EdithJump"
+	local anim = bigJump and "EdithJumpBig" or "EdithJump"
 	if
 		data.BombStomp ~= nil
 		and (player:HasCollectible(CollectibleType.COLLECTIBLE_FAST_BOMBS) or player:HasCollectible(
@@ -123,7 +121,7 @@ local function CheckEdithsCollisionWithGrid(player, data)
 			and gridEntity.CollisionClass ~= 5
 			and (gridEntity.Position - player.Position)
 			:Normalized()
-			:DistanceSquared(player.Velocity:Normalized() + room:GetWaterCurrent())
+			:DistanceSquared(player.Velocity:Normalized())
 			< 0.1
 		then
 			--Check if player is intersecting with the gridEntity
@@ -439,7 +437,7 @@ local function EdithGridMovement(player, data)
 				end
 
 				sfx:Play(slideSound)
-				game:ShakeScreen(1)
+				EdithRestored.Game:ShakeScreen(1)
 			end
 
 			-- if EdithRestored.Game:GetFrameCount() % 6 == 0 then
@@ -521,6 +519,9 @@ function Player:LoadUpdate(isLoading)
 	for _, player in ipairs(Helpers.GetPlayers()) do
 		player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_SPEED, true)
 		Helpers.ChangeSprite(player, true)
+	end
+	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH) then
+		EdithRestored.Game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_GNAWED_LEAF)
 	end
 end
 
@@ -761,7 +762,8 @@ function Player:OnUpdatePlayer(player)
 					and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
 					and JumpLib:CanJump(player)
 				then
-					EdithJump(player, edithTarget.Position)
+					EdithJump(player, edithTarget.Position, nil, player:HasCollectible(CollectibleType.COLLECTIBLE_EPIC_FETUS)
+					and (data.BombStomp == nil or data.BombStomp ~= nil and not player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)))
 				end
 				if data.EdithJumpCharge >= (100 * JumpChargeMul + MinJumpCharge) then
 					data.LockBombs = true
@@ -781,9 +783,13 @@ function Player:OnUpdatePlayer(player)
 					room:GetGridEntityFromPos(player.Position)
 					and room:GetGridEntityFromPos(player.Position):GetType() == GridEntityType.GRID_TRAPDOOR
 				then
-					if data.TrapDoorFallFrame then
+					if data.TrapDoorFallFrame ~= nil then
 						player:StopExtraAnimation()
-						player:PlayExtraAnimation("EdithTrapdoorFall")
+						local anim = "EdithTrapdoorFall"
+						--[[if data.TrapDoorFallFrame == true then
+							anim = anim.."Big"
+						end]]
+						player:PlayExtraAnimation(anim)
 						data.TrapDoorFallFrame = nil
 					else
 						player:StopExtraAnimation()
@@ -825,7 +831,7 @@ function Player:OnUpdatePlayer(player)
 				data.PostLandingKill = nil
 			end
 			if
-				sprite:GetAnimation() == "EdithJump" and not sprite:IsEventTriggered("EdithLanding")
+				(sprite:GetAnimation() == "EdithJump" or sprite:GetAnimation() == "EdithJumpBig") and not sprite:IsEventTriggered("EdithLanding")
 				or sprite:GetAnimation() == "EdithJumpQuick"
 			then
 				if sprite:IsEventTriggered("EdithJumpStart") and JumpLib:CanJump(player) then
@@ -836,24 +842,33 @@ function Player:OnUpdatePlayer(player)
 						)
 						and "EdithRocketJump"
 						or "EdithJump"
+					local heightMult = sprite:GetAnimation() == "EdithJumpBig" and 2 or 1
+					local gravityMult = sprite:GetAnimation() == "EdithJumpBig" and 6 or 1
 					JumpLib:Jump(player, {
-						Height = Helpers.GetJumpHeight(),
-						Speed = Helpers.GetJumpGravity(),
+						Height = Helpers.GetJumpHeight() * heightMult,
+						Speed = Helpers.GetJumpGravity() * gravityMult,
 						Flags = JumpLib.Flags.NO_HURT_PITFALL
 							| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
 							| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING
-							| JumpLib.Flags.DISABLE_COOL_BOMBS,
+							| JumpLib.Flags.DISABLE_COOL_BOMBS
+							| JumpLib.Flags.KNIFE_DISABLE_ENTCOLL,
 						Tags = { jumpTag },
 					})
 				end
 				if
-					data.TargetJumpPos
-					and sprite:IsEventTriggered("EdithJumpStart")
-					and not (data.BombStomp and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR))
-				then
-					player.Velocity = (data.TargetJumpPos - player.Position):Normalized()
-						* (data.TargetJumpPos - player.Position):Length()
-						/ 7.7
+					data.TargetJumpPos then
+					if
+						sprite:IsEventTriggered("EdithJumpStart")
+						and not (data.BombStomp and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR))
+					then
+						if sprite:GetAnimation() == "EdithJumpBig" then
+							player.Position = data.TargetJumpPos
+						else
+							player.Velocity = (data.TargetJumpPos - player.Position):Normalized()
+								* (data.TargetJumpPos - player.Position):Length()
+								/ 7.7
+						end
+					end
 				end
 				--[[for i = 0, room:GetGridSize() do
 					local grid = room:GetGridEntity(i)]]
@@ -866,7 +881,7 @@ function Player:OnUpdatePlayer(player)
 							and (player.Position - grid.Position):Length() <= 30
 						then
 							player.Position = grid.Position
-							data.TrapDoorFallFrame = true
+							data.TrapDoorFallFrame = sprite:GetAnimation():match("Big") == "Big"
 							player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 							player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS
 								or EntityGridCollisionClass.GRIDCOLL_GROUND
@@ -894,11 +909,7 @@ function Player:OnUpdatePlayer(player)
 		local sprite = player:GetSprite()
 		if sprite:IsPlaying("Death") and dataP.Pepper < 5 then
 			if
-				sprite:GetFrame() == 5
-				or sprite:GetFrame() == 6
-				or sprite:GetFrame() == 7
-				or sprite:GetFrame() == 8
-				or sprite:GetFrame() == 9
+				sprite:GetFrame() >= 5 and sprite:GetFrame() <= 9
 			then
 				dataP.Pepper = dataP.Pepper + 1
 				Helpers.ChangeSprite(player, false)
@@ -1192,6 +1203,7 @@ function Player:NewRoom()
 			player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS
 				or EntityGridCollisionClass.GRIDCOLL_GROUND
 			data.TrapDoorFall = nil
+			JumpLib:QuitJump(player)
 		end
 		Helpers.ChangeSprite(player)
 
@@ -1321,6 +1333,7 @@ local tearsToNotChange = {
     TearVariant.SPORE,
     TearVariant.TECH_SWORD_BEAM,
     TearVariant.FETUS,
+	TearVariant.ICE
 }
 
 ---@param tear EntityTear
@@ -1348,78 +1361,58 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_FIRE_TEAR, Player.OnEdithFireTear)
 
+
+local MovementActions = {
+	[ButtonAction.ACTION_LEFT] = { Direction = Vector(-1, 0), Return = 0 },
+	[ButtonAction.ACTION_RIGHT] = { Direction = Vector(1, 0), Return = 0 },
+	[ButtonAction.ACTION_UP] = { Direction = Vector(0, -1), Return = 0 },
+	[ButtonAction.ACTION_DOWN] = { Direction = Vector(0, 1), Return = 0 },
+}
+
+local function PonyOverride(player, data, actions)
+	local movementDirection = data.EdithTargetMovementDirection
+	local forceInput = movementDirection:DistanceSquared(actions.Direction) == 0
+
+	if not forceInput then return end
+	data.ForceMovementInput = data.ForceMovementInput - 1
+	if data.ForceMovementInput > 0 then return end
+	if data.PonyItem then
+		player:UseActiveItem(data.PonyItem, UseFlag.USE_NOANIM)
+		data.PonyItem = nil
+	end
+
+	data.ForceMovementInput = nil
+
+	return 1
+end
+
+
 ---@param entity Entity
 function Player:EdithMovement(entity, hook, button)
-	if entity and not entity:IsDead() then
-		local player = entity:ToPlayer()
-		if player and Helpers.IsPlayerEdith(player, true, false) then
-			local OnlyStomps = EdithRestored:GetDefaultFileSave("OnlyStomps")
-			if
-				player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
-				or player:HasCurseMistEffect()
-			then
-				return
-			end
-			local data = EdithRestored:GetData(player)
-			if hook == InputHook.GET_ACTION_VALUE then
-				if data.ForceMovementInput then
-					local forceInput = false
-					if
-						data.EdithTargetMovementDirection:DistanceSquared(Vector(-1, 0)) == 0
-						and button == ButtonAction.ACTION_LEFT
-					then
-						forceInput = true
-					elseif
-						data.EdithTargetMovementDirection:DistanceSquared(Vector(1, 0)) == 0
-						and button == ButtonAction.ACTION_RIGHT
-					then
-						forceInput = true
-					elseif
-						data.EdithTargetMovementDirection:DistanceSquared(Vector(0, -1)) == 0
-						and button == ButtonAction.ACTION_UP
-					then
-						forceInput = true
-					elseif
-						data.EdithTargetMovementDirection:DistanceSquared(Vector(0, 1)) == 0
-						and button == ButtonAction.ACTION_DOWN
-					then
-						forceInput = true
-					end
+	if not (entity and not entity:IsDead()) then return end
+	local player = entity:ToPlayer()
 
-					if forceInput then
-						data.ForceMovementInput = data.ForceMovementInput - 1
-						if data.ForceMovementInput == 0 then
-							if data.PonyItem then
-								player:UseActiveItem(data.PonyItem, UseFlag.USE_NOANIM)
-								data.PonyItem = nil
-							end
+	if not player then return end
+	if not Helpers.IsPlayerEdith(player, true, false) then return end
+	if player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) or player:HasCurseMistEffect() then return end
 
-							data.ForceMovementInput = nil
-						end
+	local OnlyStomps = EdithRestored:GetDefaultFileSave("OnlyStomps")
+	local data = EdithRestored:GetData(player)
+	local actions = MovementActions[button]
 
-						return 1
-					end
-				else
-					if
-						button == ButtonAction.ACTION_LEFT
-						or button == ButtonAction.ACTION_RIGHT
-						or button == ButtonAction.ACTION_UP
-						or button == ButtonAction.ACTION_DOWN
-					then
-						return 0
-					end
-				end
-			else
-				if IsEdithExtraAnim(player) then
-					return false
-				end
-				if button == ButtonAction.ACTION_BOMB and (data.LockBombs or OnlyStomps) then
-					data.LockBombs = nil
-					return false
-				end
-			end
-		end
+	if hook == InputHook.GET_ACTION_VALUE and actions then
+		return data.ForceMovementInput and PonyOverride(player, data, actions) or actions.Return
 	end
+
+	if hook == InputHook.GET_ACTION_VALUE then return end
+	if IsEdithExtraAnim(player) then
+		return false
+	end
+	if button == ButtonAction.ACTION_BOMB and (data.LockBombs or not OnlyStomps) then
+		data.LockBombs = nil
+		return false
+	end
+
 end
 
 EdithRestored:AddPriorityCallback(ModCallbacks.MC_INPUT_ACTION, CallbackPriority.EARLY, Player.EdithMovement)
@@ -1626,7 +1619,7 @@ function Player:AccessToMirrorWorld(p)
 			p,
 			dimension
 		)
-		level().LeaveDoor = Door.Slot
+		EdithRestored.Level().LeaveDoor = Door.Slot
 		::continue::
 	end
 end

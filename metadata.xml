@@ -3,8 +3,7 @@
     <name>Edith Restored</name>
     <directory>edith</directory>
     <id>3552120418</id>
-    <description>
-[b]&quot;But Lot's wife looked back, and she became a pillar of salt.&quot; - Genesis 19:26[/b]
+    <description>[b]&quot;But Lot's wife looked back, and she became a pillar of salt.&quot; - Genesis 19:26[/b]
 
 The unused secret character from Antibirth has been restored and improved, with updated gameplay for Repentance!
 
@@ -47,7 +46,7 @@ BrakeDude, Pandora, Akad, Sillst, fly_6, im_tem, Thicco Catto, Kotry, Aceolotl, 
 https://discord.gg/BYGmAhgG8k
 
 </description>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
