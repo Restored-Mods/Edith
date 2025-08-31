@@ -925,7 +925,7 @@ function Player:Landing(player, jumpData, inPit)
 	local data = EdithRestored:GetData(player)
 	if not inPit then
 		local data = EdithRestored:GetData(player)
-		Helpers.Stomp(player, nil, not data.PostRocketRide)
+		Helpers.Stomp(player, nil, not data.PostRocketRide, Helpers.IsPlayerEdith(player, true, false))
 		data.Landed = true
 		data.PostRocketRide = nil
 		--data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
