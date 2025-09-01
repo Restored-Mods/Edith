@@ -1213,6 +1213,7 @@ function Player:NewRoom()
 		data.HTJ = nil
 		data.PostLandingKill = nil
 		data.Landed = nil
+		data.PreJumpPosition = nil
 	end
 end
 

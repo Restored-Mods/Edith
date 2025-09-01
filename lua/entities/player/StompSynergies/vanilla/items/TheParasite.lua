@@ -1,22 +1,4 @@
 local TheParasite = {}
-local Helpers = EdithRestored.Helpers
-
----@param player EntityPlayer
----@param stompDamage number
----@param radius number
----@param knockback number
----@param doBombStomp boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function TheParasite:OnJump(player, stompDamage, radius, knockback, doBombStomp, isDollarBill, isFruitCake)
-	local data = EdithRestored:GetData(player)
-	data.ParasitePreJumpPosition = player.Position
-end
-EdithRestored:AddCallback(
-	EdithRestored.Enums.Callbacks.ON_EDITH_JUMPING,
-	TheParasite.OnJump,
-	{Item = CollectibleType.COLLECTIBLE_PARASITE }
-)
 
 ---@param player EntityPlayer
 ---@param stompDamage number
@@ -26,8 +8,8 @@ EdithRestored:AddCallback(
 ---@param force boolean
 function TheParasite:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake, force)
     local data = EdithRestored:GetData(player)
-	if data.ParasitePreJumpPosition then
-		local vec = player.Position - data.ParasitePreJumpPosition
+	if data.PreJumpPosition then
+		local vec = player.Position - data.PreJumpPosition
 		local dir = vec:GetAngleDegrees()
 		for i = -90, 90, 180 do
 			local tear = player:FireTear(player.Position, Vector.FromAngle(dir + i):Resized(10 * player.ShotSpeed), false, true, false, player, 0.5)

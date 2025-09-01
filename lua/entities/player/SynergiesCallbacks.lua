@@ -1,7 +1,13 @@
-local Synergies = {}
+EdithRestored.Synergies = {}
 
-Synergies.Items = {}
-Synergies.Trinkets = {}
+local conditions = {
+	vanilla = function()
+		return true
+	end,
+	fiendfolio = function()
+		return FiendFolio ~= nil
+	end,
+}
 
 local itemsSynergiesTable = {
 	vanilla = {
@@ -63,6 +69,11 @@ local itemsSynergiesTable = {
 		"Tropicamide",
 		"Uranus",
 	},
+	fiendfolio = { 
+		"DevilsUmbrella",
+		"NuggetBombs",
+		"Pinhead",
+	},
 }
 
 local trinketsSynergiesTable = {
@@ -74,22 +85,52 @@ local trinketsSynergiesTable = {
 		"NoseGoblin",
 		"PinkyEye",
 	},
+	fiendfolio = {},
 }
 
-for t, tab in pairs(itemsSynergiesTable) do
-	for _, item in pairs(tab) do
-		Synergies.Items[item] = include("lua.entities.player.StompSynergies." .. t .. ".items." .. item)
+local function LoadScripts()
+	for t, tab in pairs(itemsSynergiesTable) do
+		if conditions[t] and conditions[t]() then
+			if not EdithRestored.Synergies[t] then
+				EdithRestored.Synergies[t] = {}
+			end
+			if not EdithRestored.Synergies[t].Items then
+				EdithRestored.Synergies[t].Items = {}
+			end
+			for _, item in pairs(tab) do
+				if EdithRestored.Synergies[t].Items[item] == nil then
+					EdithRestored.Synergies[t].Items[item] = include("lua.entities.player.StompSynergies." .. t .. ".items." .. item)
+				end
+			end
+		end
+	end
+
+	for t, tab in pairs(trinketsSynergiesTable) do
+		if conditions[t] and conditions[t]() then
+			if not EdithRestored.Synergies[t] then
+				EdithRestored.Synergies[t] = {}
+			end
+			if not EdithRestored.Synergies[t].Trinkets then
+				EdithRestored.Synergies[t].Trinkets = {}
+			end
+			for _, trinket in pairs(tab) do
+				if EdithRestored.Synergies[t].Trinkets[trinket] == nil then
+					EdithRestored.Synergies[t].Trinkets[trinket] = include("lua.entities.player.StompSynergies." .. t .. ".trinkets." .. trinket)
+				end
+			end
+		end
 	end
 end
 
-for t, tab in pairs(trinketsSynergiesTable) do
-	for _, trinket in pairs(tab) do
-		Synergies.Trinkets[trinket] = include("lua.entities.player.StompSynergies." .. t .. ".trinkets." .. trinket)
-	end
-end
+LoadScripts()
+
+EdithRestored:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
+	LoadScripts()
+end)
 
 ---@param player EntityPlayer
 local function OnJump(_, player)
+	EdithRestored:GetData(player).PreJumpPosition = player.Position
 	for _, callback in ipairs(Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_JUMPING)) do
 		local params = callback.Param
 		if
@@ -108,4 +149,13 @@ EdithRestored:AddCallback(
 	{ tag = "EdithJump", type = EntityType.ENTITY_PLAYER }
 )
 
-EdithRestored.Synergies = Synergies
+---@param player EntityPlayer
+local function AfterJump(_, player)
+	EdithRestored:GetData(player).PreJumpPosition = nil
+end
+EdithRestored:AddPriorityCallback(
+	JumpLib.Callbacks.ENTITY_LAND,
+	CallbackPriority.LATE + 100,
+	AfterJump,
+	{ type = EntityType.ENTITY_PLAYER }
+)

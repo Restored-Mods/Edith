@@ -1136,7 +1136,8 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 		--#endregion
 
 		if
-			Helpers.IsPlayerEdith(player, true, false) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)
+			Helpers.IsPlayerEdith(player, true, false)
+			and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)
 		then
 			knockback = knockback * 2
 		end
@@ -1243,7 +1244,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 		local callbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
 		for _, callback in ipairs(callbacks) do
 			if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
-				local ret = callback.Function(callback.Mod, player, bombDamage, radius, hasBombs)
+				local ret = callback.Function(callback.Mod, player, bombDamage, radius, hasBombs, isGigaBomb)
 				if type(ret) == "table" then
 					bombDamage = ret.BombDamage or bombDamage
 					radius = ret.Radius or radius
@@ -1295,6 +1296,10 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
 			for i = 1, TSIL.Random.GetRandomInt(4, 5) do
+				local flags = player:GetBombFlags()
+				if isGigaBomb then
+					flags = flags | TearFlags.TEAR_GIGA_BOMB
+				end
 				Isaac.CreateTimer(function()
 					local explosionPosition = Vector.FromAngle(TSIL.Random.GetRandomInt(1, 360))
 						:Resized(TSIL.Random.GetRandomFloat(0.1, radius * 1.5))
@@ -1308,6 +1313,25 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 						true,
 						false
 					)
+					if FiendFolio and player:HasCollectible(FiendFolio.ITEM.COLLECTIBLE.NUGGET_BOMBS) then -- FF Synergy
+						local spooter = FiendFolio:SpawnNuggetFam(
+						player.Position + explosionPosition,
+							flags,
+							player,
+							false,
+							nil
+						)
+						if spooter and not isGigaBomb then
+							spooter:GetData().isBabySpooter = true
+							--spooter.SpriteScale = Vector(0.5, 0.5)
+							spooter:SetSize(spooter.Size * 0.5, spooter.SizeMulti * 0.5, 12)
+							local sprite = spooter:GetSprite()
+							sprite:Load("gfx/familiar/nugget fly/pooter_0.anm2", true)
+							sprite:Play("Appear", true)
+							--sprite:ReplaceSpritesheet(1, "gfx/familiar/babypooter_spawn.png")
+							--sprite:LoadGraphics()
+						end
+					end
 				end, TSIL.Random.GetRandomInt(5, 10), 1, false)
 			end
 		end

@@ -1,5 +1,4 @@
 local EightInchNails = {}
-local Helpers = EdithRestored.Helpers
 
 ---@param player EntityPlayer
 ---@param stompDamage number

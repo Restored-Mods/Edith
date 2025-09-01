@@ -1,5 +1,4 @@
 local CricketsBody = {}
-local Helpers = EdithRestored.Helpers
 
 ---@param player EntityPlayer
 ---@param stompDamage number
