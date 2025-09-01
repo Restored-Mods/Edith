@@ -6,9 +6,8 @@ local Helpers = EdithRestored.Helpers
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function Pisces:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isDollarBill, isFruitCake)
+---@param isStompPool table
+function Pisces:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	return { Knockback = knockback + 10 }
 end
 EdithRestored:AddCallback(

@@ -5,7 +5,8 @@ local Peeper = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
-function Peeper:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
+---@param isStompPool table
+function Peeper:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	local data = EdithRestored:RunSave(player)
 	if data.StompCount % 2 == 0 then
 		return { StompDamage = stompDamage * 1.35 }

@@ -4,12 +4,12 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function Lodestone:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function Lodestone:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_LODESTONE)
     local maxchance = 1 / (6 - Helpers.Clamp(player.Luck, 0, 5))
-    if rng:RandomFloat() <= maxchance or isFruitCake then
+    if rng:RandomFloat() <= maxchance or isStompPool.PoolFruitCake then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
             enemy:AddMagnetized(EntityRef(player), 150)
         end

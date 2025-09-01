@@ -5,9 +5,8 @@ local EightInchNails = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function EightInchNails:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isDollarBill, isFruitCake)
+---@param isStompPool table
+function EightInchNails:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	return { Knockback = knockback + 8 }
 end
 EdithRestored:AddCallback(

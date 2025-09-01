@@ -1,5 +1,6 @@
 local Helpers = {}
 
+local stompPoolsList = { Items = {}, Trinkets = {}}
 local turretList = {
 	{ 831, 10, -1 },
 	{ 835, 10, -1 },
@@ -886,7 +887,7 @@ function Helpers.RemoveEdithTarget(player)
 end
 
 local function InTable(value, tab)
-	if type(value) ~= "number" or type(tab) ~= "table" then
+	if type(tab) ~= "table" then
 		return false
 	end
 	for _, v in pairs(tab) do
@@ -900,14 +901,16 @@ end
 ---@param player EntityPlayer
 ---@param pickerItem WeightedOutcomePicker
 ---@param pickerTrinket WeightedOutcomePicker
----@param collectible CollectibleType | integer
+---@param col_trink CollectibleType | TrinketType | integer
+---@param isItem boolean
 ---@param limit number
 ---@return table
-local function FillWithRandomItemsTrinkets(player, pickerItem, pickerTrinket, collectible, limit)
-	local rng = player:GetCollectibleRNG(collectible)
+local function FillWithRandomItemsTrinkets(player, pickerItem, pickerTrinket, col_trink, isItem, limit)
+	local rng = isItem and player:GetCollectibleRNG(col_trink) or player:GetTrinketRNG(col_trink)
+	local hasItem = isItem and player:HasCollectible(col_trink) or player:HasTrinket(col_trink)
 	local outputTable = { Items = {}, Trinkets = {} }
 	while
-		player:HasCollectible(collectible)
+		hasItem
 		and (pickerItem:GetNumOutcomes() > 0 or pickerTrinket:GetNumOutcomes() > 0)
 		and (#outputTable.Items + #outputTable.Trinkets) < limit
 	do
@@ -999,13 +1002,113 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 	local hasBombs = bombs > 0 or force
 
 	if triggerStompCallbacks == true then
+		local stompCallbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP)
+		local stompModifyCallback = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP)
+
+		local pools = { }
+		for pool, valPool in pairs(stompPoolsList) do
+			for id, valItem in pairs(valPool) do
+				local itemsPicker = WeightedOutcomePicker()
+				local trinketsPicker = WeightedOutcomePicker()
+				local poolItemsPicker = Helpers.Filter(
+					Helpers.MergeTables({}, stompCallbacks, stompModifyCallback),
+					function(index, callback)
+						return type(callback.Param) == "table"
+							and type(callback.Param.Item) == "number"
+							and type(callback.Param[valItem.Name]) == "boolean"
+							and callback.Param[valItem.Name] == true
+					end
+				)
+				local poolTrinketsPicker = Helpers.Filter(
+					Helpers.MergeTables({}, stompCallbacks, stompModifyCallback),
+					function(index, callback)
+						return type(callback.Param) == "table"
+							and type(callback.Param.Trinket) == "number"
+							and type(callback.Param[valItem.Name]) == "boolean"
+							and callback.Param[valItem.Name] == true
+					end
+				)
+
+				for _, item in ipairs(poolItemsPicker) do
+					itemsPicker:AddOutcomeFloat(item.Param.Item, 1 / #poolItemsPicker)
+				end
+
+				for _, item in ipairs(poolTrinketsPicker) do
+					trinketsPicker:AddOutcomeFloat(item.Param.Trinket, 1 / #poolTrinketsPicker)
+				end
+
+				pools[valItem.Name] = FillWithRandomItemsTrinkets(
+					player,
+					itemsPicker,
+					trinketsPicker,
+					id,
+					pool == "Items",
+					valItem.Limit
+				)
+			end
+		end
+
+		local forcedStompCallbacks = { Items = {}, Trinkets = {} }
+		--#region Damage, knockback, knockback time, damage on knockback, radius, breaking rocks, stomp forcing modifications
+		for _, callback in ipairs(stompModifyCallback) do
+			local params = callback.Param
+			local isTbl = type(params) == "table"
+			local item = (isTbl and type(params.Item) == "number") and params.Item
+			local trinket = (isTbl and type(params.Trinket) == "number") and params.Trinket
+			local isStompPool = {}
+			for name, tab in pairs(pools) do
+				isStompPool[name] = isTbl and (
+					InTable(item, tab.Items) and not player:HasCollectible(item)
+					or InTable(trinket, tab.Trinkets) and not player:HasTrinket(trinket)
+				)
+			end
+			
+			if
+				params == nil
+				or item == nil and trinket == nil
+				or type(item) == "number" and player:HasCollectible(item)
+				or type(trinket) == "number" and player:HasTrinket(trinket)
+				or InTable(true, isStompPool)
+			then
+				local ret = callback.Function(
+					EdithRestored,
+					player,
+					stompDamage,
+					radius,
+					knockback,
+					doBombStomp or bombDamage > 0,
+					isStompPool
+				)
+				if type(ret) == "table" then
+					stompDamage = type(ret.StompDamage) == "number" and ret.StompDamage or stompDamage
+					knockback = type(ret.Knockback) == "number" and ret.Knockback or knockback
+					radius = type(ret.Radius) == "number" and ret.Radius or radius
+					if type(ret.BreakRocks) == "boolean" and ret.BreakRocks == true then
+						breakRocks = true
+					end
+					if type(ret.KnockbackTime) == "number" and ret.KnockbackTime > 0 then
+						knockbackTime = ret.KnockbackTime
+					end
+					if type(ret.KnockbackDamage) == "boolean" and ret.KnockbackDamage == true then
+						knockbackDamage = ret.KnockbackDamage
+					end
+					if type(ret.DoStomp) == "boolean" and ret.DoStomp == true then
+						if item ~= nil then
+							forcedStompCallbacks.Items[item] = true
+						end
+						if trinket ~= nil then
+							forcedStompCallbacks.Trinkets[trinket] = true
+						end
+					end
+				end
+			end
+		end
+		--[[
+--#region og pools
 		local dollarBillItemPicker = WeightedOutcomePicker()
 		local fruitCakeItemPicker = WeightedOutcomePicker()
 		local dollarBillTrinketPicker = WeightedOutcomePicker()
 		local fruitCakeTrinketPicker = WeightedOutcomePicker()
-
-		local stompCallbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP)
-		local stompModifyCallback = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP)
 
 		local allDollarBillItems = Helpers.Filter(
 			Helpers.MergeTables({}, stompCallbacks, stompModifyCallback),
@@ -1134,7 +1237,8 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 			end
 		end
 		--#endregion
-
+--#endregion
+]]		
 		if
 			Helpers.IsPlayerEdith(player, true, false)
 			and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)
@@ -1142,8 +1246,41 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 			knockback = knockback * 2
 		end
 
+
 		--#region Stomping
 		for _, callback in ipairs(stompCallbacks) do
+			local params = callback.Param
+			local isTbl = type(params) == "table"
+			local item = (isTbl and type(params.Item) == "number") and params.Item
+			local trinket = (isTbl and type(params.Trinket) == "number") and params.Trinket
+			local isStompPool = {}
+			for name, tab in pairs(pools) do
+				isStompPool[name] = isTbl and (
+					InTable(item, tab.Items) and not player:HasCollectible(item)
+					or InTable(trinket, tab.Trinkets) and not player:HasTrinket(trinket)
+				)
+			end
+			if
+				params == nil
+				or item == nil and trinket == nil
+				or type(item) == "number" and (player:HasCollectible(item) or forcedStompCallbacks.Items[item])
+				or type(trinket) == "number" and (player:HasTrinket(trinket) or forcedStompCallbacks.Trinkets[trinket])
+				or InTable(true, isStompPool)
+			then
+				callback.Function(
+					EdithRestored,
+					player,
+					stompDamage,
+					EdithRestored:GetData(player).BombStomp,
+					type(item) == "number" and forcedStompCallbacks.Items[item]
+						or type(trinket) == "number" and forcedStompCallbacks.Trinkets[trinket],
+					isStompPool
+				)
+			end
+		end
+	end
+--#region og pools 2
+--[[		for _, callback in ipairs(stompCallbacks) do
 			local params = callback.Param
 			local isTbl = type(params) == "table"
 			local item = (isTbl and type(params.Item) == "number") and params.Item
@@ -1178,7 +1315,8 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 				)
 			end
 		end
-	end
+	end]]
+--#endregion
 	local enemiesInRadius = Helpers.GetEnemiesInRadius(player.Position, radius, true)
 	if not (EdithRestored.DebugMode and EdithRestored:GetDebugValue("IgnoreStompDamage")) then
 		for _, enemy in pairs(enemiesInRadius) do
@@ -1313,23 +1451,39 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 						true,
 						false
 					)
-					if FiendFolio and player:HasCollectible(FiendFolio.ITEM.COLLECTIBLE.NUGGET_BOMBS) then -- FF Synergy
-						local spooter = FiendFolio:SpawnNuggetFam(
-						player.Position + explosionPosition,
-							flags,
-							player,
-							false,
-							nil
-						)
-						if spooter and not isGigaBomb then
-							spooter:GetData().isBabySpooter = true
-							--spooter.SpriteScale = Vector(0.5, 0.5)
-							spooter:SetSize(spooter.Size * 0.5, spooter.SizeMulti * 0.5, 12)
-							local sprite = spooter:GetSprite()
-							sprite:Load("gfx/familiar/nugget fly/pooter_0.anm2", true)
-							sprite:Play("Appear", true)
-							--sprite:ReplaceSpritesheet(1, "gfx/familiar/babypooter_spawn.png")
-							--sprite:LoadGraphics()
+					if FiendFolio then
+						if player:HasCollectible(FiendFolio.ITEM.COLLECTIBLE.SLIPPYS_GUTS) then
+							local cloud = Isaac.Spawn(
+								FiendFolio.FF.SlippyFart.ID,
+								FiendFolio.FF.SlippyFart.Var,
+								FiendFolio.FF.SlippyFart.Sub,
+								explosion.Position,
+								Vector.Zero,
+								player
+							)
+							SFXManager():Play(FiendFolio.Sounds.FartFrog1, 0.2, 0, false, math.random(80, 120) / 100)
+
+							cloud:GetData().RadiusMult = 0.5
+							cloud.SpriteScale = Vector(0.5, 0.5)
+						end
+						if player:HasCollectible(FiendFolio.ITEM.COLLECTIBLE.NUGGET_BOMBS) then -- FF Synergy
+							local spooter = FiendFolio:SpawnNuggetFam(
+								player.Position + explosionPosition,
+								flags,
+								player,
+								false,
+								nil
+							)
+							if spooter and not isGigaBomb then
+								spooter:GetData().isBabySpooter = true
+								--spooter.SpriteScale = Vector(0.5, 0.5)
+								spooter:SetSize(spooter.Size * 0.5, spooter.SizeMulti * 0.5, 12)
+								local sprite = spooter:GetSprite()
+								sprite:Load("gfx/familiar/nugget fly/pooter_0.anm2", true)
+								sprite:Play("Appear", true)
+								--sprite:ReplaceSpritesheet(1, "gfx/familiar/babypooter_spawn.png")
+								--sprite:LoadGraphics()
+							end
 						end
 					end
 				end, TSIL.Random.GetRandomInt(5, 10), 1, false)
@@ -1548,6 +1702,16 @@ function Helpers.Clamp(value, min, max)
 	end
 end
 
-EdithRestored.Helpers = Helpers
+function Helpers.AddStompPool(id, isCollectible, name, limit, chance)
+	limit = type(limit) == "number" and limit or 3
+	chance = type(chance) == "number" and chance or 0.25
+	if type(id) == "number" and type(isCollectible) == "boolean" and type(name) == "string" then
+		if isCollectible then
+			stompPoolsList.Items[id] = {Name = name, Limit = limit, Chance = chance}
+		else
+			stompPoolsList.Trinkets[id] = {Name = name, Limit = limit, Chance = chance}
+		end
+	end
+end
 
-return Helpers
+EdithRestored.Helpers = Helpers

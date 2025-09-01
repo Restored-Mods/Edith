@@ -4,12 +4,12 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function TheMulligan:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function TheMulligan:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_MULLIGAN)
 	if
-		(rng:RandomFloat() <= 0.1667 or isFruitCake)
+		(rng:RandomFloat() <= 0.1667 or isStompPool.PoolFruitCake)
 		and #Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius()) > 0
 		and #Helpers.Filter(
 				Isaac.FindByType(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BLUE_FLY),

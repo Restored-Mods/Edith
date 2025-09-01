@@ -6,9 +6,8 @@ local Helpers = EdithRestored.Helpers
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function ImpSoda:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isDollarBill, isFruitCake)
+---@param isStompPool table
+function ImpSoda:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	if FiendFolio:shouldCriticalHit(player) then
 		return { StompDamage = stompDamage * 5, DoStomp = true }
 	end
@@ -23,11 +22,10 @@ EdithRestored:AddPriorityCallback(
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
----@param force boolean
-function ImpSoda:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake, force)
-	if force then
+---@param forced boolean
+---@param isStompPool table
+function ImpSoda:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
+	if forced then
 		for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
 			FiendFolio:doCriticalHitFx(enemy.Position, enemy, player)
 		end

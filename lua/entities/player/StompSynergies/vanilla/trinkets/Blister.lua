@@ -5,7 +5,8 @@ local Blister = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
-function Blister:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
+---@param isStompPool table
+function Blister:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
     return {Knockback = knockback + 8}
 end
 EdithRestored:AddCallback(

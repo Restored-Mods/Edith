@@ -4,9 +4,9 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function CompoundFracture:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function CompoundFracture:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_COMPOUND_FRACTURE)
 	for _ = 1, rng:RandomInt(1, 3) do
 		local tear = player:FireTear(player.Position, Vector.FromAngle(rng:RandomInt(1, 360)):Resized(player.ShotSpeed * Helpers.GetTrueRange(player)), false, true, false, player, 0.5)

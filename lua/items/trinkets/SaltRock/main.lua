@@ -3,7 +3,7 @@ local SaltCreepVar = EdithRestored.Enums.Entities.SALT_CREEP.Variant
 local SaltCreepSubtype = EdithRestored.Enums.Entities.SALT_CREEP.SubType
 local SaltQuantity = 4
 local spawnDegree = 360 / SaltQuantity
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 local function ChangeToEdithTear(tear)
 	tear:ChangeVariant(TearVariant.ROCK)

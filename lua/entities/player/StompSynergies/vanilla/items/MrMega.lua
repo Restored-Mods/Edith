@@ -5,7 +5,8 @@ local MrMega = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
-function MrMega:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
+---@param isStompPool table
+function MrMega:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	if doBombStomp then -- Mr. Mega
 		return {StompDamage = stompDamage * 1.15, Radius = radius * 1.3 }
 	end

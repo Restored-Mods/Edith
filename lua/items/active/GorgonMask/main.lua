@@ -1,5 +1,5 @@
 local GorgonMask = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 GorgonMask.FREEZE_DURATION = 90
 GorgonMask.FREEZE_SIZE = 12

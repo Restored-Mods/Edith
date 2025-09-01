@@ -5,7 +5,8 @@ local Tropicamide = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
-function Tropicamide:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
+---@param isStompPool table
+function Tropicamide:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	return { Radius = radius * 1.06 }
 end
 EdithRestored:AddPriorityCallback(

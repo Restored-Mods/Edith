@@ -4,9 +4,9 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function MomsKnife:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function MomsKnife:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     local weapon = player:GetWeapon(1)
     if weapon and weapon:GetWeaponType() == WeaponType.WEAPON_KNIFE and weapon:GetCharge() > 0 then
         local knife = player:GetActiveWeaponEntity():ToKnife()

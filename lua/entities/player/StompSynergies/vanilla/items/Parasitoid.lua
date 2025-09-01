@@ -4,12 +4,12 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function Parasitoid:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function Parasitoid:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_PARASITOID)
 	local chance = math.min(0.5, 1 / (7 - Helpers.Clamp(player.Luck, 0, 6))) + 1
-	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
+	if rng:RandomFloat() <= chance or isStompPool.Pool3DollarBill or isStompPool.PoolFruitCake then
 		local outcome = WeightedOutcomePicker()
 		outcome:AddOutcomeWeight(FamiliarVariant.BLUE_FLY, 50)
 		outcome:AddOutcomeWeight(FamiliarVariant.BLUE_SPIDER, 50)

@@ -4,11 +4,11 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function Glaucoma:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function Glaucoma:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_GLAUCOMA)
-	if rng:RandomFloat() <= 0.05 or isFruitCake then
+	if rng:RandomFloat() <= 0.05 or isStompPool.PoolFruitCake then
 		for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
 			enemy:AddEntityFlags(EntityFlag.FLAG_CONFUSION)
 		end

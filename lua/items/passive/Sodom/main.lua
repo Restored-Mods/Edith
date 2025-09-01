@@ -1,5 +1,5 @@
 local Sodom = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 local function SetOnFire(enemy, player, damage)
     if Helpers.IsEnemy(enemy) then

@@ -1,5 +1,5 @@
 local Chisel = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 function Chisel:UseTheChisel(_, _, player)
 	local ChiselSelection

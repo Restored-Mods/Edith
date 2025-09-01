@@ -4,12 +4,12 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function BallOfTar:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function BallOfTar:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_BALL_OF_TAR)
 	local chance = 1 / (10 - (Helpers.Clamp(player.Luck * 0.5, 0, 9)))
-	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
+	if rng:RandomFloat() <= chance or isStompPool.Pool3DollarBill or isStompPool.PoolFruitCake then
 		for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
 			enemy:AddSlowing(EntityRef(player), 60, 1, Color(0.15, 0.15, 0.15, 1, 0, 0, 0))
 		end

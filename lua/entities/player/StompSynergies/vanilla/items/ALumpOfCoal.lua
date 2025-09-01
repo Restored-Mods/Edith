@@ -5,9 +5,8 @@ local ALumpOfCoal = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function ALumpOfCoal:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isDollarBill, isFruitCake)
+---@param isStompPool table
+function ALumpOfCoal:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
     local data = EdithRestored:GetData(player)
 	if data.PreJumpPosition then
 		local extraDamage = (player.Position - data.PreJumpPosition):Length() / 40

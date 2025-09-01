@@ -3,9 +3,9 @@ local Godhead = {}
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function Godhead:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function Godhead:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 
 	local aura = player:FireTear(player.Position, Vector.Zero, false, true, false, player):ToTear()
 	aura.TearFlags = BitSet128(0, 0)

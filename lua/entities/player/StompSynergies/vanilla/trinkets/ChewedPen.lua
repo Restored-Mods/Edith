@@ -4,9 +4,9 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function BallOfTar:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function BallOfTar:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local rng = player:GetTrinketRNG(TrinketType.TRINKET_CHEWED_PEN)
 	local chance = 1 / (10 - (Helpers.Clamp(player.Luck * 0.5, 0, 9)))
 	if rng:RandomFloat() <= chance then

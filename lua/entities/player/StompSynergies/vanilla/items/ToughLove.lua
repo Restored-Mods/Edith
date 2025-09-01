@@ -6,12 +6,11 @@ local Helpers = EdithRestored.Helpers
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function ToughLove:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isDollarBill, isFruitCake)
+---@param isStompPool table
+function ToughLove:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_TOUGH_LOVE)
 	local maxChance = 1 / (10 - Helpers.Clamp(player.Luck, 0, 9))
-	if rng:RandomFloat() <= maxChance or isDollarBill then
+	if rng:RandomFloat() <= maxChance or isStompPool.Pool3DollarBill then
 		return { StompDamage = stompDamage * 3.2 }
 	end
 end

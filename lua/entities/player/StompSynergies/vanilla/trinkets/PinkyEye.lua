@@ -4,10 +4,9 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
 ---@param forced boolean
-function PinkyEye:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake, forced)
+---@param isStompPool table
+function PinkyEye:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     local rng = player:GetTrinketRNG(TrinketType.TRINKET_PINKY_EYE)
     local maxchance = 1 / (10 - Helpers.Clamp(player.Luck * 0.5, 0, 9))
     if rng:RandomFloat() <= maxchance or forced then

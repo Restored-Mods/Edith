@@ -1,5 +1,5 @@
 local SaltShakerLocal = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 local SaltCreepVar = EdithRestored.Enums.Entities.SALT_CREEP.Variant
 local SaltCreepSubtype = EdithRestored.Enums.Entities.SALT_CREEP.SubType

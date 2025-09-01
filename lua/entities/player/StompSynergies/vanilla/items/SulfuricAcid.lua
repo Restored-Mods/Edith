@@ -5,7 +5,8 @@ local SulfuricAcid = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
-function SulfuricAcid:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
+---@param isStompPool boolean
+function SulfuricAcid:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SULFURIC_ACID)
 	if rng:RandomFloat() <= 0.25 then
 		return { BreakRocks = true }

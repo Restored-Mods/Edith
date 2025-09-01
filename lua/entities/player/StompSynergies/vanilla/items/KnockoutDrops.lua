@@ -6,12 +6,11 @@ local Helpers = EdithRestored.Helpers
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function KnockoutDrops:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isDollarBill, isFruitCake)
+---@param isStompPool table
+function KnockoutDrops:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_KNOCKOUT_DROPS)
     local maxchance = 1 / (6 - Helpers.Clamp(player.Luck, 0, 5))
-	if rng:RandomFloat() <= maxchance then
+	if rng:RandomFloat() <= maxchance or isStompPool.PoolFruitCake then
 		return { Knockback = knockback * 3, DoStomp = true, KnockbackDamage = true, KnockbackTime = 15 }
 	end
 end
@@ -25,11 +24,10 @@ EdithRestored:AddPriorityCallback(
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
----@param force boolean
-function KnockoutDrops:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake, force)
-    if isFruitCake or force then
+---@param forced boolean
+---@param isStompPool table
+function KnockoutDrops:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
+    if isStompPool.PoolFruitCake or forced then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
             enemy:AddConfusion(EntityRef(player), 60, false)
         end

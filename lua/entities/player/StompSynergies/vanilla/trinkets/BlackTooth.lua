@@ -6,7 +6,8 @@ local Helpers = EdithRestored.Helpers
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
-function BlackTooth:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
+---@param isStompPool table
+function BlackTooth:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
     local rng = player:GetTrinketRNG(TrinketType.TRINKET_BLACK_TOOTH)
     local maxchance = 1 / (33 - Helpers.Clamp(player.Luck, 0, 32))
     if rng:RandomFloat() <= maxchance then
@@ -23,10 +24,9 @@ EdithRestored:AddPriorityCallback(
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
 ---@param forced boolean
-function BlackTooth:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake, forced)
+---@param isStompPool table
+function BlackTooth:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     if forced then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
             enemy:AddPoison(EntityRef(player), 40, player.Damage)

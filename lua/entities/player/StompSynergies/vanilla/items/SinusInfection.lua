@@ -4,9 +4,9 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function SinusInfection:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function SinusInfection:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SINUS_INFECTION)
     if rng:RandomFloat() <= 0.2 then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do

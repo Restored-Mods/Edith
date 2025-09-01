@@ -6,12 +6,11 @@ local Helpers = EdithRestored.Helpers
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function Apple:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isDollarBill, isFruitCake)
+---@param isStompPool table
+function Apple:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_APPLE)
 	local maxChance = 1 / (15 - Helpers.Clamp(player.Luck, 0, 14))
-	if rng:RandomFloat() <= maxChance or isDollarBill then
+	if rng:RandomFloat() <= maxChance or isStompPool.Pool3DollarBill then
 		return { StompDamage = stompDamage * 4 }
 	end
 end

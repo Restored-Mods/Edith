@@ -1,5 +1,5 @@
 local Cards = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 function Cards:UseReversePrudence(_, player)
     local slot = TSIL.EntitySpecific.SpawnSlot(

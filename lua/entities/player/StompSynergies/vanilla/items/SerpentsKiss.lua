@@ -3,11 +3,10 @@ local Helpers = EdithRestored.Helpers
 
 ---@param player EntityPlayer
 ---@param stompDamage number
----@param rng RNG
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function SerpentsKiss:OnStomp(player, stompDamage, rng, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function SerpentsKiss:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SERPENTS_KISS)
     if rng:RandomFloat() <= 0.25 then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do

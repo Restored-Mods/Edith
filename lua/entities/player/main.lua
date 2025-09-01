@@ -1,4 +1,4 @@
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 local sfx = SFXManager()
 
 local SlideColors = {

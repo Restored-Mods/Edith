@@ -18,10 +18,9 @@ end
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
----@param force boolean
-function Pinhead:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake, force)
+---@param forced boolean
+---@param isStompPool table
+function Pinhead:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	if isPinheadUseSuccessful(player) then
 		local secondHandMultiplier = getStackedPinheadDuration(player, player:GetTrinketMultiplier(TrinketType.TRINKET_SECOND_HAND) + 1)
 		for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do

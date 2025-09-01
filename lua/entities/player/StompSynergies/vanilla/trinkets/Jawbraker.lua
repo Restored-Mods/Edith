@@ -6,9 +6,8 @@ local Helpers = EdithRestored.Helpers
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function Jawbreaker:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isDollarBill, isFruitCake)
+---@param isStompPool table
+function Jawbreaker:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	local rng = player:GetTrinketRNG(TrinketType.TRINKET_JAW_BREAKER)
 	local maxChance = 1 / (10 - Helpers.Clamp(player.Luck, 0, 9))
 	if rng:RandomFloat() <= maxChance then

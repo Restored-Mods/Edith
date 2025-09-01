@@ -1,5 +1,5 @@
 local SaltPawns = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 local SaltPawnsDesc = Isaac.GetItemConfig():GetCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALT_PAWNS)
 local sfx = SFXManager()

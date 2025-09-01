@@ -3,10 +3,9 @@ local Haemolacria = {}
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
 ---@param forced boolean
-function Haemolacria:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake, forced)
+---@param isStompPool table
+function Haemolacria:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local tear = player:FireTear(player.Position, Vector.Zero, false, true, false, player)
 	tear.Height = -0.5
 	tear.FallingAcceleration = 1

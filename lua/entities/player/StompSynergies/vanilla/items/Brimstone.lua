@@ -3,9 +3,9 @@ local Brimstone = {}
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function Brimstone:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function Brimstone:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	player:FireBrimstoneBall(player.Position, Vector.Zero, Vector.Zero)
 end
 EdithRestored:AddCallback(

@@ -3,10 +3,9 @@ local TheParasite = {}
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
----@param force boolean
-function TheParasite:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake, force)
+---@param forced boolean
+---@param isStompPool table
+function TheParasite:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     local data = EdithRestored:GetData(player)
 	if data.PreJumpPosition then
 		local vec = player.Position - data.PreJumpPosition

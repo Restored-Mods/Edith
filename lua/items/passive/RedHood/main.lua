@@ -1,6 +1,6 @@
 local mod = EdithRestored
 local RedHoodLocal = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 local lastGreedWave = nil
 local moonPhaseSprite = Sprite("gfx/moon_phase.anm2", true)
 local moonPhaseSpriteStatic = Sprite("gfx/moon_phase.anm2", true)

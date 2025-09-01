@@ -1,5 +1,5 @@
 local ThunderBombs = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 ---@param bomb Entity
 ---@return boolean

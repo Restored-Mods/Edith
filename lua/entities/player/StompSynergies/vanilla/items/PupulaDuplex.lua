@@ -5,7 +5,8 @@ local PupulaDuplex = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
-function PupulaDuplex:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
+---@param isStompPool table
+function PupulaDuplex:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	return { Radius = radius * 1.2 }
 end
 EdithRestored:AddPriorityCallback(

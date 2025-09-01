@@ -1,5 +1,5 @@
 local Cards = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 function Cards:UseSoulEdith(soe, player, useflags)
     local statue = TSIL.EntitySpecific.SpawnEffect(EdithRestored.Enums.Entities.SALT_STATUE.Variant, 0, player.Position, Vector(0, 0), player)

@@ -4,12 +4,12 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function LittleHorn:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function LittleHorn:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_LITTLE_HORN)
 	local chance = math.min(0.25, 1 / (30 - Helpers.Clamp(player.Luck * 2, 0, 29)))
-	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
+	if rng:RandomFloat() <= chance or isStompPool.Pool3DollarBill or isStompPool.PoolFruitCake then
 		for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius(), true, nil, nil, false, true)) do
 			local tear = Isaac.Spawn(EntityType.ENTITY_TEAR, 1, 0, enemy.Position, Vector.Zero, player):ToTear()
 			tear:AddTearFlags(TearFlags.TEAR_HORN)

@@ -5,11 +5,10 @@ local Terra = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
-function Terra:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
+---@param isStompPool table
+function Terra:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_TERRA)
-	if rng:RandomFloat() <= 0.25 then
-		return { BreakRocks = true, StompDamage = stompDamage * rng:RandomInt(5, 20) / 10 }
-	end
+	return { BreakRocks = true, StompDamage = stompDamage * rng:RandomInt(5, 20) / 10 }
 end
 EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,

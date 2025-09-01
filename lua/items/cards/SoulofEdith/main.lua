@@ -1,5 +1,5 @@
 local SoulOfEdith = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 local function GetRandomDoorPosition(rng)
 	local doorSlots = {}

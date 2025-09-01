@@ -4,9 +4,9 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function NoseGoblin:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function NoseGoblin:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     local rng = player:GetTrinketRNG(TrinketType.TRINKET_NOSE_GOBLIN)
     if rng:RandomFloat() <= 0.1 then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do

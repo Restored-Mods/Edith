@@ -4,12 +4,12 @@ local Helpers = EdithRestored.Helpers
 ---@param player EntityPlayer
 ---@param stompDamage number
 ---@param bombLanding boolean
----@param isDollarBill boolean
----@param isFruitCake boolean
-function MomsPerfume:OnStomp(player, stompDamage, bombLanding, isDollarBill, isFruitCake)
+---@param forced boolean
+---@param isStompPool table
+function MomsPerfume:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_MOMS_PERFUME)
     local chance = 15 / (100 - Helpers.Clamp(player.Luck, 0, 85))
-	if rng:RandomFloat() <= chance or isDollarBill or isFruitCake then
+	if rng:RandomFloat() <= chance or isStompPool.Pool3DollarBill or isStompPool.PoolFruitCake then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
             enemy:AddFear(EntityRef(player), 150)
         end

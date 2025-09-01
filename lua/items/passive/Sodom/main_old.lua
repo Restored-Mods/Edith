@@ -1,6 +1,6 @@
 local Sodom = {}
 local game = Game()
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 ---@param npc EntityNPC
 function Sodom:npcInit(npc)

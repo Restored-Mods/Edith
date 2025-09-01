@@ -1,4 +1,5 @@
 EdithRestored.Synergies = {}
+local Helpers = EdithRestored.Helpers
 
 local conditions = {
 	vanilla = function()
@@ -51,7 +52,7 @@ local itemsSynergiesTable = {
 		"Parasitoid",
 		"Peeper",
 		"Pisces",
-		"PlaydoughCookie",
+		--"PlaydoughCookie",
 		"PupulaDuplex",
 		"RottenTomato",
 		"Scorpio",
@@ -70,9 +71,14 @@ local itemsSynergiesTable = {
 		"Uranus",
 	},
 	fiendfolio = { 
+		"BeeSkin",
 		"DevilsUmbrella",
+		"DichromaticButterfly",
+		"ImpSoda",
+		"LeftoverTakeout",
 		"NuggetBombs",
 		"Pinhead",
+		"SlippysGuts",
 	},
 }
 
@@ -85,10 +91,16 @@ local trinketsSynergiesTable = {
 		"NoseGoblin",
 		"PinkyEye",
 	},
-	fiendfolio = {},
+	fiendfolio = {
+		"FortuneWorm",
+		"YingYangOrb",
+	},
 }
 
 local function LoadScripts()
+	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_3_DOLLAR_BILL, true, "Pool3DollarBill", 3)
+	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_FRUIT_CAKE, true, "PoolFruitCake", 1)
+	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_FRUIT_CAKE, true, "PoolPlaydoughCookie", 2, 0.5)
 	for t, tab in pairs(itemsSynergiesTable) do
 		if conditions[t] and conditions[t]() then
 			if not EdithRestored.Synergies[t] then

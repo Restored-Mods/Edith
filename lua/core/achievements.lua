@@ -1,5 +1,5 @@
 ---CHALLENGE UNLOCKS-------------------------------------------------
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 local marksA = EdithRestored.Enums.Achievements.Marks.ASide
 
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_RENDER_CUSTOM_CHARACTER_MENU, function(_, id, pos, sprite)
