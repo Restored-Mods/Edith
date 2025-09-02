@@ -22,10 +22,12 @@ end
 ---@param isStompPool table
 function Pinhead:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	if isPinheadUseSuccessful(player) then
-		local secondHandMultiplier = getStackedPinheadDuration(player, player:GetTrinketMultiplier(TrinketType.TRINKET_SECOND_HAND) + 1)
-		for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
-			FiendFolio.AddSewn(enemy, player, secondHandMultiplier)
-		end
+		Isaac.CreateTimer(function()
+			local secondHandMultiplier = getStackedPinheadDuration(player, player:GetTrinketMultiplier(TrinketType.TRINKET_SECOND_HAND) + 1)
+			for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
+				FiendFolio.AddSewn(enemy, player, secondHandMultiplier)
+			end
+		end, 1, 1, false)
 	end
 end
 EdithRestored:AddCallback(

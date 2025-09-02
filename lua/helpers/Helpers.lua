@@ -951,7 +951,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 	)
 	local level = EdithRestored.Level():GetStage()
 
-	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5)
+	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage)
 	local bombDamage = 0
 	local radius = Helpers.GetStompRadius()
 	local knockback = 15

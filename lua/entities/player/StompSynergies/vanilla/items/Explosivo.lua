@@ -3,11 +3,10 @@ local Helpers = EdithRestored.Helpers
 
 ---@param player EntityPlayer
 ---@param stompDamage number
----@param rng RNG
 ---@param bombLanding boolean
 ---@param forced boolean
 ---@param isStompPool table
-function Explosivo:OnStomp(player, stompDamage, rng, bombLanding, forced, isStompPool)
+function Explosivo:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_EXPLOSIVO)
 	if rng:RandomFloat() <= 0.25 or isStompPool.PoolFruitCake then
 		for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
