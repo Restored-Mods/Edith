@@ -1036,6 +1036,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 
 	local hasBombs = bombs > 0 or force
 	local stompPosition = player.Position
+	local doProptosis = false
 
 	if triggerStompCallbacks == true then
 		local stompCallbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP)
@@ -1096,6 +1097,9 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 							forcedStompCallbacks.Trinkets[trinket] = true
 						end
 					end
+					if type(ret.DoProptosis) == "boolean" then
+						doProptosis = doProptosis or ret.DoProptosis
+					end
 				end
 			end
 		end
@@ -1153,7 +1157,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 			)
 			if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
 				local newDamage = stompDamage
-				if player:HasCollectible(CollectibleType.COLLECTIBLE_PROPTOSIS) then
+				if doProptosis then
 					newDamage = newDamage * (1.5 - stompPosition:Distance(enemy.Position) / radius)
 				end
 				enemy:TakeDamage(

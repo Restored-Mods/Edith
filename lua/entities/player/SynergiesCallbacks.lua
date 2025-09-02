@@ -54,7 +54,7 @@ local itemsSynergiesTable = {
 		"Parasitoid",
 		"Peeper",
 		"Pisces",
-		--"PlaydoughCookie",
+		"Proptosis",
 		"PupulaDuplex",
 		"RottenTomato",
 		"Scorpio",
