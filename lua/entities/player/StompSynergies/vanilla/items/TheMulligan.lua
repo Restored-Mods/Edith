@@ -9,7 +9,7 @@ local Helpers = EdithRestored.Helpers
 function TheMulligan:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
 	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_MULLIGAN)
 	if
-		(rng:RandomFloat() <= 0.1667 or isStompPool.PoolFruitCake)
+		(rng:RandomFloat() <= 0.1667 or isStompPool.PoolFruitCake or isStompPool.PoolFFEmojiGlases)
 		and #Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius()) > 0
 		and #Helpers.Filter(
 				Isaac.FindByType(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BLUE_FLY),
@@ -26,7 +26,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
 	TheMulligan.OnStomp,
-	{ Item = CollectibleType.COLLECTIBLE_MULLIGAN, PoolFruitCake = true }
+	{ Item = CollectibleType.COLLECTIBLE_MULLIGAN, PoolFruitCake = true, PoolFFEmojiGlases = true }
 )
 
 return TheMulligan

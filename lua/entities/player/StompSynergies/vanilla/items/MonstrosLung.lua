@@ -19,7 +19,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
 	MonstrosLung.OnStomp,
-	{ Item = CollectibleType.COLLECTIBLE_MONSTROS_LUNG }
+	{ Item = CollectibleType.COLLECTIBLE_MONSTROS_LUNG, PoolFFEmojiGlases = true }
 )
 
 return MonstrosLung

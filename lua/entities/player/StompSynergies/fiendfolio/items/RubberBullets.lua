@@ -21,7 +21,7 @@ end
 ---@param force boolean
 ---@param isStompPool table
 function RubberBullets:OnStomp(player, stompDamage, bombLanding, force, isStompPool)
-	if isRubberBulletsUseSuccessful(player) then
+	if isRubberBulletsUseSuccessful(player) or isStompPool.PoolFFEmojiGlases then
 		local secondHandMultiplier = player:GetTrinketMultiplier(TrinketType.TRINKET_SECOND_HAND) + 1
 		for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
 			FiendFolio.AddBruise(enemy, player, getStackedRubberBulletsDuration(player, secondHandMultiplier), 1, 1)
@@ -31,7 +31,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
 	RubberBullets.OnStomp,
-	{ Item = FiendFolio.ITEM.COLLECTIBLE.RUBBER_BULLETS }
+	{ Item = FiendFolio.ITEM.COLLECTIBLE.RUBBER_BULLETS, PoolFFEmojiGlases = true }
 )
 
 return RubberBullets

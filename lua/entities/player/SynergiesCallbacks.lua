@@ -85,6 +85,7 @@ local itemsSynergiesTable = {
 		"Musca",
 		"NuggetBombs",
 		"Pinhead",
+		"PrankCookie",
 		"RubberBullets",
 		"SlippysGuts",
 		"SmashTrophy",
@@ -116,6 +117,9 @@ local function LoadScripts()
 	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_3_DOLLAR_BILL, true, "Pool3DollarBill", 3)
 	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_FRUIT_CAKE, true, "PoolFruitCake", 1)
 	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_PLAYDOUGH_COOKIE, true, "PoolPlaydoughCookie", 2, 0.5)
+	if FiendFolio then
+		Helpers.AddStompPool(FiendFolio.ITEM.COLLECTIBLE.EMOJI_GLASSES, true, "PoolFFEmojiGlases", 1, 1)
+	end
 	for t, tab in pairs(itemsSynergiesTable) do
 		if conditions[t] and conditions[t]() then
 			if not EdithRestored.Synergies[t] then

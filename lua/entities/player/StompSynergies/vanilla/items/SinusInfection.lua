@@ -8,7 +8,7 @@ local Helpers = EdithRestored.Helpers
 ---@param isStompPool table
 function SinusInfection:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SINUS_INFECTION)
-    if rng:RandomFloat() <= 0.2 then
+    if rng:RandomFloat() <= 0.2 or isStompPool.Pool3DollarBill or isStompPool.PoolFruitCake or isStompPool.PoolFFEmojiGlases then
         for _, enemy in ipairs(Helpers.GetEnemiesInRadius(player.Position, Helpers.GetStompRadius())) do
             local tear = Isaac.Spawn(EntityType.ENTITY_TEAR, TearVariant.BOOGER, 0, enemy.Position, Vector.Zero, player):ToTear()
             tear:AddTearFlags(TearFlags.TEAR_BOOGER)
@@ -19,7 +19,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,
 	SinusInfection.OnStomp,
-	{ Item = CollectibleType.COLLECTIBLE_SINUS_INFECTION, Pool3DollarBill = true, PoolFruitCake = true }
+	{ Item = CollectibleType.COLLECTIBLE_SINUS_INFECTION, Pool3DollarBill = true, PoolFruitCake = true, PoolFFEmojiGlases = true }
 )
 
 return SinusInfection

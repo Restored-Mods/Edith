@@ -8,7 +8,7 @@ local Helpers = EdithRestored.Helpers
 ---@param doBombStomp boolean
 ---@param isStompPool table
 function ImpSoda:OnStompModify(player, stompDamage, radius, knockback, doBombStomp, isStompPool)
-	if FiendFolio:shouldCriticalHit(player) then
+	if FiendFolio:shouldCriticalHit(player) or isStompPool.PoolFFEmojiGlases then
 		return { StompDamage = stompDamage * 5, DoStomp = true }
 	end
 end
@@ -16,7 +16,7 @@ EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_MODIFY_STOMP,
 	CallbackPriority.LATE,
 	ImpSoda.OnStompModify,
-	{ Item = FiendFolio.ITEM.COLLECTIBLE.IMP_SODA }
+	{ Item = FiendFolio.ITEM.COLLECTIBLE.IMP_SODA, PoolFFEmojiGlases = true }
 )
 
 ---@param player EntityPlayer
