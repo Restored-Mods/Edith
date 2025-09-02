@@ -5,6 +5,7 @@ local ChemicalPeel = {}
 ---@param radius number
 ---@param knockback number
 ---@param doBombStomp boolean
+---@return table?
 function ChemicalPeel:OnStompModify(player, stompDamage, radius, knockback, doBombStomp)
 	local data = EdithRestored:RunSave(player)
 	if data.StompCount % 2 == 0 then

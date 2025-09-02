@@ -57,7 +57,6 @@ local itemsSynergiesTable = {
 		--"PlaydoughCookie",
 		"PupulaDuplex",
 		"RottenTomato",
-		"ScatterBombs",
 		"Scorpio",
 		"SerpentsKiss",
 		"SinusInfection",
@@ -75,13 +74,20 @@ local itemsSynergiesTable = {
 	},
 	fiendfolio = { 
 		"BeeSkin",
+		"BridgeBombs",
+		"Crucifix",
 		"DevilsUmbrella",
 		"DichromaticButterfly",
+		"HypnoRing",
 		"ImpSoda",
+		"LawnDarts",
 		"LeftoverTakeout",
+		"Musca",
 		"NuggetBombs",
 		"Pinhead",
+		"RubberBullets",
 		"SlippysGuts",
+		"ToyPiano",
 	},
 }
 

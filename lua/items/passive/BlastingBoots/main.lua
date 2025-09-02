@@ -24,7 +24,7 @@ function BlastBoots:PreBombDamage(player, _, flags)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, BlastBoots.PreBombDamage)
 
-function BlastBoots:BlastingBootsExtraJump(player, bombDamage, radius, hasBombs)
+function BlastBoots:BlastingBootsExtraJump(player, bombDamage, position, radius, hasBombs, isGigaBomb, isScatterBomb)
 	JumpLib:Jump(player, BootsJumpInfo)
 end
 EdithRestored:AddCallback(

@@ -95,7 +95,7 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_TEAR_COLLISION, ShrapnelBombs.TearCollision, TearVariant.NAIL)
 
 ---@param player EntityPlayer
-function ShrapnelBombs:EdithStompShrapnelBomb(player, damage, radius, hasBombs)
-	FireShrapnel(player, player.Position, player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS))
+function ShrapnelBombs:EdithStompShrapnelBomb(player, bombDamage, position, radius, hasBombs, isGigaBomb, isScatterBomb)
+	FireShrapnel(player, position, player:GetCollectibleRNG(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS))
 end
 EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ShrapnelBombs.EdithStompShrapnelBomb, {Item = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS })

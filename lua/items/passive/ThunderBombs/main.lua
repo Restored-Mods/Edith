@@ -64,11 +64,11 @@ local function ThunderBombInit(bomb)
 	end
 end
 
-local function SpawnThunderBombLaser(bomb, parent, damage, radius)
+local function SpawnThunderBombLaser(bomb, parent, position, damage, radius)
 	EdithRestored.Room():DoLightningStrike()
 	Game():MakeShockwave(bomb.Position, .035, .01, 10)
 
-	local ring = Isaac.Spawn(EntityType.ENTITY_LASER, LaserVariant.THIN_RED, LaserSubType.LASER_SUBTYPE_RING_FOLLOW_PARENT, bomb.Position, Vector.Zero, parent):ToLaser()
+	local ring = Isaac.Spawn(EntityType.ENTITY_LASER, LaserVariant.THIN_RED, LaserSubType.LASER_SUBTYPE_RING_FOLLOW_PARENT, position, Vector.Zero, parent):ToLaser()
 	ring.Radius = 80 * (bomb.RadiusMultiplier and bomb.RadiusMultiplier or 1)
 	ring.CollisionDamage = damage and damage or bomb.ExplosionDamage / 2
 	ring:SetTimeout(10)
@@ -95,7 +95,7 @@ function ThunderBombs:BombUpdate(bomb)
 	end
 
 	if sprite:IsPlaying("Explode") then
-		SpawnThunderBombLaser(bomb, Helpers.GetPlayerFromTear(bomb))
+		SpawnThunderBombLaser(bomb, Helpers.GetPlayerFromTear(bomb), bomb.Position)
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, ThunderBombs.BombUpdate)
@@ -107,7 +107,7 @@ end
 EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBombProc, { Item = EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS })
 
 ---@param player EntityPlayer
-function ThunderBombs:EdithStompThunderBomb(player, damage, radius, hasBombs)
+function ThunderBombs:EdithStompThunderBomb(player, bombDamage, position, radius, hasBombs, isGigaBomb, isScatterBomb)
 	if not hasBombs then
 		local charge = GetFullThunderBombCharge(player)
 		local usedCharges = 3
@@ -129,7 +129,7 @@ function ThunderBombs:EdithStompThunderBomb(player, damage, radius, hasBombs)
 		SFXManager():Play(SoundEffect.SOUND_BATTERYDISCHARGE, 1 , 0)
 	end
 	player:SetMinDamageCooldown(60)
-	SpawnThunderBombLaser(player, player, damage / 2)
+	SpawnThunderBombLaser(player, player, position, bombDamage / 2)
 
 end
 EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBomb, { Item = EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS })

@@ -1,12 +1,14 @@
 local ShortFuse = {}
 
 ---@param player EntityPlayer
----@param damage number
+---@param bombDamage number
+---@param position Vector
 ---@param radius number
 ---@param hasBombs boolean
----@param isStompPool table
+---@param isGigaBomb boolean
+---@param isScatterBomb boolean
 ---@return table?
-function ShortFuse:OnStompExplosion(player, damage, radius, hasBombs, isStompPool)
+function ShortFuse:OnStompExplosion(player, bombDamage, position, radius, hasBombs, isGigaBomb, isScatterBomb)
 	local creep =
 		Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_GREEN, 0, player.Position, Vector.Zero, player)
 			:ToEffect()

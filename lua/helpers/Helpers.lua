@@ -818,9 +818,8 @@ function Helpers.UnlockAchievement(achievement, force) -- from Community Remix
 	end
 end
 
-local function GetBombDamage(player)
-	return player:GetNumGigaBombs() > 0 and 300
-		or (player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) and 185 or 100)
+local function GetBombDamage(isGigaBomb)
+	return isGigaBomb and 300 or 100
 end
 
 function Helpers.HasBombs(player)
@@ -903,26 +902,27 @@ end
 ---@param pickerTrinket WeightedOutcomePicker
 ---@param col_trink CollectibleType | TrinketType | integer
 ---@param isItem boolean
----@param limit number
+---@param chance number
+---@param limit number?
 ---@return table
-local function FillWithRandomItemsTrinkets(player, pickerItem, pickerTrinket, col_trink, isItem, limit)
+local function FillWithRandomItemsTrinkets(player, pickerItem, pickerTrinket, col_trink, isItem, chance, limit)
 	local rng = isItem and player:GetCollectibleRNG(col_trink) or player:GetTrinketRNG(col_trink)
 	local hasItem = isItem and player:HasCollectible(col_trink) or player:HasTrinket(col_trink)
 	local outputTable = { Items = {}, Trinkets = {} }
 	while
 		hasItem
 		and (pickerItem:GetNumOutcomes() > 0 or pickerTrinket:GetNumOutcomes() > 0)
-		and (#outputTable.Items + #outputTable.Trinkets) < limit
+		and (limit == nil or (#outputTable.Items + #outputTable.Trinkets) < limit)
 	do
 		if pickerItem:GetNumOutcomes() > 0 and (rng:RandomInt(2) == 0 or pickerTrinket:GetNumOutcomes() == 0) then
 			local outcome = pickerItem:PickOutcome(rng)
-			if rng:RandomInt(8) == 1 then
+			if rng:RandomFloat() <= chance then
 				outputTable.Items[#outputTable.Items + 1] = outcome
 			end
 			pickerItem:RemoveOutcome(outcome)
 		elseif pickerTrinket:GetNumOutcomes() > 0 then
 			local outcome = pickerTrinket:PickOutcome(rng)
-			if rng:RandomInt(8) == 1 then
+			if rng:RandomFloat() <= chance then
 				outputTable.Trinkets[#outputTable.Trinkets + 1] = outcome
 			end
 			pickerTrinket:RemoveOutcome(outcome)
@@ -964,8 +964,15 @@ local function GetCallbacksPools(player, callbacks)
 				trinketsPicker:AddOutcomeFloat(item.Param.Trinket, 1 / #poolTrinketsPicker)
 			end
 
-			pools[valItem.Name] =
-				FillWithRandomItemsTrinkets(player, itemsPicker, trinketsPicker, id, pool == "Items", valItem.Limit)
+			pools[valItem.Name] = FillWithRandomItemsTrinkets(
+				player,
+				itemsPicker,
+				trinketsPicker,
+				id,
+				pool == "Items",
+				valItem.Chance,
+				valItem.Limit
+			)
 		end
 	end
 	return pools
@@ -1014,7 +1021,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 					end
 				end
 
-				bombDamage = GetBombDamage(player)
+				bombDamage = GetBombDamage(isGigaBomb)
 			end
 		end
 		if doBombStomp == nil then
@@ -1026,16 +1033,6 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 	local knockbackDamage = false
 
 	pData.StompCount = pData.StompCount and ((pData.StompCount + 1) % 2) or 1
-
-	-- On hold until i find a better way
-	--[[
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_LUMP_OF_COAL) and data.LastEdithPosition ~= nil then
-			local LandPos = data.TargetLandPos 
-			local JumpPos = data.LastEdithPosition 
-
-			print((LandPos - JumpPos):Length()/40)
-		end
-	]]
 
 	local hasBombs = bombs > 0 or force
 
@@ -1205,27 +1202,19 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 					)
 			end
 			if
-				(params == nil
+				params == nil
 				or item == nil and trinket == nil
 				or type(item) == "number" and player:HasCollectible(item)
 				or type(trinket) == "number" and player:HasTrinket(trinket)
-				or InTable(true, isStompPool))
+				or InTable(true, isStompPool)
 			then
 				local ret = callback.Function(callback.Mod, player, isStompPool)
 				if ret == true then
 					bombEffectTriggered = true
-					bombDamage = GetBombDamage(player)
+					bombDamage = GetBombDamage(isGigaBomb)
 					break
 				end
 			end
-			--[[if callback.Param == nil or callback.Param ~= nil and player:HasCollectible(callback.Param) then
-				local ret = callback.Function(callback.Mod, player, isStompPool)
-				if ret == true then
-					bombEffectTriggered = true
-					bombDamage = GetBombDamage(player)
-					break
-				end
-			end]]
 		end
 	end
 
@@ -1254,17 +1243,22 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 				or type(trinket) == "number" and player:HasTrinket(trinket)
 				or InTable(true, isStompPool)
 			then
-				local ret = callback.Function(callback.Mod, player, bombDamage, radius, hasBombs, isGigaBomb, isStompPool)
+				local ret = callback.Function(
+					callback.Mod,
+					player,
+					bombDamage,
+					player.Position,
+					radius,
+					hasBombs,
+					isGigaBomb,
+					false
+				)
 				if type(ret) == "table" then
 					bombDamage = ret.BombDamage or bombDamage
 					radius = ret.Radius or radius
 				end
 			end
 		end
-
-		--[[if player:HasTrinket(TrinketType.TRINKET_SHORT_FUSE) then
-			bombDamage = bombDamage * 1.15
-		end]]
 
 		EdithRestored.Game:BombExplosionEffects(
 			player.Position,
@@ -1274,6 +1268,62 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 			player
 		)
 
+		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
+			local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SCATTER_BOMBS)
+			for i = 1, rng:RandomInt(4, 5) do
+				local flags = player:GetBombFlags()
+				if isGigaBomb then
+					flags = flags | TearFlags.TEAR_GIGA_BOMB
+				end
+				Isaac.CreateTimer(function()
+					local explosionPosition = Vector.FromAngle(rng:RandomInt(1, 360))
+						:Resized(TSIL.Random.GetRandomFloat(0.1, radius * 1.5, rng))
+					EdithRestored.Game:BombExplosionEffects(
+						player.Position + explosionPosition,
+						bombDamage / 2,
+						player:GetBombFlags(),
+						Color.Default,
+						player,
+						0.5,
+						true,
+						false
+					)
+					for _, callback in ipairs(stompExplosionCallback) do
+						local params = callback.Param
+						local isTbl = type(params) == "table"
+						local item = (isTbl and type(params.Item) == "number") and params.Item
+						local trinket = (isTbl and type(params.Trinket) == "number") and params.Trinket
+						local isStompPool = {}
+						for name, tab in pairs(pools) do
+							isStompPool[name] = isTbl
+								and (
+									InTable(item, tab.Items) and not player:HasCollectible(item)
+									or InTable(trinket, tab.Trinkets) and not player:HasTrinket(trinket)
+								)
+						end
+						if
+							params == nil
+							or item == nil and trinket == nil
+							or type(item) == "number" and player:HasCollectible(item)
+							or type(trinket) == "number" and player:HasTrinket(trinket)
+							or InTable(true, isStompPool)
+						then
+							callback.Function(
+								callback.Mod,
+								player,
+								bombDamage / 2,
+								player.Position + explosionPosition,
+								radius / 2,
+								hasBombs,
+								isGigaBomb,
+								true
+							)
+						end
+					end
+				end, rng:RandomInt(5, 10), 1, false)
+			end
+		end
+
 		if player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) > 0 then
 			for i = 1, player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) do
 				local rng = player:GetTrinketRNG(TrinketType.TRINKET_RING_CAP)
@@ -1282,20 +1332,6 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 					bombDamage,
 					player:GetBombFlags(),
 					Color.Default,
-					player
-				)
-			end
-		end
-		
-		if player:HasTrinket(TrinketType.TRINKET_BLASTING_CAP) and data.BombStomp ~= nil then
-			local rng = player:GetTrinketRNG(TrinketType.TRINKET_BLASTING_CAP)
-			if rng:RandomFloat() <= 0.1 then
-				Isaac.Spawn(
-					EntityType.ENTITY_PICKUP,
-					PickupVariant.PICKUP_BOMB,
-					0,
-					player.Position,
-					Vector.Zero,
 					player
 				)
 			end
