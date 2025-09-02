@@ -30,7 +30,7 @@ end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION,
 	BlastBoots.BlastingBootsExtraJump,
-	BlastBootsID
+	{ Item = BlastBootsID }
 )
 
 ---@param player EntityPlayer

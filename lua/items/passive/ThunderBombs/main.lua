@@ -104,7 +104,7 @@ function ThunderBombs:EdithStompThunderBombProc(player)
 	local data = EdithRestored:GetData(player)
 	return DoChargeThunderBomb(player) and not data.LockBombs
 end
-EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBombProc, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBombProc, { Item = EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS })
 
 ---@param player EntityPlayer
 function ThunderBombs:EdithStompThunderBomb(player, damage, radius, hasBombs)
@@ -132,7 +132,7 @@ function ThunderBombs:EdithStompThunderBomb(player, damage, radius, hasBombs)
 	SpawnThunderBombLaser(player, player, damage / 2)
 
 end
-EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBomb, EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
+EdithRestored:AddCallback(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION, ThunderBombs.EdithStompThunderBomb, { Item = EdithRestored.Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS })
 
 function ThunderBombs:HandleRingDamage(laser) --this exists because it doesnt properly hit everything inside of it
 	local data = EdithRestored:GetData(laser)

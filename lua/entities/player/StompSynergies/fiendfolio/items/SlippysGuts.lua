@@ -5,7 +5,7 @@ local SlippysGuts = {}
 ---@param radius number
 ---@param hasBombs boolean
 ---@param isGigaBomb boolean
-function SlippysGuts:OnStompExposion(player, bombDamage, radius, hasBombs, isGigaBomb)
+function SlippysGuts:OnStompExplosion(player, bombDamage, radius, hasBombs, isGigaBomb)
 	local cloud = Isaac.Spawn(
 		FiendFolio.FF.SlippyFart.ID,
 		FiendFolio.FF.SlippyFart.Var,
@@ -18,8 +18,8 @@ function SlippysGuts:OnStompExposion(player, bombDamage, radius, hasBombs, isGig
 end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION,
-	SlippysGuts.OnStompExposion,
-	FiendFolio.ITEM.COLLECTIBLE.SLIPPYS_GUTS
+	SlippysGuts.OnStompExplosion,
+	{Item = FiendFolio.ITEM.COLLECTIBLE.SLIPPYS_GUTS }
 )
 
 return SlippysGuts

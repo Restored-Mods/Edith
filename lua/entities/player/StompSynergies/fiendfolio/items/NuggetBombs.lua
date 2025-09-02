@@ -5,7 +5,7 @@ local NuggetBombs = {}
 ---@param radius number
 ---@param hasBombs boolean
 ---@param isGigaBomb boolean
-function NuggetBombs:OnStompExposion(player, bombDamage, radius, hasBombs, isGigaBomb)
+function NuggetBombs:OnStompExplosion(player, bombDamage, radius, hasBombs, isGigaBomb)
 	local flags = player:GetBombFlags()
 	if isGigaBomb then
 		flags = flags | TearFlags.TEAR_GIGA_BOMB
@@ -22,8 +22,8 @@ function NuggetBombs:OnStompExposion(player, bombDamage, radius, hasBombs, isGig
 end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION,
-	NuggetBombs.OnStompExposion,
-	FiendFolio.ITEM.COLLECTIBLE.NUGGET_BOMBS
+	NuggetBombs.OnStompExplosion,
+	{Item = FiendFolio.ITEM.COLLECTIBLE.NUGGET_BOMBS }
 )
 
 return NuggetBombs

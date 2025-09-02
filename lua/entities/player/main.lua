@@ -838,10 +838,19 @@ function Player:OnUpdatePlayer(player)
 					local jumpTag = (
 							data.BombStomp ~= nil
 							and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
-							and (player:GetNumBombs() > 0 or player:HasGoldenBomb())
+							and (player:GetNumBombs() > 0 or player:HasGoldenBomb() or player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_BOMBS))
 						)
 						and "EdithRocketJump"
 						or "EdithJump"
+						local currentAnimation = sprite:GetAnimation()
+						local currentFrame = sprite:GetFrame()
+						if data.BombStomp ~= nil and player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_BOMBS)
+						and jumpTag == "EdithRocketJump" and not Helpers.HasBombs(player)
+							then
+								player:TakeDamage(1, DamageFlag.DAMAGE_IV_BAG | DamageFlag.DAMAGE_INVINCIBLE, EntityRef(nil), 60)
+								player:PlayExtraAnimation(currentAnimation)
+								sprite:SetFrame(currentFrame)
+							end
 					local heightMult = sprite:GetAnimation() == "EdithJumpBig" and 2 or 1
 					local gravityMult = sprite:GetAnimation() == "EdithJumpBig" and 6 or 1
 					JumpLib:Jump(player, {
@@ -859,7 +868,11 @@ function Player:OnUpdatePlayer(player)
 					data.TargetJumpPos then
 					if
 						sprite:IsEventTriggered("EdithJumpStart")
-						and not (data.BombStomp and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR))
+						and not (data.BombStomp ~= nil
+							and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
+							and (player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_BOMBS)
+							or Helpers.HasBombs(player))
+							)
 					then
 						if sprite:GetAnimation() == "EdithJumpBig" then
 							player.Position = data.TargetJumpPos
@@ -925,7 +938,7 @@ function Player:Landing(player, jumpData, inPit)
 	local data = EdithRestored:GetData(player)
 	if not inPit then
 		local data = EdithRestored:GetData(player)
-		Helpers.Stomp(player, nil, not data.PostRocketRide, Helpers.IsPlayerEdith(player, true, false))
+		Helpers.Stomp(player, nil, not data.PostRocketRide and data.BombStomp, Helpers.IsPlayerEdith(player, true, false))
 		data.Landed = true
 		data.PostRocketRide = nil
 		--data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
@@ -1683,7 +1696,7 @@ EdithRestored:AddPriorityCallback(
 	EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION,
 	CallbackPriority.LATE,
 	Player.OnStompBloodBombs,
-	CollectibleType.COLLECTIBLE_BLOOD_BOMBS
+	{ Item = CollectibleType.COLLECTIBLE_BLOOD_BOMBS }
 )
 
 ---@param player EntityPlayer
