@@ -87,6 +87,9 @@ local itemsSynergiesTable = {
 		"Pinhead",
 		"RubberBullets",
 		"SlippysGuts",
+		"SmashTrophy",
+		"Telebombs",
+		"TimeItself",
 		"ToyPiano",
 	},
 }
@@ -112,7 +115,7 @@ local trinketsSynergiesTable = {
 local function LoadScripts()
 	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_3_DOLLAR_BILL, true, "Pool3DollarBill", 3)
 	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_FRUIT_CAKE, true, "PoolFruitCake", 1)
-	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_FRUIT_CAKE, true, "PoolPlaydoughCookie", 2, 0.5)
+	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_PLAYDOUGH_COOKIE, true, "PoolPlaydoughCookie", 2, 0.5)
 	for t, tab in pairs(itemsSynergiesTable) do
 		if conditions[t] and conditions[t]() then
 			if not EdithRestored.Synergies[t] then
@@ -153,7 +156,8 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
 end)
 
 ---@param player EntityPlayer
-local function OnJump(_, player)
+---@param config PassedJumpConfig
+local function OnJump(_, player, config)
 	EdithRestored:GetData(player).PreJumpPosition = player.Position
 	for _, callback in ipairs(Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_JUMPING)) do
 		local params = callback.Param
@@ -163,7 +167,7 @@ local function OnJump(_, player)
 			or type(params.Item) == "number" and player:HasCollectible(callback.Param.Item)
 			or type(params.Trinket) == "number" and player:HasTrinket(params.Trinket)
 		then
-			callback.Function(EdithRestored, player)
+			callback.Function(EdithRestored, player, config)
 		end
 	end
 end

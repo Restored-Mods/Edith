@@ -1035,6 +1035,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 	pData.StompCount = pData.StompCount and ((pData.StompCount + 1) % 2) or 1
 
 	local hasBombs = bombs > 0 or force
+	local stompPosition = player.Position
 
 	if triggerStompCallbacks == true then
 		local stompCallbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP)
@@ -1139,13 +1140,12 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 		end
 	end
 
-	local enemiesInRadius = Helpers.GetEnemiesInRadius(player.Position, radius, true)
+	local enemiesInRadius = Helpers.GetEnemiesInRadius(stompPosition, radius, true)
 	if not (EdithRestored.DebugMode and EdithRestored:GetDebugValue("IgnoreStompDamage")) then
 		for _, enemy in pairs(enemiesInRadius) do
-			--enemy.Velocity = (enemy.Position - player.Position):Resized(knockback)
 			enemy:AddKnockback(
 				EntityRef(player),
-				(enemy.Position - player.Position):Resized(knockback),
+				(enemy.Position - stompPosition):Resized(knockback),
 				knockbackTime,
 				Helpers.IsPlayerEdith(player, true, false)
 						and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT)
@@ -1154,7 +1154,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 			if enemy:IsActiveEnemy() and enemy:IsVulnerableEnemy() then
 				local newDamage = stompDamage
 				if player:HasCollectible(CollectibleType.COLLECTIBLE_PROPTOSIS) then
-					newDamage = newDamage * (1.5 - player.Position:Distance(enemy.Position) / radius)
+					newDamage = newDamage * (1.5 - stompPosition:Distance(enemy.Position) / radius)
 				end
 				enemy:TakeDamage(
 					newDamage,
@@ -1172,14 +1172,13 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 			if grid then
 				if
 					(breakRocks or grid:ToPoop() and grid.State ~= 1000)
-					and player.Position:Distance(grid.Position) <= radius
+					and stompPosition:Distance(grid.Position) <= radius
 				then
 					grid:Destroy()
 				end
 			end
 		end
 	end
-	--EdithRestored.Game:BombDamage(player.Position, damage, radius, true, player, TearFlags.TEAR_NORMAL, DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION, false)
 
 	local doStompsCallbacks = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.DO_STOMP_EXPLOSION)
 	local stompExplosionCallback = Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_EXPLOSION)
@@ -1247,7 +1246,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 					callback.Mod,
 					player,
 					bombDamage,
-					player.Position,
+					stompPosition,
 					radius,
 					hasBombs,
 					isGigaBomb,
@@ -1261,7 +1260,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 		end
 
 		EdithRestored.Game:BombExplosionEffects(
-			player.Position,
+			stompPosition,
 			bombDamage,
 			player:GetBombFlags(),
 			Color.Default,
@@ -1279,7 +1278,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 					local explosionPosition = Vector.FromAngle(rng:RandomInt(1, 360))
 						:Resized(TSIL.Random.GetRandomFloat(0.1, radius * 1.5, rng))
 					EdithRestored.Game:BombExplosionEffects(
-						player.Position + explosionPosition,
+						stompPosition + explosionPosition,
 						bombDamage / 2,
 						player:GetBombFlags(),
 						Color.Default,
@@ -1312,7 +1311,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 								callback.Mod,
 								player,
 								bombDamage / 2,
-								player.Position + explosionPosition,
+								stompPosition + explosionPosition,
 								radius / 2,
 								hasBombs,
 								isGigaBomb,
@@ -1328,7 +1327,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 			for i = 1, player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) do
 				local rng = player:GetTrinketRNG(TrinketType.TRINKET_RING_CAP)
 				EdithRestored.Game:BombExplosionEffects(
-					player.Position + Vector.FromAngle(rng:RandomInt(1, 360)):Resized(rng:RandomInt(100) * 0.015),
+					stompPosition + Vector.FromAngle(rng:RandomInt(1, 360)):Resized(rng:RandomInt(100) * 0.015),
 					bombDamage,
 					player:GetBombFlags(),
 					Color.Default,
@@ -1346,7 +1345,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 
 	for i = 1, TSIL.Random.GetRandomInt(6, 9) do
 		local randRockVel = Vector(TSIL.Random.GetRandomInt(-3, 3), TSIL.Random.GetRandomInt(-3, 3))
-		Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 1, player.Position, randRockVel, nil)
+		Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 1, stompPosition, randRockVel, nil)
 	end
 	if room:HasWater() then
 		-- if not chap4 then
@@ -1355,7 +1354,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 			EntityType.ENTITY_EFFECT,
 			EffectVariant.BIG_SPLASH,
 			0,
-			player.Position + Vector(0, 2),
+			stompPosition + Vector(0, 2),
 			Vector.Zero,
 			player
 		):ToEffect()
@@ -1365,10 +1364,10 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 	else
 		local poof
 		if not chap4 then
-			poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 1, player.Position, Vector.Zero, player)
+			poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 1, stompPosition, Vector.Zero, player)
 				:ToEffect()
 		else
-			poof = Isaac.Spawn(1000, 16, 3, player.Position, Vector.Zero, nil):ToEffect()
+			poof = Isaac.Spawn(1000, 16, 3, stompPosition, Vector.Zero, nil):ToEffect()
 			if bdType == 13 then
 				poof.Color = Color(0, 0, 0, 1, 0.3, 0.4, 0.6)
 			elseif bdType == 34 then
