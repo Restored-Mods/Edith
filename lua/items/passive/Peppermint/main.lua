@@ -1,5 +1,5 @@
 local Peppermint = {}
-local Helpers = include("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 -- Hi here Kotry, here's Peppermint rework, right now its main functionality is done
 -- Code formatted with https://codebeautify.org/lua-beautifier
