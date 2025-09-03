@@ -39,6 +39,7 @@ include("lua.items.passive.ThunderBombs.main")
 
 include("lua.items.passive.RedHood.main")
 include("lua.items.passive.ShrapnelBombs.main")
+include("lua.items.passive.Peppermint.main")
 
 -- trinkets
 --include("lua.items.trinkets.PepperGrinder.main")
@@ -48,6 +49,9 @@ include("lua.items.trinkets.ChunkOfAmber.main")
 
 -- cards
 include("lua.items.cards.SoulOfEdith.main")
+
+-- challenges
+include("lua.challenges.rocket_laces")
 
 --mod compatibility
 include("lua.mod_compat.eid.eid")

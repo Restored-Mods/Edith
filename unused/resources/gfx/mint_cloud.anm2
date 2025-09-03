@@ -2,7 +2,7 @@
 	<Info CreatedBy="trtv" CreatedOn="05.07.2019 16:05:56" Fps="30" Version="2" />
 	<Content>
 		<Spritesheets>
-			<Spritesheet Id="0" Path="../gfx/effects/smoke_cloud.png" />
+			<Spritesheet Id="0" Path="effects\smoke_cloud.png" />
 		</Spritesheets>
 		<Layers>
 			<Layer Id="0" Name="Main" SpritesheetId="0" />

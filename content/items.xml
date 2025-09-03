@@ -8,6 +8,7 @@
 	<familiar id="5" name="Salt Pawns" achievement="Salt Pawns" description="Peasent Infantry" gfx="collectibles_008_salt_pawns.png" quality="1" craftquality="1" tags="baby summonable monstermanual offensive"/>
     <passive id="6" name="​Red Hood" achievement="​Red Hood" description="Lycanthropy" gfx="collectibles_009_red_hood.png" quality="3" craftquality="3" tags="offensive"/>
     <passive id="9" name="Shrapnel Bombs" achievement="Shrapnel Bombs" description="Fragging blasts +5 bombs" bombs="5" gfx="collectibles_015_shrapnel_bombs.png" quality="2" craftquality="2" tags="offensive"/>
+    <passive id="10" name="Peppermint" description="Cold breath" bombs="5" gfx="collectibles_001_peppermint.png" quality="2" craftquality="2" tags="offensive"/>
 
 	<!-- Active Items -->
 	<active id="7" name="​Salt Shaker" achievement="​Salt Shaker" description="Keeps evil away" gfx="collectibles_010_salt_shaker.png" shopprice="10" quality="1" craftquality="1" maxcharges="2" tags="offensive"/>

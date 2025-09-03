@@ -19,6 +19,10 @@
 	<achievement name="​Sodom" text="Edith Beast" gfx="achievement_sodom.png" />
 	<achievement name="Soul of Edith" text="Edith Full Completion" gfx="achievement_soul_of_edith.png" />
 
+	<!-- challenges -->
+	<achievement name="Peppermint" text="Edith Rocket Laces" gfx="achievement_peppermint.png" />
+
+	
 	<achievement name="Tainted Edith (Restored Edith)" text='You unlocked "Edith"' gfx="achievement_soul_of_edith.png" hidden="true" />
 
 	<!-- Unused

@@ -79,7 +79,7 @@ Enums.PlayerType =
 
 Enums.CollectibleType = 
 					{
-						--COLLECTIBLE_BREATH_MINTS = Isaac.GetItemIdByName("Breath Mints"),
+						COLLECTIBLE_PEPPERMINT = Isaac.GetItemIdByName("Peppermint"),
 						COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("Lithium Salts"),
 						COLLECTIBLE_SODOM = Isaac.GetItemIdByName("​Sodom"),
 						COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),
@@ -191,7 +191,7 @@ BombFlagsAPI.AddNewCustomBombFlag("THUNDER_BOMB", Enums.CollectibleType.COLLECTI
 BombFlagsAPI.AddNewCustomBombFlag("SHRAPNEL_BOMB", Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS)
 
 Enums.Challenges = {
-
+	ROCKET_LACES = Isaac.GetChallengeIdByName("Rocket Laces"),
 }
 
 Enums.Achievements = {}
@@ -215,6 +215,8 @@ Enums.Achievements.CompletionMarks = {
 	SODOM =  Isaac.GetAchievementIdByName("​Sodom"),
 	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),
 	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
+	
+	PEPPERMINT =  Isaac.GetAchievementIdByName("Peppermint"),
 	--REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
 }
 Enums.Achievements.Misc = {

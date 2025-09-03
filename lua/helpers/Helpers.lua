@@ -1539,4 +1539,15 @@ function Helpers.AddStompPool(id, isCollectible, name, limit, chance)
 	end
 end
 
+---@param id number | string
+function Helpers.IsChallenge(id)
+	if type(id) ~= "number" and type(id) ~= "string" then
+		return false
+	end
+	if type(id) == "string" then
+		id = Isaac.GetChallengeIdByName(id)
+	end
+	return Isaac.GetChallenge() == id
+end
+
 EdithRestored.Helpers = Helpers
