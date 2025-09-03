@@ -17,7 +17,6 @@
           portrait="playerportrait_Edith_B.png" skinColor="-1"
           extraportrait="edith_stage.anm2" 
           birthright="Reflect their gaze" costumeSuffix="edithb"
-          achievement="Tainted Edith"
           speedmodifier="-0.1"
           achievement="Tainted Edith (Restored Edith)"
           bSkinParent="Redith" /> 
