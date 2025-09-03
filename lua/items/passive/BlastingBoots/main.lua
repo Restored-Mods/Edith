@@ -81,8 +81,10 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, BlastBoots.AntiSo
 ---@param inPit boolean
 function BlastBoots:Landing(player, jumpData, inPit)
 	if not inPit then
-		Helpers.Stomp(player, false, false)
-
+		local mult = Helpers.IsChallenge(EdithRestored.Enums.Challenges.ROCKET_LACES) and 3 or 1.5
+		Helpers.Stomp(player, mult, false, false)
+		player:ResetDamageCooldown()
+		player:SetMinDamageCooldown(60)
 		for _, v in pairs(Isaac.FindInRadius(player.Position, 55, EntityPartition.BULLET)) do
 			local projectile = v:ToProjectile() ---@cast projectile EntityProjectile
 			local angle = ((player.Position - projectile.Position) * -1):GetAngleDegrees()

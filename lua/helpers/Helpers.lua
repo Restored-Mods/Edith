@@ -32,6 +32,7 @@ local turretList = {
 	{ 293, -1, -1 },
 }
 
+---@param player EntityPlayer
 local function RemoveStoreCreditFromPlayer(player) -- Partially from FF
 	local t0 = player:GetTrinket(0)
 	local t1 = player:GetTrinket(1)
@@ -46,6 +47,7 @@ local function RemoveStoreCreditFromPlayer(player) -- Partially from FF
 	player:TryRemoveSmeltedTrinket(TrinketType.TRINKET_STORE_CREDIT)
 end
 
+---@param player EntityPlayer
 local function TryRemoveStoreCredit(player)
 	if EdithRestored.Room():GetType() == RoomType.ROOM_SHOP then
 		if player:HasTrinket(TrinketType.TRINKET_STORE_CREDIT) then
@@ -63,6 +65,7 @@ local function TryRemoveStoreCredit(player)
 	end
 end
 
+---@param enemy Entity
 function Helpers.HereticBattle(enemy)
 	local room = EdithRestored.Room()
 	if room:GetType() == RoomType.ROOM_BOSS and room:GetBossID() == 81 and enemy.Type == EntityType.ENTITY_EXORCIST then
@@ -71,6 +74,7 @@ function Helpers.HereticBattle(enemy)
 	return false
 end
 
+---@param enemy Entity
 function Helpers.IsTurret(enemy)
 	for _, e in ipairs(turretList) do
 		if e[1] == enemy.Type and (e[2] == -1 or e[2] == enemy.Variant) and (e[3] == -1 or e[3] == enemy.SubType) then
@@ -80,14 +84,21 @@ function Helpers.IsTurret(enemy)
 	return false
 end
 
+---@param player EntityPlayer
+---@return boolean
 function Helpers.IsLost(player)
 	return player:GetHealthType() == HealthType.NO_HEALTH and player:GetPlayerType() ~= PlayerType.PLAYER_THESOUL_B
 end
 
+---@param player EntityPlayer
+---@return boolean
 function Helpers.IsGhost(player)
 	return player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) or Helpers.IsLost(player)
 end
 
+---@param player EntityPlayer
+---@param pickup EntityPickup
+---@return boolean
 function Helpers.CanCollectCustomShopPickup(player, pickup)
 	if
 		pickup:IsShopItem()
@@ -99,6 +110,9 @@ function Helpers.CanCollectCustomShopPickup(player, pickup)
 	return true
 end
 
+---@param player EntityPlayer
+---@param pickup EntityPickup
+---@return boolean?
 function Helpers.CollectCustomPickup(player, pickup)
 	if not Helpers.CanCollectCustomShopPickup(player, pickup) then
 		return pickup:IsShopItem()
@@ -214,24 +228,32 @@ function Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, igno
 				--[[if enemy.Type == EntityType.ENTITY_ETERNALFLY then
 					enemy:Morph(EntityType.ENTITY_ATTACKFLY,0,0,-1)
 				end]]
-				if not (Helpers.HereticBattle(enemy) or Helpers.IsTurret(enemy) and not includeTurrets) then
+				--if not (Helpers.HereticBattle(enemy) or Helpers.IsTurret(enemy) and not includeTurrets) then
 					table.insert(enemies, enemy)
-				end
+				--end
 			end
 		end
 	end
 	return enemies
 end
 
+---@param a number | Vector
+---@param b number | Vector
+---@param t number
+---@param speed number
+---@return number | Vector
 function Helpers.Lerp(a, b, t, speed)
 	speed = speed or 1
 	return a + (b - a) * speed * t
 end
 
+---@param x number
+---@return integer
 function Helpers.Sign(x)
 	return x >= 0 and 1 or -1
 end
 
+---@return boolean
 function Helpers.IsMenuing()
 	if ModConfigMenu and ModConfigMenu.IsVisible or DeadSeaScrollsMenu and DeadSeaScrollsMenu.OpenedMenu then
 		return true
@@ -239,15 +261,19 @@ function Helpers.IsMenuing()
 	return false
 end
 
+---@return boolean
 function Helpers.InBoilerMirrorWorld()
 	return FFGRACE and FFGRACE:IsBoilerMirrorWorld()
 end
 
+---@return boolean
 function Helpers.InMirrorWorld()
 	return EdithRestored.Room():IsMirrorWorld() or Helpers.InBoilerMirrorWorld()
 end
 
 ---@param player EntityPlayer
+---@param allowJump boolean?
+---@return boolean
 function Helpers.CanMove(player, allowJump)
 	local controlsEnabled = player.ControlsEnabled
 
@@ -289,6 +315,8 @@ function Helpers.CanMove(player, allowJump)
 	return controlsEnabled and not isDead and not isPlayingForbiddenExtraAnimation
 end
 
+---@param player EntityPlayer
+---@return boolean
 function Helpers.CantMove(player)
 	return not (
 		player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
@@ -297,10 +325,15 @@ function Helpers.CantMove(player)
 	)
 end
 
+---@param player EntityPlayer
+---@param type PlayerType | integer
+---@return boolean
 function Helpers.IsPlayerType(player, type)
 	return player:GetPlayerType() == type
 end
 
+---@param player EntityPlayer
+---@return number
 function Helpers.GetPlayerIndex(player)
 	local id = 1
 	if player:GetPlayerType() == PlayerType.PLAYER_LAZARUS2_B then
@@ -309,6 +342,8 @@ function Helpers.GetPlayerIndex(player)
 	return player:GetCollectibleRNG(id):GetSeed()
 end
 
+---@param bomb EntityBomb
+---@return number
 function Helpers.GetBombExplosionRadius(bomb)
 	local damage = bomb.ExplosionDamage
 	local radiusMult = bomb.RadiusMultiplier
@@ -327,6 +362,9 @@ function Helpers.GetBombExplosionRadius(bomb)
 	return radius * radiusMult
 end
 
+---@param damage number
+---@param isBomber boolean?
+---@return number
 function Helpers.GetBombRadiusFromDamage(damage, isBomber)
 	if 300 <= damage then
 		return 300.0
@@ -343,6 +381,10 @@ function Helpers.GetBombRadiusFromDamage(damage, isBomber)
 	end
 end
 
+---@param player EntityPlayer
+---@param includeNormal boolean?
+---@param includeTainted boolean?
+---@return boolean
 function Helpers.IsPlayerEdith(player, includeNormal, includeTainted)
 	if includeNormal == nil then
 		includeNormal = true
@@ -363,10 +405,15 @@ function Helpers.IsPlayerEdith(player, includeNormal, includeTainted)
 end
 
 --self explanatory
+---@param player EntityPlayer
+---@param slot ActiveSlot | integer?
+---@return integer
 function Helpers.GetCharge(player, slot)
 	return player:GetActiveCharge(slot) + player:GetBatteryCharge(slot)
 end
 
+---@param player EntityPlayer
+---@return integer
 function Helpers.BatteryChargeMult(player)
 	return player:HasCollectible(CollectibleType.COLLECTIBLE_BATTERY) and 2 or 1
 end
@@ -382,6 +429,9 @@ function Helpers.GetMovementActionVector(player)
 	return Vector(right - left, down - up):Normalized()
 end
 
+---@param player EntityPlayer
+---@param slot ActiveSlot | integer?
+---@return ActiveSlot?
 function Helpers.GetUnchargedSlot(player, slot)
 	local charge = Helpers.GetCharge(player, slot)
 	local battery = Helpers.BatteryChargeMult(player)
@@ -403,11 +453,16 @@ function Helpers.GetUnchargedSlot(player, slot)
 	return nil
 end
 
+---@param player EntityPlayer
+---@param slot ActiveSlot | integer?
+---@param item unknown?
 function Helpers.OverCharge(player, slot, item)
 	local effect = Isaac.Spawn(1000, 49, 1, player.Position + Vector(0, 1), Vector.Zero, nil)
 	effect:GetSprite().Offset = Vector(0, -22)
 end
 
+---@param _vec Vector
+---@return integer | Direction
 function Helpers.VecToDir(_vec)
 	local angle = _vec:GetAngleDegrees()
 	if angle < 45 and angle >= -45 then
@@ -420,6 +475,8 @@ function Helpers.VecToDir(_vec)
 	return Direction.LEFT
 end
 
+---@param player EntityPlayer
+---@return boolean
 function Helpers.IsEdithNearEnemy(player) -- Enemy detection
 	local data = EdithRestored:RunSave(player)
 	for _, enemies in pairs(Isaac.FindInRadius(player.Position, 95)) do
@@ -435,6 +492,8 @@ function Helpers.IsEdithNearEnemy(player) -- Enemy detection
 	return false
 end
 
+---@param player EntityPlayer
+---@param amount integer?
 function Helpers.ChangePepperValue(player, amount)
 	amount = amount or 0
 	local data = EdithRestored:RunSave(player)
@@ -444,6 +503,8 @@ function Helpers.ChangePepperValue(player, amount)
 	data.Pepper = math.max(0, math.min(5, data.Pepper + amount))
 end
 
+---@param player EntityPlayer
+---@param loading boolean?
 function Helpers.ChangeSprite(player, loading)
 	local data = EdithRestored:RunSave(player)
 	local sprite = player:GetSprite()
@@ -518,11 +579,15 @@ function Helpers.ChangeSprite(player, loading)
 	end
 end
 
+---@param player EntityPlayer
+---@return boolean
 function Helpers.magicchalk_3f(player)
 	local magicchalk = Isaac.GetItemIdByName("Magic Chalk")
 	return magicchalk ~= -1 and player:HasCollectible(magicchalk)
 end
 
+---@param list table
+---@return table
 function Helpers.Shuffle(list)
 	local size, shuffled = #list, list
 	for i = size, 2, -1 do
@@ -532,30 +597,42 @@ function Helpers.Shuffle(list)
 	return shuffled
 end
 
+---@return integer
 function Helpers.GetMaxCollectibleID()
 	return Isaac.GetItemConfig():GetCollectibles().Size - 1
 end
 
+---@return integer
 function Helpers.GetMaxTrinketID()
 	return Isaac.GetItemConfig():GetTrinkets().Size - 1
 end
 
+---@param firedelay number
+---@param val number
+---@return number
 function Helpers.tearsUp(firedelay, val)
 	local currentTears = Helpers.ToTearsPerSecond(firedelay)
 	local newTears = currentTears + val
 	return math.max((30 / newTears) - 1, -0.75)
 end
 
+---@param player EntityPlayer
+---@return number
 function Helpers.GetTrueRange(player)
 	return player.TearRange / 40.0
 end
 
+---@param range number
+---@param val number
+---@return number
 function Helpers.rangeUp(range, val)
 	local currentRange = range / 40.0
 	local newRange = currentRange + val
 	return math.max(1.0, newRange) * 40.0
 end
 
+---@param sound SoundEffect | integer
+---@param alwaysSfx boolean?
 function Helpers.PlaySND(sound, alwaysSfx)
 	if
 		Options.AnnouncerVoiceMode == 2
@@ -566,6 +643,8 @@ function Helpers.PlaySND(sound, alwaysSfx)
 	end
 end
 
+---@param pos Vector
+---@return Vector
 function Helpers.GridAlignPosition(pos)
 	local x = pos.X
 	local y = pos.Y
@@ -590,6 +669,7 @@ function Helpers.IsTargetableEnemy(enemy)
 end
 
 ---@param player EntityPlayer
+---@return boolean
 function Helpers.DoesPlayerHaveRightAmountOfPickups(player)
 	local has7Coins = player:GetNumCoins() % 10 == 7
 	local has7Keys = player:GetNumKeys() % 10 == 7
@@ -600,6 +680,7 @@ function Helpers.DoesPlayerHaveRightAmountOfPickups(player)
 end
 
 ---@param player EntityPlayer
+---@return number
 function Helpers.GetLuckySevenTearChance(player)
 	local has7Coins = player:GetNumCoins() % 10 == 7
 	local has7Keys = player:GetNumKeys() % 10 == 7
@@ -637,6 +718,7 @@ end
 
 ---@param laser EntityLaser
 ---@param entity Entity
+---@return boolean?
 function Helpers.DoesLaserHitEntity(laser, entity)
 	local targetSamples = {
 		entity.Position,
@@ -682,12 +764,16 @@ end
 --Helper Functions (thanks piber)--
 -----------------------------------
 
+---@param ignoreCoopBabies boolean?
+---@return EntityPlayer[]
 function Helpers.GetPlayers(ignoreCoopBabies)
 	return Helpers.Filter(PlayerManager.GetPlayers(), function(_, player)
 		return player.Variant == 0 or ignoreCoopBabies == false
 	end)
 end
 
+---@param tear EntityTear | EntityLaser | EntityKnife | EntityBomb
+---@return EntityPlayer?
 function Helpers.GetPlayerFromTear(tear)
 	for i = 1, 2 do
 		local check = nil
@@ -709,6 +795,8 @@ function Helpers.GetPlayerFromTear(tear)
 	return nil
 end
 
+---@param entity Entity | EntityRef
+---@return Entity?
 function Helpers.GetPtrHashEntity(entity)
 	if entity then
 		if entity.Entity then
@@ -723,6 +811,9 @@ function Helpers.GetPtrHashEntity(entity)
 	return nil
 end
 
+---@param list table
+---@param x any
+---@return boolean
 function Helpers.Contains(list, x)
 	for _, v in pairs(list) do
 		if v == x then
@@ -746,6 +837,8 @@ function ripairs(t)
 end
 
 --- Executes a function for each key-value pair of a table
+---@param toIterate table
+---@param funct function
 function Helpers.ForEach(toIterate, funct)
 	for index, value in pairs(toIterate) do
 		funct(index, value)
@@ -753,6 +846,9 @@ function Helpers.ForEach(toIterate, funct)
 end
 
 --filters a table given a predicate
+---@param toFilter table
+---@param predicate function
+---@return table
 function Helpers.Filter(toFilter, predicate)
 	local filtered = {}
 
@@ -766,6 +862,8 @@ function Helpers.Filter(toFilter, predicate)
 end
 
 --returns a list of all players that have a certain item
+---@param collectibleId CollectibleType | integer
+---@return EntityPlayer[]
 function Helpers.GetPlayersByCollectible(collectibleId)
 	local players = Helpers.GetPlayers()
 
@@ -775,6 +873,8 @@ function Helpers.GetPlayersByCollectible(collectibleId)
 end
 
 --returns a list of all players that have a certain item effect (useful for actives)
+---@param collectibleId CollectibleType | integer
+---@return EntityPlayer[]
 function Helpers.GetPlayersWithCollectibleEffect(collectibleId)
 	local players = Helpers.GetPlayers()
 
@@ -784,6 +884,8 @@ function Helpers.GetPlayersWithCollectibleEffect(collectibleId)
 end
 
 --returns a list of all players that have a certain item effect (useful for actives)
+---@param nullItemId NullItemID | integer
+---@return EntityPlayer[]
 function Helpers.GetPlayersByNullEffect(nullItemId)
 	local players = Helpers.GetPlayers()
 
@@ -806,6 +908,8 @@ function Helpers.GetPlayersByType(playerType)
 	end)
 end
 
+---@param achievement Achievement | integer
+---@param force boolean
 function Helpers.UnlockAchievement(achievement, force) -- from Community Remix
 	if not force then
 		if not EdithRestored.Game:AchievementUnlocksDisallowed() then
@@ -818,27 +922,37 @@ function Helpers.UnlockAchievement(achievement, force) -- from Community Remix
 	end
 end
 
+---@param isGigaBomb boolean
+---@return integer
 local function GetBombDamage(isGigaBomb)
 	return isGigaBomb and 300 or 100
 end
 
+---@param player EntityPlayer
+---@return boolean
 function Helpers.HasBombs(player)
 	return player:GetNumBombs() > 0 or player:HasGoldenBomb()
 end
 
+---@param default boolean?
+---@return number
 function Helpers.GetStompRadius(default)
 	default = type(default) == "boolean" and default or false
-	return (EdithRestored.DebugMode and not default) and EdithRestored:GetDebugValue("StompRadius") or 65
+	return (EdithRestored.DebugMode and not default) and EdithRestored:GetDebugValue("StompRadius") or 65 --[[@as number]]
 end
 
+---@param default boolean?
+---@return number
 function Helpers.GetJumpHeight(default)
 	default = type(default) == "boolean" and default or false
-	return (EdithRestored.DebugMode and not default) and EdithRestored:GetDebugValue("JumpHeight") or 4
+	return (EdithRestored.DebugMode and not default) and EdithRestored:GetDebugValue("JumpHeight") or 4 --[[@as number]]
 end
 
+---@param default boolean?
+---@return number
 function Helpers.GetJumpGravity(default)
 	default = type(default) == "boolean" and default or false
-	return (EdithRestored.DebugMode and not default) and EdithRestored:GetDebugValue("Gravity") or 0.7
+	return (EdithRestored.DebugMode and not default) and EdithRestored:GetDebugValue("Gravity") or 0.7 --[[@as number]]
 end
 
 ---@param player EntityPlayer
@@ -885,6 +999,9 @@ function Helpers.RemoveEdithTarget(player)
 	end
 end
 
+---@param value any
+---@param tab table
+---@return boolean
 local function InTable(value, tab)
 	if type(tab) ~= "table" then
 		return false
@@ -944,6 +1061,9 @@ local function FillWithRandomItemsTrinkets(player, pickerItem, pickerTrinket, co
 	return outputTable
 end
 
+---@param player EntityPlayer
+---@param callbacks table
+---@return table
 local function GetCallbacksPools(player, callbacks)
 	local pools = {}
 	for pool, valPool in pairs(stompPoolsList) do
@@ -992,10 +1112,11 @@ local function GetCallbacksPools(player, callbacks)
 end
 
 ---@param player EntityPlayer
+---@param multiplier number
 ---@param force boolean?
 ---@param doBombStomp boolean?
 ---@param triggerStompCallbacks boolean?
-function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
+function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallbacks)
 	local data = EdithRestored:GetData(player)
 	local pData = EdithRestored:RunSave(player)
 	local room = EdithRestored.Room()
@@ -1011,7 +1132,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 	)
 	local level = EdithRestored.Level():GetStage()
 
-	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5)
+	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5) * Helpers.Clamp(multiplier, 0.1, multiplier)
 	local bombDamage = 0
 	local radius = Helpers.GetStompRadius()
 	local knockback = 15
@@ -1486,6 +1607,9 @@ local function runUpdates(tab) --This is from Fiend Folio
 end
 
 local delayedFuncs = {}
+---@param foo function
+---@param delay number
+---@param callback ModCallbacks | integer | string
 function Helpers.scheduleForUpdate(foo, delay, callback)
 	callback = callback or ModCallbacks.MC_POST_UPDATE
 	if not delayedFuncs[callback] then
@@ -1517,6 +1641,10 @@ function Helpers.VectorEquals(v1, v2)
 	return v1.X == v2.X and v1.Y == v2.Y
 end
 
+---@param value number
+---@param min number
+---@param max number
+---@return number
 function Helpers.Clamp(value, min, max)
 	if value < min then
 		return min
@@ -1527,6 +1655,11 @@ function Helpers.Clamp(value, min, max)
 	end
 end
 
+---@param id CollectibleType | TrinketType | integer
+---@param isCollectible boolean
+---@param name string
+---@param limit integer?
+---@param chance number?
 function Helpers.AddStompPool(id, isCollectible, name, limit, chance)
 	limit = type(limit) == "number" and limit or 3
 	chance = type(chance) == "number" and chance or 0.25

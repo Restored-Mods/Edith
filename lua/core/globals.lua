@@ -15,13 +15,12 @@ local runData = {
 	["MoonPhaseWolf"] = false
 }
 
-EdithRestored.DebugMode = false
+EdithRestored.DebugMode = true
 local DebugModeValues = {
 	StompRadius = 65,
 	InstantJumpCharge = true,
 	JumpHeight = 4,
 	Gravity = 0.7,
-	ShowBoSEffect = false,
 	IFrames = 30,
 	UseIFrames = false,
 	IgnoreStompDamage = false,
@@ -32,7 +31,6 @@ local DebugModeValuesDefault = {
 	InstantJumpCharge = true,
 	JumpHeight = 4,
 	Gravity = 0.7,
-	ShowBoSEffect = false,
 	IFrames = 30,
 	UseIFrames = false,
 	IgnoreStompDamage = false,

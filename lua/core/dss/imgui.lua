@@ -320,14 +320,6 @@ local function UpdateDebugMode()
 			EdithRestored:SetDebugValue("InstantJumpCharge", newVal)
 		end, EdithRestored:GetDebugValue("InstantJumpCharge"))
 
-		if ImGui.ElementExists("edithDebugModeShowBoSEffect") then
-			ImGui.RemoveElement("edithDebugModeShowBoSEffect")
-		end
-
-		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeShowBoSEffect", "Show Book of Shadows I-Frames on landing", function(newVal)
-			EdithRestored:SetDebugValue("ShowBoSEffect", newVal)
-		end, EdithRestored:GetDebugValue("ShowBoSEffect"))
-
 		if ImGui.ElementExists("edithDebugModeIgnoreStomp") then
 			ImGui.RemoveElement("edithDebugModeIgnoreStomp")
 		end
@@ -340,7 +332,6 @@ local function UpdateDebugMode()
 		ImGui.UpdateData("edithDebugModeInstaJumpCharge", ImGuiData.Value, EdithRestored:GetDebugValue("InstantJumpCharge"))
 		ImGui.UpdateData("edithDebugModeJumpHeight", ImGuiData.Value, EdithRestored:GetDebugValue("JumpHeight"))
 		ImGui.UpdateData("edithDebugModeJumpGravity", ImGuiData.Value, EdithRestored:GetDebugValue("Gravity"))
-		ImGui.UpdateData("edithDebugModeShowBoSEffect", ImGuiData.Value, EdithRestored:GetDebugValue("ShowBoSEffect"))
 		ImGui.UpdateData("edithDebugModeIgnoreStomp", ImGuiData.Value, EdithRestored:GetDebugValue("IgnoreStompDamage"))
 		ImGui.SetVisible("edithWindowDebugModeSettings", true)
 	else

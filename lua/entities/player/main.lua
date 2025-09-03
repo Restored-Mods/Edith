@@ -546,7 +546,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBarRe
 
 function Player:StompRadiusRender()
 	if EdithRestored.DebugMode then
-		for _, player in ipairs(Helpers.GetPlayersByType(EdithRestored.Enums.PlayerType.EDITH)) do
+		for _, player in ipairs(Helpers.MergeTables({}, Helpers.GetPlayersByType(EdithRestored.Enums.PlayerType.EDITH), Helpers.GetPlayersByCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_BLASTING_BOOTS))) do
 			local shape = player:GetDebugShape(true)
 			shape:Circle(player.Position, EdithRestored:GetDebugValue("StompRadius"))
 		end
@@ -817,15 +817,14 @@ function Player:OnUpdatePlayer(player)
 						IFrames = Helpers.Round(ret, 0)
 					end
 				end
-				local showBOS = false
 				if EdithRestored.DebugMode then
 					if EdithRestored:GetDebugValue("UseIFrames") then
 						IFrames = EdithRestored:GetDebugValue("IFrames")
 					end
-					showBOS = EdithRestored:GetDebugValue("ShowBoSEffect")
 				end
 				if IFrames > 0 then
-					player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, showBOS, IFrames, true)
+					player:ResetDamageCooldown()
+					player:SetMinDamageCooldown(IFrames)
 				end
 				data.Landed = nil
 				data.PostLandingKill = nil
@@ -938,7 +937,7 @@ function Player:Landing(player, jumpData, inPit)
 	local data = EdithRestored:GetData(player)
 	if not inPit then
 		local data = EdithRestored:GetData(player)
-		Helpers.Stomp(player, nil, not data.PostRocketRide and data.BombStomp, Helpers.IsPlayerEdith(player, true, false))
+		Helpers.Stomp(player, 1, nil, not data.PostRocketRide and data.BombStomp, Helpers.IsPlayerEdith(player, true, false))
 		data.Landed = true
 		data.PostRocketRide = nil
 		--data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position

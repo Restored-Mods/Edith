@@ -3,8 +3,7 @@ local Helpers = EdithRestored.Helpers
 
 ---@param bomb EntityBomb
 function RocketLases:InstaBoom(bomb)
-    if bomb.IsFetus and Helpers.GetPlayerFromTear(bomb) ~= nil and Helpers.IsChallenge(EdithRestored.Enums.Challenges.ROCKET_LACES) then        
-        bomb.ExplosionDamage = 500
+    if bomb.IsFetus and Helpers.GetPlayerFromTear(bomb) ~= nil and Helpers.IsChallenge(EdithRestored.Enums.Challenges.ROCKET_LACES) then
         bomb:SetExplosionCountdown(0)
     end
 end

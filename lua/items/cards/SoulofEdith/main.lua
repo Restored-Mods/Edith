@@ -240,7 +240,7 @@ function SoulOfEdith:Landing(player, jumpData, inPit)
 		local statueData = EdithRestored:GetData(data.Statue)
 		if statueData.StoneJumps then
 			statueData.StoneJumps = math.max(statueData.StoneJumps - 1, 0)
-			Helpers.Stomp(player, statueData.StoneJumps == 0)
+			Helpers.Stomp(player, 1, statueData.StoneJumps == 0)
 			if statueData.StoneJumps == 0 then
 				SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
 				player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, false, 45, true)
