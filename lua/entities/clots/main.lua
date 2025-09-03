@@ -1,5 +1,5 @@
 local EdithClots = {}
-local Helpers = require("lua.helpers.Helpers")
+local Helpers = EdithRestored.Helpers
 
 ---@param clot EntityFamiliar
 function EdithClots:Movement(clot)

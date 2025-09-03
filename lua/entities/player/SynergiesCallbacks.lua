@@ -78,6 +78,7 @@ local itemsSynergiesTable = {
 		"Crucifix",
 		"DevilsUmbrella",
 		"DichromaticButterfly",
+		"EmojiGlasses",
 		"HypnoRing",
 		"ImpSoda",
 		"LawnDarts",
@@ -118,7 +119,7 @@ local function LoadScripts()
 	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_FRUIT_CAKE, true, "PoolFruitCake", 1)
 	Helpers.AddStompPool(CollectibleType.COLLECTIBLE_PLAYDOUGH_COOKIE, true, "PoolPlaydoughCookie", 2, 0.5)
 	if FiendFolio then
-		Helpers.AddStompPool(FiendFolio.ITEM.COLLECTIBLE.EMOJI_GLASSES, true, "PoolFFEmojiGlases", 1, 1)
+		Helpers.AddStompPool(FiendFolio.ITEM.COLLECTIBLE.EMOJI_GLASSES, true, "PoolFFEmojiGlases", 1, 0.5)
 	end
 	for t, tab in pairs(itemsSynergiesTable) do
 		if conditions[t] and conditions[t]() then

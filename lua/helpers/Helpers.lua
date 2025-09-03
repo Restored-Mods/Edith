@@ -906,8 +906,21 @@ end
 ---@param limit number?
 ---@return table
 local function FillWithRandomItemsTrinkets(player, pickerItem, pickerTrinket, col_trink, isItem, chance, limit)
-	local rng = isItem and player:GetCollectibleRNG(col_trink) or player:GetTrinketRNG(col_trink)
-	local hasItem = isItem and player:HasCollectible(col_trink) or player:HasTrinket(col_trink)
+	local rng
+	local hasItem = false
+	if col_trink > 0 then
+		if isItem then
+			if col_trink <= (Isaac.GetItemConfig():GetCollectibles().Size - 1) then
+				rng = player:GetCollectibleRNG(col_trink)
+				hasItem = player:HasCollectible(col_trink)
+			end
+		else
+			if col_trink <= (Isaac.GetItemConfig():GetTrinkets().Size - 1) then
+				rng = player:GetTrinketRNG(col_trink)
+				hasItem = player:HasTrinket(col_trink)
+			end
+		end
+	end
 	local outputTable = { Items = {}, Trinkets = {} }
 	while
 		hasItem
@@ -998,7 +1011,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 	)
 	local level = EdithRestored.Level():GetStage()
 
-	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage)
+	local stompDamage = (1 + (level * 6 / 1.4) + player.Damage * 2.5)
 	local bombDamage = 0
 	local radius = Helpers.GetStompRadius()
 	local knockback = 15
@@ -1028,7 +1041,7 @@ function Helpers.Stomp(player, force, doBombStomp, triggerStompCallbacks)
 			doBombStomp = force or data.BombStomp
 		end
 	end
-	local breakRocks = not doBombStomp
+	local breakRocks = false
 	local knockbackTime = 5
 	local knockbackDamage = false
 
