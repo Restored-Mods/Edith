@@ -69,6 +69,10 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMB
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD, "Cycles between moon phases on room clear#Increased stats the closer the phase is to a full moon#On full moon, gain extra stat boosts, contact damage, and {{Stompy}} Stompy effect", "Red Hood", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD, "Меняет фазы луны при зачистке комнаты#Увеличивает характеристики, чем ближе к фаза полнолуния#При полной луне получает сильное увеличение характеристик, контактный урон и {{Stompy}} эффект Топтуна", "Красная шапочка", "ru")
 
+--Peppermint
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT, "{{Chargeable}} ", "Peppermint", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT, "{{Chargeable}} ", "Перченая мята", "ru")
+
 -- Trinkets
 
 --Smelling Salts

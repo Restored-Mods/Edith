@@ -79,7 +79,7 @@ Enums.PlayerType =
 
 Enums.CollectibleType = 
 					{
-						COLLECTIBLE_PEPPERMINT = Isaac.GetItemIdByName("Peppermint"),
+						COLLECTIBLE_PEPPERMINT = Isaac.GetItemIdByName("​Peppermint"),
 						COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("Lithium Salts"),
 						COLLECTIBLE_SODOM = Isaac.GetItemIdByName("​Sodom"),
 						COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),
@@ -216,7 +216,7 @@ Enums.Achievements.CompletionMarks = {
 	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),
 	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
 	
-	PEPPERMINT =  Isaac.GetAchievementIdByName("Peppermint"),
+	PEPPERMINT =  Isaac.GetAchievementIdByName("​Peppermint"),
 	--REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
 }
 Enums.Achievements.Misc = {

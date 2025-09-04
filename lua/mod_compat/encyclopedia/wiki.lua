@@ -322,6 +322,40 @@ local Wiki = {
 				},
 			},
 		},
+		Peppermint = {
+			ModName = modname,
+			Class = classname,
+			Name = "Peppermint",
+			ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY,
+			Pools = {
+				Encyclopedia.ItemPools.POOL_SHOP,
+			},
+			UnlockFunc = function(self)
+				if
+					not Isaac.GetPersistentGameData()
+						:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PEPPERMINT)
+				then
+					self.Desc = "Unlocked by beating Rocket Laces challenge"
+					return self
+				end
+			end,
+			WikiDesc = {
+				{ -- Effect
+					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
+					{ str = "" },
+				},
+				{ -- Synergies
+					{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },
+					{ str = "" },
+				},
+				{ -- Trivia
+					{ str = "Trivia", fsize = 2, clr = 3, halign = 0 },
+					{
+						str = "",
+					},
+				},
+			},
+		},
 	},
 
 	Trinket = {

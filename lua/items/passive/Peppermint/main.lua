@@ -29,6 +29,8 @@ local DIRECTION_TO_VECTOR = {
 	[Direction.UP] = Vector(0, -1),
 }
 
+local maxCharge = 210
+
 -- Returns a vector representing the direction the player is aiming at.
 ---@param player EntityPlayer
 ---@return Vector
@@ -65,7 +67,7 @@ function Peppermint:RenderPepperMintCharge(player)
 	HudHelper.RenderChargeBar(
 		data.PeppermintChargeBar,
 		math.max(0, data.PeppermintCharge or 0),
-		100,
+		maxCharge,
 		EdithRestored.Room():WorldToScreenPosition(player.Position)
 	)
 end
@@ -93,10 +95,10 @@ function Peppermint:AddPeppermintCharge(player)
 	local isShooting = (shoot.l or shoot.r or shoot.u or shoot.d)
 
 	if isShooting == true then
-		data.PeppermintCharge = math.min(100, data.PeppermintCharge + 1)
+		data.PeppermintCharge = math.min(maxCharge, data.PeppermintCharge + 1)
 		data.LastAimDirection = getAimDirection(player)
 	else
-		if data.PeppermintCharge >= 100 then
+		if data.PeppermintCharge >= maxCharge then
 			local lastAimDir = data.LastAimDirection or getAimDirection(player)
 			local speed = lastAimDir:Resized(4)
 			local pepperMintBreath = Isaac.Spawn(
@@ -115,6 +117,8 @@ function Peppermint:AddPeppermintCharge(player)
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Peppermint.AddPeppermintCharge)
+
+local slowColor = Color(0.7, 0.9, 1, 1, 0, 0, 0)
 
 ---@param cloud EntityEffect
 function Peppermint:CloudUpdate(cloud)
@@ -143,12 +147,9 @@ function Peppermint:CloudUpdate(cloud)
 			if enemy:IsVulnerableEnemy() and enemy:IsActiveEnemy() then
 				if enemy:GetDamageCountdown() == 0 then
 					enemy:TakeDamage(cloud.CollisionDamage / 3, DamageFlag.DAMAGE_COUNTDOWN, EntityRef(cloud), 10)
-					if not enemy:HasEntityFlags(EntityFlag.FLAG_ICE) then
-						enemy:AddEntityFlags(EntityFlag.FLAG_ICE)
-						Isaac.CreateTimer(function()
-							enemy:ClearEntityFlags(EntityFlag.FLAG_ICE)
-						end, 10, 1, false)
-					end
+					enemy:AddSlowing(EntityRef(cloud), 20, 0.5, slowColor)
+					enemy:AddIce(EntityRef(cloud), 20)
+					enemy:SetColor(slowColor, enemy:GetSlowingCountdown() + 20, 0, true, false)
 				end
 			end
 		end
@@ -159,22 +160,6 @@ EdithRestored:AddCallback(
 	Peppermint.CloudUpdate,
 	EdithRestored.Enums.Entities.PEPPERMINT.Variant
 )
-
-local slowColor = Color(0.7, 0.9, 1, 1, 0, 0, 0)
-function Peppermint:CloudDamage(ent, damage, flags, source, cd)
-	if
-		source
-		and source.Entity
-		and source.Entity.Type == EntityType.ENTITY_EFFECT
-		and source.Entity.Variant == EdithRestored.Enums.Entities.PEPPERMINT.Variant
-	then
-		local cloud = source.Entity:ToEffect()
-		if not ent:HasEntityFlags(EntityFlag.FLAG_SLOW) then
-			ent:AddSlowing(EntityRef(cloud), 10, 0.5, slowColor)
-		end
-	end
-end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Peppermint.CloudDamage)
 
 ---@param cloud EntityEffect
 EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, function(_, cloud)

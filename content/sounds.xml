@@ -39,7 +39,7 @@
 	<sound name="Lithium Salts">
 		<sample weight="1" path="redith/funny/Lithium Salts.wav" />
 	</sound>
-	<sound name="Peppermint">
+	<sound name="​Peppermint">
 		<sample weight="1" path="redith/funny/Peppermint.wav" />
 	</sound>
 	<sound name="Salt Pawns">
