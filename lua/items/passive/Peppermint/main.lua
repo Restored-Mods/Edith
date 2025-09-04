@@ -94,43 +94,61 @@ function Peppermint:AddPeppermintCharge(player)
 
 	if isShooting == true then
 		data.PeppermintCharge = math.min(100, data.PeppermintCharge + 1)
+		data.LastAimDirection = getAimDirection(player)
 	else
 		if data.PeppermintCharge >= 100 then
-			local speed = getAimDirection(player):Resized(4)
+			local lastAimDir = data.LastAimDirection or getAimDirection(player)
+			local speed = lastAimDir:Resized(4)
 			local pepperMintBreath = Isaac.Spawn(
 				EntityType.ENTITY_EFFECT,
 				EdithRestored.Enums.Entities.PEPPERMINT.Variant,
 				0,
-				player.Position + getAimDirection(player):Resized(20),
+				player.Position + lastAimDir:Resized(20),
 				speed,
 				player
 			):ToEffect()
-			pepperMintBreath:SetTimeout(90)
+			pepperMintBreath.CollisionDamage = player.Damage / 3
+			pepperMintBreath:SetTimeout(600)
 		end
 		data.PeppermintCharge = 0
+		data.LastAimDirection = nil
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Peppermint.AddPeppermintCharge)
 
 ---@param cloud EntityEffect
 function Peppermint:CloudUpdate(cloud)
-	local player = Helpers.GetPlayerFromTear(cloud)
-	if not player then
-		cloud:Remove()
-		return
-	end
 	if cloud.Timeout <= 0 then
 		cloud:Remove()
 	end
+	if cloud:CollidesWithGrid() and cloud.Timeout > 30 then
+		cloud:SetTimeout(30)
+	end
+	
+	cloud.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
 	--cloud.Position = player.Position + getAimDirection(player):Resized(20)
-	cloud.Velocity = Helpers.Lerp(cloud.Velocity, Vector.Zero, 0.3, 0.2)
+	local data = EdithRestored:GetData(cloud)
+	data.Pushed = data.Pushed or {}
+	for _, obj in ipairs(Isaac.FindInCapsule(cloud:GetCollisionCapsule(), EntityPartition.TEAR)) do
+		if not data.Pushed[GetPtrHash(obj)] then
+			data.Pushed[GetPtrHash(obj)] = true
+			cloud.Velocity = cloud.Velocity + obj.Velocity:Resized(0.5)
+		end
+	end
+	cloud.Velocity = Helpers.Lerp(cloud.Velocity, cloud.Velocity:Resized(0.5), 0.3, 0.2)
 	if cloud.Timeout > 10 then
 		local capsule = cloud:GetNullCapsule("cloud")
 		for _, enemy in ipairs(Isaac.FindInCapsule(capsule, EntityPartition.ENEMY)) do
 			-- Make sure it can be hurt.
 			if enemy:IsVulnerableEnemy() and enemy:IsActiveEnemy() then
 				if enemy:GetDamageCountdown() == 0 then
-					enemy:TakeDamage(player.Damage / 3, DamageFlag.DAMAGE_COUNTDOWN, EntityRef(cloud), 10)
+					enemy:TakeDamage(cloud.CollisionDamage / 3, DamageFlag.DAMAGE_COUNTDOWN, EntityRef(cloud), 10)
+					if not enemy:HasEntityFlags(EntityFlag.FLAG_ICE) then
+						enemy:AddEntityFlags(EntityFlag.FLAG_ICE)
+						Isaac.CreateTimer(function()
+							enemy:ClearEntityFlags(EntityFlag.FLAG_ICE)
+						end, 10, 1, false)
+					end
 				end
 			end
 		end
@@ -142,6 +160,7 @@ EdithRestored:AddCallback(
 	EdithRestored.Enums.Entities.PEPPERMINT.Variant
 )
 
+local slowColor = Color(0.7, 0.9, 1, 1, 0, 0, 0)
 function Peppermint:CloudDamage(ent, damage, flags, source, cd)
 	if
 		source
@@ -150,13 +169,8 @@ function Peppermint:CloudDamage(ent, damage, flags, source, cd)
 		and source.Entity.Variant == EdithRestored.Enums.Entities.PEPPERMINT.Variant
 	then
 		local cloud = source.Entity:ToEffect()
-		if ent:HasMortalDamage() then
-			ent:AddEntityFlags(EntityFlag.FLAG_ICE)
-		else
-			local slowColor = Color(0.7, 0.9, 1, 1, 0, 0, 0)
-			if not ent:HasEntityFlags(EntityFlag.FLAG_SLOW) then
-				ent:AddSlowing(EntityRef(cloud), 10, 0.5, slowColor)
-			end
+		if not ent:HasEntityFlags(EntityFlag.FLAG_SLOW) then
+			ent:AddSlowing(EntityRef(cloud), 10, 0.5, slowColor)
 		end
 	end
 end
