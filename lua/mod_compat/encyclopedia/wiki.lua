@@ -322,13 +322,86 @@ local Wiki = {
 				},
 			},
 		},
+		RedHood = {
+			ModName = modname,
+			Class = classname,
+			Name = "Red Hood",
+			ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD,
+			Pools = {
+				Encyclopedia.ItemPools.POOL_TREASURE,
+				Encyclopedia.ItemPools.POOL_GREED_TREASURE,
+				Encyclopedia.ItemPools.POOL_GREED_SECRET,
+				Encyclopedia.ItemPools.POOL_SECRET,
+				Encyclopedia.ItemPools.POOL_ULTRA_SECRET,
+			},
+			UnlockFunc = function(self)
+				if
+					not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.RED_HOOD)
+				then
+					self.Desc = "Unlocked by completing Boss Rush as" .. Edith()
+					return self
+				end
+			end,
+			WikiDesc = {
+				{ -- Effect
+					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
+					{ str = "Cycle between moon phases on room clear" },
+					{ str = "Increased stats the closer the phase is to a full moon." },
+					{ str = "On full moon, gain extra stat boosts, contact damage, and stompy effect." },
+					{ str = "Full Moon bonuses are always active in floors with Curse of Darkness" },
+				},
+				{ -- Trivia
+					{ str = "Trivia", fsize = 2, clr = 3, halign = 0 },
+					{
+						str = "This item is a reference to Little Red Riding Hood.",
+					},
+				},
+			},
+		},
+		ShrapnelBombs = {
+			ModName = modname,
+			Class = classname,
+			Name = "Shrapnel Bombs",
+			ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SHRAPNEL_BOMBS,
+			Pools = {
+				Encyclopedia.ItemPools.POOL_TREASURE,
+				Encyclopedia.ItemPools.POOL_GREED_TREASURE,
+				Encyclopedia.ItemPools.POOL_BOMB_BUM,
+				Encyclopedia.ItemPools.POOL_GREED_SHOP,			
+			},
+			UnlockFunc = function(self)
+				if
+					not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS)
+				then
+					self.Desc = "Unlocked by beating Mother" .. Edith()
+					return self
+				end
+			end,
+			WikiDesc = {
+				{ -- Effect
+					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
+					{ str = "+5 Bombs" },
+					{ str = "Isaac's bombs fire high velocity nails in random directions upon detonating" },
+					{ str = "Nails pierce enemies and inflict bleeding"},
+				},
+				{ -- Trivia
+					{ str = "Trivia", fsize = 2, clr = 3, halign = 0 },
+					{
+						str = "",
+					},
+				},
+			},
+		},
 		Peppermint = {
 			ModName = modname,
 			Class = classname,
 			Name = "Peppermint",
-			ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_SALTY_BABY,
+			ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT,
 			Pools = {
-				Encyclopedia.ItemPools.POOL_SHOP,
+				Encyclopedia.ItemPools.POOL_TREASURE,
+				Encyclopedia.ItemPools.POOL_GREED_TREASURE,
+				Encyclopedia.ItemPools.POOL_ULTRA_SECRET,
+				Encyclopedia.ItemPools.POOL_CRANE_GAME,
 			},
 			UnlockFunc = function(self)
 				if
@@ -342,7 +415,11 @@ local Wiki = {
 			WikiDesc = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
-					{ str = "" },
+					{ str = "Adds an extra charge bar that charges while firing." },
+					{ str = "After 7 seconds, releasing the fire button launches a mint cloud in the direction you are firing."},
+					{ str = "The cloud moves similar to Linger Bean gas, but will always try to advance forward until it hits the end of the room."},
+					{ str = "Enemies in the cloud are slowed and take a small amount of damage per tick."},
+					{ str = "Enemies dying in the cloud are frozen."},
 				},
 				{ -- Synergies
 					{ str = "Synergies", fsize = 2, clr = 3, halign = 0 },

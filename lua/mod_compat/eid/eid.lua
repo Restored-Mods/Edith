@@ -70,7 +70,7 @@ EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD, "Cy
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD, "Меняет фазы луны при зачистке комнаты#Увеличивает характеристики, чем ближе к фаза полнолуния#При полной луне получает сильное увеличение характеристик, контактный урон и {{Stompy}} эффект Топтуна", "Красная шапочка", "ru")
 
 --Peppermint
-EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT, "{{Chargeable}} ", "Peppermint", "en_us")
+EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT, "{{Chargeable}} Firing tears for 7 seconds and releasing the fire button launches a mint cloud in the direction you are firing.#Enemies touching the cloud are slowed and take damage over time.#Slowed enemies are frozen on death.", "​Peppermint", "en_us")
 EID:addCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_PEPPERMINT, "{{Chargeable}} ", "Перченая мята", "ru")
 
 -- Trinkets
