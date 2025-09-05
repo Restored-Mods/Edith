@@ -187,8 +187,8 @@ local Wiki = {
 				{ -- Notes
 					{ str = "Notes", fsize = 2, clr = 3, halign = 0 },
 					{ str = "When Isaac launched, he can go over pits and and rocks." },
-					{ str = "Falling into pit brings you back to nearest solid ground." },
-					{ str = "Falling into pit as Edith makes you land like you would do a stomp jump." },
+					{ str = "Falling into pit brings Isaac back to nearest solid ground." },
+					--{ str = "Falling into pit as Edith makes you land like you would do a stomp jump." },
 				},
 				--[[{ -- Trivia
 			{str = "Trivia", fsize = 2, clr = 3, halign = 0},
@@ -416,7 +416,7 @@ local Wiki = {
 				{ -- Effect
 					{ str = "Effect", fsize = 2, clr = 3, halign = 0 },
 					{ str = "Adds an extra charge bar that charges while firing." },
-					{ str = "After 7 seconds, releasing the fire button launches a mint cloud in the direction you are firing."},
+					{ str = "After 7 seconds, releasing the fire button launches a mint cloud in the direction Isaac is firing."},
 					{ str = "The cloud moves similar to Linger Bean gas, but will always try to advance forward until it hits the end of the room."},
 					{ str = "Enemies in the cloud are slowed and take a small amount of damage per tick."},
 					{ str = "Enemies dying in the cloud are frozen."},
