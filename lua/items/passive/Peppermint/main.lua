@@ -61,7 +61,7 @@ function Peppermint:RenderPepperMintCharge(player)
 	end
 
 	if not data.PeppermintChargeBar then
-		data.PeppermintChargeBar = Sprite("gfx/chargebar.anm2", true)
+		data.PeppermintChargeBar = Sprite("gfx/ui/chargebarpeppermint.anm2", true)
 	end
 	data.PeppermintChargeBar.Offset = Vector(-18 * player.SpriteScale.X, -20 * player.SpriteScale.Y)
 	HudHelper.RenderChargeBar(
