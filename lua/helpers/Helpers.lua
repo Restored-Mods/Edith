@@ -1116,7 +1116,8 @@ end
 ---@param force boolean?
 ---@param doBombStomp boolean?
 ---@param triggerStompCallbacks boolean?
-function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallbacks)
+---@param doParticles {Tooth: boolean?, Splash: boolean?}?
+function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallbacks, doParticles)
 	local data = EdithRestored:GetData(player)
 	local pData = EdithRestored:RunSave(player)
 	local room = EdithRestored.Room()
@@ -1481,41 +1482,45 @@ function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallb
 	local sound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or SoundEffect.SOUND_STONE_IMPACT
 	SFXManager():Play(sound, 1, 0)
 
-	for i = 1, TSIL.Random.GetRandomInt(6, 9) do
-		local randRockVel = Vector(TSIL.Random.GetRandomInt(-3, 3), TSIL.Random.GetRandomInt(-3, 3))
-		Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 1, stompPosition, randRockVel, nil)
-	end
-	if room:HasWater() then
-		-- if not chap4 then
-		local splashpitch = 0.9 + (TSIL.Random.GetRandomFloat(0, 1) / 10)
-		local waterSplash = Isaac.Spawn(
-			EntityType.ENTITY_EFFECT,
-			EffectVariant.BIG_SPLASH,
-			0,
-			stompPosition + Vector(0, 2),
-			Vector.Zero,
-			player
-		):ToEffect()
-		waterSplash.SpriteScale = waterSplash.SpriteScale * 0.65
-		SFXManager():Play(EdithRestored.Enums.SFX.Edith.WATER_STOMP, 1, 0, false, splashpitch, 0)
-		-- end
-	else
-		local poof
-		if not chap4 then
-			poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 1, stompPosition, Vector.Zero, player)
-				:ToEffect()
-		else
-			poof = Isaac.Spawn(1000, 16, 3, stompPosition, Vector.Zero, nil):ToEffect()
-			if bdType == 13 then
-				poof.Color = Color(0, 0, 0, 1, 0.3, 0.4, 0.6)
-			elseif bdType == 34 then
-				poof.Color = Color(0, 0, 0, 1, 0.62, 0.65, 0.62)
-			elseif bdType == 43 then
-				poof.Color = Color(0, 0, 0, 1, 0.55, 0.57, 0.55)
-			end
+	if doParticles and doParticles.Tooth then
+		for i = 1, TSIL.Random.GetRandomInt(6, 9) do
+			local randRockVel = Vector(TSIL.Random.GetRandomInt(-3, 3), TSIL.Random.GetRandomInt(-3, 3))
+			Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 1, stompPosition, randRockVel, nil)
 		end
-		poof.SpriteScale = poof.SpriteScale * 0.5
-		poof:GetSprite().PlaybackSpeed = 2
+	end
+	if not doParticles or not doParticles.Splash then
+		if room:HasWater() then
+			-- if not chap4 then
+			local splashpitch = 0.9 + (TSIL.Random.GetRandomFloat(0, 1) / 10)
+			local waterSplash = Isaac.Spawn(
+				EntityType.ENTITY_EFFECT,
+				EffectVariant.BIG_SPLASH,
+				0,
+				stompPosition + Vector(0, 2),
+				Vector.Zero,
+				player
+			):ToEffect()
+			waterSplash.SpriteScale = waterSplash.SpriteScale * 0.65
+			SFXManager():Play(EdithRestored.Enums.SFX.Edith.WATER_STOMP, 1, 0, false, splashpitch, 0)
+			-- end
+		else
+			local poof
+			if not chap4 then
+				poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 1, stompPosition, Vector.Zero, player)
+					:ToEffect()
+			else
+				poof = Isaac.Spawn(1000, 16, 3, stompPosition, Vector.Zero, nil):ToEffect()
+				if bdType == 13 then
+					poof.Color = Color(0, 0, 0, 1, 0.3, 0.4, 0.6)
+				elseif bdType == 34 then
+					poof.Color = Color(0, 0, 0, 1, 0.62, 0.65, 0.62)
+				elseif bdType == 43 then
+					poof.Color = Color(0, 0, 0, 1, 0.55, 0.57, 0.55)
+				end
+			end
+			poof.SpriteScale = poof.SpriteScale * 0.5
+			poof:GetSprite().PlaybackSpeed = 2
+		end
 	end
 end
 

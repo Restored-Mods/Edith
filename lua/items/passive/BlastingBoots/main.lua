@@ -13,13 +13,23 @@ local BootsJumpInfo = {
 	Tags = { "BlastingBootsJump" },
 }
 
+local function IsEdithExtraAnim(player)
+	local s = player:GetSprite():GetAnimation()
+	return s:sub(1, 5) == "Edith"
+end
+
 ---@param player EntityPlayer
 ---@param flags DamageFlag | integer
 function BlastBoots:PreBombDamage(player, _, flags)
 	if flags & DamageFlag.DAMAGE_EXPLOSION == 0 or not player:HasCollectible(BlastBootsID) then
 		return
 	end
-	JumpLib:Jump(player, BootsJumpInfo)
+	local data = EdithRestored:GetData(player)
+	if data.AfterPitfall == nil
+	and not (IsEdithExtraAnim(player)
+	or data.Statue) then
+		JumpLib:Jump(player, BootsJumpInfo)
+	end
 	return false
 end
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, BlastBoots.PreBombDamage)
@@ -80,7 +90,8 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, BlastBoots.AntiSo
 ---@param jumpData JumpData
 ---@param inPit boolean
 function BlastBoots:Landing(player, jumpData, inPit)
-	if not inPit then
+	local data = EdithRestored:GetData(player)
+	if not inPit and data.AfterPitfall == nil then
 		local mult = Helpers.IsChallenge(EdithRestored.Enums.Challenges.ROCKET_LACES) and 3 or 1.5
 		Helpers.Stomp(player, mult, false, false)
 		player:ResetDamageCooldown()
@@ -92,6 +103,9 @@ function BlastBoots:Landing(player, jumpData, inPit)
 			projectile:AddProjectileFlags(ProjectileFlags.CANT_HIT_PLAYER)
 			projectile:AddProjectileFlags(ProjectileFlags.HIT_ENEMIES)
 		end
+	else
+		data.HTJ = nil
+		data.AfterPitfall = false
 	end
 end
 EdithRestored:AddCallback(
