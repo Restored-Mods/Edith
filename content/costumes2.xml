@@ -14,7 +14,7 @@
 	<!-- Thunder Bombs -->
 	<costume id="3" anm2path="thunder_bombs.anm2" type="passive" hasOverlay="true" />
 	<!-- Peppermint -->
-	<costume id="10" anm2path="peppermint_rm.anm2" type="passive" />
+	<costume id="10" anm2path="peppermint_rm.anm2" type="passive" hasSkinAlt="true" />
 	<!-- Edith Hood -->
 	<costume id="150" anm2path="Character_001_Redith_Hood.anm2" type="none" priority="99" />
 
