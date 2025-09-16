@@ -569,5 +569,6 @@ DeadSeaScrollsMenu.AddMenu(modMenuName, {
     DirectoryKey = edithdirectorykey
 })
 
+include("lua.core.dss.changelog")
 -- There are a lot more features that DSS supports not covered here, like sprite insertion and scroller menus, that you'll have to look at other mods for reference to use.
 -- But, this should be everything you need to create a simple menu for configuration or other simple use cases!
