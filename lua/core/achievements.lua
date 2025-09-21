@@ -1,6 +1,17 @@
 ---CHALLENGE UNLOCKS-------------------------------------------------
 local Helpers = EdithRestored.Helpers
 local marksA = EdithRestored.Enums.Achievements.Marks.ASide
+local pgd = Isaac.GetPersistentGameData()
+
+local achievementRequirements = {
+	[1] = {
+		Cond = function(compType)
+			return pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.BLASTING_BOOTS)
+			and not pgd:Unlocked(EdithRestored.Enums.Achievements.Misc.ROCKET_LACES)
+		end,
+		Achievement = EdithRestored.Enums.Achievements.Misc.ROCKET_LACES,
+	},
+}
 
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_RENDER_CUSTOM_CHARACTER_MENU, function(_, id, pos, sprite)
 	if id == EdithRestored.Enums.PlayerType.EDITH then
@@ -19,7 +30,6 @@ end)
 
 local function UnlockEdith(doUnlock, force)
 	if doUnlock then
-		local pgd = Isaac.GetPersistentGameData()
 		if pgd:IsBossKilled(BossType.BEAST) and not pgd:Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH) then
 			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH, force)
 		end
@@ -28,19 +38,29 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, function(_, slot, selected, raw)
 	UnlockEdith(selected, true)
+	for _, ach in ipairs(achievementRequirements) do
+		if ach.Cond() then
+			Isaac.ExecuteCommand("achievement "..ach.Achievement)
+		end
+	end
 end)
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function(_, load)
 	UnlockEdith(true, true)
+	for _, ach in ipairs(achievementRequirements) do
+		if ach.Cond() then
+			Helpers.UnlockAchievement(ach.Achievement)
+		end
+	end
 end)
 
 for challenge, achievement in pairs(EdithRestored.Enums.Challenges) do
-	EdithRestored:AddCallback(ModCallbacks.MC_POST_CHALLENGE_DONE, function(_ , id)	
+	EdithRestored:AddCallback(ModCallbacks.MC_POST_CHALLENGE_DONE, function(_, id)
 		Helpers.UnlockAchievement(achievement)
-	end, challenge)
+	end, achievement)
 end
 
-EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mark)	
+EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mark)
 	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH) then
 		if mark == CompletionType.ULTRA_GREEDIER and marksA[CompletionType.ULTRA_GREED] then -- make damn sure greedier unlocks greed too
 			Helpers.UnlockAchievement(marksA[CompletionType.ULTRA_GREED])
@@ -55,18 +75,28 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mar
 	if mark == CompletionType.BEAST then
 		Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH)
 	end
+	for _, ach in ipairs(achievementRequirements) do
+		if ach.Cond(mark) then
+			Helpers.UnlockAchievement(ach.Achievement)
+		end
+	end
 end)
 
 EdithRestored:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
-    if card == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH) then
-        return 0
-    end
+	if
+		card == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH
+		and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+	then
+		return 0
+	end
 end)
 
 local TEdithAch = Isaac.GetAchievementIdByName("Tainted Edith (Restored Edith)")
 
-EdithRestored:AddCallback(ModCallbacks.MC_EXECUTE_CMD, function (_, command, args)
-	if not (command == "achievement" and args == tostring(TEdithAch)) then return end
+EdithRestored:AddCallback(ModCallbacks.MC_EXECUTE_CMD, function(_, command, args)
+	if not (command == "achievement" and args == tostring(TEdithAch)) then
+		return
+	end
 	print("Tainted Edith isn't available yet, please wait for a future update")
 	print("Reverting Tainted Edith unlock")
 

@@ -14,11 +14,11 @@ include("lua.core.saving_system")
 --core
 include("lua.core.enums")
 include("lua.core.globals")
+include("lua.helpers.Helpers")
 include("lua.core.achievements")
 include("lua.core.dss.deadseascrolls")
 include("lua.core.dss.imgui")
 include("lua.core.BlockDisabledItems")
-include("lua.helpers.Helpers")
 
 --entities
 include("lua.entities.player.main")

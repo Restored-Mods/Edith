@@ -394,19 +394,21 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_UPDATE, EdithRestored.OnNewGreedW
 ---@param player EntityPlayer
 ---@param cache CacheFlag | integer
 function RedHoodLocal:Cache(player, cache)
-	local effects = player:GetEffects()
-	local del = IsRedMoonPhase() and 4 or 8
-	local mul = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.RED_HOOD) / del
-	if cache == CacheFlag.CACHE_DAMAGE then
-		player.Damage = player.Damage + 5 * mul
-	elseif cache == CacheFlag.CACHE_FIREDELAY then
-		player.MaxFireDelay = Helpers.tearsUp(player.MaxFireDelay, 2.5 * mul)
-	elseif cache == CacheFlag.CACHE_SPEED then
-		local speed = player.MoveSpeed + 0.4 * mul
-		if IsRedMoonPhase() then
-			speed = math.max(1, speed)
+	if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD) then
+		local effects = player:GetEffects()
+		local del = IsRedMoonPhase() and 4 or 8
+		local mul = effects:GetNullEffectNum(EdithRestored.Enums.NullItems.RED_HOOD) / del
+		if cache == CacheFlag.CACHE_DAMAGE then
+			player.Damage = player.Damage + 5 * mul
+		elseif cache == CacheFlag.CACHE_FIREDELAY then
+			player.MaxFireDelay = Helpers.tearsUp(player.MaxFireDelay, 2.5 * mul)
+		elseif cache == CacheFlag.CACHE_SPEED then
+			local speed = player.MoveSpeed + 0.4 * mul
+			if IsRedMoonPhase() then
+				speed = math.max(1, speed)
+			end
+			player.MoveSpeed = speed
 		end
-		player.MoveSpeed = speed
 	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, RedHoodLocal.Cache)

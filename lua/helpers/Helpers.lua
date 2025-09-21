@@ -679,36 +679,6 @@ function Helpers.DoesPlayerHaveRightAmountOfPickups(player)
 	return has7Bombs or has7Coins or has7Keys or has7Poops
 end
 
----@param player EntityPlayer
----@return number
-function Helpers.GetLuckySevenTearChance(player)
-	local has7Coins = player:GetNumCoins() % 10 == 7
-	local has7Keys = player:GetNumKeys() % 10 == 7
-	local has7Bombs = player:GetNumBombs() % 10 == 7
-	local has7Poops = player:GetPoopMana() % 10 == 7
-
-	local chance = 0
-
-	if has7Coins then
-		chance = chance + 2
-	end
-	if has7Keys then
-		chance = chance + 2
-	end
-	if has7Bombs then
-		chance = chance + 2
-	end
-	if has7Poops then
-		chance = chance + 2
-	end
-
-	chance = math.max(0, math.min(15, chance + player.Luck))
-
-	local mult = player:HasTrinket(TrinketType.TRINKET_TEARDROP_CHARM) and 3 or 1
-
-	return chance * mult
-end
-
 ---@param v1 Vector
 ---@param v2 Vector
 ---@return number
@@ -909,7 +879,7 @@ function Helpers.GetPlayersByType(playerType)
 end
 
 ---@param achievement Achievement | integer
----@param force boolean
+---@param force boolean?
 function Helpers.UnlockAchievement(achievement, force) -- from Community Remix
 	if not force then
 		if not EdithRestored.Game:AchievementUnlocksDisallowed() then

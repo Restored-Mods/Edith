@@ -1,4 +1,5 @@
 local pgd = Isaac.GetPersistentGameData()
+local Helpers = EdithRestored.Helpers
 
 local orderedItems = {}
 
@@ -57,28 +58,32 @@ local function ReOrederItems()
 		local elemName = string.gsub(collectible.Name, " ", "") .. "BlackList"
 		if pgd:Unlocked(collectible.AchievementID) then
 			i = i + 1
-			ImGui.AddCheckbox("edithWindowBlacklistItems", elemName, RemoveZeroWidthSpace(collectible.Name), function(val)
-				local disabledItems = EdithRestored:GetDefaultFileSave("DisabledItems")
-				for indexItem, disabledItem in ipairs(disabledItems) do
-					if disabledItem == GetItemsEnum(collectible.ID) then
-						if val then
-							table.remove(disabledItems, indexItem)
+			ImGui.AddCheckbox(
+				"edithWindowBlacklistItems",
+				elemName,
+				RemoveZeroWidthSpace(collectible.Name),
+				function(val)
+					local disabledItems = EdithRestored:GetDefaultFileSave("DisabledItems")
+					for indexItem, disabledItem in ipairs(disabledItems) do
+						if disabledItem == GetItemsEnum(collectible.ID) then
+							if val then
+								table.remove(disabledItems, indexItem)
+							end
+							break
 						end
-						break
 					end
-				end
 
-				if not val then
-					table.insert(disabledItems, GetItemsEnum(collectible.ID))
-				end
-				EdithRestored.SaveManager.Save()
-			end, true)
+					if not val then
+						table.insert(disabledItems, GetItemsEnum(collectible.ID))
+					end
+					EdithRestored.SaveManager.Save()
+				end,
+				true
+			)
 
 			ImGui.AddCallback(elemName, ImGuiCallback.Render, function()
 				local val = true
-				for indexItem, disabledItem in
-					ipairs(EdithRestored:GetDefaultFileSave("DisabledItems"))
-				do
+				for indexItem, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledItems")) do
 					if disabledItem == GetItemsEnum(collectible.ID) then
 						val = false
 						break
@@ -92,14 +97,14 @@ local function ReOrederItems()
 end
 
 local function UpdateBlackListMenu(show)
-	if not ShowBlackListButton() then 
+	if not ShowBlackListButton() then
 		if ImGui.ElementExists("edithWindowBlacklistItems") then
 			ImGui.RemoveWindow("edithWindowBlacklistItems")
 		end
 		if ImGui.ElementExists("edithMenuBlacklistItems") then
 			ImGui.RemoveElement("edithMenuBlacklistItems")
 		end
-		return 
+		return
 	end
 	if not ImGui.ElementExists("edithMenuBlacklistItems") then
 		ImGui.AddElement("EdithRestored", "edithMenuBlacklistItems", ImGuiElement.MenuItem, "\u{f05e} Items Blacklist")
@@ -117,7 +122,12 @@ local function UpdateBlackListMenu(show)
 	else
 		RemoveBlacklistItems()
 		if not ImGui.ElementExists("edithMenuBlacklistItemsNoWay") then
-			ImGui.AddText("edithWindowBlacklistItems", "Options will be available after loading the game.", true, "edithMenuBlacklistItemsNoWay")
+			ImGui.AddText(
+				"edithWindowBlacklistItems",
+				"Options will be available after loading the game.",
+				true,
+				"edithMenuBlacklistItemsNoWay"
+			)
 		end
 	end
 end
@@ -171,16 +181,8 @@ local function UpdateSettingsMenu(show)
 		end
 
 		ImGui.AddCallback("edithWindowSettings", ImGuiCallback.Render, function()
-			ImGui.UpdateData(
-				"edithPushToSlide",
-				ImGuiData.Value,
-				EdithRestored:GetDefaultFileSave("AllowHolding")
-			)
-			ImGui.UpdateData(
-				"edithAllowBombs",
-				ImGuiData.Value,
-				EdithRestored:GetDefaultFileSave("OnlyStomps")
-			)
+			ImGui.UpdateData("edithPushToSlide", ImGuiData.Value, EdithRestored:GetDefaultFileSave("AllowHolding"))
+			ImGui.UpdateData("edithAllowBombs", ImGuiData.Value, EdithRestored:GetDefaultFileSave("OnlyStomps"))
 			local rgb = EdithRestored:GetDefaultFileSave("TargetColor")
 			ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, { rgb.R / 255, rgb.G / 255, rgb.B / 255 })
 			ImGui.UpdateData(
@@ -213,7 +215,12 @@ local function UpdateSettingsMenu(show)
 		end
 
 		if not ImGui.ElementExists("edithMenuSettingsNoWay") then
-			ImGui.AddText("edithWindowSettings", "Options will be available after loading the game.", true, "edithMenuSettingsNoWay")
+			ImGui.AddText(
+				"edithWindowSettings",
+				"Options will be available after loading the game.",
+				true,
+				"edithMenuSettingsNoWay"
+			)
 		end
 	end
 end
@@ -221,13 +228,17 @@ end
 local function UpdateImGuiMenu(IsDataInitialized)
 	UpdateSettingsMenu(IsDataInitialized)
 	UpdateBlackListMenu(IsDataInitialized)
-	
 end
 
 local function UpdateDebugMode()
 	if EdithRestored.DebugMode then
 		if not ImGui.ElementExists("edithDebugModeSettings") then
-			ImGui.AddElement("EdithRestored", "edithDebugModeSettings", ImGuiElement.MenuItem, "\u{f188} Debug Mode Settings")
+			ImGui.AddElement(
+				"EdithRestored",
+				"edithDebugModeSettings",
+				ImGuiElement.MenuItem,
+				"\u{f188} Debug Mode Settings"
+			)
 		end
 
 		if not ImGui.ElementExists("edithWindowDebugModeSettings") then
@@ -240,18 +251,36 @@ local function UpdateDebugMode()
 			ImGui.RemoveElement("edithDebugModeStompRadius")
 		end
 
-		ImGui.AddSliderInteger("edithWindowDebugModeSettings", "edithDebugModeStompRadius", "Stomp radius", function(newVal)
-			EdithRestored:SetDebugValue("StompRadius", newVal)
-		end, EdithRestored:GetDebugValue("StompRadius"), 30, 100)
+		ImGui.AddSliderInteger(
+			"edithWindowDebugModeSettings",
+			"edithDebugModeStompRadius",
+			"Stomp radius",
+			function(newVal)
+				EdithRestored:SetDebugValue("StompRadius", newVal)
+			end,
+			EdithRestored:GetDebugValue("StompRadius"),
+			30,
+			100
+		)
 
 		if ImGui.ElementExists("edithDebugModeStompRadiusButtonReset") then
 			ImGui.RemoveElement("edithDebugModeStompRadiusButtonReset")
 		end
 
-		ImGui.AddButton("edithWindowDebugModeSettings", "edithDebugModeStompRadiusButtonReset", "Reset", function(newVal)
-			EdithRestored:SetDefaultDebugValue("StompRadius")
-			ImGui.UpdateData("edithDebugModeStompRadius", ImGuiData.Value, EdithRestored:GetDebugValue("StompRadius"))
-		end, false)
+		ImGui.AddButton(
+			"edithWindowDebugModeSettings",
+			"edithDebugModeStompRadiusButtonReset",
+			"Reset",
+			function(newVal)
+				EdithRestored:SetDefaultDebugValue("StompRadius")
+				ImGui.UpdateData(
+					"edithDebugModeStompRadius",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("StompRadius")
+				)
+			end,
+			false
+		)
 
 		if ImGui.ElementExists("edithDebugModeJumpHeight") then
 			ImGui.RemoveElement("edithDebugModeJumpHeight")
@@ -274,62 +303,117 @@ local function UpdateDebugMode()
 			ImGui.RemoveElement("edithDebugModeJumpGravity")
 		end
 
-		ImGui.AddSliderFloat("edithWindowDebugModeSettings", "edithDebugModeJumpGravity", "Jump Gravity", function(newVal)
-			EdithRestored:SetDebugValue("Gravity", newVal)
-		end, EdithRestored:GetDebugValue("Gravity"), 0.1, 5, "%.2f")
+		ImGui.AddSliderFloat(
+			"edithWindowDebugModeSettings",
+			"edithDebugModeJumpGravity",
+			"Jump Gravity",
+			function(newVal)
+				EdithRestored:SetDebugValue("Gravity", newVal)
+			end,
+			EdithRestored:GetDebugValue("Gravity"),
+			0.1,
+			5,
+			"%.2f"
+		)
 
 		if ImGui.ElementExists("edithDebugModeJumpGravityButtonReset") then
 			ImGui.RemoveElement("edithDebugModeJumpGravityButtonReset")
 		end
 
-		ImGui.AddButton("edithWindowDebugModeSettings", "edithDebugModeJumpGravityButtonReset", "Reset", function(newVal)
-			EdithRestored:SetDefaultDebugValue("Gravity")
-			ImGui.UpdateData("edithDebugModeJumpGravity", ImGuiData.Value, EdithRestored:GetDebugValue("Gravity"))
-		end, false)
+		ImGui.AddButton(
+			"edithWindowDebugModeSettings",
+			"edithDebugModeJumpGravityButtonReset",
+			"Reset",
+			function(newVal)
+				EdithRestored:SetDefaultDebugValue("Gravity")
+				ImGui.UpdateData("edithDebugModeJumpGravity", ImGuiData.Value, EdithRestored:GetDebugValue("Gravity"))
+			end,
+			false
+		)
 
 		if ImGui.ElementExists("edithDebugModeJumpLandingIFrames") then
 			ImGui.RemoveElement("edithDebugModeJumpLandingIFrames")
 		end
 
-		ImGui.AddSliderInteger("edithWindowDebugModeSettings", "edithDebugModeJumpLandingIFrames", "Post-landing i-frames", function(newVal)
-			EdithRestored:SetDebugValue("IFrames", newVal)
-		end, EdithRestored:GetDebugValue("IFrames"), 1, 300)
+		ImGui.AddSliderInteger(
+			"edithWindowDebugModeSettings",
+			"edithDebugModeJumpLandingIFrames",
+			"Post-landing i-frames",
+			function(newVal)
+				EdithRestored:SetDebugValue("IFrames", newVal)
+			end,
+			EdithRestored:GetDebugValue("IFrames"),
+			1,
+			300
+		)
 
 		if ImGui.ElementExists("edithDebugModeJumpLandingIFramesButtonReset") then
 			ImGui.RemoveElement("edithDebugModeJumpLandingIFramesButtonReset")
 		end
 
-		ImGui.AddButton("edithWindowDebugModeSettings", "edithDebugModeJumpLandingIFramesButtonReset", "Reset", function(newVal)
-			EdithRestored:SetDefaultDebugValue("IFrames")
-			ImGui.UpdateData("edithDebugModeJumpLandingIFrames", ImGuiData.Value, EdithRestored:GetDebugValue("IFrames"))
-		end, false)
+		ImGui.AddButton(
+			"edithWindowDebugModeSettings",
+			"edithDebugModeJumpLandingIFramesButtonReset",
+			"Reset",
+			function(newVal)
+				EdithRestored:SetDefaultDebugValue("IFrames")
+				ImGui.UpdateData(
+					"edithDebugModeJumpLandingIFrames",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("IFrames")
+				)
+			end,
+			false
+		)
 
 		if ImGui.ElementExists("edithDebugModeJumpLandingIFramesCheck") then
 			ImGui.RemoveElement("edithDebugModeJumpLandingIFramesCheck")
 		end
 
-		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeJumpLandingIFramesCheck", "Use debug i-frames", function(newVal)
-			EdithRestored:SetDebugValue("UseIFrames", newVal)
-		end, EdithRestored:GetDebugValue("UseIFrames"))
+		ImGui.AddCheckbox(
+			"edithWindowDebugModeSettings",
+			"edithDebugModeJumpLandingIFramesCheck",
+			"Use debug i-frames",
+			function(newVal)
+				EdithRestored:SetDebugValue("UseIFrames", newVal)
+			end,
+			EdithRestored:GetDebugValue("UseIFrames")
+		)
 
 		if ImGui.ElementExists("edithDebugModeInstaJumpCharge") then
 			ImGui.RemoveElement("edithDebugModeInstaJumpCharge")
 		end
 
-		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeInstaJumpCharge", "Instant Jump Charge", function(newVal)
-			EdithRestored:SetDebugValue("InstantJumpCharge", newVal)
-		end, EdithRestored:GetDebugValue("InstantJumpCharge"))
+		ImGui.AddCheckbox(
+			"edithWindowDebugModeSettings",
+			"edithDebugModeInstaJumpCharge",
+			"Instant Jump Charge",
+			function(newVal)
+				EdithRestored:SetDebugValue("InstantJumpCharge", newVal)
+			end,
+			EdithRestored:GetDebugValue("InstantJumpCharge")
+		)
 
 		if ImGui.ElementExists("edithDebugModeIgnoreStomp") then
 			ImGui.RemoveElement("edithDebugModeIgnoreStomp")
 		end
 
-		ImGui.AddCheckbox("edithWindowDebugModeSettings", "edithDebugModeIgnoreStomp", "Ignore stomp damage", function(newVal)
-			EdithRestored:SetDebugValue("IgnoreStompDamage", newVal)
-		end, EdithRestored:GetDebugValue("IgnoreStompDamage"))
+		ImGui.AddCheckbox(
+			"edithWindowDebugModeSettings",
+			"edithDebugModeIgnoreStomp",
+			"Ignore stomp damage",
+			function(newVal)
+				EdithRestored:SetDebugValue("IgnoreStompDamage", newVal)
+			end,
+			EdithRestored:GetDebugValue("IgnoreStompDamage")
+		)
 
 		ImGui.UpdateData("edithDebugModeStompRadius", ImGuiData.Value, EdithRestored:GetDebugValue("StompRadius"))
-		ImGui.UpdateData("edithDebugModeInstaJumpCharge", ImGuiData.Value, EdithRestored:GetDebugValue("InstantJumpCharge"))
+		ImGui.UpdateData(
+			"edithDebugModeInstaJumpCharge",
+			ImGuiData.Value,
+			EdithRestored:GetDebugValue("InstantJumpCharge")
+		)
 		ImGui.UpdateData("edithDebugModeJumpHeight", ImGuiData.Value, EdithRestored:GetDebugValue("JumpHeight"))
 		ImGui.UpdateData("edithDebugModeJumpGravity", ImGuiData.Value, EdithRestored:GetDebugValue("Gravity"))
 		ImGui.UpdateData("edithDebugModeIgnoreStomp", ImGuiData.Value, EdithRestored:GetDebugValue("IgnoreStompDamage"))
@@ -359,14 +443,14 @@ local function InitImGuiMenu()
 	if not ImGui.ElementExists("edithMenuUnlocks") then
 		ImGui.AddElement("EdithRestored", "edithMenuUnlocks", ImGuiElement.MenuItem, "\u{f09c} Unlocks")
 	end
-		
+
 	if not ImGui.ElementExists("edithWindowUnlocks") then
 		ImGui.CreateWindow("edithWindowUnlocks", "Edith Unlocks")
 		ImGui.LinkWindowToElement("edithWindowUnlocks", "edithMenuUnlocks")
 	end
-	
+
 	local marksA = EdithRestored.Enums.Achievements.Marks.ASide
-	
+
 	local unlocksMarksA = {
 		[CompletionType.MOMS_HEART] = "Mom's Heart",
 		[CompletionType.ISAAC] = "Isaac",
@@ -382,67 +466,109 @@ local function InitImGuiMenu()
 		[CompletionType.MOTHER] = "Mother",
 		[CompletionType.BEAST] = "Beast",
 	}
-	
+
+	local challenges = {
+		[EdithRestored.Enums.Achievements.Challenges.PEPPERMINT] = "Rocket Laces",
+	}
+
+	local dependants = {
+		[marksA[CompletionType.HUSH]] = EdithRestored.Enums.Achievements.Misc.ROCKET_LACES,
+	}
+
 	if ImGui.ElementExists("edithMarks") then
 		ImGui.RemoveElement("edithMarks")
 	end
 
 	ImGui.AddTabBar("edithWindowUnlocks", "edithMarks")
 	ImGui.AddTab("edithMarks", "edithUnlocksA", "Edith")
-	
+
 	for key, val in pairs(unlocksMarksA) do
 		if ImGui.ElementExists("edithMark" .. key) then
 			ImGui.RemoveElement("edithMark" .. key)
 		end
-	
-		ImGui.AddCombobox("edithUnlocksA", "edithMark" .. key, val, function(index, val)
-			if index == 0 then
-				Isaac.ExecuteCommand("lockachievement " .. marksA[key])
-				Isaac.ExecuteCommand("lockachievement " .. marksA[key])
-			end
-			Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key, index)
-			if index > 0 then
-				if not pgd:Unlocked(EdithRestored.Enums.Achievements.Marks.ASide[key]) then
-					Isaac.ExecuteCommand("achievement " .. marksA[key])
+
+		if marksA[key] then
+			ImGui.AddCombobox("edithUnlocksA", "edithMark" .. key, val, function(index, val)
+				if index == 0 then
+					Isaac.ExecuteCommand("lockachievement " .. marksA[key])
+					if dependants[marksA[key]] then
+						Isaac.ExecuteCommand("lockachievement " .. dependants[marksA[key]])
+					end
 				end
-				if
-					Isaac.AllMarksFilled(EdithRestored.Enums.PlayerType.EDITH) > 0
-					and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-				then
-					Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+				Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key, index)
+				if index > 0 then
+					if not pgd:Unlocked(marksA[key]) then
+						Isaac.ExecuteCommand("achievement " .. marksA[key])
+						if dependants[marksA[key]] then
+							Isaac.ExecuteCommand("achievement " .. dependants[marksA[key]])
+						end
+					end
+					if
+						Isaac.AllMarksFilled(EdithRestored.Enums.PlayerType.EDITH) > 0
+						and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+					then
+						Isaac.ExecuteCommand(
+							"achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH
+						)
+					end
 				end
-			end
-			UpdateBlackListMenu()
-		end, { "None", "Normal", "Hard" }, 0, true)
-		ImGui.AddCallback("edithMark" .. key, ImGuiCallback.Render, function()
-			ImGui.UpdateData(
-				"edithMark" .. key,
-				ImGuiData.Value,
-				Isaac.GetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key)
-			)
-		end)
+				UpdateBlackListMenu()
+			end, { "None", "Normal", "Hard" }, 0, true)
+			ImGui.AddCallback("edithMark" .. key, ImGuiCallback.Render, function()
+				ImGui.UpdateData(
+					"edithMark" .. key,
+					ImGuiData.Value,
+					Isaac.GetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key)
+				)
+			end)
+		end
 	end
-	
+
 	ImGui.AddCombobox("edithUnlocksA", "edithMarkAll", "All Marks", function(index, val)
 		if index < 1 then
 			Isaac.ExecuteCommand("lockachievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
 		elseif not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH) then
 			Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
 			for key, val in pairs(unlocksMarksA) do
-				if not pgd:Unlocked(EdithRestored.Enums.Achievements.Marks.ASide[key]) then
-					Isaac.ExecuteCommand("achievement " .. marksA[key])
-					Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key, 1)
+				if marksA[key] then
+					if not pgd:Unlocked(EdithRestored.Enums.Achievements.Marks.ASide[key]) then
+						Isaac.ExecuteCommand("achievement " .. marksA[key])
+						Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key, 1)
+					end
 				end
 			end
 		end
 		UpdateBlackListMenu()
 	end, { "None", "Unlocked" }, 0, true)
-	
+
 	ImGui.AddCallback("edithMarkAll", ImGuiCallback.Render, function()
 		local unlocked = pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
 		ImGui.UpdateData("edithMarkAll", ImGuiData.Value, unlocked and 1 or 0)
 	end)
-	
+
+	ImGui.AddTab("edithMarks", "edithChallenges", "Challenges")
+
+	for key, val in pairs(challenges) do
+		if ImGui.ElementExists("edithChallenge" .. key) then
+			ImGui.RemoveElement("edithChallenge" .. key)
+		end
+
+		ImGui.AddCombobox("edithChallenges", "edithChallenge" .. key, val, function(index, val)
+			if index == 0 then
+				Isaac.ExecuteCommand("lockachievement " .. key)
+			end
+			if index > 0 then
+				if not pgd:Unlocked(key) then
+					Isaac.ExecuteCommand("achievement " .. key)
+				end
+			end
+			UpdateBlackListMenu()
+		end, { "Locked", "Unlocked" }, 0, true)
+		ImGui.AddCallback("edithChallenge" .. key, ImGuiCallback.Render, function()
+			ImGui.UpdateData("edithChallenge" .. key, ImGuiData.Value, pgd:Unlocked(key) and 1 or 0)
+		end)
+	end
+
 	ImGui.SetWindowSize("edithWindowUnlocks", 800, 650)
 end
 

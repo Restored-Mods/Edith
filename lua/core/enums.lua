@@ -200,7 +200,7 @@ Enums.Achievements.Characters = {
 	--TAINTED =  Isaac.GetAchievementIdByName("Tainted Edith"),
 }
 Enums.Achievements.CompletionMarks = {
-	-- A-side Unlicks
+	-- A-side Unlocks
 	BLASTING_BOOTS =  Isaac.GetAchievementIdByName("Blasting Boots"),
 	SALTY_BABY =  Isaac.GetAchievementIdByName("​Salty Baby"),
 	SALT_SHAKER =  Isaac.GetAchievementIdByName("​Salt Shaker"),
@@ -215,16 +215,14 @@ Enums.Achievements.CompletionMarks = {
 	SODOM =  Isaac.GetAchievementIdByName("​Sodom"),
 	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),
 	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
-	
-	PEPPERMINT =  Isaac.GetAchievementIdByName("​Peppermint"),
 	--REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
 }
 Enums.Achievements.Misc = {
-	
+	ROCKET_LACES = Isaac.GetAchievementIdByName("Rocket Laces"),
 }
 -- Challenges
 Enums.Achievements.Challenges = {
-
+	PEPPERMINT =  Isaac.GetAchievementIdByName("​Peppermint"),
 }
 
 Enums.Achievements.Marks = {
