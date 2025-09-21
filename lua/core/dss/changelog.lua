@@ -1,5 +1,17 @@
 local modname = "Edith Restored"
 
+DeadSeaScrollsMenu.AddChangelog(modname, "v1.1.0", [[{{FSIZE2}}changes
+- salt shaker wisp tear damage
+reduced from 4 to 3
+
+- salt shaker wisp now fires 15%
+fear tear insead of 33% petrify
+tear
+
+{{FSIZE2}}fixes
+- not being able to open doors
+when moving against water current]], {"edith", "restored", "", "v1.1.0", "update"}, true, true)
+
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.0.2", [[{{FSIZE2}}changes
 - salt shaker wisp tear damage
 reduced from 4 to 3
