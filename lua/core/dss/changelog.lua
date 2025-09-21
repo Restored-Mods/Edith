@@ -1,16 +1,21 @@
 local modname = "Edith Restored"
 
-DeadSeaScrollsMenu.AddChangelog(modname, "v1.1.0", [[{{FSIZE2}}changes
-- salt shaker wisp tear damage
-reduced from 4 to 3
+DeadSeaScrollsMenu.AddChangelog(modname, "v1.1.0", [[{{FSIZE2}}added
+- rocket laces challenge
 
-- salt shaker wisp now fires 15%
-fear tear insead of 33% petrify
-tear
+- peppermint collectible
+
+{{FSIZE2}}changes
+
+- edith now starts with 1 bomb
 
 {{FSIZE2}}fixes
-- not being able to open doors
-when moving against water current]], {"edith", "restored", "", "v1.1.0", "update"}, true, true)
+- errors when getting completion
+marks
+
+- having 1.0 movement speed during
+curse of the darkness without
+red hood]], {"edith", "restored", "", "v1.1.0", "update"}, true, true)
 
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.0.2", [[{{FSIZE2}}changes
 - salt shaker wisp tear damage
