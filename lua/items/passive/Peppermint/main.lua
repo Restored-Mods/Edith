@@ -109,6 +109,8 @@ function Peppermint:AddPeppermintCharge(player)
 				speed,
 				player
 			):ToEffect()
+			pepperMintBreath.PositionOffset = Vector(0, -25)
+			pepperMintBreath:GetSprite():Play("Appear", true)
 			pepperMintBreath.CollisionDamage = player.Damage / 3
 			pepperMintBreath:SetTimeout(600)
 		end
@@ -122,11 +124,23 @@ local slowColor = Color(0.7, 0.9, 1, 1, 0, 0, 0)
 
 ---@param cloud EntityEffect
 function Peppermint:CloudUpdate(cloud)
-	if cloud.Timeout <= 0 then
-		cloud:Remove()
+	local sprite = cloud:GetSprite()
+	if sprite:IsFinished("Appear") then	
+		sprite:Play("Idle", true)
 	end
-	if cloud:CollidesWithGrid() and cloud.Timeout > 30 then
-		cloud:SetTimeout(30)
+	if sprite:IsFinished("Disappear") then
+		cloud:Remove()
+		return
+	end
+	if cloud.Timeout <= 0 and not sprite:IsPlaying("Disappear") then
+		sprite:Play("Disappear", true)
+	end
+
+	if sprite:IsPlaying("Disappear") then
+		return
+	end
+	if cloud:CollidesWithGrid() and cloud.Timeout > 15 then
+		cloud:SetTimeout(15)
 	end
 	
 	cloud.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
@@ -163,11 +177,11 @@ EdithRestored:AddCallback(
 
 ---@param cloud EntityEffect
 EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, function(_, cloud)
-	cloud.Color = Color(0.14, 0.91, 1, math.min(1, cloud.Timeout / 30), 0, 0, 0)
-	cloud:GetSprite().Offset = Vector(0, -10)
+	cloud:GetSprite().Offset = Vector(0, 20)
+	cloud.DepthOffset = 3
 	if EdithRestored.DebugMode then
 		local shape = cloud:GetDebugShape(true)
-		local capsule = cloud:GetNullCapsule("cloud")
-		shape:Circle(cloud.Position, capsule:GetF1())
+		local capsule = cloud:GetCollisionCapsule()
+		shape:Circle(cloud.Position + cloud.PositionOffset, capsule:GetF1())
 	end
 end, EdithRestored.Enums.Entities.PEPPERMINT.Variant)
