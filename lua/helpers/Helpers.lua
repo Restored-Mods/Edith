@@ -631,6 +631,20 @@ function Helpers.rangeUp(range, val)
 	return math.max(1.0, newRange) * 40.0
 end
 
+---@param player EntityPlayer
+---@param includeTearDrop boolean?
+---@return number
+function Helpers.GetLuck(player, includeTearDrop)
+	local tearDropLuck = 0
+	if includeTearDrop then
+		tearDropLuck = player:GetTrinketMultiplier(TrinketType.TRINKET_TEARDROP_CHARM) * 2
+		if tearDropLuck > 0 then
+			tearDropLuck = tearDropLuck + 2
+		end
+	end
+	return player.Luck + tearDropLuck
+end
+
 ---@param sound SoundEffect | integer
 ---@param alwaysSfx boolean?
 function Helpers.PlaySND(sound, alwaysSfx)
