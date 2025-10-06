@@ -10,16 +10,6 @@ local Helpers = EdithRestored.Helpers
 	- Ah yeah we need sound effect too
 ]]
 
--- Took from MeleeLib, for change tear Position when moving player's head
--- Conversions between directions to angle degrees
-local DIRECTION_TO_DEGREES = {
-	[Direction.NO_DIRECTION] = 0,
-	[Direction.RIGHT] = 0,
-	[Direction.DOWN] = 90,
-	[Direction.LEFT] = 180,
-	[Direction.UP] = 270,
-}
-
 -- Conversions between directions to vectors.
 local DIRECTION_TO_VECTOR = {
 	[Direction.NO_DIRECTION] = Vector(0, 0),
@@ -113,6 +103,7 @@ function Peppermint:AddPeppermintCharge(player)
 			pepperMintBreath:GetSprite():Play("Appear", true)
 			pepperMintBreath.CollisionDamage = player.Damage / 3
 			pepperMintBreath:SetTimeout(600)
+			SFXManager():Play(EdithRestored.Enums.SFX.PEPPERMINT_BREATH, 0.8, 0, false, 1.0)
 		end
 		data.PeppermintCharge = 0
 		data.LastAimDirection = nil

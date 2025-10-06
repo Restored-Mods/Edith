@@ -24,6 +24,9 @@
 		<sample weight="1" path="redith/Rock_Slide_7.wav" />
 		<sample weight="1" path="redith/Rock_Slide_8.wav" />
 	</sound>
+	<sound name="Peppermint Breath">
+		<sample weight="1" path="redith/peppermintbreath.wav"/>
+	</sound>
 	<sound name="deadseascrolls_pop">
         <sample weight="1" path="deadseascrolls/pop.wav"/>
     </sound>

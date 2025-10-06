@@ -147,6 +147,7 @@ Enums.SFX =
 								ROCK_SLIDE = Isaac.GetSoundIdByName("RockSlide"),
 								WATER_STOMP = Isaac.GetSoundIdByName("stompOnWater"),
 							},
+					PEPPERMINT_BREATH = Isaac.GetSoundIdByName("Peppermint Breath"),
 				}
 
 Enums.GFX = 
