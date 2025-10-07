@@ -1,5 +1,4 @@
 local pgd = Isaac.GetPersistentGameData()
-local Helpers = EdithRestored.Helpers
 
 local orderedItems = {}
 
@@ -521,6 +520,25 @@ local function InitImGuiMenu()
 					Isaac.GetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, key)
 				)
 			end)
+			for _, col in pairs(EdithRestored.Enums.CollectibleType) do
+				local colConf = itemConfig:GetCollectible(col)
+				if colConf then
+					if colConf.AchievementID == marksA[key] then
+						ImGui.SetHelpmarker("edithMark" .. key, "Unlocks "..RemoveZeroWidthSpace(colConf.Name))
+						break
+					end
+				end
+			end
+			for _, trk in pairs(EdithRestored.Enums.TrinketType) do
+				local trkConf = itemConfig:GetTrinket(trk)
+				if trkConf then
+					if trkConf.AchievementID == marksA[key] then
+						ImGui.SetHelpmarker("edithMark" .. key, "Unlocks "..RemoveZeroWidthSpace(trkConf.Name))
+						break
+					end
+				end
+			end
+			--ImGui.SetTooltip()
 		end
 	end
 
@@ -546,6 +564,11 @@ local function InitImGuiMenu()
 		ImGui.UpdateData("edithMarkAll", ImGuiData.Value, unlocked and 1 or 0)
 	end)
 
+	local cardConf = itemConfig:GetCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH)
+	if cardConf then
+		ImGui.SetHelpmarker("edithMarkAll", "Unlocks "..RemoveZeroWidthSpace(cardConf.Name))
+	end
+
 	ImGui.AddTab("edithMarks", "edithChallenges", "Challenges")
 
 	for key, val in pairs(challenges) do
@@ -567,6 +590,24 @@ local function InitImGuiMenu()
 		ImGui.AddCallback("edithChallenge" .. key, ImGuiCallback.Render, function()
 			ImGui.UpdateData("edithChallenge" .. key, ImGuiData.Value, pgd:Unlocked(key) and 1 or 0)
 		end)
+		for _, col in pairs(EdithRestored.Enums.CollectibleType) do
+			local colConf = itemConfig:GetCollectible(col)
+			if colConf then
+				if colConf.AchievementID == key then
+					ImGui.SetHelpmarker("edithChallenge" .. key, "Unlocks "..RemoveZeroWidthSpace(colConf.Name))
+					break
+				end
+			end
+		end
+		for _, trk in pairs(EdithRestored.Enums.TrinketType) do
+			local trkConf = itemConfig:GetTrinket(trk)
+			if trkConf then
+				if trkConf.AchievementID == key then
+					ImGui.SetHelpmarker("edithChallenge" .. key, "Unlocks "..RemoveZeroWidthSpace(trkConf.Name))
+					break
+				end
+			end
+		end
 	end
 
 	ImGui.SetWindowSize("edithWindowUnlocks", 800, 650)
