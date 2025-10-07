@@ -16,8 +16,8 @@ marks
 - smelling salts not being tied
 to achievement
 
-- having 1.0 movement speed during
-curse of the darkness without
+- having minimum 1.0 movement speed
+during curse of the darkness without
 red hood]], {"edith", "restored", "", "v1.1.0", "update"}, true, true)
 
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.0.2", [[{{FSIZE2}}changes
