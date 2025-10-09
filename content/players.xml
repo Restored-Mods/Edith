@@ -3,7 +3,7 @@
          nameimageroot="gfx/ui/boss/">
 	   <player name="Redith" skin="Character_001_Redith.png" modcostume="150" armor="6"
           nameimage="playername_Edith.png" 
-          portrait="playerportrait_Edith_A.png" skinColor="0" costumeSuffix="apollyon"
+          portrait="playerportrait_Edith_A.png" skinColor="0" costumeSuffix="edith"
           birthright="Jump and stomp"
           healthtype="1"
           achievement="Edith"
