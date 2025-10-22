@@ -21,6 +21,23 @@ local DIRECTION_TO_VECTOR = {
 
 local maxCharge = 210
 
+---@return integer
+local function GetMaxCharge()
+	return EdithRestored.DebugMode and EdithRestored:GetDebugValue("PeppermintCharge") or maxCharge
+end
+
+---@param cloud EntityEffect
+---@return Capsule
+local function GetCollisionCapsule(cloud)
+	if EdithRestored.DebugMode then
+		local offset = Vector(EdithRestored:GetDebugValue("PeppermintCloudPosOffsetX"), EdithRestored:GetDebugValue("PeppermintCloudPosOffsetY"))
+		local mult = Vector(EdithRestored:GetDebugValue("PeppermintCloudSizeXMult"), EdithRestored:GetDebugValue("PeppermintCloudSizeYMult"))
+		return Capsule(cloud.Position + offset, mult, 0,  EdithRestored:GetDebugValue("PeppermintCloudSize"))
+	else
+		return cloud:GetCollisionCapsule()
+	end
+end
+
 -- Returns a vector representing the direction the player is aiming at.
 ---@param player EntityPlayer
 ---@return Vector
@@ -57,7 +74,7 @@ function Peppermint:RenderPepperMintCharge(player)
 	HudHelper.RenderChargeBar(
 		data.PeppermintChargeBar,
 		math.max(0, data.PeppermintCharge or 0),
-		maxCharge,
+		GetMaxCharge(),
 		EdithRestored.Room():WorldToScreenPosition(player.Position)
 	)
 end
@@ -85,10 +102,10 @@ function Peppermint:AddPeppermintCharge(player)
 	local isShooting = (shoot.l or shoot.r or shoot.u or shoot.d)
 
 	if isShooting == true then
-		data.PeppermintCharge = math.min(maxCharge, data.PeppermintCharge + 1)
+		data.PeppermintCharge = math.min(GetMaxCharge(), data.PeppermintCharge + 1)
 		data.LastAimDirection = getAimDirection(player)
 	else
-		if data.PeppermintCharge >= maxCharge then
+		if data.PeppermintCharge >= GetMaxCharge() then
 			local lastAimDir = data.LastAimDirection or getAimDirection(player)
 			local speed = lastAimDir:Resized(4)
 			local pepperMintBreath = Isaac.Spawn(
@@ -137,8 +154,9 @@ function Peppermint:CloudUpdate(cloud)
 	cloud.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
 	--cloud.Position = player.Position + getAimDirection(player):Resized(20)
 	local data = EdithRestored:GetData(cloud)
+	local capsule = GetCollisionCapsule(cloud)
 	data.Pushed = data.Pushed or {}
-	for _, obj in ipairs(Isaac.FindInCapsule(cloud:GetCollisionCapsule(), EntityPartition.TEAR)) do
+	for _, obj in ipairs(Isaac.FindInCapsule(capsule, EntityPartition.TEAR)) do
 		if not data.Pushed[GetPtrHash(obj)] then
 			data.Pushed[GetPtrHash(obj)] = true
 			cloud.Velocity = cloud.Velocity + obj.Velocity:Resized(0.5)
@@ -146,15 +164,25 @@ function Peppermint:CloudUpdate(cloud)
 	end
 	cloud.Velocity = Helpers.Lerp(cloud.Velocity, cloud.Velocity:Resized(0.5), 0.3, 0.2)
 	if cloud.Timeout > 10 then
-		local capsule = cloud:GetNullCapsule("cloud")
 		for _, enemy in ipairs(Isaac.FindInCapsule(capsule, EntityPartition.ENEMY)) do
 			-- Make sure it can be hurt.
 			if enemy:IsVulnerableEnemy() and enemy:IsActiveEnemy() then
 				if enemy:GetDamageCountdown() == 0 then
-					enemy:TakeDamage(cloud.CollisionDamage / 3, DamageFlag.DAMAGE_COUNTDOWN, EntityRef(cloud), 10)
-					enemy:AddSlowing(EntityRef(cloud), 20, 0.5, slowColor)
-					enemy:AddIce(EntityRef(cloud), 20)
-					enemy:SetColor(slowColor, enemy:GetSlowingCountdown() + 20, 0, true, false)
+					enemy:TakeDamage(EdithRestored.DebugMode and EdithRestored:GetDebugValue("PeppermintCloudDamage") or cloud.CollisionDamage, DamageFlag.DAMAGE_COUNTDOWN, EntityRef(cloud), 10)
+					if enemy:GetSlowingCountdown() < 90 then
+						enemy:AddSlowing(EntityRef(cloud), 90, 0.5, slowColor)
+						enemy:SetSlowingCountdown(90)
+						enemy:SetColor(slowColor, 90, 0, true, false)
+					else
+						enemy:AddSlowing(EntityRef(cloud), 20, 0.5, slowColor)
+						enemy:SetColor(slowColor, enemy:GetSlowingCountdown() + 20, 0, true, false)
+					end
+					if enemy:GetIceCountdown() < 90 then
+						enemy:AddIce(EntityRef(cloud), 90)
+						enemy:SetIceCountdown(90)
+					else
+						enemy:AddIce(EntityRef(cloud), 20)
+					end
 				end
 			end
 		end
@@ -172,7 +200,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_RENDER, function(_, cloud)
 	cloud.DepthOffset = 3
 	if EdithRestored.DebugMode then
 		local shape = cloud:GetDebugShape(true)
-		local capsule = cloud:GetCollisionCapsule()
-		shape:Circle(cloud.Position + cloud.PositionOffset, capsule:GetF1())
+		local capsule = GetCollisionCapsule(cloud)
+		shape:Capsule(capsule)
 	end
 end, EdithRestored.Enums.Entities.PEPPERMINT.Variant)

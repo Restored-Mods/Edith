@@ -37,14 +37,7 @@ end
 
 local function IsRedMoonPhase()
 	return EdithRestored:RunSave()["MoonPhaseWolf"] == true or EdithRestored.Level():GetCurses() & LevelCurse.CURSE_OF_DARKNESS > 0
-end
-
----@param bool boolean
-local function SetRedMoonPhase(bool)
-	if not IsRedMoonPhase() and bool then
-		SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
-	end
-	EdithRestored:RunSave()["MoonPhaseWolf"] = bool
+	or EdithRestored.DebugMode and EdithRestored:GetDebugValue("AlwaysRedMoon")
 end
 
 local function GetMoonSpritesheetPath()
@@ -58,6 +51,20 @@ local function SetRedMoonPhaseSprites()
 		moonPhaseSpriteStatic:ReplaceSpritesheet(i, GetMoonSpritesheetPath(), true)
 	end
 end
+
+---@param bool boolean
+local function SetRedMoonPhase(bool)
+	if not IsRedMoonPhase() and bool then
+		SFXManager():Play(SoundEffect.SOUND_ISAAC_ROAR, 1, 0, false, 0.7)
+	end
+	EdithRestored:RunSave()["MoonPhaseWolf"] = bool
+	if EdithRestored.DebugMode and EdithRestored:GetDebugValue("AlwaysShowMoonPhase") then
+		SetRedMoonPhaseSprites()
+		moonPhaseSpriteStatic:SetFrame(moonPhaseAnim[GetCurrentMoonPhase()], 15)
+	end
+end
+
+EdithRestored.SetRedMoon = SetRedMoonPhase
 
 local moonPhaseCount = {
 	[1] = 0,
@@ -108,9 +115,14 @@ local function SetMoonPhase(phase, keep, reverse)
 	PlayNewMoonPhase(anim)
 end
 
+EdithRestored.SetMoon = SetMoonPhase
+
 ---@param step integer
 ---@param keep boolean
 local function AdvanceMoonPhase(step, keep)
+	if EdithRestored.DebugMode and EdithRestored:GetDebugValue("DisableMoonProgression") then
+		return
+	end
 	local moonPhase = GetCurrentMoonPhase()
     local reverse = step < 0
 	if step ~= 0 then
@@ -125,6 +137,10 @@ EdithRestored.AdvanceMoon = AdvanceMoonPhase
 local actionPressed = false
 
 function RedHoodLocal:OnMoonPhaseRender()
+	if EdithRestored.DebugMode and EdithRestored:GetDebugValue("AlwaysShowMoonPhase") then
+		moonPhaseSpriteStatic:Render(Vector(Isaac.GetScreenWidth() / 2 - 60, 20))
+		return
+	end
 	local CurrentPhaseAnim = moonPhaseAnim[GetCurrentMoonPhase()]
 	local IsCurrentAnimFinished = moonPhaseSprite:IsFinished(CurrentPhaseAnim) or moonPhaseSprite:IsFinished(CurrentPhaseAnim.."Reverse")
 
@@ -139,10 +155,14 @@ function RedHoodLocal:OnMoonPhaseRender()
 		end
 	end
 end
-mod:AddCallback(ModCallbacks.MC_POST_RENDER, RedHoodLocal.OnMoonPhaseRender)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_RENDER, RedHoodLocal.OnMoonPhaseRender)
 
 function RedHoodLocal:UpdateMoonAnim()
 	moonPhaseSprite:Update()
+	if EdithRestored.DebugMode and EdithRestored:GetDebugValue("AlwaysShowMoonPhase") then
+		moonPhaseAlpha.A = 1
+		moonPhaseSpriteStatic.Color = moonPhaseAlpha
+	end
 	if not PlayerManager.AnyoneHasCollectible(RedhoodItem) then
 		return
 	end
@@ -161,7 +181,7 @@ function RedHoodLocal:UpdateMoonAnim()
 	moonPhaseAlpha.A = Helpers.Clamp(moonPhaseAlpha.A + lerpTo, 0, 1)
 	moonPhaseSpriteStatic.Color = moonPhaseAlpha
 end
-mod:AddCallback(ModCallbacks.MC_POST_UPDATE, RedHoodLocal.UpdateMoonAnim)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_UPDATE, RedHoodLocal.UpdateMoonAnim)
 
 ---@param rng RNG
 function RedHoodLocal:AdvanceMoonPhase(rng)
@@ -359,14 +379,14 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_USE_CARD, RedHoodLocal.UseCard)
 
 -- -- kittenchilly's Mama Mega Greed Mode Buff code
-function EdithRestored:WaveReset()
+function RedHoodLocal:WaveReset()
 	if Game():IsGreedMode() then
 		lastGreedWave = 0
 	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, EdithRestored.WaveReset)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, RedHoodLocal.WaveReset)
 
-function EdithRestored:OnNewGreedWave()
+function RedHoodLocal:OnNewGreedWave()
 	if EdithRestored.Game:IsGreedMode() then
 		local greedModeWave = EdithRestored.Level().GreedModeWave
 
@@ -389,7 +409,7 @@ function EdithRestored:OnNewGreedWave()
 		end
 	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_UPDATE, EdithRestored.OnNewGreedWave)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_UPDATE, RedHoodLocal.OnNewGreedWave)
 
 ---@param player EntityPlayer
 ---@param cache CacheFlag | integer

@@ -432,23 +432,6 @@ local edithdirectory = {
                 nosel = true
             },
             {
-                strset = {'always show', 'moon phase'},
-                choices = {'enable', 'disable'},
-                setting = 1,
-                variable = 'AwaysShowMoonPhase',
-
-                load = function ()
-                    return EdithRestored:GetDefaultFileSave("AlwaysShowMoonPhase") and 1 or 2
-                end,
-
-                store = function(newOption)
-                    EdithRestored:AddDefaultFileSave("AlwaysShowMoonPhase", newOption == 1)
-                    EdithRestored.SaveManager.Save()
-                end,
-
-                tooltip = GenerateTooltip('enable always showing moon phase')
-            },
-            {
                 str = '',
                 fsize = 2,
                 nosel = true

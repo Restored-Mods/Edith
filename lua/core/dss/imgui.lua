@@ -172,23 +172,11 @@ local function UpdateSettingsMenu(show)
 			end, 155 / 255, 0, 0)
 		end]]
 
-		if not ImGui.ElementExists("edithAlwaysShowMoonPhase") then
-			ImGui.AddCheckbox("edithWindowSettings", "edithAlwaysShowMoonPhase", "Always show moon phase", function(val)
-				EdithRestored:AddDefaultFileSave("AlwaysShowMoonPhase", val)
-				EdithRestored.SaveManager.Save()
-			end, true)
-		end
-
 		ImGui.AddCallback("edithWindowSettings", ImGuiCallback.Render, function()
 			ImGui.UpdateData("edithPushToSlide", ImGuiData.Value, EdithRestored:GetDefaultFileSave("AllowHolding"))
 			ImGui.UpdateData("edithAllowBombs", ImGuiData.Value, EdithRestored:GetDefaultFileSave("OnlyStomps"))
 			local rgb = EdithRestored:GetDefaultFileSave("TargetColor")
 			ImGui.UpdateData("edithTargetColorRGB", ImGuiData.ColorValues, { rgb.R / 255, rgb.G / 255, rgb.B / 255 })
-			ImGui.UpdateData(
-				"edithAlwaysShowMoonPhase",
-				ImGuiData.Value,
-				EdithRestored:GetDefaultFileSave("AlwaysShowMoonPhase")
-			)
 		end)
 	else
 		ImGui.RemoveCallback("edithWindowSettings", ImGuiCallback.Render)
@@ -209,16 +197,118 @@ local function UpdateSettingsMenu(show)
 			ImGui.RemoveElement("edithTargetColorRGB")
 		end
 
-		if ImGui.ElementExists("edithAlwaysShowMoonPhase") then
-			ImGui.RemoveElement("edithAlwaysShowMoonPhase")
-		end
-
 		if not ImGui.ElementExists("edithMenuSettingsNoWay") then
 			ImGui.AddText(
 				"edithWindowSettings",
 				"Options will be available after loading the game.",
 				true,
 				"edithMenuSettingsNoWay"
+			)
+		end
+	end
+end
+
+local function RedMoonSilder(bool)
+	if bool and ImGui.ElementExists("edithDebugModeTabRedHood") then
+		if ImGui.ElementExists("edithDebugModeTabRedHoodText") then
+			ImGui.RemoveElement("edithDebugModeTabRedHoodText")
+		end
+		if not ImGui.ElementExists("edithDebugModeTabRedHoodPhase") then
+			ImGui.AddSliderInteger(
+				"edithDebugModeTabRedHood",
+				"edithDebugModeTabRedHoodPhase",
+				"Red Moon phase",
+				function(newVal)
+					EdithRestored.SetRedMoon(newVal == 5 or EdithRestored:GetDebugValue("AlwaysRedMoon"))
+					EdithRestored.SetMoon(
+						newVal,
+						newVal == 5 or EdithRestored:GetDebugValue("AlwaysRedMoon"),
+						EdithRestored:RunSave()["MoonPhase"] > newVal
+					)
+					EdithRestored:RunSave()["MoonPhase"] = newVal
+				end,
+				EdithRestored:RunSave()["MoonPhase"],
+				1,
+				8
+			)
+
+			ImGui.AddCallback("edithDebugModeTabRedHoodPhase", ImGuiCallback.Render, function()
+				ImGui.UpdateData("edithDebugModeTabRedHoodPhase", ImGuiData.Value, EdithRestored:RunSave()["MoonPhase"])
+			end)
+		end
+		if not ImGui.ElementExists("edithDebugModeTabRedHoodAlwaysShowMoonPhase") then
+			ImGui.AddCheckbox(
+				"edithDebugModeTabRedHood",
+				"edithDebugModeTabRedHoodAlwaysShowMoonPhase",
+				"Always show Moon phase",
+				function(newVal)
+					EdithRestored:SetDebugValue("AlwaysShowMoonPhase", newVal)
+					EdithRestored.SetRedMoon(newVal == 5 or EdithRestored:GetDebugValue("AlwaysRedMoon"))
+				end,
+				EdithRestored:GetDebugValue("AlwaysShowMoonPhase")
+			)
+			ImGui.AddCallback("edithDebugModeTabRedHoodAlwaysShowMoonPhase", ImGuiCallback.Render, function()
+				ImGui.UpdateData(
+					"edithDebugModeTabRedHoodAlwaysShowMoonPhase",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("AlwaysShowMoonPhase")
+				)
+			end)
+		end
+		if not ImGui.ElementExists("edithDebugModeTabRedHoodAdvance") then
+			ImGui.AddCheckbox(
+				"edithDebugModeTabRedHood",
+				"edithDebugModeTabRedHoodAdvance",
+				"Disable Moon phase advancement",
+				function(newVal)
+					EdithRestored:SetDebugValue("DisableMoonProgression", newVal)
+				end,
+				EdithRestored:GetDebugValue("DisableMoonProgression")
+			)
+			ImGui.AddCallback("edithDebugModeTabRedHoodAdvance", ImGuiCallback.Render, function()
+				ImGui.UpdateData(
+					"edithDebugModeTabRedHoodAdvance",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("DisableMoonProgression")
+				)
+			end)
+		end
+		if not ImGui.ElementExists("edithDebugModeTabRedHoodAlwaysRedMoon") then
+			ImGui.AddCheckbox(
+				"edithDebugModeTabRedHood",
+				"edithDebugModeTabRedHoodAlwaysRedMoon",
+				"Always Red moon phase",
+				function(newVal)
+					EdithRestored:SetDebugValue("AlwaysRedMoon", newVal)
+					EdithRestored.SetRedMoon(EdithRestored:RunSave()["MoonPhase"] == 5 or newVal)
+				end,
+				EdithRestored:GetDebugValue("AlwaysRedMoon")
+			)
+			ImGui.AddCallback("edithDebugModeTabRedHoodAlwaysRedMoon", ImGuiCallback.Render, function()
+				ImGui.UpdateData(
+					"edithDebugModeTabRedHoodAlwaysRedMoon",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("AlwaysRedMoon")
+				)
+			end)
+		end
+	else
+		for _, text in ipairs({
+			"edithDebugModeTabRedHoodPhase",
+			"edithDebugModeTabRedHoodAlwaysShowMoonPhase",
+			"edithDebugModeTabRedHoodAdvance",
+			"edithDebugModeTabRedHoodAlwaysRedMoon",
+		}) do
+			if ImGui.ElementExists(text) then
+				ImGui.RemoveElement(text)
+			end
+		end
+		if not ImGui.ElementExists("edithDebugModeTabRedHoodText") then
+			ImGui.AddText(
+				"edithDebugModeTabRedHood",
+				"Enter run for options to appear",
+				true,
+				"edithDebugModeTabRedHoodText"
 			)
 		end
 	end
@@ -231,6 +321,7 @@ end
 
 local function UpdateDebugMode()
 	if EdithRestored.DebugMode then
+		--#region Init ImGui menu
 		if not ImGui.ElementExists("edithDebugModeSettings") then
 			ImGui.AddElement(
 				"EdithRestored",
@@ -246,46 +337,30 @@ local function UpdateDebugMode()
 			ImGui.SetWindowSize("edithWindowDebugModeSettings", 800, 350)
 		end
 
-		if ImGui.ElementExists("edithDebugModeStompRadius") then
-			ImGui.RemoveElement("edithDebugModeStompRadius")
+		if ImGui.ElementExists("edithDebugModeTabBar") then
+			ImGui.RemoveElement("edithDebugModeTabBar")
 		end
 
-		ImGui.AddSliderInteger(
-			"edithWindowDebugModeSettings",
-			"edithDebugModeStompRadius",
-			"Stomp radius",
-			function(newVal)
-				EdithRestored:SetDebugValue("StompRadius", newVal)
-			end,
-			EdithRestored:GetDebugValue("StompRadius"),
-			30,
-			100
-		)
+		ImGui.AddTabBar("edithWindowDebugModeSettings", "edithDebugModeTabBar")
 
-		if ImGui.ElementExists("edithDebugModeStompRadiusButtonReset") then
-			ImGui.RemoveElement("edithDebugModeStompRadiusButtonReset")
-		end
+		ImGui.AddTab("edithDebugModeTabBar", "edithDebugModeTabEdith", "Edith")
+		ImGui.AddTab("edithDebugModeTabBar", "edithDebugModeTabPeppermintCloud", "Peppermint Cloud")
+		ImGui.AddTab("edithDebugModeTabBar", "edithDebugModeTabRedHood", "Red Hood")
+		ImGui.AddTab("edithDebugModeTabBar", "edithDebugModeTabMisc", "Miscellaneous")
 
-		ImGui.AddButton(
-			"edithWindowDebugModeSettings",
-			"edithDebugModeStompRadiusButtonReset",
-			"Reset",
-			function(newVal)
-				EdithRestored:SetDefaultDebugValue("StompRadius")
-				ImGui.UpdateData(
-					"edithDebugModeStompRadius",
-					ImGuiData.Value,
-					EdithRestored:GetDebugValue("StompRadius")
-				)
-			end,
-			false
-		)
+		--#endregion
 
-		if ImGui.ElementExists("edithDebugModeJumpHeight") then
-			ImGui.RemoveElement("edithDebugModeJumpHeight")
-		end
+		--#region Edith specific
+		ImGui.AddSliderInteger("edithDebugModeTabEdith", "edithDebugModeStompRadius", "Stomp radius", function(newVal)
+			EdithRestored:SetDebugValue("StompRadius", newVal)
+		end, EdithRestored:GetDebugValue("StompRadius"), 30, 100)
 
-		ImGui.AddSliderFloat("edithWindowDebugModeSettings", "edithDebugModeJumpHeight", "Jump Height", function(newVal)
+		ImGui.AddButton("edithDebugModeTabEdith", "edithDebugModeStompRadiusButtonReset", "Reset", function(newVal)
+			EdithRestored:SetDefaultDebugValue("StompRadius")
+			ImGui.UpdateData("edithDebugModeStompRadius", ImGuiData.Value, EdithRestored:GetDebugValue("StompRadius"))
+		end, false)
+
+		ImGui.AddSliderFloat("edithDebugModeTabEdith", "edithDebugModeJumpHeight", "Jump Height", function(newVal)
 			EdithRestored:SetDebugValue("JumpHeight", newVal)
 		end, EdithRestored:GetDebugValue("JumpHeight"), 1, 10, "%.2f")
 
@@ -293,49 +368,22 @@ local function UpdateDebugMode()
 			ImGui.RemoveElement("edithDebugModeJumpHeightButtonReset")
 		end
 
-		ImGui.AddButton("edithWindowDebugModeSettings", "edithDebugModeJumpHeightButtonReset", "Reset", function(newVal)
+		ImGui.AddButton("edithDebugModeTabEdith", "edithDebugModeJumpHeightButtonReset", "Reset", function(newVal)
 			EdithRestored:SetDefaultDebugValue("JumpHeight")
 			ImGui.UpdateData("edithDebugModeJumpHeight", ImGuiData.Value, EdithRestored:GetDebugValue("JumpHeight"))
 		end, false)
 
-		if ImGui.ElementExists("edithDebugModeJumpGravity") then
-			ImGui.RemoveElement("edithDebugModeJumpGravity")
-		end
+		ImGui.AddSliderFloat("edithDebugModeTabEdith", "edithDebugModeJumpGravity", "Jump Gravity", function(newVal)
+			EdithRestored:SetDebugValue("Gravity", newVal)
+		end, EdithRestored:GetDebugValue("Gravity"), 0.1, 5, "%.2f")
 
-		ImGui.AddSliderFloat(
-			"edithWindowDebugModeSettings",
-			"edithDebugModeJumpGravity",
-			"Jump Gravity",
-			function(newVal)
-				EdithRestored:SetDebugValue("Gravity", newVal)
-			end,
-			EdithRestored:GetDebugValue("Gravity"),
-			0.1,
-			5,
-			"%.2f"
-		)
-
-		if ImGui.ElementExists("edithDebugModeJumpGravityButtonReset") then
-			ImGui.RemoveElement("edithDebugModeJumpGravityButtonReset")
-		end
-
-		ImGui.AddButton(
-			"edithWindowDebugModeSettings",
-			"edithDebugModeJumpGravityButtonReset",
-			"Reset",
-			function(newVal)
-				EdithRestored:SetDefaultDebugValue("Gravity")
-				ImGui.UpdateData("edithDebugModeJumpGravity", ImGuiData.Value, EdithRestored:GetDebugValue("Gravity"))
-			end,
-			false
-		)
-
-		if ImGui.ElementExists("edithDebugModeJumpLandingIFrames") then
-			ImGui.RemoveElement("edithDebugModeJumpLandingIFrames")
-		end
+		ImGui.AddButton("edithDebugModeTabEdith", "edithDebugModeJumpGravityButtonReset", "Reset", function(newVal)
+			EdithRestored:SetDefaultDebugValue("Gravity")
+			ImGui.UpdateData("edithDebugModeJumpGravity", ImGuiData.Value, EdithRestored:GetDebugValue("Gravity"))
+		end, false)
 
 		ImGui.AddSliderInteger(
-			"edithWindowDebugModeSettings",
+			"edithDebugModeTabEdith",
 			"edithDebugModeJumpLandingIFrames",
 			"Post-landing i-frames",
 			function(newVal)
@@ -346,12 +394,8 @@ local function UpdateDebugMode()
 			300
 		)
 
-		if ImGui.ElementExists("edithDebugModeJumpLandingIFramesButtonReset") then
-			ImGui.RemoveElement("edithDebugModeJumpLandingIFramesButtonReset")
-		end
-
 		ImGui.AddButton(
-			"edithWindowDebugModeSettings",
+			"edithDebugModeTabEdith",
 			"edithDebugModeJumpLandingIFramesButtonReset",
 			"Reset",
 			function(newVal)
@@ -365,12 +409,8 @@ local function UpdateDebugMode()
 			false
 		)
 
-		if ImGui.ElementExists("edithDebugModeJumpLandingIFramesCheck") then
-			ImGui.RemoveElement("edithDebugModeJumpLandingIFramesCheck")
-		end
-
 		ImGui.AddCheckbox(
-			"edithWindowDebugModeSettings",
+			"edithDebugModeTabEdith",
 			"edithDebugModeJumpLandingIFramesCheck",
 			"Use debug i-frames",
 			function(newVal)
@@ -379,12 +419,8 @@ local function UpdateDebugMode()
 			EdithRestored:GetDebugValue("UseIFrames")
 		)
 
-		if ImGui.ElementExists("edithDebugModeInstaJumpCharge") then
-			ImGui.RemoveElement("edithDebugModeInstaJumpCharge")
-		end
-
 		ImGui.AddCheckbox(
-			"edithWindowDebugModeSettings",
+			"edithDebugModeTabEdith",
 			"edithDebugModeInstaJumpCharge",
 			"Instant Jump Charge",
 			function(newVal)
@@ -393,19 +429,9 @@ local function UpdateDebugMode()
 			EdithRestored:GetDebugValue("InstantJumpCharge")
 		)
 
-		if ImGui.ElementExists("edithDebugModeIgnoreStomp") then
-			ImGui.RemoveElement("edithDebugModeIgnoreStomp")
-		end
-
-		ImGui.AddCheckbox(
-			"edithWindowDebugModeSettings",
-			"edithDebugModeIgnoreStomp",
-			"Ignore stomp damage",
-			function(newVal)
-				EdithRestored:SetDebugValue("IgnoreStompDamage", newVal)
-			end,
-			EdithRestored:GetDebugValue("IgnoreStompDamage")
-		)
+		ImGui.AddCheckbox("edithDebugModeTabEdith", "edithDebugModeIgnoreStomp", "Ignore stomp damage", function(newVal)
+			EdithRestored:SetDebugValue("IgnoreStompDamage", newVal)
+		end, EdithRestored:GetDebugValue("IgnoreStompDamage"))
 
 		ImGui.UpdateData("edithDebugModeStompRadius", ImGuiData.Value, EdithRestored:GetDebugValue("StompRadius"))
 		ImGui.UpdateData(
@@ -413,9 +439,238 @@ local function UpdateDebugMode()
 			ImGuiData.Value,
 			EdithRestored:GetDebugValue("InstantJumpCharge")
 		)
+
 		ImGui.UpdateData("edithDebugModeJumpHeight", ImGuiData.Value, EdithRestored:GetDebugValue("JumpHeight"))
 		ImGui.UpdateData("edithDebugModeJumpGravity", ImGuiData.Value, EdithRestored:GetDebugValue("Gravity"))
 		ImGui.UpdateData("edithDebugModeIgnoreStomp", ImGuiData.Value, EdithRestored:GetDebugValue("IgnoreStompDamage"))
+
+		--#endregion
+
+		--#region Peppermint specific
+		ImGui.AddSliderInteger(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintCharge",
+			"Peppermint Max Charge",
+			function(newVal)
+				EdithRestored:SetDebugValue("PeppermintCharge", newVal)
+			end,
+			EdithRestored:GetDebugValue("PeppermintCharge"),
+			1,
+			210
+		)
+
+		ImGui.AddButton(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintChargeReset",
+			"Reset",
+			function(newVal)
+				EdithRestored:SetDefaultDebugValue("PeppermintCharge")
+				ImGui.UpdateData(
+					"edithDebugModePeppermintCharge",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("PeppermintCharge")
+				)
+			end,
+			false
+		)
+
+		ImGui.UpdateData(
+			"edithDebugModePeppermintCharge",
+			ImGuiData.Value,
+			EdithRestored:GetDebugValue("PeppermintCharge")
+		)
+
+		ImGui.AddSliderInteger(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintCloudSize",
+			"Peppermint Cloud Size",
+			function(newVal)
+				EdithRestored:SetDebugValue("PeppermintCloudSize", newVal)
+			end,
+			EdithRestored:GetDebugValue("PeppermintCloudSize"),
+			1,
+			100
+		)
+
+		ImGui.AddButton(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintCloudSizeReset",
+			"Reset",
+			function(newVal)
+				EdithRestored:SetDefaultDebugValue("PeppermintCloudSize")
+				ImGui.UpdateData(
+					"edithDebugModePeppermintCloudSize",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("PeppermintCloudSize")
+				)
+			end,
+			false
+		)
+		ImGui.UpdateData(
+			"edithDebugModePeppermintCloudSize",
+			ImGuiData.Value,
+			EdithRestored:GetDebugValue("PeppermintCloudSize")
+		)
+
+		ImGui.AddSliderInteger(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintCloudPosOffsetX",
+			"Peppermint Cloud Position X Offset",
+			function(newVal)
+				EdithRestored:SetDebugValue("PeppermintCloudPosOffsetX", newVal)
+			end,
+			EdithRestored:GetDebugValue("PeppermintCloudPosOffsetX"),
+			-100,
+			100
+		)
+		ImGui.UpdateData(
+			"edithDebugModePeppermintCloudPosOffsetX",
+			ImGuiData.Value,
+			EdithRestored:GetDebugValue("PeppermintCloudPosOffsetX")
+		)
+
+		ImGui.AddSliderInteger(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintCloudPosOffsetY",
+			"Peppermint Cloud Position Y Offset",
+			function(newVal)
+				EdithRestored:SetDebugValue("PeppermintCloudPosOffsetY", newVal)
+			end,
+			EdithRestored:GetDebugValue("PeppermintCloudPosOffsetY"),
+			-100,
+			100
+		)
+
+		ImGui.AddButton(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintCloudPosOffsetReset",
+			"Reset",
+			function(newVal)
+				EdithRestored:SetDefaultDebugValue("PeppermintCloudPosOffsetX")
+				EdithRestored:SetDefaultDebugValue("PeppermintCloudPosOffsetY")
+				ImGui.UpdateData(
+					"edithDebugModePeppermintCloudPosOffsetX",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("PeppermintCloudPosOffsetX")
+				)
+				ImGui.UpdateData(
+					"edithDebugModePeppermintCloudPosOffsetY",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("PeppermintCloudPosOffsetY")
+				)
+			end,
+			false
+		)
+		ImGui.UpdateData(
+			"edithDebugModePeppermintCloudPosOffsetY",
+			ImGuiData.Value,
+			EdithRestored:GetDebugValue("PeppermintCloudPosOffsetY")
+		)
+
+		ImGui.AddSliderFloat(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintCloudSizeXMult",
+			"Peppermint Cloud Position X Offset",
+			function(newVal)
+				EdithRestored:SetDebugValue("PeppermintCloudSizeXMult", newVal)
+			end,
+			EdithRestored:GetDebugValue("PeppermintCloudSizeXMult"),
+			0.1,
+			5
+		)
+		ImGui.UpdateData(
+			"edithDebugModePeppermintCloudSizeXMult",
+			ImGuiData.Value,
+			EdithRestored:GetDebugValue("PeppermintCloudSizeXMult")
+		)
+
+		ImGui.AddSliderFloat(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintCloudSizeYMult",
+			"Peppermint Cloud Position Y Offset",
+			function(newVal)
+				EdithRestored:SetDebugValue("PeppermintCloudSizeYMult", newVal)
+			end,
+			EdithRestored:GetDebugValue("PeppermintCloudSizeYMult"),
+			0.1,
+			5
+		)
+
+		ImGui.AddButton(
+			"edithDebugModeTabPeppermintCloud",
+			"edithDebugModePeppermintCloudSizeMultReset",
+			"Reset",
+			function(newVal)
+				EdithRestored:SetDefaultDebugValue("PeppermintCloudSizeXMult")
+				EdithRestored:SetDefaultDebugValue("PeppermintCloudPosOffsetY")
+				ImGui.UpdateData(
+					"edithDebugModePeppermintCloudSizeXMult",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("PeppermintCloudSizeXMult")
+				)
+				ImGui.UpdateData(
+					"edithDebugModePeppermintCloudSizeYMult",
+					ImGuiData.Value,
+					EdithRestored:GetDebugValue("PeppermintCloudSizeYMult")
+				)
+			end,
+			false
+		)
+		ImGui.UpdateData(
+			"edithDebugModePeppermintCloudSizeYMult",
+			ImGuiData.Value,
+			EdithRestored:GetDebugValue("PeppermintCloudSizeYMult")
+		)
+
+		--#endregion
+
+		--#region Misc specific
+		ImGui.AddSliderInteger(
+			"edithDebugModeTabMisc",
+			"edithDebugModeBlastingBootsCd",
+			"Blasting Boots cooldown",
+			function(newVal)
+				EdithRestored:SetDebugValue("BlastingBootsCd", newVal)
+			end,
+			EdithRestored:GetDebugValue("BlastingBootsCd"),
+			30,
+			150
+		)
+
+		ImGui.AddButton("edithDebugModeTabMisc", "edithDebugModeBlastingBootsCdReset", "Reset", function(newVal)
+			EdithRestored:SetDefaultDebugValue("BlastingBootsCd")
+			ImGui.UpdateData(
+				"edithDebugModeBlastingBootsCd",
+				ImGuiData.Value,
+				EdithRestored:GetDebugValue("BlastingBootsCd")
+			)
+		end, false)
+		ImGui.UpdateData(
+			"edithDebugModeBlastingBootsCd",
+			ImGuiData.Value,
+			EdithRestored:GetDebugValue("BlastingBootsCd")
+		)
+
+		ImGui.AddCheckbox(
+			"edithDebugModeTabMisc",
+			"edithDebugModeBlastingBootsDisable",
+			"Disable Blasting Boots cooldown",
+			function(newVal)
+				EdithRestored:SetDebugValue("BlastingBootsDisable", newVal)
+			end,
+			EdithRestored:GetDebugValue("BlastingBootsDisable")
+		)
+		ImGui.UpdateData(
+			"edithDebugModeBlastingBootsDisable",
+			ImGuiData.Value,
+			EdithRestored:GetDebugValue("BlastingBootsDisable")
+		)
+		--#endregion
+
+		--#region Red Hood specific
+
+		RedMoonSilder(EdithRestored.SaveManager.IsLoaded())
+		--#endregion
 		ImGui.SetVisible("edithWindowDebugModeSettings", true)
 	else
 		if ImGui.ElementExists("edithDebugModeSettings") then
@@ -524,7 +779,7 @@ local function InitImGuiMenu()
 				local colConf = itemConfig:GetCollectible(col)
 				if colConf then
 					if colConf.AchievementID == marksA[key] then
-						ImGui.SetHelpmarker("edithMark" .. key, "Unlocks "..RemoveZeroWidthSpace(colConf.Name))
+						ImGui.SetHelpmarker("edithMark" .. key, "Unlocks " .. RemoveZeroWidthSpace(colConf.Name))
 						break
 					end
 				end
@@ -533,7 +788,7 @@ local function InitImGuiMenu()
 				local trkConf = itemConfig:GetTrinket(trk)
 				if trkConf then
 					if trkConf.AchievementID == marksA[key] then
-						ImGui.SetHelpmarker("edithMark" .. key, "Unlocks "..RemoveZeroWidthSpace(trkConf.Name))
+						ImGui.SetHelpmarker("edithMark" .. key, "Unlocks " .. RemoveZeroWidthSpace(trkConf.Name))
 						break
 					end
 				end
@@ -566,7 +821,7 @@ local function InitImGuiMenu()
 
 	local cardConf = itemConfig:GetCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH)
 	if cardConf then
-		ImGui.SetHelpmarker("edithMarkAll", "Unlocks "..RemoveZeroWidthSpace(cardConf.Name))
+		ImGui.SetHelpmarker("edithMarkAll", "Unlocks " .. RemoveZeroWidthSpace(cardConf.Name))
 	end
 
 	ImGui.AddTab("edithMarks", "edithChallenges", "Challenges")
@@ -594,7 +849,7 @@ local function InitImGuiMenu()
 			local colConf = itemConfig:GetCollectible(col)
 			if colConf then
 				if colConf.AchievementID == key then
-					ImGui.SetHelpmarker("edithChallenge" .. key, "Unlocks "..RemoveZeroWidthSpace(colConf.Name))
+					ImGui.SetHelpmarker("edithChallenge" .. key, "Unlocks " .. RemoveZeroWidthSpace(colConf.Name))
 					break
 				end
 			end
@@ -603,7 +858,7 @@ local function InitImGuiMenu()
 			local trkConf = itemConfig:GetTrinket(trk)
 			if trkConf then
 				if trkConf.AchievementID == key then
-					ImGui.SetHelpmarker("edithChallenge" .. key, "Unlocks "..RemoveZeroWidthSpace(trkConf.Name))
+					ImGui.SetHelpmarker("edithChallenge" .. key, "Unlocks " .. RemoveZeroWidthSpace(trkConf.Name))
 					break
 				end
 			end
@@ -645,6 +900,14 @@ EdithRestored:AddPriorityCallback(ModCallbacks.MC_MAIN_MENU_RENDER, CallbackPrio
 ---@param completion CompletionType
 EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, completion)
 	UpdateBlackListMenu(Isaac.IsInGame())
+end)
+
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, 1000, function()
+	RedMoonSilder(EdithRestored.SaveManager.IsLoaded())
+end)
+
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_PRE_GAME_EXIT, -1000, function()
+	RedMoonSilder(false)
 end)
 
 EdithRestored:AddCallback(ModCallbacks.MC_EXECUTE_CMD, function(_, cmd, args)
