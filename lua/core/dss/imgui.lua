@@ -303,7 +303,7 @@ local function RedMoonSilder(bool)
 				ImGui.RemoveElement(text)
 			end
 		end
-		if not ImGui.ElementExists("edithDebugModeTabRedHoodText") then
+		if not ImGui.ElementExists("edithDebugModeTabRedHoodText") and ImGui.ElementExists("edithDebugModeTabRedHood") then
 			ImGui.AddText(
 				"edithDebugModeTabRedHood",
 				"Enter run for options to appear",
