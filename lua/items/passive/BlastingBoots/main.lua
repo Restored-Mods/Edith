@@ -43,6 +43,10 @@ EdithRestored:AddCallback(
 	{ Item = BlastBootsID }
 )
 
+local function GetCooldown()
+	return EdithRestored.DebugMode and EdithRestored:GetDebugValue("BlastingBootsCd") or 150
+end
+
 ---@param player EntityPlayer
 function BlastBoots:AntiSoftlock(player)
 	if not player:HasCollectible(BlastBootsID) then
@@ -51,7 +55,12 @@ function BlastBoots:AntiSoftlock(player)
 	local playerData = EdithRestored:GetData(player)
 	local movDir = player:GetMovementDirection()
 
-	playerData.Antisoftlocktimer = playerData.Antisoftlocktimer or 150
+	if EdithRestored.DebugMode and EdithRestored:GetDebugValue("BlastingBootsDisable") then
+		playerData.Antisoftlocktimer = nil
+		return
+	end
+
+	playerData.Antisoftlocktimer = playerData.Antisoftlocktimer or GetCooldown()
 
 	if
 		not (
@@ -60,7 +69,7 @@ function BlastBoots:AntiSoftlock(player)
 			and not playerData.EdithTargetMovementPosition
 		)
 	then
-		playerData.Antisoftlocktimer = 150
+		playerData.Antisoftlocktimer = GetCooldown()
 		return
 	end
 
@@ -75,7 +84,7 @@ function BlastBoots:AntiSoftlock(player)
 	if timer ~= 0 then
 		return
 	end
-	playerData.Antisoftlocktimer = 150
+	playerData.Antisoftlocktimer = GetCooldown()
 	JumpLib:Jump(player, BootsJumpInfo)
 
 	---@diagnostic disable-next-line: param-type-mismatch

@@ -45,7 +45,6 @@ EdithRestored:AddCallback(EdithRestored.SaveManager.SaveCallbacks.PRE_DATA_LOAD,
             ["TargetColor"] = {R = 155, G = 0, B = 0},
             ["AllowHolding"] = true,
             ["DisabledItems"] = {},
-            ["AlwaysShowMoonPhase"] = 2,
 		}
 		for k,v in pairs(settings) do
 			if data.file.other[k] == nil then

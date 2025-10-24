@@ -17,6 +17,7 @@ local runData = {
 
 EdithRestored.DebugMode = false
 local DebugModeValues = {
+	--Edith
 	StompRadius = 65,
 	InstantJumpCharge = true,
 	JumpHeight = 4,
@@ -24,9 +25,24 @@ local DebugModeValues = {
 	IFrames = 30,
 	UseIFrames = false,
 	IgnoreStompDamage = false,
+	--Peppermint
+	PeppermintCharge = 210,
+	PeppermintCloudSize = 20,
+	PeppermintCloudPosOffsetX = 0,
+	PeppermintCloudPosOffsetY = -25,
+	PeppermintCloudSizeXMult = 1,
+	PeppermintCloudSizeYMult = 1,
+	--Misc
+	BlastingBootsCd = 150,
+	BlastingBootsDisable = false,
+	--Red Hood
+	AlwaysRedMoon = false,
+	DisableMoonProgression = false,
+	AlwaysShowMoonPhase = false,
 }
 
 local DebugModeValuesDefault = {
+	--Edith
 	StompRadius = 65,
 	InstantJumpCharge = true,
 	JumpHeight = 4,
@@ -34,6 +50,20 @@ local DebugModeValuesDefault = {
 	IFrames = 30,
 	UseIFrames = false,
 	IgnoreStompDamage = false,
+	--Peppermint
+	PeppermintCharge = 210,
+	PeppermintCloudSize = 20,
+	PeppermintCloudPosOffsetX = 0,
+	PeppermintCloudPosOffsetY = -25,
+	PeppermintCloudSizeXMult = 1,
+	PeppermintCloudSizeYMult = 1,
+	--Misc
+	BlastingBootsCd = 150,
+	BlastingBootsDisable = false,
+	--Red Hood
+	AlwaysRedMoon = false,
+	DisableMoonProgression = false,
+	AlwaysShowMoonPhase = false,
 }
 
 EdithRestored.SaveManager.Utility.AddDefaultRunData(EdithRestored.SaveManager.DefaultSaveKeys.GLOBAL, runData)
