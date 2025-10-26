@@ -22,6 +22,7 @@ include("lua.core.BlockDisabledItems")
 
 --entities
 include("lua.entities.player.main")
+include("lua.entities.player.tainted")
 include("lua.entities.clots.main")
 
 --items

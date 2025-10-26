@@ -1,5 +1,6 @@
 local Helpers = EdithRestored.Helpers
 local sfx = SFXManager()
+local mod = EdithRestored
 
 local SlideColors = {
 	Water = {
@@ -31,6 +32,9 @@ local function IsChap4()
 	return Chap4Backdrops[backdrop] or false 
 end
 
+
+---@param player EntityPlayer
+---@return boolean
 local function IsPureEdith(player)
 	return Helpers.IsPlayerEdith(player, true, false)
 end
@@ -109,16 +113,21 @@ local function GetJumpMultStats(player)
 	return heightMult, gravityMult
 end
 
+---@param tear EntityTear
 local function ChangeToEdithTear(tear)
 	tear:ChangeVariant(TearVariant.ROCK)
+
+	local tearColor = tear.Color
+	local parentColor = tear.Parent.Color
+
 	tear.Color = Color(
-		tear.Color.R + 0.8 + (tear.Parent.Color.R - 1),
-		tear.Color.G + 1 + (tear.Parent.Color.G - 1),
-		tear.Color.B + 1 + (tear.Parent.Color.B - 1),
-		tear.Color.A + (tear.Parent.Color.A - 1),
-		tear.Color.RO + tear.Parent.Color.RO,
-		tear.Color.GO + tear.Parent.Color.GO,
-		tear.Color.BO + tear.Parent.Color.BO
+		tearColor.R + 0.8 + (parentColor.R - 1),
+		tearColor.G + 1 + (parentColor.G - 1),
+		tearColor.B + 1 + (parentColor.B - 1),
+		tearColor.A + (parentColor.A - 1),
+		tearColor.RO + parentColor.RO,
+		tearColor.GO + parentColor.GO,
+		tearColor.BO + parentColor.BO
 	)
 end
 
@@ -235,313 +244,374 @@ local function CheckEdithsCollisionWithSlots(player, data)
 	data.EdithTargetMovementPosition = nil
 end
 
+local function EdithJupiterEffect(player, data)
+	if not player:HasCollectible(CollectibleType.COLLECTIBLE_JUPITER) then return end
+	local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_JUPITER)
+
+	local smokeNum = rng:RandomInt(3) + 1
+
+	for _ = 1, smokeNum, 1 do
+		local randomVel = rng:RandomFloat() * 2 - 1
+		local spawningVel
+		if data.EdithTargetMovementDirection.X == 0 then
+			spawningVel = Vector(randomVel, -data.EdithTargetMovementDirection.Y)
+		else
+			spawningVel = Vector(-data.EdithTargetMovementDirection.X, randomVel)
+		end
+
+		local smokeCloud = TSIL.EntitySpecific.SpawnEffect(
+			EffectVariant.SMOKE_CLOUD,
+			0,
+			player.Position,
+			spawningVel:Normalized() * 10,
+			player
+		)
+		local randomScale = rng:RandomFloat() * 0.3
+		smokeCloud.SpriteScale = Vector(0.5 + randomScale, 0.5 + randomScale)
+		smokeCloud:SetTimeout(70)
+	end
+
+	local particleNum = rng:RandomInt(4) + 2
+	for _ = 1, particleNum, 1 do
+		local randomVel = rng:RandomFloat() * 1 - 0.5
+		local spawningVel
+		if data.EdithTargetMovementDirection.X == 0 then
+			spawningVel = Vector(randomVel, -data.EdithTargetMovementDirection.Y)
+		else
+			spawningVel = Vector(-data.EdithTargetMovementDirection.X, randomVel)
+		end
+
+		local waterParticle = TSIL.EntitySpecific.SpawnEffect(
+			EffectVariant.WATER_SPLASH,
+			1,
+			player.Position,
+			spawningVel:Normalized() * 10,
+			player
+		)
+		local randomScale = rng:RandomFloat() * 0.3
+		waterParticle.SpriteScale = Vector(2 + randomScale, 2 + randomScale)
+		waterParticle:SetTimeout(10)
+		waterParticle:GetSprite().Color = Color(0.3, 0.42, 0.25)
+	end
+
+	sfx:Play(SoundEffect.SOUND_FART)
+end
+
 ---@param player EntityPlayer
-local function EdithGridMovement(player, data)
-	local firstFrameOfMovement = false
+---@param directionStuff number
+local function EdithSlideEffects(player, directionStuff)
+	local dustVelocity = (-player.Velocity):Normalized() * 10
+	local bdType = EdithRestored.Room():GetBackdropType()
+	local chap4 = IsChap4()
+	local slideSound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or EdithRestored.Enums.SFX.Edith.ROCK_SLIDE
+	local HasWater = EdithRestored.Room():HasWater()
+	local variant = HasWater and EffectVariant.BIG_SPLASH or (
+		chap4 and EffectVariant.POOF02 or EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant
+	)
+	local subtype = HasWater and 1 or (chap4 and 3 or 0)
+	local scale = {
+		X = (((not HasWater and chap4) and 0.4) or 1) * directionStuff,
+		Y = ((not HasWater and chap4) and 0.25) or 1
+	}
 
-	if (player.ControlsEnabled ~= true or Helpers.IsMenuing()) and not data.EdithTargetMovementPosition then
-		return
+	local slideGFX = Isaac.Spawn(
+		EntityType.ENTITY_EFFECT,
+		variant,
+		subtype,
+		player.Position,
+		Vector.Zero,
+		nil
+	)
+
+	slideGFX.SpriteScale = Vector(scale.X, scale.Y) * player.SpriteScale.X
+
+	if not HasWater and not chap4 then
+		slideGFX.Velocity = dustVelocity
 	end
 
-	local effects = player:GetEffects()
-	local hasMarsEffect = effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)
-	local hasMegaMush = effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
+	local tableColorTarget = HasWater and SlideColors.Water or (chap4 and SlideColors.Flesh)
 
-	local playerSprite = player:GetSprite()
-	if playerSprite:IsPlaying("EdithJump") or playerSprite:IsPlaying("EdithJumpQuick")
-	or playerSprite:IsPlaying("EdithJumpBig") or playerSprite:IsPlaying("EdithJumpBigQuick")
-	or playerSprite:IsPlaying("EdithPitFall") or playerSprite:IsPlaying("EdithPitFallBig") then
-		return
+	if tableColorTarget then
+		slideGFX.Color = (tableColorTarget[bdType] or tableColorTarget.Default)
 	end
 
-	if not data.EdithTargetMovementPosition and Helpers.CanMove(player) and not hasMegaMush then
-		--If EdithTargetMovementPosition is nil, it means we are not moving
-		--Calculate movement direction
-		local controllerIndex = player.ControllerIndex
+	sfx:Play(slideSound)
+	EdithRestored.Game:ShakeScreen(1)
 
-		local isPressingLeft
-		local isPressingRight
-		local isPressingUp
-		local isPressingDown
-		local allowHolding = EdithRestored:GetDefaultFileSave("AllowHolding")
+	-- local rockParticleVelocity = Vector(0, 0)
 
-		if allowHolding == true then
-			isPressingLeft = Input.IsActionPressed(ButtonAction.ACTION_LEFT, controllerIndex)
-			isPressingRight = Input.IsActionPressed(ButtonAction.ACTION_RIGHT, controllerIndex)
-			isPressingUp = Input.IsActionPressed(ButtonAction.ACTION_UP, controllerIndex)
-			isPressingDown = Input.IsActionPressed(ButtonAction.ACTION_DOWN, controllerIndex)
-		elseif allowHolding ~= true then
-			isPressingLeft = Input.IsActionTriggered(ButtonAction.ACTION_LEFT, controllerIndex)
-			isPressingRight = Input.IsActionTriggered(ButtonAction.ACTION_RIGHT, controllerIndex)
-			isPressingUp = Input.IsActionTriggered(ButtonAction.ACTION_UP, controllerIndex)
-			isPressingDown = Input.IsActionTriggered(ButtonAction.ACTION_DOWN, controllerIndex)
-		end
+	-- if math.random(2) == 2 then
+	-- 	rockParticleVelocity = - (player.Velocity:Rotated(45) / 2)
+	-- else
+	-- 	rockParticleVelocity = - (player.Velocity:Rotated(-45) / 2)
+	-- end
 
-		if data.InputBuffer then
-			isPressingLeft = isPressingLeft or data.InputBuffer.input == ButtonAction.ACTION_LEFT
-			isPressingRight = isPressingRight or data.InputBuffer.input == ButtonAction.ACTION_RIGHT
-			isPressingUp = isPressingUp or data.InputBuffer.input == ButtonAction.ACTION_UP
-			isPressingDown = isPressingDown or data.InputBuffer.input == ButtonAction.ACTION_DOWN
+	-- local rockParticleSpawn = player.Position - player.Velocity / 2
+	-- rockParticleSpawn = rockParticleSpawn + Vector(0, 20)
 
-			data.InputBuffer = nil
-		end
+	-- local rockParticle = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 0,
+	-- rockParticleSpawn, rockParticleVelocity, nil)
+	-- rockParticle:SetColor(player.Color, -1, -20, false, true)
 
-		--If we're not pressing anything, return
-		if not isPressingLeft and not isPressingRight and not isPressingUp and not isPressingDown then
-			return
-		end
+	-- rockParticle.DepthOffset = -20
+end
 
-		local room = EdithRestored.Room()
-		local clampedPlayerPos = room:GetGridPosition(room:GetGridIndex(player.Position))
-		local targetMovementPosition
-		local targetMovementDirection
-		local mirrorWorldReverser = Helpers.InMirrorWorld() and -1 or 1
+local JumpAnims = {
+	["EdithJump"] = true,
+	["EdithJumpQuick"] = true,
+	["EdithJumpBig"] = true,
+	["EdithJumpBigQuick"] = true,
+	["EdithPitFall"] = true,
+	["EdithPitFallBig"] = true,
+}
 
+---@param playerSprite Sprite
+---@return boolean
+local function IsEdithPlayingAJumpAnim(playerSprite)
+	local anim = playerSprite
+
+	return JumpAnims[anim] or false
+end
+
+---@param player EntityPlayer
+---@param data table
+local function EdithTriggerSlide(player, data, gridMult, forcedDir)
+
+	local isPressingLeft
+	local isPressingRight
+	local isPressingUp
+	local isPressingDown
+	local controllerIndex = player.ControllerIndex
+	local allowHolding = IsPureEdith(player) and EdithRestored:GetDefaultFileSave("AllowHolding")
+
+	-- I can't believe this actually works
+	local ActionFunc = allowHolding and Input.IsActionPressed or Input.IsActionTriggered
+
+	isPressingLeft = ActionFunc(ButtonAction.ACTION_LEFT, controllerIndex)
+	isPressingRight = ActionFunc(ButtonAction.ACTION_RIGHT, controllerIndex)
+	isPressingUp = ActionFunc(ButtonAction.ACTION_UP, controllerIndex)
+	isPressingDown = ActionFunc(ButtonAction.ACTION_DOWN, controllerIndex)
+
+	if data.InputBuffer  then
+		isPressingLeft = isPressingLeft or data.InputBuffer.input == ButtonAction.ACTION_LEFT
+		isPressingRight = isPressingRight or data.InputBuffer.input == ButtonAction.ACTION_RIGHT
+		isPressingUp = isPressingUp or data.InputBuffer.input == ButtonAction.ACTION_UP
+		isPressingDown = isPressingDown or data.InputBuffer.input == ButtonAction.ACTION_DOWN
+
+		data.InputBuffer = nil
+	end
+
+	-- There's really a need to return if we aren't pressing anything??
+	--If we're not pressing anything, return
+	-- if not isPressingLeft and not isPressingRight and not isPressingUp and not isPressingDown then
+	-- 	return
+	-- end
+
+	local room = EdithRestored.Room()
+	local clampedPlayerPos = room:GetGridPosition(room:GetGridIndex(player.Position))
+	local targetMovementPosition
+	local targetMovementDirection
+	local mirrorWorldReverser = Helpers.InMirrorWorld() and -1 or 1
+	local gridMove = 40 * Helpers.Round(gridMult, 0)
+
+	if forcedDir then
+		local params = {
+			[ButtonAction.ACTION_LEFT] = {
+				GridMove = Vector(-gridMove, 0) * mirrorWorldReverser,
+				Direction = Vector(-1, 0)
+			},
+			[ButtonAction.ACTION_RIGHT] = {
+				GridMove = Vector(gridMove, 0) * mirrorWorldReverser,
+				Direction = Vector(1, 0)
+			},
+			[ButtonAction.ACTION_UP] = {
+				GridMove = Vector(0, -gridMove),
+				Direction = Vector(0, -1)
+			},
+			[ButtonAction.ACTION_DOWN] = {
+				GridMove = Vector(0, gridMove),
+				Direction = Vector(0, 1)
+			},
+		}
+
+		local ButtomParams = params[forcedDir]
+
+		targetMovementPosition = clampedPlayerPos + ButtomParams.GridMove
+		targetMovementDirection = ButtomParams.Direction
+	else
 		if isPressingLeft then
-			targetMovementPosition = clampedPlayerPos + Vector(-40, 0) * mirrorWorldReverser
+			targetMovementPosition = clampedPlayerPos + Vector(-gridMove, 0) * mirrorWorldReverser
 			targetMovementDirection = Vector(-1, 0)
 		elseif isPressingRight then
-			targetMovementPosition = clampedPlayerPos + Vector(40, 0) * mirrorWorldReverser
+			targetMovementPosition = clampedPlayerPos + Vector(gridMove, 0) * mirrorWorldReverser
 			targetMovementDirection = Vector(1, 0)
 		elseif isPressingDown then
-			targetMovementPosition = clampedPlayerPos + Vector(0, 40)
+			targetMovementPosition = clampedPlayerPos + Vector(0, gridMove)
 			targetMovementDirection = Vector(0, 1)
 		elseif isPressingUp then
-			targetMovementPosition = clampedPlayerPos + Vector(0, -40)
+			targetMovementPosition = clampedPlayerPos + Vector(0, -gridMove)
 			targetMovementDirection = Vector(0, -1)
 		end
-
-		data.EdithTargetMovementPosition = targetMovementPosition
-		data.EdithTargetMovementDirection = targetMovementDirection
-
-		data.PreLastEdithPosition = nil
-		data.LastEdithPosition = nil
-
-		if player:HasCollectible(CollectibleType.COLLECTIBLE_JUPITER) then
-			local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_JUPITER)
-
-			local smokeNum = rng:RandomInt(3) + 1
-
-			for _ = 1, smokeNum, 1 do
-				local randomVel = rng:RandomFloat() * 2 - 1
-				local spawningVel
-				if data.EdithTargetMovementDirection.X == 0 then
-					spawningVel = Vector(randomVel, -data.EdithTargetMovementDirection.Y)
-				else
-					spawningVel = Vector(-data.EdithTargetMovementDirection.X, randomVel)
-				end
-
-				local smokeCloud = TSIL.EntitySpecific.SpawnEffect(
-					EffectVariant.SMOKE_CLOUD,
-					0,
-					player.Position,
-					spawningVel:Normalized() * 10,
-					player
-				)
-				local randomScale = rng:RandomFloat() * 0.3
-				smokeCloud.SpriteScale = Vector(0.5 + randomScale, 0.5 + randomScale)
-				smokeCloud:SetTimeout(70)
-			end
-
-			local particleNum = rng:RandomInt(4) + 2
-			for _ = 1, particleNum, 1 do
-				local randomVel = rng:RandomFloat() * 1 - 0.5
-				local spawningVel
-				if data.EdithTargetMovementDirection.X == 0 then
-					spawningVel = Vector(randomVel, -data.EdithTargetMovementDirection.Y)
-				else
-					spawningVel = Vector(-data.EdithTargetMovementDirection.X, randomVel)
-				end
-
-				local waterParticle = TSIL.EntitySpecific.SpawnEffect(
-					EffectVariant.WATER_SPLASH,
-					1,
-					player.Position,
-					spawningVel:Normalized() * 10,
-					player
-				)
-				local randomScale = rng:RandomFloat() * 0.3
-				waterParticle.SpriteScale = Vector(2 + randomScale, 2 + randomScale)
-				waterParticle:SetTimeout(10)
-				waterParticle:GetSprite().Color = Color(0.3, 0.42, 0.25)
-			end
-
-			sfx:Play(SoundEffect.SOUND_FART)
-		end
-
-		firstFrameOfMovement = true
 	end
 
-	if data.EdithTargetMovementPosition then
-		if not player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and not EdithRestored.Game:IsPaused() then
-			data.EdithJumpCharge = math.max(0, data.EdithJumpCharge - JumpCharge / 2)
-		end
+	EdithJupiterEffect(player, data)
 
-		if not hasMarsEffect and data.HadMarsEffect then
-			data.EdithTargetMovementPosition = nil
-		end
+	data.EdithTargetMovementPosition = targetMovementPosition
+	data.EdithTargetMovementDirection = targetMovementDirection
 
-		if not Helpers.CanMove(player) or hasMegaMush then
-			data.EdithTargetMovementPosition = nil
+	-- data.PreLastEdithPosition = nil
+	-- data.LastEdithPosition = nil
+end
+
+local function EdithSliding(player, data, hasMarsEffect, hasMegaMush, speedBase, firstFrameOfMovement)
+	local effects = player:GetEffects()
+
+	if IsPureEdith(player) and not player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and not EdithRestored.Game:IsPaused() then
+		data.EdithJumpCharge = math.max(0, data.EdithJumpCharge - JumpCharge / 2)
+	end
+
+	if not hasMarsEffect and data.HadMarsEffect then
+		data.EdithTargetMovementPosition = nil
+	end
+
+	if not Helpers.CanMove(player) or hasMegaMush then
+		data.EdithTargetMovementPosition = nil
+		player.Velocity = Vector.Zero
+		return
+	end
+
+	--If EdithTargetMovementPosition is not nil, we are moving
+	--Handle her velocity
+	local velocityMagnitude = speedBase * player.MoveSpeed
+	if hasMarsEffect then
+		velocityMagnitude = velocityMagnitude * 3
+		local velocityDirection = (data.EdithTargetMovementDirection):Normalized()
+		local vel = velocityDirection * velocityMagnitude
+		if IsPlayerOnGravityGrid(player) then
+			player.Velocity.X = vel.X
+		else
+			player.Velocity = vel
+		end
+	elseif data.EdithTargetMovementPosition then
+		if IsPlayerOnGravityGrid(player, data.EdithTargetMovementPosition) then
+			data.EdithTargetMovementPosition.Y = player.Position.Y
+			player.Velocity.Y = Helpers.Lerp(player.Velocity.Y, 1, 0.1)
+		end
+		local velocityDirection = (data.EdithTargetMovementPosition - player.Position):Normalized()
+		local distanceToTarget = player.Position:DistanceSquared(data.EdithTargetMovementPosition)
+
+		if distanceToTarget < 5 then
+			player.Position = data.EdithTargetMovementPosition
 			player.Velocity = Vector.Zero
-			return
+			data.TriggerMove = false
+			data.EdithTargetMovementPosition = nil
+		elseif (velocityMagnitude * velocityMagnitude) > distanceToTarget then
+			--We squared the distace before dummy
+			player.Velocity = velocityDirection * math.sqrt(distanceToTarget)
+		else
+			player.Velocity = velocityDirection * velocityMagnitude
 		end
+	end
 
-		--If EdithTargetMovementPosition is not nil, we are moving
-		--Handle her velocity
-		local velocityMagnitude = 5 * player.MoveSpeed
-		if hasMarsEffect then
-			velocityMagnitude = velocityMagnitude * 3
-			local velocityDirection = (data.EdithTargetMovementDirection):Normalized()
-			local vel = velocityDirection * velocityMagnitude
-			if IsPlayerOnGravityGrid(player) then
-				player.Velocity.X = vel.X
-			else
-				player.Velocity = vel
-			end
-		elseif data.EdithTargetMovementPosition then
-			if IsPlayerOnGravityGrid(player, data.EdithTargetMovementPosition) then
-				data.EdithTargetMovementPosition.Y = player.Position.Y
-				player.Velocity.Y = Helpers.Lerp(player.Velocity.Y, 1, 0.1)
-			end
-			local velocityDirection = (data.EdithTargetMovementPosition - player.Position):Normalized()
-			local distanceToTarget = player.Position:DistanceSquared(data.EdithTargetMovementPosition)
+	CheckEdithsCollisionWithGrid(player, data)
 
-			if distanceToTarget < 5 then
-				player.Position = data.EdithTargetMovementPosition
-				player.Velocity = Vector.Zero
-				data.EdithTargetMovementPosition = nil
-			elseif (velocityMagnitude * velocityMagnitude) > distanceToTarget then
-				--We squared the distace before dummy
-				player.Velocity = velocityDirection * math.sqrt(distanceToTarget)
-			else
-				player.Velocity = velocityDirection * velocityMagnitude
-			end
-		end
+	if not firstFrameOfMovement then
+		--Don't check for slot collission the first frame, so we can use them and move away
+		CheckEdithsCollisionWithSlots(player, data)
+	end
 
-		CheckEdithsCollisionWithGrid(player, data)
+	local MovementDir = data.EdithTargetMovementDirection
+	local directionStuff = (MovementDir.X == -1 or MovementDir.Y == -1) and -1 or 1
 
-		if not firstFrameOfMovement then
-			--Don't check for slot collission the first frame, so we can use them and move away
-			CheckEdithsCollisionWithSlots(player, data)
-		end
+	if data.EdithTargetMovementPosition and not player:IsFlying() and firstFrameOfMovement then
+		EdithSlideEffects(player, directionStuff)
+	end
 
-		local MovementDir = data.EdithTargetMovementDirection
-		local directionStuff = (MovementDir.X == -1 or MovementDir.Y == -1) and -1 or 1
+	--Store last input in a buffer
+	if not firstFrameOfMovement then
+		--We need to check if it's the first frame of movement because we'd be recording the first input twice
+		local controllerIndex = player.ControllerIndex
 
-		if data.EdithTargetMovementPosition and not player:IsFlying() then
-			if firstFrameOfMovement then
-				local dustVelocity = (-player.Velocity):Normalized() * 10
-				local bdType = EdithRestored.Room():GetBackdropType()
-				local chap4 = IsChap4()
-				local slideSound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or EdithRestored.Enums.SFX.Edith.ROCK_SLIDE
-				local HasWater = EdithRestored.Room():HasWater()
-				local variant = HasWater and EffectVariant.BIG_SPLASH or (
-					chap4 and EffectVariant.POOF02 or EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant
-				)
-				local subtype = HasWater and 1 or (chap4 and 3 or 0)
-				local scale = {
-					X = (((not HasWater and chap4) and 0.4) or 1) * directionStuff,
-					Y = ((not HasWater and chap4) and 0.25) or 1
-				}
+		local isPressingLeft = Input.IsActionTriggered(ButtonAction.ACTION_LEFT, controllerIndex)
+		local isPressingRight = Input.IsActionTriggered(ButtonAction.ACTION_RIGHT, controllerIndex)
+		local isPressingUp = Input.IsActionTriggered(ButtonAction.ACTION_UP, controllerIndex)
+		local isPressingDown = Input.IsActionTriggered(ButtonAction.ACTION_DOWN, controllerIndex)
 
-				local slideGFX = Isaac.Spawn(
-					EntityType.ENTITY_EFFECT,
-					variant,
-					subtype,
-					player.Position,
-					Vector.Zero,
-					nil
-				)
+		if isPressingLeft then
+			data.InputBuffer = { input = ButtonAction.ACTION_LEFT, frame = 5 }
+		elseif isPressingRight then
+			data.InputBuffer = { input = ButtonAction.ACTION_RIGHT, frame = 5 }
+		elseif isPressingUp then
+			data.InputBuffer = { input = ButtonAction.ACTION_UP, frame = 5 }
+		elseif isPressingDown then
+			data.InputBuffer = { input = ButtonAction.ACTION_DOWN, frame = 5 }
+		elseif data.InputBuffer then
+			data.InputBuffer.frame = data.InputBuffer.frame - 1
 
-				slideGFX.SpriteScale = Vector(scale.X, scale.Y) * player.SpriteScale.X
-
-				if not HasWater and not chap4 then
-					slideGFX.Velocity = dustVelocity
-				end
-
-				local tableColorTarget = HasWater and SlideColors.Water or (chap4 and SlideColors.Flesh)
-
-				if tableColorTarget then
-					slideGFX.Color = (tableColorTarget[bdType] or tableColorTarget.Default)
-				end
-
-				sfx:Play(slideSound)
-				EdithRestored.Game:ShakeScreen(1)
-			end
-
-			-- if EdithRestored.Game:GetFrameCount() % 6 == 0 then
-			-- local rockParticleVelocity = Vector(0, 0)
-
-			-- if math.random(2) == 2 then
-			-- rockParticleVelocity = - (player.Velocity:Rotated(45) / 2)
-			-- else
-			-- rockParticleVelocity = - (player.Velocity:Rotated(-45) / 2)
-			-- end
-
-			-- local rockParticleSpawn = player.Position - player.Velocity / 2
-			-- rockParticleSpawn = rockParticleSpawn + Vector(0, 20)
-
-			-- local rockParticle = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TOOTH_PARTICLE, 0,
-			-- rockParticleSpawn, rockParticleVelocity, nil)
-			-- rockParticle:SetColor(player.Color, -1, -20, false, true)
-
-			-- rockParticle.DepthOffset = -20
-			-- end
-		end
-
-		--Store last input in a buffer
-		if not firstFrameOfMovement then
-			--We need to check if it's the first frame of movement because we'd be recording the first input twice
-			local controllerIndex = player.ControllerIndex
-
-			local isPressingLeft = Input.IsActionTriggered(ButtonAction.ACTION_LEFT, controllerIndex)
-			local isPressingRight = Input.IsActionTriggered(ButtonAction.ACTION_RIGHT, controllerIndex)
-			local isPressingUp = Input.IsActionTriggered(ButtonAction.ACTION_UP, controllerIndex)
-			local isPressingDown = Input.IsActionTriggered(ButtonAction.ACTION_DOWN, controllerIndex)
-
-			if isPressingLeft then
-				data.InputBuffer = { input = ButtonAction.ACTION_LEFT, frame = 5 }
-			elseif isPressingRight then
-				data.InputBuffer = { input = ButtonAction.ACTION_RIGHT, frame = 5 }
-			elseif isPressingUp then
-				data.InputBuffer = { input = ButtonAction.ACTION_UP, frame = 5 }
-			elseif isPressingDown then
-				data.InputBuffer = { input = ButtonAction.ACTION_DOWN, frame = 5 }
-			elseif data.InputBuffer then
-				data.InputBuffer.frame = data.InputBuffer.frame - 1
-
-				if data.InputBuffer == 0 then
-					data.InputBuffer = nil
-				end
-			end
-
-			--Also check if we moved
-			if
-				player.Position:DistanceSquared(data.LastEdithPosition) <= 0.1
-				or (
-					data.PreLastEdithPosition
-					and (
-						player.Position:DistanceSquared(data.PreLastEdithPosition) <= 0.1
-						or data.LastEdithPosition:DistanceSquared(data.PreLastEdithPosition)
-						<= math.min(player.MoveSpeed * 2.5, 2)
-					)
-				)
-			then
-				--If we barely moved between 2 frames, cancel the movement
-				data.EdithTargetMovementPosition = nil
+			if data.InputBuffer == 0 then
+				data.InputBuffer = nil
 			end
 		end
 
-		data.PreLastEdithPosition = data.LastEdithPosition
-		data.LastEdithPosition = player.Position
+		--Also check if we moved
+		-- if
+		-- 	player.Position:DistanceSquared(data.LastEdithPosition) <= 0.1
+		-- 	or (
+		-- 		data.PreLastEdithPosition
+		-- 		and (
+		-- 			player.Position:DistanceSquared(data.PreLastEdithPosition) <= 0.1
+		-- 			or data.LastEdithPosition:DistanceSquared(data.PreLastEdithPosition)
+		-- 			<= math.min(player.MoveSpeed * 2.5, 2)
+		-- 		)
+		-- 	)
+		-- then
+		-- 	--If we barely moved between 2 frames, cancel the movement
+		-- 	data.EdithTargetMovementPosition = nil
+		-- end
+	end
 
-		if not data.EdithTargetMovementPosition then
-			effects:RemoveCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)
-		end
+	data.PreLastEdithPosition = data.LastEdithPosition
+	data.LastEdithPosition = player.Position
+
+	if not data.EdithTargetMovementPosition then
+		effects:RemoveCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)
+	end
+end
+
+---@param player EntityPlayer
+function EdithRestored:EdithGridMovement(player, data, speedBase, gridMult, forcedDir)
+	local firstFrameOfMovement = false
+	local MovementPos = data.EdithTargetMovementPosition
+	local effects = player:GetEffects()
+
+	if (player.ControlsEnabled ~= true or Helpers.IsMenuing()) and not MovementPos then return end
+	
+	local hasMarsEffect = effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)
+	local hasMegaMush = effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH)
+	local playerSprite = player:GetSprite()
+
+	if IsEdithPlayingAJumpAnim(playerSprite) then return end
+
+	data.SlideCounter = data.SlideCounter or 0
+
+	if data.EdithTargetMovementPosition then	
+		data.SlideCounter = data.SlideCounter + 1
+	else 
+		data.SlideCounter = 0
+	end	
+
+	firstFrameOfMovement = data.SlideCounter == 1
+
+	if (not MovementPos and Helpers.CanMove(player) and not hasMegaMush) then
+		EdithTriggerSlide(player, data, gridMult, forcedDir)
+	end
+
+	if MovementPos then
+		EdithSliding(player, data, hasMarsEffect, hasMegaMush, speedBase, firstFrameOfMovement)
 	end
 
 	data.HadMarsEffect = hasMarsEffect
+	-- data.TriggerMove = false	
 end
 
 --- Is this a Tainted Edith function??
@@ -807,6 +877,21 @@ local function EdithTrapdoorManager(player, sprite, data, room)
 	end
 end
 
+local jumpAnims = {
+	["EdithJump"] = true,
+	["EdithJumpBig"] = true
+}
+
+---@param sprite Sprite
+---@return boolean
+local function isEdithAnimJumping(sprite)
+	local anim = sprite:GetAnimation()
+	local isJumpAnim = jumpAnims[anim] or false
+
+	return (isJumpAnim) and not sprite:IsEventTriggered("EdithLanding") 
+	or anim == "EdithJumpQuick" or anim:match("EdithPitFall") == "EdithPitFall"
+end
+
 ---@param sprite Sprite
 ---@param data table
 ---@return boolean
@@ -818,9 +903,7 @@ end
 
 local function EdithLandManager(player, data)
 	local IFrames = data.PostLandingKill and 25 or 10
-	for _, callback in
-	ipairs(Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_LANDING_IFRAMES))
-	do
+	for _, callback in ipairs(Isaac.GetCallbacks(EdithRestored.Enums.Callbacks.ON_EDITH_STOMP_LANDING_IFRAMES)) do
 		local ret = callback.Function(
 			callback.Mod,
 			player,
@@ -844,11 +927,95 @@ local function EdithLandManager(player, data)
 end
 
 ---@param player EntityPlayer
+---@param data table
+---@return boolean
+local function CanUseRocketJump(player, data)
+	return (
+		data.BombStomp and
+		player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR) and
+		(player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_BOMBS) or Helpers.HasBombs(player))
+	)
+end
+
+---@param player EntityPlayer
+---@param sprite Sprite
+---@param data table
+local function EdithJumpAlt(player, sprite, data)
+	if not (sprite:IsEventTriggered("EdithJumpStart") and JumpLib:CanJump(player)) then return end
+
+	local currentAnimation = sprite:GetAnimation()
+	local currentFrame = sprite:GetFrame()
+	local hasBombs = Helpers.HasBombs(player)
+	local hasBloodBombs = player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_BOMBS)
+	local heightMult, gravityMult = GetJumpMultStats(player)
+	local jumpTag = CanUseRocketJump(player, data) and "EdithRocketJump" or "EdithJump"
+	
+	if (not data.BombStomp) and hasBloodBombs and jumpTag == "EdithRocketJump" and not hasBombs then
+		player:TakeDamage(1, DamageFlag.DAMAGE_IV_BAG | DamageFlag.DAMAGE_INVINCIBLE, EntityRef(nil), 60)
+		player:PlayExtraAnimation(currentAnimation)
+		sprite:SetFrame(currentFrame)
+	end
+	
+	JumpLib:Jump(player, {
+		Height = Helpers.GetJumpHeight() * heightMult,
+		Speed = Helpers.GetJumpGravity() * gravityMult,
+		Flags = JumpLib.Flags.NO_HURT_PITFALL
+			| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
+			| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING
+			| JumpLib.Flags.DISABLE_COOL_BOMBS
+			| JumpLib.Flags.KNIFE_DISABLE_ENTCOLL,
+		Tags = { jumpTag },
+	})
+end
+
+---@param player EntityPlayer
+---@param sprite Sprite
+---@param data table
+local function EdithJumpMove(player, sprite, data)
+	if not data.TargetJumpPos then return end
+	if not (sprite:IsEventTriggered("EdithJumpStart") and not CanUseRocketJump(player, data)) then return end
+
+	local anim = sprite:GetAnimation()
+
+	if anim == "EdithJumpBig" or anim == "EdithPitFallBig" then
+		player.Velocity = Vector.Zero
+		player.Position = data.TargetJumpPos
+	else
+		local posDif = data.TargetJumpPos - player.Position
+		player.Velocity = (posDif):Normalized() * (posDif):Length() / 7.7
+	end
+end
+
+---@param player EntityPlayer
+---@param sprite Sprite
+---@param data table
+---@param room Room
+local function EdithJumpGridManager(player, sprite, data, room)
+	local grid = room:GetGridEntityFromPos(player.Position)
+	if not grid then return end
+	if sprite:GetFrame() <= 14 then return end
+	if not (
+		grid:GetType() == GridEntityType.GRID_TRAPDOOR and
+		grid.State == 1 and
+		(player.Position - grid.Position):Length() <= 30
+	) then return end
+
+	player.Velocity = Vector.Zero
+	player.Position = grid.Position
+	player.ControlsEnabled = true
+	player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
+	player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS
+		or EntityGridCollisionClass.GRIDCOLL_GROUND
+	player:StopExtraAnimation()
+
+	data.TrapDoorFallFrame = sprite:GetAnimation():match("Big") == "Big"
+	data.TargetJumpPos = nil
+
+	Helpers.RemoveEdithTarget(player)
+end
+
+---@param player EntityPlayer
 function Player:OnUpdatePlayer(player)
-	-- if Helpers.IsPlayerEdith(player, false, true) then
-	-- 	player:ChangePlayerType(EdithRestored.Enums.PlayerType.EDITH)
-	-- 	player:EvaluateItems()
-	-- end
 	if not IsPureEdith(player) then return end
 	local dataP = EdithRestored:RunSave(player)
 
@@ -856,7 +1023,6 @@ function Player:OnUpdatePlayer(player)
 	local data = EdithRestored:GetData(player)
 	local sprite = player:GetSprite()
 	local room = EdithRestored.Room()
-	local MinJumpCharge = MinJumpVal
 	local jumpData = JumpLib:GetData(player)
 	local isJumping = jumpData.Jumping
 
@@ -874,124 +1040,31 @@ function Player:OnUpdatePlayer(player)
 	---@diagnostic disable-next-line: undefined-field
 	player:SetGnawedLeafTimer(0)
 	if JumpLib:CanJump(player) then
-		EdithGridMovement(player, data)
+		mod:EdithGridMovement(player, data, 5, 1)
 	end
 
-	
 	data.EdithJumpCharge = data.EdithJumpCharge or 0
-	
-	EdithBombLandSetter(player, data)
-	EdithBobbyBombsInteraction(player, isJumping, data)
 
 	if ShouldChargeEdithJump(sprite, isJumping) then
 		EdithJumpChargeManager(player, data)
 	end
 
-	EdithTeleportManager(player, sprite)
-	EdithTargetManager(player, data)
-	EdithTrapdoorManager(player, sprite, data, room)
+	if isEdithAnimJumping(sprite) then
+		EdithJumpAlt(player, sprite, data)
+		EdithJumpMove(player, sprite, data)
+		EdithJumpGridManager(player, sprite, data, room)
+	end		
 
 	if DidEdithLanded(sprite, data) then
 		EdithLandManager(player, data)
 	end
-	
-	if
-		(sprite:GetAnimation() == "EdithJump" or sprite:GetAnimation() == "EdithJumpBig") and not sprite:IsEventTriggered("EdithLanding")
-		or sprite:GetAnimation() == "EdithJumpQuick" or sprite:GetAnimation():match("EdithPitFall") == "EdithPitFall"
-	then
-		if sprite:IsEventTriggered("EdithJumpStart") and JumpLib:CanJump(player) then
-			local jumpTag = (
-					data.BombStomp ~= nil
-					and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
-					and (player:GetNumBombs() > 0 or player:HasGoldenBomb() or player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_BOMBS))
-				)
-				and "EdithRocketJump"
-				or "EdithJump"
-				local currentAnimation = sprite:GetAnimation()
-				local currentFrame = sprite:GetFrame()
-				if data.BombStomp ~= nil and player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_BOMBS)
-				and jumpTag == "EdithRocketJump" and not Helpers.HasBombs(player)
-					then
-						player:TakeDamage(1, DamageFlag.DAMAGE_IV_BAG | DamageFlag.DAMAGE_INVINCIBLE, EntityRef(nil), 60)
-						player:PlayExtraAnimation(currentAnimation)
-						sprite:SetFrame(currentFrame)
-					end
-			local heightMult, gravityMult = GetJumpMultStats(player)
-			JumpLib:Jump(player, {
-				Height = Helpers.GetJumpHeight() * heightMult,
-				Speed = Helpers.GetJumpGravity() * gravityMult,
-				Flags = JumpLib.Flags.NO_HURT_PITFALL
-					| JumpLib.Flags.FAMILIAR_FOLLOW_ORBITALS
-					| JumpLib.Flags.FAMILIAR_FOLLOW_TEARCOPYING
-					| JumpLib.Flags.DISABLE_COOL_BOMBS
-					| JumpLib.Flags.KNIFE_DISABLE_ENTCOLL,
-				Tags = { jumpTag },
-			})
-		end
-		if
-			data.TargetJumpPos then
-			if
-				sprite:IsEventTriggered("EdithJumpStart")
-				and not (data.BombStomp ~= nil
-					and player:HasCollectible(CollectibleType.COLLECTIBLE_ROCKET_IN_A_JAR)
-					and (player:HasCollectible(CollectibleType.COLLECTIBLE_BLOOD_BOMBS)
-					or Helpers.HasBombs(player))
-					)
-			then
-				if sprite:GetAnimation() == "EdithJumpBig"
-				or sprite:GetAnimation() == "EdithPitFallBig" then
-					player.Velocity = Vector.Zero
-					player.Position = data.TargetJumpPos
-				else
-					player.Velocity = (data.TargetJumpPos - player.Position):Normalized()
-						* (data.TargetJumpPos - player.Position):Length()
-						/ 7.7
-				end
-			end
-		end
-		--[[for i = 0, room:GetGridSize() do
-			local grid = room:GetGridEntity(i)]]
-		local grid = room:GetGridEntityFromPos(player.Position)
-		if grid then
-			if sprite:GetFrame() > 14 then
-				if
-					grid:GetType() == GridEntityType.GRID_TRAPDOOR
-					and grid.State == 1
-					and (player.Position - grid.Position):Length() <= 30
-				then
-					player.Position = grid.Position
-					data.TrapDoorFallFrame = sprite:GetAnimation():match("Big") == "Big"
-					player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-					player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS
-						or EntityGridCollisionClass.GRIDCOLL_GROUND
-					player.Velocity = Vector.Zero
-					Helpers.RemoveEdithTarget(player)
-					data.TargetJumpPos = nil
-					player.ControlsEnabled = true
-					player:StopExtraAnimation()
-				end
-			end
-		end
-		--end
-	end		
-end
-	-- else
-	-- 	data.LockBombs = nil
 
-	-- if Helpers.IsPlayerEdith(player, false, true) then -- Apply different costume for her tainted variant
-	-- 	if dataP.Pepper == 5 and Helpers.CantMove(player) then
-	-- 		player.Velocity = Vector.Zero
-	-- 	end
-	-- 	local sprite = player:GetSprite()
-	-- 	if sprite:IsPlaying("Death") and dataP.Pepper < 5 then
-	-- 		if
-	-- 			sprite:GetFrame() >= 5 and sprite:GetFrame() <= 9
-	-- 		then
-	-- 			dataP.Pepper = dataP.Pepper + 1
-	-- 			Helpers.ChangeSprite(player, false)
-	-- 		end
-	-- 	end
-	-- end
+	EdithBombLandSetter(player, data)
+	EdithBobbyBombsInteraction(player, isJumping, data)
+	EdithTeleportManager(player, sprite)
+	EdithTargetManager(player, data)
+	EdithTrapdoorManager(player, sprite, data, room)
+end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePlayer, 0)
 
 ---@param jumpData JumpData
@@ -1327,7 +1400,6 @@ EdithRestored:AddCallback(
 	PickupVariant.PICKUP_COLLECTIBLE
 )
 
-
 ---@param collider Entity
 function Player:OnMegaChestCollision(_, collider)
 	local player = collider:ToPlayer()
@@ -1455,7 +1527,7 @@ function Player:EdithMovement(entity, hook, button)
 	local player = entity:ToPlayer()
 
 	if not player then return end
-	if not Helpers.IsPlayerEdith(player, true, false) then return end
+	if not Helpers.IsPlayerEdith(player, true, true) then return end
 	if player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) or player:HasCurseMistEffect() then return end
 
 	local OnlyStomps = EdithRestored:GetDefaultFileSave("OnlyStomps")
