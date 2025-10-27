@@ -556,9 +556,10 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Player.LoadUpdate)
 
+---@param player EntityPlayer
 function Player:ChargeBarRender(player)
 	local data = EdithRestored:GetData(player)
-	if not Helpers.IsPlayerEdith(player, true, false) then return end
+	if not Helpers.IsPlayerEdith(player, true, false) or player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) then return end
 
 	data.EdithJumpCharge = data.EdithJumpCharge or 0
 	data.ChargeBar = data.ChargeBar or Sprite("gfx/chargebar.anm2", true)

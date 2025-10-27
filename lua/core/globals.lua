@@ -27,7 +27,7 @@ local DebugModeValues = {
 	IgnoreStompDamage = false,
 	--Peppermint
 	PeppermintCharge = 210,
-	PeppermintCloudSize = 20,
+	PeppermintCloudSize = XMLData.GetEntryByName(XMLNode.ENTITY, "Peppermint Cloud").collisionradius,
 	PeppermintCloudPosOffsetX = 0,
 	PeppermintCloudPosOffsetY = -25,
 	PeppermintCloudSizeXMult = 1,
@@ -52,7 +52,7 @@ local DebugModeValuesDefault = {
 	IgnoreStompDamage = false,
 	--Peppermint
 	PeppermintCharge = 210,
-	PeppermintCloudSize = 20,
+	PeppermintCloudSize = XMLData.GetEntryByName(XMLNode.ENTITY, "Peppermint Cloud").collisionradius,
 	PeppermintCloudPosOffsetX = 0,
 	PeppermintCloudPosOffsetY = -25,
 	PeppermintCloudSizeXMult = 1,
