@@ -851,11 +851,11 @@ local function EdithTargetManager(player, data)
 	local isJumpFullyCharged = data.EdithJumpCharge >= (100 * JumpChargeMul + MinJumpVal)
 
 	if not Helpers.CanMove(player) or hasMegaMush then return end
-	if not isBombActionPressed then return end
-	if not isJumpFullyCharged then return end
+	if not isJumpFullyCharged then data.LockBombs = nil return end
 
 	data.LockBombs = true
 
+	if not isBombActionPressed then return end
 	if not edithTarget then
 		Helpers.SpawnEdithTarget(player)
 	elseif JumpLib:CanJump(player) and not isJumping then
