@@ -392,7 +392,7 @@ local function EdithTriggerSlide(player, data, gridMult, forcedDir)
 	isPressingUp = ActionFunc(ButtonAction.ACTION_UP, controllerIndex)
 	isPressingDown = ActionFunc(ButtonAction.ACTION_DOWN, controllerIndex)
 
-	if data.InputBuffer  then
+	if IsPureEdith(player) and data.InputBuffer then
 		isPressingLeft = isPressingLeft or data.InputBuffer.input == ButtonAction.ACTION_LEFT
 		isPressingRight = isPressingRight or data.InputBuffer.input == ButtonAction.ACTION_RIGHT
 		isPressingUp = isPressingUp or data.InputBuffer.input == ButtonAction.ACTION_UP
@@ -578,6 +578,12 @@ local function EdithSliding(player, data, hasMarsEffect, hasMegaMush, speedBase,
 	end
 end
 
+---@param data table
+---@return boolean
+function EdithRestored:IsEdithSliding(data)
+	return data.EdithTargetMovementPosition ~= nil
+end
+
 ---@param player EntityPlayer
 function EdithRestored:EdithGridMovement(player, data, speedBase, gridMult, forcedDir)
 	local firstFrameOfMovement = false
@@ -609,6 +615,8 @@ function EdithRestored:EdithGridMovement(player, data, speedBase, gridMult, forc
 	if MovementPos then
 		EdithSliding(player, data, hasMarsEffect, hasMegaMush, speedBase, firstFrameOfMovement)
 	end
+
+	-- print()
 
 	data.HadMarsEffect = hasMarsEffect
 	-- data.TriggerMove = false	
