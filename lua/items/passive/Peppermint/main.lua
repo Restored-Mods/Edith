@@ -34,7 +34,7 @@ local function GetCollisionCapsule(cloud)
 		local mult = Vector(EdithRestored:GetDebugValue("PeppermintCloudSizeXMult"), EdithRestored:GetDebugValue("PeppermintCloudSizeYMult"))
 		return Capsule(cloud.Position + offset, mult, 0,  EdithRestored:GetDebugValue("PeppermintCloudSize"))
 	else
-		return cloud:GetCollisionCapsule()
+		return cloud:GetCollisionCapsule(Vector(0, -25))
 	end
 end
 
@@ -118,7 +118,7 @@ function Peppermint:AddPeppermintCharge(player)
 			):ToEffect()
 			pepperMintBreath.PositionOffset = Vector(0, -25)
 			pepperMintBreath:GetSprite():Play("Appear", true)
-			pepperMintBreath.CollisionDamage = player.Damage / 3
+			pepperMintBreath.CollisionDamage = player.Damage / 4
 			pepperMintBreath:SetTimeout(600)
 			SFXManager():Play(EdithRestored.Enums.SFX.PEPPERMINT_BREATH, 0.8, 0, false, 1.0)
 		end
@@ -169,17 +169,17 @@ function Peppermint:CloudUpdate(cloud)
 			if enemy:IsVulnerableEnemy() and enemy:IsActiveEnemy() then
 				if enemy:GetDamageCountdown() == 0 then
 					enemy:TakeDamage(EdithRestored.DebugMode and EdithRestored:GetDebugValue("PeppermintCloudDamage") or cloud.CollisionDamage, DamageFlag.DAMAGE_COUNTDOWN, EntityRef(cloud), 10)
-					if enemy:GetSlowingCountdown() < 90 then
-						enemy:AddSlowing(EntityRef(cloud), 90, 0.5, slowColor)
-						enemy:SetSlowingCountdown(90)
-						enemy:SetColor(slowColor, 90, 0, true, false)
+					if enemy:GetSlowingCountdown() < 60 then
+						enemy:AddSlowing(EntityRef(cloud), 60, 0.5, slowColor)
+						enemy:SetSlowingCountdown(60)
+						enemy:SetColor(slowColor, 60, 0, true, false)
 					else
 						enemy:AddSlowing(EntityRef(cloud), 20, 0.5, slowColor)
 						enemy:SetColor(slowColor, enemy:GetSlowingCountdown() + 20, 0, true, false)
 					end
-					if enemy:GetIceCountdown() < 90 then
-						enemy:AddIce(EntityRef(cloud), 90)
-						enemy:SetIceCountdown(90)
+					if enemy:GetIceCountdown() < 60 then
+						enemy:AddIce(EntityRef(cloud), 60)
+						enemy:SetIceCountdown(60)
 					else
 						enemy:AddIce(EntityRef(cloud), 20)
 					end
