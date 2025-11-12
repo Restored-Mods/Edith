@@ -71,6 +71,15 @@ Enums.Familiars =
 								},
 				}
 
+Enums.Slots = 
+				{
+					ELECTRIFIER = {
+						Type = Isaac.GetEntityTypeByName("Electrifier Machine"),
+						Variant = Isaac.GetEntityVariantByName("Electrifier Machine"),
+						SubType = Isaac.GetEntitySubTypeByName("Electrifier Machine"),
+					}
+				}
+
 Enums.PlayerType = 
 				{
 					EDITH = Isaac.GetPlayerTypeByName("Redith", false), 
@@ -116,8 +125,8 @@ Enums.Pickups =
 				{
 					Cards  = 
 							{
-								--CARD_PRUDENCE = Isaac.GetCardIdByName("Prudence"),
-								--CARD_REVERSE_PRUDENCE = Isaac.GetCardIdByName("Prudence?"),
+								CARD_PRUDENCE = Isaac.GetCardIdByName("Prudence"),
+								CARD_REVERSE_PRUDENCE = Isaac.GetCardIdByName("Prudence?"),
 								CARD_SOUL_EDITH = Isaac.GetCardIdByName("Soul of Edith"),
 							},
 					Pills  =
@@ -135,7 +144,7 @@ Enums.SFX =
 					Cards  = 
 							{
 								--CARD_PRUDENCE = Isaac.GetSoundIdByName("Prudence"),
-								--CARD_REVERSE_PRUDENCE = Isaac.GetSoundIdByName("Reverse Prudence"),
+								CARD_REVERSE_PRUDENCE = Isaac.GetSoundIdByName("Reverse Prudence"),
 								CARD_SOUL_EDITH = Isaac.GetSoundIdByName("Soul Of Edith"),
 							},
 					SaltShaker =
@@ -155,7 +164,7 @@ Enums.GFX =
 	Cards 	=
 			{
 				--CARD_PRUDENCE = "Prudence.png",
-				--CARD_REVERSE_PRUDENCE = "PrudenceReverse.png",
+				CARD_REVERSE_PRUDENCE = "PrudenceReverse.png",
 				CARD_SOUL_EDITH = "SoulOfEdith.png",
 			},
 }
@@ -215,8 +224,11 @@ Enums.Achievements.CompletionMarks = {
 	SHRAPNEL_BOMBS = Isaac.GetAchievementIdByName("Shrapnel Bombs"),
 	SODOM =  Isaac.GetAchievementIdByName("​Sodom"),
 	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),
+	PRUDENCE = Isaac.GetAchievementIdByName("Prudence"),
+	-- B-side Unlocks
 	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
-	--REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
+	REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
+	ELECTRIFIER = Isaac.GetAchievementIdByName("Electrifier"),
 }
 Enums.Achievements.Misc = {
 	ROCKET_LACES = Isaac.GetAchievementIdByName("Rocket Laces"),
@@ -241,6 +253,10 @@ Enums.Achievements.Marks = {
 		[CompletionType.DELIRIUM] = Enums.Achievements.CompletionMarks.LITHIUM,
 		[CompletionType.MOTHER] = Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS,
 		[CompletionType.BEAST] = Enums.Achievements.CompletionMarks.SODOM,
+	},
+	BSide = {
+		[CompletionType.MEGA_SATAN] = Enums.Achievements.CompletionMarks.ELECTRIFIER,
+		[CompletionType.ULTRA_GREEDIER] = Enums.Achievements.CompletionMarks.REV_PRUDENCE,
 	}
 }
 

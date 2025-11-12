@@ -1,7 +1,15 @@
 ---CHALLENGE UNLOCKS-------------------------------------------------
 local Helpers = EdithRestored.Helpers
 local marksA = EdithRestored.Enums.Achievements.Marks.ASide
+local marksB = EdithRestored.Enums.Achievements.Marks.BSide
 local pgd = Isaac.GetPersistentGameData()
+
+local function AreMarksCompleted(...)
+	for _, mark in ipairs({...}) do
+
+	end
+	return true
+end
 
 local achievementRequirements = {
 	[1] = {
@@ -11,6 +19,14 @@ local achievementRequirements = {
 		end,
 		Achievement = EdithRestored.Enums.Achievements.Misc.ROCKET_LACES,
 	},
+	[2] = {
+		Cond = function(compType)
+			Isaac.GetCompletionMarks()
+			return PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH_B)
+			and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+		end,
+		Achievement = EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH
+	}
 }
 
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_RENDER_CUSTOM_CHARACTER_MENU, function(_, id, pos, sprite)
@@ -69,7 +85,12 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mar
 			Helpers.UnlockAchievement(marksA[mark])
 		end
 		if Isaac.AllMarksFilled(EdithRestored.Enums.PlayerType.EDITH) == 2 then
-			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE)
+		end
+	end
+	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH_B) then
+		if marksB[mark] then
+			Helpers.UnlockAchievement(marksB[mark])
 		end
 	end
 	if mark == CompletionType.BEAST then
@@ -85,7 +106,9 @@ end)
 EdithRestored:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
 	if
 		card == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH
-		and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+		and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+		or card == EdithRestored.Enums.Pickups.Cards.CARD_PRUDENCE and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE)
+		or card == EdithRestored.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.REV_PRUDENCE)
 	then
 		return 0
 	end

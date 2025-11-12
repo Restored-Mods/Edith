@@ -17,18 +17,23 @@
 	<achievement name="Lithium Salts" text="Edith Delirium" gfx="achievement_lithiumsalts.png" />
 	<achievement name="Shrapnel Bombs" text="Edith Mother Witness" gfx="achievement_shrapnel_bombs.png" />
 	<achievement name="​Sodom" text="Edith Beast" gfx="achievement_sodom.png" />
-	<achievement name="Soul of Edith" text="Edith Full Completion" gfx="achievement_soul_of_edith.png" />
+	<achievement name="Prudence" text="Edith All Marks" gfx="achievement_prudence.png" />
+
+	<!-- b side unlocks -->
+	<achievement name="Soul of Edith" text="Tainted Edith Hush, Boss Rush" gfx="achievement_soul_of_edith.png" />
+	<achievement name="Reverse Prudence" text="Tainted Edith Ultra Greedier" gfx="achievement_revprudence.png" />
+	<achievement name="Pepper Grinder" text="Tainted Edith Isaac, Satan, Blue Baby, The Lamb" gfx="achievement_peppergrinder.png" />
 
 	<!-- challenges -->
-	 <achievement name="​Peppermint" text="Edith Peppermint" gfx="achievement_peppermint.png" />
-
+	<achievement name="​Peppermint" text="Edith Peppermint" gfx="achievement_peppermint.png" />
+	
 	<!-- other -->
 	<achievement name="Rocket Laces" text="Edith Rocket Laces" gfx="achievement_rocketlaces.png" />
 	
-	<achievement name="Tainted Edith (Restored Edith)" text='You unlocked "Edith"' gfx="achievement_soul_of_edith.png" hidden="true" />
+	<achievement name="Tainted Edith (Restored Edith)" text='You unlocked "Edith"' gfx="achievement_taintededith.png" />
 
 	<!-- Unused
 	<achievement name="Lot Baby" text="Edith Full Completion" gfx="achievement_lotbaby.png" />
-	<achievement name="Reverse Prudence" text="Edith Ultra Greedier" gfx="achievement_revprudence.png" />
+	
 	-->
 </achievements>

@@ -31,7 +31,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function(_, isSaving)
     end
 end)
 
-EdithRestored:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function(_, isLoading)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function(_, isLoading)
     if isLoading then
         local runSave = EdithRestored:RunSave()
         EdithRestored.HiddenItemManager:LoadData(runSave.HiddenItemManager)
@@ -45,6 +45,7 @@ EdithRestored:AddCallback(EdithRestored.SaveManager.SaveCallbacks.PRE_DATA_LOAD,
             ["TargetColor"] = {R = 155, G = 0, B = 0},
             ["AllowHolding"] = true,
             ["DisabledItems"] = {},
+            ["ElectrifierCharges"] = {},
 		}
 		for k,v in pairs(settings) do
 			if data.file.other[k] == nil then

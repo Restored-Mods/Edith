@@ -1,0 +1,1 @@
+include("lua.entities.slots.electrifier.main")

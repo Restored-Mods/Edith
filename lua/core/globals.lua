@@ -12,7 +12,7 @@ end
 local runData = {
 	["UsedDataMiner"] = false,
 	["MoonPhase"] = 1,
-	["MoonPhaseWolf"] = false
+	["MoonPhaseWolf"] = false,
 }
 
 EdithRestored.DebugMode = false
