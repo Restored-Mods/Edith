@@ -18,12 +18,60 @@ local StatsDownPills = {
     PillEffect.PILLEFFECT_TEARS_DOWN,
 }
 
+local NeutralPills = {
+	PillEffect.PILLEFFECT_BOMBS_ARE_KEYS,
+	PillEffect.PILLEFFECT_EXPLOSIVE_DIARRHEA,
+	PillEffect.PILLEFFECT_I_FOUND_PILLS,
+	PillEffect.PILLEFFECT_PUBERTY,
+	PillEffect.PILLEFFECT_TELEPILLS,
+	PillEffect.PILLEFFECT_HEMATEMESIS,
+	PillEffect.PILLEFFECT_RELAX,
+	PillEffect.PILLEFFECT_HORF,
+	PillEffect.PILLEFFECT_EXPERIMENTAL,
+}
+
+if XMLData.GetNumEntries(XMLNode.PILL) > 49 then
+    for i = 50, XMLData.GetNumEntries(XMLNode.PILL) do
+        local data = XMLData.GetEntryById(XMLNode.PILL, i)
+        if data ~= nil and data.class ~= nil then
+            if data.class:match("^[0-3]$") ~= nil then
+                table.insert(NeutralPills, i)
+            end
+        end
+    end
+end
+
 local RNG = RNG()
 
-function Lithium:InitRNG(isContinue)
-    RNG:SetSeed(Game():GetSeeds():GetStartSeed(), 35)
+local function IsPillInPool(effect)
+    return itemPool:GetPillColor(effect) ~= -1
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Lithium.InitRNG)
+
+local function ReplaceLithiumOnNormalPill()
+	if not IsPillInPool(EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM) then
+		return -1
+	end
+
+	local effect = NeutralPills[1]
+	
+	repeat
+		effect = NeutralPills[RNG:RandomInt(1, #NeutralPills)]
+	until not IsPillInPool(effect)
+	
+	EdithRestored:RunSave()["LithiumPillReplacer"] = effect
+end
+
+local function GetLithiumReplacer()
+	return type(EdithRestored:RunSave()["LithiumPillReplacer"]) == "number" and EdithRestored:RunSave()["LithiumPillReplacer"] or 0
+end
+
+function Lithium:InitRun(isContinue)
+    RNG:SetSeed(Game():GetSeeds():GetStartSeed(), 35)
+    if not isContinue or type(EdithRestored:RunSave()["LithiumPillReplacer"]) ~= "number" then
+       ReplaceLithiumOnNormalPill()
+    end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Lithium.InitRun)
 
 function Lithium:PillAlwaysIdentified()
     if not itemPool:IsPillIdentified(LithiumPill) then
@@ -61,6 +109,10 @@ EdithRestored:AddCallback(ModCallbacks.MC_USE_PILL, Lithium.OnPillUse)
 function Lithium:GetEffect(pillEffect, pillColor)
     if pillColor == EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM then
         return EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM
+    end
+    if pillColor ~= EdithRestored.Enums.Pickups.Pills.PILL_LITHIUM and pillEffect == EdithRestored.Enums.Pickups.PillEffects.PILLEFFECT_LITHIUM
+    and GetLithiumReplacer() ~= -1 then
+        return GetLithiumReplacer()
     end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_GET_PILL_EFFECT, Lithium.GetEffect)
