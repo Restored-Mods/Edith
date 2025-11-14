@@ -1,6 +1,6 @@
 local Electrifier = {}
 local Helpers = EdithRestored.Helpers
-local itemPool = game:GetItemPool()
+local itemPool = EdithRestored.Game:GetItemPool()
 local itemConfig = Isaac.GetItemConfig()
 
 local trinketList = {

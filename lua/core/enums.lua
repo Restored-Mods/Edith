@@ -1,172 +1,149 @@
 local Enums = {}
+local pgd = Isaac.GetPersistentGameData()
 
-Enums.MouseClick = {LEFT = 0, RIGHT = 1, WHEEL = 2, BACK = 3, FORWARD = 4}
+Enums.MouseClick = { LEFT = 0, RIGHT = 1, WHEEL = 2, BACK = 3, FORWARD = 4 }
 
 Enums.Entities = {
-					FALLING_CHISEL = 
-					{
-						Type = Isaac.GetEntityTypeByName("The Chisel"), 
-						Variant = Isaac.GetEntityVariantByName("The Chisel"),
-						SubType = 0
-					},
-					SALT_STATUE = 
-					{
-						Type = Isaac.GetEntityTypeByName("Salt Statue"), 
-						Variant = Isaac.GetEntityVariantByName("Salt Statue"),
-						SubType = 0
-					},
-					SALT_STATUE_MINI = 
-					{
-						Type = Isaac.GetEntityTypeByName("Mini Salt Statue"), 
-						Variant = Isaac.GetEntityVariantByName("Mini Salt Statue"),
-						SubType = 0
-					},
-					EDITH_TARGET =
-					{
-						Type = Isaac.GetEntityTypeByName("Restored Edith Target"),
-						Variant = Isaac.GetEntityVariantByName("Restored Edith Target"),
-						SubType = 0
-					},
-					SALT_CREEP =
-					{
-						Type = Isaac.GetEntityTypeByName("Salt Creep"),
-						Variant = Isaac.GetEntityVariantByName("Salt Creep"),
-						SubType = Isaac.GetEntitySubTypeByName("Salt Creep")
-					},
-					PEPPERMINT =
-					{
-						Type = Isaac.GetEntityTypeByName("Peppermint Cloud"),
-						Variant = Isaac.GetEntityVariantByName("Peppermint Cloud"),
-						SubType = 0
-					},
-					CUSTOM_DUST_CLOUD =
-					{
-						Type = Isaac.GetEntityTypeByName("Custom Dust Cloud"),
-						Variant = Isaac.GetEntityVariantByName("Custom Dust Cloud")
-					},
-					WEREWOLF_SWIPE = {
-						Type = Isaac.GetEntityTypeByName("Werewolf Swipe"),
-						Variant = Isaac.GetEntityVariantByName("Werewolf Swipe"),
-						SubType = 0
-					},
-				}
+	FALLING_CHISEL = {
+		Type = Isaac.GetEntityTypeByName("The Chisel"),
+		Variant = Isaac.GetEntityVariantByName("The Chisel"),
+		SubType = 0,
+	},
+	SALT_STATUE = {
+		Type = Isaac.GetEntityTypeByName("Salt Statue"),
+		Variant = Isaac.GetEntityVariantByName("Salt Statue"),
+		SubType = 0,
+	},
+	SALT_STATUE_MINI = {
+		Type = Isaac.GetEntityTypeByName("Mini Salt Statue"),
+		Variant = Isaac.GetEntityVariantByName("Mini Salt Statue"),
+		SubType = 0,
+	},
+	EDITH_TARGET = {
+		Type = Isaac.GetEntityTypeByName("Restored Edith Target"),
+		Variant = Isaac.GetEntityVariantByName("Restored Edith Target"),
+		SubType = 0,
+	},
+	SALT_CREEP = {
+		Type = Isaac.GetEntityTypeByName("Salt Creep"),
+		Variant = Isaac.GetEntityVariantByName("Salt Creep"),
+		SubType = Isaac.GetEntitySubTypeByName("Salt Creep"),
+	},
+	PEPPERMINT = {
+		Type = Isaac.GetEntityTypeByName("Peppermint Cloud"),
+		Variant = Isaac.GetEntityVariantByName("Peppermint Cloud"),
+		SubType = 0,
+	},
+	CUSTOM_DUST_CLOUD = {
+		Type = Isaac.GetEntityTypeByName("Custom Dust Cloud"),
+		Variant = Isaac.GetEntityVariantByName("Custom Dust Cloud"),
+	},
+	WEREWOLF_SWIPE = {
+		Type = Isaac.GetEntityTypeByName("Werewolf Swipe"),
+		Variant = Isaac.GetEntityVariantByName("Werewolf Swipe"),
+		SubType = 0,
+	},
+}
 
-Enums.Familiars = 
-				{
-					SALTY_BABY =
-								{
-									Type = Isaac.GetEntityTypeByName("​Salty Baby"),
-									Variant = Isaac.GetEntityVariantByName("​Salty Baby"),
-									SubType = 0
-								},
-					LOT_BABY = {
-									Type = Isaac.GetEntityTypeByName("Lot Baby"),
-									Variant = Isaac.GetEntityVariantByName("Lot Baby"),
-									SubType = Isaac.GetEntitySubTypeByName("Lot Baby")
-								},
-					SALT_PAWNS = {
-									Type = Isaac.GetEntityTypeByName("Salt Pawns"),
-									Variant = Isaac.GetEntityVariantByName("Salt Pawns"),
-									SubType = 0
-								},
-				}
+Enums.Familiars = {
+	SALTY_BABY = {
+		Type = Isaac.GetEntityTypeByName("​Salty Baby"),
+		Variant = Isaac.GetEntityVariantByName("​Salty Baby"),
+		SubType = 0,
+	},
+	LOT_BABY = {
+		Type = Isaac.GetEntityTypeByName("Lot Baby"),
+		Variant = Isaac.GetEntityVariantByName("Lot Baby"),
+		SubType = Isaac.GetEntitySubTypeByName("Lot Baby"),
+	},
+	SALT_PAWNS = {
+		Type = Isaac.GetEntityTypeByName("Salt Pawns"),
+		Variant = Isaac.GetEntityVariantByName("Salt Pawns"),
+		SubType = 0,
+	},
+}
 
-Enums.Slots = 
-				{
-					ELECTRIFIER = {
-						Type = Isaac.GetEntityTypeByName("Electrifier Machine"),
-						Variant = Isaac.GetEntityVariantByName("Electrifier Machine"),
-						SubType = Isaac.GetEntitySubTypeByName("Electrifier Machine"),
-					}
-				}
+Enums.Slots = {
+	ELECTRIFIER = {
+		Type = Isaac.GetEntityTypeByName("Electrifier Machine"),
+		Variant = Isaac.GetEntityVariantByName("Electrifier Machine"),
+		SubType = Isaac.GetEntitySubTypeByName("Electrifier Machine"),
+	},
+}
 
-Enums.PlayerType = 
-				{
-					EDITH = Isaac.GetPlayerTypeByName("Redith", false), 
-					EDITH_B = Isaac.GetPlayerTypeByName("Redith", true)
-				}
+Enums.PlayerType = {
+	EDITH = Isaac.GetPlayerTypeByName("Redith", false),
+	EDITH_B = Isaac.GetPlayerTypeByName("Redith", true),
+}
 
-Enums.CollectibleType = 
-					{
-						COLLECTIBLE_PEPPERMINT = Isaac.GetItemIdByName("​Peppermint"),
-						COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("Lithium Salts"),
-						COLLECTIBLE_SODOM = Isaac.GetItemIdByName("​Sodom"),
-						COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),
-						COLLECTIBLE_THUNDER_BOMBS = Isaac.GetItemIdByName("​Thunder Bombs"),
-						--COLLECTIBLE_LOT_BABY = Isaac.GetItemIdByName("Lot Baby"),
-						COLLECTIBLE_SALTY_BABY = Isaac.GetItemIdByName("​Salty Baby"),
-						COLLECTIBLE_SALT_PAWNS = Isaac.GetItemIdByName("Salt Pawns"),
-						COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("​Salt Shaker"),					
-						COLLECTIBLE_GORGON_MASK = Isaac.GetItemIdByName("Gorgon Mask"),
-						COLLECTIBLE_RED_HOOD = Isaac.GetItemIdByName("​Red Hood"),
-						COLLECTIBLE_SHRAPNEL_BOMBS = Isaac.GetItemIdByName("Shrapnel Bombs"),
-						--COLLECTIBLE_THE_CHISEL = Isaac.GetItemIdByName("The Chisel"),
-					}
+Enums.CollectibleType = {
+	COLLECTIBLE_PEPPERMINT = Isaac.GetItemIdByName("​Peppermint"),
+	COLLECTIBLE_LITHIUM = Isaac.GetItemIdByName("Lithium Salts"),
+	COLLECTIBLE_SODOM = Isaac.GetItemIdByName("​Sodom"),
+	COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),
+	COLLECTIBLE_THUNDER_BOMBS = Isaac.GetItemIdByName("​Thunder Bombs"),
+	--COLLECTIBLE_LOT_BABY = Isaac.GetItemIdByName("Lot Baby"),
+	COLLECTIBLE_SALTY_BABY = Isaac.GetItemIdByName("​Salty Baby"),
+	COLLECTIBLE_SALT_PAWNS = Isaac.GetItemIdByName("Salt Pawns"),
+	COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("​Salt Shaker"),
+	COLLECTIBLE_GORGON_MASK = Isaac.GetItemIdByName("Gorgon Mask"),
+	COLLECTIBLE_RED_HOOD = Isaac.GetItemIdByName("​Red Hood"),
+	COLLECTIBLE_SHRAPNEL_BOMBS = Isaac.GetItemIdByName("Shrapnel Bombs"),
+	--COLLECTIBLE_THE_CHISEL = Isaac.GetItemIdByName("The Chisel"),
+}
 
-Enums.TrinketType =
-					{
-						--TRINKET_PEPPER_GRINDER = Isaac.GetTrinketIdByName("Pepper Grinder"),
-						TRINKET_SALT_ROCK = Isaac.GetTrinketIdByName("Salt Rock"),
-						TRINKET_SMELLING_SALTS = Isaac.GetTrinketIdByName("Smelling Salts"),
-						TRINKET_CHUNK_OF_AMBER = Isaac.GetTrinketIdByName("Chunk of Amber"),
-					}
+Enums.TrinketType = {
+	TRINKET_PEPPER_GRINDER = Isaac.GetTrinketIdByName("Pepper Grinder"),
+	TRINKET_SALT_ROCK = Isaac.GetTrinketIdByName("Salt Rock"),
+	TRINKET_SMELLING_SALTS = Isaac.GetTrinketIdByName("Smelling Salts"),
+	TRINKET_CHUNK_OF_AMBER = Isaac.GetTrinketIdByName("Chunk of Amber"),
+}
 
-Enums.NullItems = 
-					{
-						GORGON_MASK = Isaac.GetNullItemIdByName("Gorgon Mask Effect"),
-						RED_HOOD = Isaac.GetNullItemIdByName("Red Hood Effect"),
-						LITHIUM_POSITIVE = Isaac.GetNullItemIdByName("Lithium Positive Effect"),
-						LITHIUM_NEGATIVE = Isaac.GetNullItemIdByName("Lithium Negative Effect"),
-						LITHIUM_FALSEPHD = Isaac.GetNullItemIdByName("Lithium False PHD Effect"),
-					}
+Enums.NullItems = {
+	GORGON_MASK = Isaac.GetNullItemIdByName("Gorgon Mask Effect"),
+	RED_HOOD = Isaac.GetNullItemIdByName("Red Hood Effect"),
+	LITHIUM_POSITIVE = Isaac.GetNullItemIdByName("Lithium Positive Effect"),
+	LITHIUM_NEGATIVE = Isaac.GetNullItemIdByName("Lithium Negative Effect"),
+	LITHIUM_FALSEPHD = Isaac.GetNullItemIdByName("Lithium False PHD Effect"),
+}
 
+Enums.Pickups = {
+	Cards = {
+		CARD_PRUDENCE = Isaac.GetCardIdByName("Prudence"),
+		CARD_REVERSE_PRUDENCE = Isaac.GetCardIdByName("Prudence?"),
+		CARD_SOUL_EDITH = Isaac.GetCardIdByName("Soul of Edith"),
+	},
+	Pills = {
+		PILL_LITHIUM = Isaac.GetEntitySubTypeByName("Lithium Pill"),
+		PILL_HORSE_LITHIUM = Isaac.GetEntitySubTypeByName("Horse Lithium Pill"),
+	},
+	PillEffects = {
+		PILLEFFECT_LITHIUM = Isaac.GetPillEffectByName("Lithium"),
+	},
+}
 
-Enums.Pickups = 
-				{
-					Cards  = 
-							{
-								CARD_PRUDENCE = Isaac.GetCardIdByName("Prudence"),
-								CARD_REVERSE_PRUDENCE = Isaac.GetCardIdByName("Prudence?"),
-								CARD_SOUL_EDITH = Isaac.GetCardIdByName("Soul of Edith"),
-							},
-					Pills  =
-							{
-								PILL_LITHIUM = Isaac.GetEntitySubTypeByName("Lithium Pill"),
-								PILL_HORSE_LITHIUM = Isaac.GetEntitySubTypeByName("Horse Lithium Pill"),
-							},
-					PillEffects = {
-								PILLEFFECT_LITHIUM = Isaac.GetPillEffectByName("Lithium");
-					},
-				}
+Enums.SFX = {
+	Cards = {
+		--CARD_PRUDENCE = Isaac.GetSoundIdByName("Prudence"),
+		CARD_REVERSE_PRUDENCE = Isaac.GetSoundIdByName("Reverse Prudence"),
+		CARD_SOUL_EDITH = Isaac.GetSoundIdByName("Soul Of Edith"),
+	},
+	SaltShaker = {
+		SHAKE = Isaac.GetSoundIdByName("Salt Shaker Use"),
+	},
+	Edith = {
+		ROCK_SLIDE = Isaac.GetSoundIdByName("RockSlide"),
+		WATER_STOMP = Isaac.GetSoundIdByName("stompOnWater"),
+	},
+	PEPPERMINT_BREATH = Isaac.GetSoundIdByName("Peppermint Breath"),
+}
 
-Enums.SFX = 
-				{
-					Cards  = 
-							{
-								--CARD_PRUDENCE = Isaac.GetSoundIdByName("Prudence"),
-								CARD_REVERSE_PRUDENCE = Isaac.GetSoundIdByName("Reverse Prudence"),
-								CARD_SOUL_EDITH = Isaac.GetSoundIdByName("Soul Of Edith"),
-							},
-					SaltShaker =
-							{
-								SHAKE = Isaac.GetSoundIdByName("Salt Shaker Use"),
-							},
-					Edith = 
-							{
-								ROCK_SLIDE = Isaac.GetSoundIdByName("RockSlide"),
-								WATER_STOMP = Isaac.GetSoundIdByName("stompOnWater"),
-							},
-					PEPPERMINT_BREATH = Isaac.GetSoundIdByName("Peppermint Breath"),
-				}
-
-Enums.GFX = 
-{
-	Cards 	=
-			{
-				--CARD_PRUDENCE = "Prudence.png",
-				CARD_REVERSE_PRUDENCE = "PrudenceReverse.png",
-				CARD_SOUL_EDITH = "SoulOfEdith.png",
-			},
+Enums.GFX = {
+	Cards = {
+		--CARD_PRUDENCE = "Prudence.png",
+		CARD_REVERSE_PRUDENCE = "PrudenceReverse.png",
+		CARD_SOUL_EDITH = "SoulOfEdith.png",
+	},
 }
 
 -- Costumes
@@ -177,7 +154,7 @@ Enums.Costumes = {
 
 Enums.PlayerSprites = {
 	EDITH = "gfx/Redith.anm2",
-	EDITH_B = "gfx/Redith_b.anm2"
+	EDITH_B = "gfx/Redith_b.anm2",
 }
 
 Enums.Callbacks = {
@@ -186,15 +163,15 @@ Enums.Callbacks = {
 	ON_EDITH_STOMP_LANDING_IFRAMES = "ON_EDITH_STOMP_LANDING_IFRAMES",
 	ON_EDITH_JUMPING = "ON_EDITH_JUMPING",
 	ON_EDITH_STOMP = "ON_EDITH_STOMP",
-	ON_EDITH_MODIFY_STOMP = "ON_EDITH_MODIFY_STOMP"
+	ON_EDITH_MODIFY_STOMP = "ON_EDITH_MODIFY_STOMP",
 }
 
 Enums.BombVariant = {
-	BOMB_SHRAPNEL = Isaac.GetEntityVariantByName("Shrapnel Bomb")
+	BOMB_SHRAPNEL = Isaac.GetEntityVariantByName("Shrapnel Bomb"),
 }
 
 Enums.RockVariant = {
-	ROCK_SALT = 683
+	ROCK_SALT = 683,
 }
 
 BombFlagsAPI.AddNewCustomBombFlag("THUNDER_BOMB", Enums.CollectibleType.COLLECTIBLE_THUNDER_BOMBS)
@@ -206,58 +183,164 @@ Enums.Challenges = {
 
 Enums.Achievements = {}
 Enums.Achievements.Characters = {
-	EDITH =  Isaac.GetAchievementIdByName("Edith"),
-	--TAINTED =  Isaac.GetAchievementIdByName("Tainted Edith"),
+	EDITH = Isaac.GetAchievementIdByName("Edith"),
+	TAINTED = Isaac.GetAchievementIdByName("Tainted Edith"),
 }
 Enums.Achievements.CompletionMarks = {
 	-- A-side Unlocks
-	BLASTING_BOOTS =  Isaac.GetAchievementIdByName("Blasting Boots"),
-	SALTY_BABY =  Isaac.GetAchievementIdByName("​Salty Baby"),
-	SALT_SHAKER =  Isaac.GetAchievementIdByName("​Salt Shaker"),
-	CHUNK_OF_AMBER =  Isaac.GetAchievementIdByName("Chunk of Amber"),
-	THUNDER_BOMBS =  Isaac.GetAchievementIdByName("​Thunder Bombs"),
-	SMELLING_SALTS =  Isaac.GetAchievementIdByName("Smelling Salts"),
-	SALT_PAWNS =  Isaac.GetAchievementIdByName("Salt Pawns"),
-	GORGON_MASK =  Isaac.GetAchievementIdByName("Gorgon Mask"),
-	RED_HOOD =  Isaac.GetAchievementIdByName("​Red Hood"),
-	LITHIUM =  Isaac.GetAchievementIdByName("Lithium Salts"),
+	BLASTING_BOOTS = Isaac.GetAchievementIdByName("Blasting Boots"),
+	SALTY_BABY = Isaac.GetAchievementIdByName("​Salty Baby"),
+	SALT_SHAKER = Isaac.GetAchievementIdByName("​Salt Shaker"),
+	CHUNK_OF_AMBER = Isaac.GetAchievementIdByName("Chunk of Amber"),
+	THUNDER_BOMBS = Isaac.GetAchievementIdByName("​Thunder Bombs"),
+	SMELLING_SALTS = Isaac.GetAchievementIdByName("Smelling Salts"),
+	SALT_PAWNS = Isaac.GetAchievementIdByName("Salt Pawns"),
+	GORGON_MASK = Isaac.GetAchievementIdByName("Gorgon Mask"),
+	RED_HOOD = Isaac.GetAchievementIdByName("​Red Hood"),
+	LITHIUM = Isaac.GetAchievementIdByName("Lithium Salts"),
 	SHRAPNEL_BOMBS = Isaac.GetAchievementIdByName("Shrapnel Bombs"),
-	SODOM =  Isaac.GetAchievementIdByName("​Sodom"),
+	SODOM = Isaac.GetAchievementIdByName("​Sodom"),
 	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),
 	PRUDENCE = Isaac.GetAchievementIdByName("Prudence"),
 	-- B-side Unlocks
-	SOUL_EDITH =  Isaac.GetAchievementIdByName("Soul of Edith"),
-	REV_PRUDENCE =  Isaac.GetAchievementIdByName("Reverse Prudence"),
+	SOUL_EDITH = Isaac.GetAchievementIdByName("Soul of Edith"),
+	REV_PRUDENCE = Isaac.GetAchievementIdByName("Reverse Prudence"),
 	ELECTRIFIER = Isaac.GetAchievementIdByName("Electrifier"),
+	PEPPER_GRINDER = Isaac.GetAchievementIdByName("Pepper Grinder"),
 }
 Enums.Achievements.Misc = {
 	ROCKET_LACES = Isaac.GetAchievementIdByName("Rocket Laces"),
 }
 -- Challenges
 Enums.Achievements.Challenges = {
-	PEPPERMINT =  Isaac.GetAchievementIdByName("​Peppermint"),
+	PEPPERMINT = Isaac.GetAchievementIdByName("​Peppermint"),
 }
 
 Enums.Achievements.Marks = {
 	ASide = {
-		[CompletionType.MOMS_HEART] = Enums.Achievements.CompletionMarks.SALTY_BABY,
-		[CompletionType.ISAAC] = Enums.Achievements.CompletionMarks.SALT_SHAKER,
-		[CompletionType.SATAN] = Enums.Achievements.CompletionMarks.CHUNK_OF_AMBER,
-		[CompletionType.BOSS_RUSH] = Enums.Achievements.CompletionMarks.RED_HOOD,
-		[CompletionType.BLUE_BABY] = Enums.Achievements.CompletionMarks.THUNDER_BOMBS,
-		[CompletionType.LAMB] = Enums.Achievements.CompletionMarks.SMELLING_SALTS,
-		[CompletionType.MEGA_SATAN] = Enums.Achievements.CompletionMarks.SALT_ROCK,
-		[CompletionType.HUSH] = Enums.Achievements.CompletionMarks.BLASTING_BOOTS,
-		[CompletionType.ULTRA_GREED] = Enums.Achievements.CompletionMarks.SALT_PAWNS,
-		[CompletionType.ULTRA_GREEDIER] = Enums.Achievements.CompletionMarks.GORGON_MASK,
-		[CompletionType.DELIRIUM] = Enums.Achievements.CompletionMarks.LITHIUM,
-		[CompletionType.MOTHER] = Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS,
-		[CompletionType.BEAST] = Enums.Achievements.CompletionMarks.SODOM,
+		[Enums.Achievements.CompletionMarks.SALTY_BABY] = {
+			Mark = CompletionType.MOMS_HEART,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALTY_BABY)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MOMS_HEART) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.SALT_SHAKER] = {
+			Mark = CompletionType.ISAAC,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALT_SHAKER)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ISAAC) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.CHUNK_OF_AMBER] = {
+			Mark = CompletionType.SATAN,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.CHUNK_OF_AMBER)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.SATAN) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.RED_HOOD] = {
+			Mark = CompletionType.BOSS_RUSH,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.RED_HOOD)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BOSS_RUSH) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.THUNDER_BOMBS] = {
+			Mark = CompletionType.BLUE_BABY,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.THUNDER_BOMBS)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BLUE_BABY) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.SMELLING_SALTS] = {
+			Mark = CompletionType.LAMB,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SMELLING_SALTS)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.LAMB) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.SALT_ROCK] = {
+			Mark = CompletionType.MEGA_SATAN,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALT_ROCK)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MEGA_SATAN) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.BLASTING_BOOTS] = {
+			Mark = CompletionType.HUSH,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.BLASTING_BOOTS)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.HUSH) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.SALT_PAWNS] = {
+			Mark = CompletionType.ULTRA_GREED,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALT_PAWNS)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ULTRA_GREED) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.GORGON_MASK] = {
+			Mark = CompletionType.ULTRA_GREEDIER,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.GORGON_MASK)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ULTRA_GREEDIER) > 1
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.LITHIUM] = {
+			Mark = CompletionType.DELIRIUM,
+			Condition = function(mark)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.LITHIUM)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.DELIRIUM) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS] = {
+			Mark = CompletionType.MOTHER,
+			Condition = function(mark)
+			return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS)
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MOTHER) > 0
+		end},
+		[Enums.Achievements.CompletionMarks.SODOM] = {
+			Mark = CompletionType.BEAST,
+			Condition = function(mark)
+			return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SODOM)
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BEAST) > 0
+		end},
+		[Enums.Achievements.CompletionMarks.PRUDENCE] = function(mark)
+			return not pgd:Unlocked(Enums.Achievements.CompletionMarks.PRUDENCE)
+				and Isaac.AllMarksFilled(Enums.PlayerType.EDITH) == 2
+		end,
 	},
+
 	BSide = {
-		[CompletionType.MEGA_SATAN] = Enums.Achievements.CompletionMarks.ELECTRIFIER,
-		[CompletionType.ULTRA_GREEDIER] = Enums.Achievements.CompletionMarks.REV_PRUDENCE,
-	}
+		[Enums.Achievements.CompletionMarks.ELECTRIFIER] = function(mark)
+			return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MEGA_SATAN) > 1
+		end,
+		[Enums.Achievements.CompletionMarks.REV_PRUDENCE] = function(mark)
+			return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ULTRA_GREEDIER) > 1
+		end,
+		[Enums.Achievements.CompletionMarks.SOUL_EDITH] = function(mark)
+			return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.HUSH) > 1
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.BOSS_RUSH) > 1
+		end,
+		[Enums.Achievements.CompletionMarks.PEPPER_GRINDER] = function(mark)
+			return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PEPPER_GRINDER)
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.ISAAC) > 1
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.SATAN) > 1
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.BLUE_BABY) > 1
+				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.LAMB) > 1
+		end,
+	},
+	Characters = {
+		[Enums.Achievements.Characters.EDITH] = function()
+			return pgd:IsBossKilled(BossType.BEAST)
+				and not pgd:Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH)
+		end,
+	},
 }
 
 EdithRestored.Enums = Enums

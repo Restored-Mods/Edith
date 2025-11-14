@@ -16,10 +16,11 @@
 	<active id="8" name="Gorgon Mask" gfx="collectibles_011_gorgonmask.png" achievement="Gorgon Mask" description="Stone faced glare" shopprice="10" quality="2" craftquality="2" maxcharges="100" tags="offensive" chargetype="timed" />
 	
 	<!-- Trinkets -->
-	<!-- <trinket id="0" name="Pepper Grinder" description="Achoo!" gfx="pepper_grinder.png" /> -->
+
 	<trinket id="0" name="Salt Rock" achievement="Salt Rock" description="Back to the salt mines" customtags="" gfx="salt_rock.png" />
 	<trinket id="1" name="Smelling Salts" achievement="Smelling Salts" description="Regain consciousness" gfx="smelling_salts.png" />
 	<trinket id="2" name="Chunk of Amber" achievement="Chunk of Amber" description="Preserved rewards" gfx="chunk_of_amber.png"/>
+	<trinket id="3" name="Pepper Grinder" description="Achoo!" gfx="pepper_grinder.png" />
 
 	<!-- Null Items -->
 	<null id="1" name="Gorgon Mask Effect" persistent="true"/>
