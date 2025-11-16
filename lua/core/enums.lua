@@ -184,7 +184,7 @@ Enums.Challenges = {
 Enums.Achievements = {}
 Enums.Achievements.Characters = {
 	EDITH = Isaac.GetAchievementIdByName("Edith"),
-	TAINTED = Isaac.GetAchievementIdByName("Tainted Edith"),
+	TAINTED = Isaac.GetAchievementIdByName("Tainted Edith (Restored Edith)"),
 }
 Enums.Achievements.CompletionMarks = {
 	-- A-side Unlocks
@@ -216,130 +216,229 @@ Enums.Achievements.Challenges = {
 	PEPPERMINT = Isaac.GetAchievementIdByName("​Peppermint"),
 }
 
-Enums.Achievements.Marks = {
+Enums.Achievements.Unlocks = {
 	ASide = {
 		[Enums.Achievements.CompletionMarks.SALTY_BABY] = {
-			Mark = CompletionType.MOMS_HEART,
+			Marks = { CompletionType.MOMS_HEART },
+			Name = "Mom's Heart",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALTY_BABY)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MOMS_HEART) > 0
 			end,
 		},
 		[Enums.Achievements.CompletionMarks.SALT_SHAKER] = {
-			Mark = CompletionType.ISAAC,
+			Marks = { CompletionType.ISAAC },
+			Name = "Isaac",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALT_SHAKER)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ISAAC) > 0
 			end,
 		},
 		[Enums.Achievements.CompletionMarks.CHUNK_OF_AMBER] = {
-			Mark = CompletionType.SATAN,
+			Marks = { CompletionType.SATAN },
+			Name = "Satan",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.CHUNK_OF_AMBER)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.SATAN) > 0
 			end,
 		},
 		[Enums.Achievements.CompletionMarks.RED_HOOD] = {
-			Mark = CompletionType.BOSS_RUSH,
+			Marks = { CompletionType.BOSS_RUSH },
+			Name = "Boss Rush",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.RED_HOOD)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BOSS_RUSH) > 0
 			end,
 		},
 		[Enums.Achievements.CompletionMarks.THUNDER_BOMBS] = {
-			Mark = CompletionType.BLUE_BABY,
+			Marks = { CompletionType.BLUE_BABY },
+			Name = "Blue Baby",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.THUNDER_BOMBS)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BLUE_BABY) > 0
 			end,
 		},
 		[Enums.Achievements.CompletionMarks.SMELLING_SALTS] = {
-			Mark = CompletionType.LAMB,
+			Marks = { CompletionType.LAMB },
+			Name = "Lamb",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SMELLING_SALTS)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.LAMB) > 0
 			end,
 		},
 		[Enums.Achievements.CompletionMarks.SALT_ROCK] = {
-			Mark = CompletionType.MEGA_SATAN,
+			Marks = { CompletionType.MEGA_SATAN },
+			Name = "Mega Satan",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALT_ROCK)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MEGA_SATAN) > 0
 			end,
 		},
 		[Enums.Achievements.CompletionMarks.BLASTING_BOOTS] = {
-			Mark = CompletionType.HUSH,
+			Marks = { CompletionType.HUSH },
+			Name = "Hush",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.BLASTING_BOOTS)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.HUSH) > 0
 			end,
+			Function = function(mark)
+				if mark > 0 then
+					if not pgd:Unlocked(Enums.Achievements.Misc.ROCKET_LACES) then
+						Isaac.ExecuteCommand("achievement " .. Enums.Achievements.Misc.ROCKET_LACES)
+					end
+				else
+					Isaac.ExecuteCommand("lockachievement " .. Enums.Achievements.Misc.ROCKET_LACES)
+				end
+			end,
 		},
 		[Enums.Achievements.CompletionMarks.SALT_PAWNS] = {
-			Mark = CompletionType.ULTRA_GREED,
+			Marks = { CompletionType.ULTRA_GREED },
+			Name = "Ultra Greed",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALT_PAWNS)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ULTRA_GREED) > 0
 			end,
+			Function = function(mark)
+				if mark == 2 then
+					if not pgd:Unlocked(Enums.Achievements.CompletionMarks.GORGON_MASK) then
+						Isaac.ExecuteCommand("achievement " .. Enums.Achievements.CompletionMarks.GORGON_MASK)
+					end
+				else
+					Isaac.ExecuteCommand("lockachievement " .. Enums.Achievements.CompletionMarks.GORGON_MASK)
+				end
+				Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, CompletionType.ULTRA_GREEDIER, mark)
+			end,
 		},
 		[Enums.Achievements.CompletionMarks.GORGON_MASK] = {
-			Mark = CompletionType.ULTRA_GREEDIER,
+			Marks = { CompletionType.ULTRA_GREEDIER },
+			Name = "Ultra Greedier",
+			Difficulty = 2,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.GORGON_MASK)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ULTRA_GREEDIER) > 1
 			end,
+			Function = function(mark)
+				if mark == 2 then
+					if not pgd:Unlocked(Enums.Achievements.CompletionMarks.GORGON_MASK) then
+						Isaac.ExecuteCommand("achievement " .. Enums.Achievements.CompletionMarks.GORGON_MASK)
+					end
+					Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, CompletionType.ULTRA_GREED, 2)
+				else
+					Isaac.ExecuteCommand("lockachievement " .. Enums.Achievements.CompletionMarks.GORGON_MASK)
+					Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, CompletionType.ULTRA_GREED, 1)
+				end
+			end,
 		},
 		[Enums.Achievements.CompletionMarks.LITHIUM] = {
-			Mark = CompletionType.DELIRIUM,
+			Marks = { CompletionType.DELIRIUM },
+			Name = "Delirium",
+			Difficulty = 1,
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.LITHIUM)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.DELIRIUM) > 0
 			end,
 		},
 		[Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS] = {
-			Mark = CompletionType.MOTHER,
+			Marks = { CompletionType.MOTHER },
+			Name = "Mother",
+			Difficulty = 1,
 			Condition = function(mark)
-			return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS)
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MOTHER) > 0
-		end},
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MOTHER) > 0
+			end,
+		},
 		[Enums.Achievements.CompletionMarks.SODOM] = {
-			Mark = CompletionType.BEAST,
+			Marks = { CompletionType.BEAST },
+			Name = "Beast",
+			Difficulty = 1,
 			Condition = function(mark)
-			return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SODOM)
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BEAST) > 0
-		end},
-		[Enums.Achievements.CompletionMarks.PRUDENCE] = function(mark)
-			return not pgd:Unlocked(Enums.Achievements.CompletionMarks.PRUDENCE)
-				and Isaac.AllMarksFilled(Enums.PlayerType.EDITH) == 2
-		end,
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SODOM)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BEAST) > 0
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.PRUDENCE] = {
+			Name = "All Marks",
+			Condition = function()
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.PRUDENCE)
+					and Isaac.AllMarksFilled(Enums.PlayerType.EDITH) == 2
+			end,
+		},
 	},
-
 	BSide = {
-		[Enums.Achievements.CompletionMarks.ELECTRIFIER] = function(mark)
-			return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MEGA_SATAN) > 1
-		end,
-		[Enums.Achievements.CompletionMarks.REV_PRUDENCE] = function(mark)
-			return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ULTRA_GREEDIER) > 1
-		end,
-		[Enums.Achievements.CompletionMarks.SOUL_EDITH] = function(mark)
-			return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.HUSH) > 1
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.BOSS_RUSH) > 1
-		end,
-		[Enums.Achievements.CompletionMarks.PEPPER_GRINDER] = function(mark)
-			return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PEPPER_GRINDER)
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.ISAAC) > 1
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.SATAN) > 1
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.BLUE_BABY) > 1
-				and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.LAMB) > 1
-		end,
+		[Enums.Achievements.CompletionMarks.ELECTRIFIER] = {
+			Name = "Mega Satan",
+			Difficulty = 2,
+			Marks = { CompletionType.MEGA_SATAN },
+			Condition = function(mark)
+				return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MEGA_SATAN) > 1
+			end,
+			ExtraData = function(elem)
+				ImGui.SetHelpmarker(elem, "Unlocks Electrifier")
+			end
+		},
+		[Enums.Achievements.CompletionMarks.REV_PRUDENCE] = {
+			Name = "Ultra Greedier",
+			Difficulty = 2,
+			Marks = { CompletionType.ULTRA_GREEDIER },
+			Condition = function(mark)
+				return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ULTRA_GREEDIER) > 1
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.SOUL_EDITH] = {
+			Name = "Hush/Boss Rush",
+			Difficulty = 2,
+			Marks = { CompletionType.HUSH, CompletionType.BOSS_RUSH },
+			Condition = function(mark)
+				return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.HUSH) > 1
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.BOSS_RUSH) > 1
+			end,
+		},
+		[Enums.Achievements.CompletionMarks.PEPPER_GRINDER] = {
+			Name = "Isaac/Satan/Blue Baby/Lamb",
+			Difficulty = 2,
+			Marks = { CompletionType.ISAAC, CompletionType.SATAN, CompletionType.BLUE_BABY, CompletionType.LAMB },
+			Condition = function(mark)
+				return not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PEPPER_GRINDER)
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.ISAAC) > 1
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.SATAN) > 1
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.BLUE_BABY) > 1
+					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.LAMB) > 1
+			end,
+		},
+	},
+	Challenges = {
+		[Enums.Achievements.Challenges.PEPPERMINT] = {
+			Name = "Rocket Laces",
+			Condition = function()
+				return not pgd:Unlocked(Enums.Achievements.Challenges.PEPPERMINT)
+			end,
+			Function = function(mark)
+				if mark > 0 and not pgd:Unlocked(Enums.Achievements.Misc.ROCKET_LACES) then
+					Isaac.ExecuteCommand("achievement " .. Enums.Achievements.Misc.ROCKET_LACES)
+				end
+			end,
+		},
 	},
 	Characters = {
-		[Enums.Achievements.Characters.EDITH] = function()
-			return pgd:IsBossKilled(BossType.BEAST)
-				and not pgd:Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH)
-		end,
+		[Enums.Achievements.Characters.EDITH] = {
+			Name = "Edith",
+			Condition = function()
+				return pgd:IsBossKilled(BossType.BEAST)
+					and not pgd:Unlocked(EdithRestored.Enums.Achievements.Characters.EDITH)
+			end,
+		},
 	},
 }
 

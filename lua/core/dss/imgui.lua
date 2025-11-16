@@ -696,10 +696,6 @@ local function InitImGuiMenu()
 	UpdateImGuiMenu()
 	UpdateBlackListMenu()
 
-	if true then
-		return
-	end
-	
 	if not ImGui.ElementExists("edithMenuUnlocks") then
 		ImGui.AddElement("EdithRestored", "edithMenuUnlocks", ImGuiElement.MenuItem, "\u{f09c} Unlocks")
 	end
@@ -709,74 +705,14 @@ local function InitImGuiMenu()
 		ImGui.LinkWindowToElement("edithWindowUnlocks", "edithMenuUnlocks")
 	end
 
-	local marksA = EdithRestored.Enums.Achievements.Marks.ASide
-	local marksB = EdithRestored.Enums.Achievements.Marks.BSide
+	local marksA = EdithRestored.Enums.Achievements.Unlocks.ASide
+	local marksB = EdithRestored.Enums.Achievements.Unlocks.BSide
 
-	local completionMarks = {
-		[CompletionType.MOMS_HEART] = { Name = "Mom's Heart", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.ISAAC] = { Name = "Isaac", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.SATAN] = { Name = "Satan", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.BOSS_RUSH] = { Name = "Boss Rush", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.BLUE_BABY] = { Name = "???", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.LAMB] = { Name = "Lamb", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.MEGA_SATAN] = { Name = "Mega Satan", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.HUSH] = { Name = "Hush", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.ULTRA_GREED] = { Name = "Ultra Greed", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.ULTRA_GREEDIER] = { Name = "Ultra Greedier", Difficulty = Difficulty.DIFFICULTY_HARD },
-		[CompletionType.DELIRIUM] = { Name = "Delirium", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.MOTHER] = { Name = "Mother", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-		[CompletionType.BEAST] = { Name = "Beast", Difficulty = Difficulty.DIFFICULTY_NORMAL },
-	}
-
-	local unlocksB = {
-		["BossRush_Hush"] = {
-			Name = "Boss Rush, Hush",
-			CompletionMarks = { CompletionType.BOSS_RUSH, CompletionType.HUSH },
-			Achievement = EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH,
-		},
-		["LightDarkPath"] = {
-			Name = "Light/Dark paths",
-			CompletionMarks = {
-				CompletionType.ISAAC,
-				CompletionType.SATAN,
-				CompletionType.BLUE_BABY,
-				CompletionType.LAMB,
-			},
-			Achievement = EdithRestored.Enums.Achievements.CompletionMarks.PEPPER_GRINDER,
-		},
-		["MegaSatan"] = {
-			Name = "Mega Satan",
-			CompletionMarks = { CompletionType.MEGA_SATAN },
-			Achievement = EdithRestored.Enums.Achievements.CompletionMarks.ELECTRIFIER,
-		},
-	}
-
-	local unlocksBLinks = {
-		[CompletionType.ISAAC] = "LightDarkPath",
-		[CompletionType.SATAN] = "LightDarkPath",
-		[CompletionType.BOSS_RUSH] = "BossRush_Hush",
-		[CompletionType.BLUE_BABY] = "LightDarkPath",
-		[CompletionType.LAMB] = "LightDarkPath",
-		[CompletionType.MEGA_SATAN] = "MegaSatan",
-		[CompletionType.HUSH] = "BossRush_Hush",
-		[CompletionType.ULTRA_GREEDIER] = "UltraGreedier",
-		[CompletionType.DELIRIUM] = "Delirium",
-		[CompletionType.MOTHER] = "Mother",
-		[CompletionType.BEAST] = "Beast",
-	}
-
-	local challenges = {
-		[EdithRestored.Enums.Achievements.Challenges.PEPPERMINT] = "Rocket Laces",
-	}
-
-	local dependants = {
-		[EdithRestored.Enums.Achievements.CompletionMarks.BLASTING_BOOTS] = EdithRestored.Enums.Achievements.Misc.ROCKET_LACES,
-	}
+	local challenges = EdithRestored.Enums.Achievements.Unlocks.Challenges
 
 	local function LockAchievementA(id)
 		if type(id) == "number" then
 			Isaac.ExecuteCommand("lockachievement " .. id)
-			LockAchievementA(dependants[id])
 		end
 	end
 
@@ -785,42 +721,15 @@ local function InitImGuiMenu()
 			if not pgd:Unlocked(id) then
 				Isaac.ExecuteCommand("achievement " .. id)
 			end
-			UnLockAchievementA(dependants[id])
 		end
 	end
 
-	local function HandleAchievement(id, cond)
-		if cond() then
-			UnLockAchievementA(id)
-		else
-			LockAchievementA(id)
-		end
-	end
-
-	local greedText = nil
-	local function SetHelpMarker(tab, func, key, achTab)
+	local function SetHelpMarker(tab, func, ach, elem)
 		for _, item in pairs(tab) do
 			local conf = func(itemConfig, item)
 			if conf then
-				local text = "Unlocks " .. RemoveZeroWidthSpace(conf.Name)
-				print(conf.AchievementID)
-				if conf.AchievementID == achTab[key] then
-					if key == CompletionType.ULTRA_GREEDIER then
-						if greedText ~= nil then
-							greedText = greedText .. ", " .. RemoveZeroWidthSpace(conf.Name)
-						else
-							greedText = text
-						end
-						ImGui.SetHelpmarker("edithMark" .. CompletionType.ULTRA_GREED, greedText .. " (Greedier)")
-						greedText = nil
-					else
-						if key == CompletionType.ULTRA_GREED then
-							greedText = "Unlocks " .. RemoveZeroWidthSpace(conf.Name) .. " (Greed)"
-							ImGui.SetHelpmarker("edithMark" .. key, "Unlocks " .. RemoveZeroWidthSpace(conf.Name))
-						else
-							ImGui.SetHelpmarker("edithMark" .. key, "Unlocks " .. RemoveZeroWidthSpace(conf.Name))
-						end
-					end
+				if conf.AchievementID > 0 and ach and ach == conf.AchievementID then
+					ImGui.SetHelpmarker(elem, "Unlocks " .. RemoveZeroWidthSpace(conf.Name))
 					break
 				end
 			end
@@ -836,49 +745,69 @@ local function InitImGuiMenu()
 	ImGui.AddTab("edithMarks", "edithUnlocksA", "Edith")
 	ImGui.AddTab("edithMarks", "edithUnlocksB", "Tainted Edith")
 
-	for key, v in pairs(completionMarks) do
-		for tab, prefix in pairs({ ["edithUnlocksA"] = "edithMarksA", ["edithUnlocksB"] = "edithMarksB" }) do
-			if ImGui.ElementExists(prefix .. key) then
-				ImGui.RemoveElement(prefix .. key)
-			end
-			if key ~= CompletionType.ULTRA_GREEDIER then
-				local diff = { "None", "Normal", "Hard" }
-				if key == CompletionType.ULTRA_GREED then
-					diff = { "None", "Greed", "Greedier" }
+	if ImGui.ElementExists("edithMarksBTainted") then
+		ImGui.RemoveElement("edithMarksBTainted")
+	end
+	ImGui.AddCombobox("edithUnlocksB", "edithMarksBTainted", "Tainted Edith", function(index, val)
+		if index == 1 then
+			UnLockAchievementA(EdithRestored.Enums.Achievements.Characters.TAINTED)
+		else
+			LockAchievementA(EdithRestored.Enums.Achievements.Characters.TAINTED)
+		end
+		UpdateBlackListMenu()
+	end, { "Locked", "Unlocked" }, 0, true)
+	ImGui.AddCallback("edithMarksBTainted", ImGuiCallback.Render, function()
+		ImGui.UpdateData(
+			"edithMarksBTainted",
+			ImGuiData.Value,
+			pgd:Unlocked(EdithRestored.Enums.Achievements.Characters.TAINTED) and 1 or 0
+		)
+	end)
+
+	for tab, prefix in pairs({ ["edithUnlocksA"] = "edithMarksA", ["edithUnlocksB"] = "edithMarksB" }) do
+		local pType = prefix == "edithMarksA" and EdithRestored.Enums.PlayerType.EDITH
+			or EdithRestored.Enums.PlayerType.EDITH_B
+		local achievements = prefix == "edithMarksA" and marksA or marksB
+		for ach, data in pairs(achievements) do
+			if data.Name ~= nil and data.Difficulty ~= nil and ach > 0 then
+				if ImGui.ElementExists(prefix .. data.Name) then
+					ImGui.RemoveElement(prefix .. data.Name)
 				end
-				local pType = prefix == "edithMarksA" and EdithRestored.Enums.PlayerType.EDITH or EdithRestored.Enums.PlayerType.EDITH_B
-				local marks = prefix == "edithMarksA" and marksA or marksB
-				ImGui.AddCombobox(tab, prefix .. key, v.Name, function(index, val)
-					Isaac.SetCompletionMark(pType, key, index)
-					if key == CompletionType.ULTRA_GREED then
-						Isaac.SetCompletionMark(
-							pType,
-							CompletionType.ULTRA_GREEDIER,
-							index
-						)
-					end
-					for ach, data in pairs(marks) do
-						if data.Mark == key then
-							HandleAchievement(ach, data.Condition())
-							break
+				ImGui.AddCombobox(tab, prefix .. data.Name, data.Name, function(index, val)
+					if index == 1 then
+						for _, mark in pairs(data.Marks) do
+							local diff = data.Difficulty ~= nil and data.Difficulty or 2
+							Isaac.SetCompletionMark(pType, mark, math.max(diff, Isaac.GetCompletionMark(pType, mark)))
 						end
+						UnLockAchievementA(ach)
+					else
+						for _, mark in pairs(data.Marks) do
+							Isaac.SetCompletionMark(pType, mark, 0)
+						end
+						LockAchievementA(ach)
+					end
+					if data.Function then
+						data.Function(index)
 					end
 					UpdateBlackListMenu()
-				end, diff, 0, true)
-				ImGui.AddCallback(prefix..key, ImGuiCallback.Render, function()
-					ImGui.UpdateData(prefix..key, ImGuiData.Value, Isaac.GetCompletionMark(pType, key))
+				end, { "Locked", "Unlocked" }, 0, true)
+				ImGui.AddCallback(prefix .. data.Name, ImGuiCallback.Render, function()
+					ImGui.UpdateData(prefix .. data.Name, ImGuiData.Value, pgd:Unlocked(ach) and 1 or 0)
 				end)
-			end
-		end
 
-		--ImGui.SetTooltip()
-		if marksA[key] then
-			SetHelpMarker(EdithRestored.Enums.CollectibleType, itemConfig.GetCollectible, key, marksA)
-			SetHelpMarker(EdithRestored.Enums.TrinketType, itemConfig.GetTrinket, key, marksA)
+				SetHelpMarker(EdithRestored.Enums.CollectibleType, itemConfig.GetCollectible, ach, prefix .. data.Name)
+				SetHelpMarker(EdithRestored.Enums.TrinketType, itemConfig.GetTrinket, ach, prefix .. data.Name)
+				SetHelpMarker(EdithRestored.Enums.Pickups.Cards, itemConfig.GetCard, ach, prefix .. data.Name)
+				if data.ExtraData then
+					data.ExtraData(prefix .. data.Name)
+				end
+			end
 		end
 	end
 
-	ImGui.AddCombobox("edithUnlocksA", "edithMarkAll", "All Marks", function(index, val)
+	--ImGui.SetTooltip()
+
+	ImGui.AddCombobox("edithUnlocksA", "edithMarksAAll", "All Marks", function(index, val)
 		if index < 1 then
 			Isaac.ExecuteCommand("lockachievement " .. EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE)
 		elseif not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE) then
@@ -886,23 +815,23 @@ local function InitImGuiMenu()
 				if not pgd:Unlocked(key) then
 					Isaac.ExecuteCommand("achievement " .. key)
 				end
-				if val.Mark then
-					Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, val.Mark, 2)
+				for _, mark in pairs(val.Marks) do
+					Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, mark, 2)
 				end
 			end
 			Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE)
 		end
 		UpdateBlackListMenu()
-	end, { "None", "Unlocked" }, 0, true)
+	end, { "Locked", "Unlocked" }, 0, true)
 
-	ImGui.AddCallback("edithMarkAll", ImGuiCallback.Render, function()
+	ImGui.AddCallback("edithMarksAAll", ImGuiCallback.Render, function()
 		local unlocked = pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE)
-		ImGui.UpdateData("edithMarkAll", ImGuiData.Value, unlocked and 1 or 0)
+		ImGui.UpdateData("edithMarksAAll", ImGuiData.Value, unlocked and 1 or 0)
 	end)
 
 	local cardConf = itemConfig:GetCard(EdithRestored.Enums.Pickups.Cards.CARD_PRUDENCE)
 	if cardConf then
-		ImGui.SetHelpmarker("edithMarkAll", "Unlocks " .. RemoveZeroWidthSpace(cardConf.Name))
+		ImGui.SetHelpmarker("edithMarksAAll", "Unlocks " .. RemoveZeroWidthSpace(cardConf.Name))
 	end
 	--#endregion
 
@@ -910,11 +839,11 @@ local function InitImGuiMenu()
 	ImGui.AddTab("edithMarks", "edithChallenges", "Challenges")
 
 	for key, val in pairs(challenges) do
-		if ImGui.ElementExists("edithChallenge" .. key) then
-			ImGui.RemoveElement("edithChallenge" .. key)
+		if ImGui.ElementExists("edithChallenge" .. val.Name) then
+			ImGui.RemoveElement("edithChallenge" .. val.Name)
 		end
 
-		ImGui.AddCombobox("edithChallenges", "edithChallenge" .. key, val, function(index, val)
+		ImGui.AddCombobox("edithChallenges", "edithChallenge" .. val.Name, val.Name, function(index, value)
 			if index == 0 then
 				Isaac.ExecuteCommand("lockachievement " .. key)
 			end
@@ -923,28 +852,21 @@ local function InitImGuiMenu()
 					Isaac.ExecuteCommand("achievement " .. key)
 				end
 			end
+			if val.Function then
+				val.Function(index)
+			end
 			UpdateBlackListMenu()
 		end, { "Locked", "Unlocked" }, 0, true)
-		ImGui.AddCallback("edithChallenge" .. key, ImGuiCallback.Render, function()
-			ImGui.UpdateData("edithChallenge" .. key, ImGuiData.Value, pgd:Unlocked(key) and 1 or 0)
+
+		ImGui.AddCallback("edithChallenge" .. val.Name, ImGuiCallback.Render, function()
+			ImGui.UpdateData("edithChallenge" .. val.Name, ImGuiData.Value, pgd:Unlocked(key) and 1 or 0)
 		end)
-		for _, col in pairs(EdithRestored.Enums.CollectibleType) do
-			local colConf = itemConfig:GetCollectible(col)
-			if colConf then
-				if colConf.AchievementID == key then
-					ImGui.SetHelpmarker("edithChallenge" .. key, "Unlocks " .. RemoveZeroWidthSpace(colConf.Name))
-					break
-				end
-			end
-		end
-		for _, trk in pairs(EdithRestored.Enums.TrinketType) do
-			local trkConf = itemConfig:GetTrinket(trk)
-			if trkConf then
-				if trkConf.AchievementID == key then
-					ImGui.SetHelpmarker("edithChallenge" .. key, "Unlocks " .. RemoveZeroWidthSpace(trkConf.Name))
-					break
-				end
-			end
+
+		SetHelpMarker(EdithRestored.Enums.CollectibleType, itemConfig.GetCollectible, key, "edithChallenge" .. val.Name)
+		SetHelpMarker(EdithRestored.Enums.TrinketType, itemConfig.GetTrinket, key, "edithChallenge" .. val.Name)
+		SetHelpMarker(EdithRestored.Enums.Pickups.Cards, itemConfig.GetCard, key, "edithChallenge" .. val.Name)
+		if val.ExtraData then
+			val.ExtraData("edithChallenge" .. val.Name)
 		end
 	end
 	--#endregion

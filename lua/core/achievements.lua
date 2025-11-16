@@ -1,13 +1,12 @@
 ---CHALLENGE UNLOCKS-------------------------------------------------
 local Helpers = EdithRestored.Helpers
-local marksA = EdithRestored.Enums.Achievements.Marks.ASide
-local marksB = EdithRestored.Enums.Achievements.Marks.BSide
---local marksChallenge = EdithRestored.Enums.Achievements.Marks.BSide
+local marksA = EdithRestored.Enums.Achievements.Unlocks.ASide
+local marksB = EdithRestored.Enums.Achievements.Unlocks.BSide
 local pgd = Isaac.GetPersistentGameData()
 
 local achievementRequirements = {
 	[1] = {
-		Cond = function(compType)
+		Condition = function(compType)
 			return pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.BLASTING_BOOTS)
 			and not pgd:Unlocked(EdithRestored.Enums.Achievements.Misc.ROCKET_LACES)
 		end,
@@ -32,7 +31,7 @@ end)
 
 local function UnlockEdith(doUnlock, ach, force)
 	if doUnlock then
-		if EdithRestored.Enums.Achievements.Marks.Characters[EdithRestored.Enums.Achievements.Characters.EDITH]() then
+		if EdithRestored.Enums.Achievements.Unlocks.Characters[EdithRestored.Enums.Achievements.Characters.EDITH].Condition() then
 			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH, force)
 		end
 	end
@@ -42,7 +41,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, function(_, slot, 
 	UnlockEdith(selected, EdithRestored.Enums.Achievements.Characters.EDITH, true)
 	UnlockEdith(selected, EdithRestored.Enums.Achievements.Characters.EDITH_B, true)
 	for _, ach in ipairs(achievementRequirements) do
-		if ach.Cond() then
+		if ach.Condition() then
 			Isaac.ExecuteCommand("achievement "..ach.Achievement)
 		end
 	end
@@ -52,7 +51,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function(_, load)
 	UnlockEdith(true, EdithRestored.Enums.Achievements.Characters.EDITH, true)
 	UnlockEdith(true, EdithRestored.Enums.Achievements.Characters.EDITH_B, true)
 	for _, ach in ipairs(achievementRequirements) do
-		if ach.Cond() then
+		if ach.Condition() then
 			Helpers.UnlockAchievement(ach.Achievement)
 		end
 	end
@@ -66,15 +65,15 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mark)
 	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH) then
-		for ach_mark, cond in pairs(marksA) do
-			if cond(mark) then
+		for ach_mark, data in pairs(marksA) do
+			if data.Condition() then
 				Helpers.UnlockAchievement(ach_mark)
 			end
 		end
 	end
 	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH_B) then
-		for ach_mark, cond in pairs(marksB) do
-			if cond(mark) then
+		for ach_mark, data in pairs(marksB) do
+			if data.Condition() then
 				Helpers.UnlockAchievement(ach_mark)
 			end
 		end
@@ -83,7 +82,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mar
 		Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH)
 	end
 	for _, ach in ipairs(achievementRequirements) do
-		if ach.Cond(mark) then
+		if ach.Condition(mark) then
 			Helpers.UnlockAchievement(ach.Achievement)
 		end
 	end

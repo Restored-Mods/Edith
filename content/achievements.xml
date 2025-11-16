@@ -23,6 +23,7 @@
 	<achievement name="Soul of Edith" text="Tainted Edith Hush, Boss Rush" gfx="achievement_soul_of_edith.png" />
 	<achievement name="Reverse Prudence" text="Tainted Edith Ultra Greedier" gfx="achievement_revprudence.png" />
 	<achievement name="Pepper Grinder" text="Tainted Edith Isaac, Satan, Blue Baby, The Lamb" gfx="achievement_peppergrinder.png" />
+	<achievement name="Electrifier" text="Mega Satan" gfx="achievement_electrifier.png" />
 
 	<!-- challenges -->
 	<achievement name="​Peppermint" text="Edith Peppermint" gfx="achievement_peppermint.png" />
