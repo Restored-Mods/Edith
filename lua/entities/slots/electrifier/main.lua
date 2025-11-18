@@ -76,7 +76,7 @@ local function ChangeAltarSprite(pickup)
     if pickup.SpawnerType == EdithRestored.Enums.Slots.ELECTRIFIER.Type and pickup.SpawnerVariant == EdithRestored.Enums.Slots.ELECTRIFIER.Variant and pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE and not pickup:IsShopItem() then
         local sprite = pickup:GetSprite()
         pickup:SetAlternatePedestal(PedestalType.FORTUNE_TELLING_MACHINE)
-        sprite:ReplaceSpritesheet(5, "gfx/Electrifier_altar.png")
+        sprite:ReplaceSpritesheet(5, "gfx/items/Electrifier_altar.png")
         sprite:LoadGraphics()
     end
 end
@@ -92,7 +92,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Electrifier.onItemAlata
 ---@param slot EntitySlot
 function Electrifier:onDeath(slot)
     local rng = slot:GetDropRNG()
-    if rng:RandomFloat() >= 0.90 then
+    if slot:GetPrizeType() == 2 then
         slot.Velocity = Vector.Zero
         slot.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
         slot.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
@@ -141,6 +141,9 @@ function Electrifier:onUpdate(slot)
         s:Play("Idle", true)
         slot:SetState(1)
     end
+    if slot:GetState() == 3 and not (s:GetAnimation() == "Broken" or s:GetAnimation() == "Death") then
+        s:Play("Death", true)
+    end
     if s:IsFinished("Death") then
         s:Play("Broken", true)
     end
@@ -148,8 +151,9 @@ function Electrifier:onUpdate(slot)
         s:Play("Initiate", true)
     end
     if s:IsFinished("Initiate") then
-        if rng:RandomFloat() >= 0.95 then
+        if rng:RandomFloat() >= (0.95 - slot:GetDonationValue() * 0.015 - GetCharges() * 0.005) then
             local effect = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BOMB_EXPLOSION, 0, slot.Position, Vector.Zero, nil):ToEffect()
+            slot:SetPrizeType(rng:RandomFloat() >= math.max(0.5, 0.9 + GetCharges() * 0.015) and 2 or 1)
             slot:TakeDamage(2, DamageFlag.DAMAGE_EXPLOSION, EntityRef(effect), 0)
             s:Play("Death", true)
             slot:SetState(3)
@@ -159,6 +163,7 @@ function Electrifier:onUpdate(slot)
     end
     if s:IsEventTriggered("Prize") then
         AddCharges(1)
+        slot:SetDonationValue(slot:GetDonationValue() + 1)
         local BatteryEffect = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BATTERY, 0, slot.Position, Vector.Zero, nil):ToEffect()
         BatteryEffect.SpriteOffset = Vector(0,-15)
         BatteryEffect.DepthOffset = 15
