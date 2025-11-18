@@ -16,10 +16,10 @@
        <player name ="Redith" skin="Character_001_TaintedRedith.png" armor="6"
           nameimage="playername_Edith.png" modcostume="151"
           portrait="playerportrait_Edith_B.png" skinColor="-1"
-          extraportrait="edith_stage.anm2"
           bombs="1"
           birthright="Reflect their gaze" costumeSuffix="edithb"
           speedmodifier="-0.1"
           achievement="Tainted Edith (Restored Edith)"
+          noshake="true"
           bSkinParent="Redith" /> 
 </players>

@@ -92,13 +92,15 @@ include("lua.items.passive.ShrapnelBombs.main")
 include("lua.items.passive.Peppermint.main")
 
 -- trinkets
---include("lua.items.trinkets.PepperGrinder.main")
+include("lua.items.trinkets.PepperGrinder.main")
 include("lua.items.trinkets.SaltRock.main")
 include("lua.items.trinkets.SmellingSalts.main")
 include("lua.items.trinkets.ChunkOfAmber.main")
 
 -- cards
 include("lua.items.cards.SoulOfEdith.main")
+include("lua.items.cards.Prudence.main")
+include("lua.items.cards.PrudenceReverse.main")
 
 -- challenges
 include("lua.challenges.rocket_laces")
@@ -119,14 +121,14 @@ if StageAPI and StageAPI.Loaded then
 	StageAPI.AddPlayerGraphicsInfo(EdithRestored.Enums.PlayerType.EDITH, {
 		Name = "gfx/ui/boss/playername_Edith.png",
 		Portrait = "gfx/ui/boss/playerportrait_Edith_A.png",
-		NoShake = false,
+		NoShake = true,
 	})
 
-	--[[StageAPI.AddPlayerGraphicsInfo(EdithRestored.Enums.PlayerType.EDITH_B, {
+	StageAPI.AddPlayerGraphicsInfo(EdithRestored.Enums.PlayerType.EDITH_B, {
         Name = "gfx/ui/boss/playername_Edith.png",
         Portrait = "gfx/ui/boss/playerportrait_Edith_B.png",
-        NoShake = false
-    })]]
+        NoShake = true
+    })
 end
 
 EdithRestored:Log("Edith Restored loaded.")
