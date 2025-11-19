@@ -183,21 +183,21 @@ local function CheckEdithsCollisionWithGrid(player, data)
 						not player:IsFlying()
 						and (
 							gridEntity.CollisionClass == GridCollisionClass.COLLISION_PIT
-							or gridEntity:GetType() == GridEntityType.GRID_ROCKB
+							or gridEntity.CollisionClass == GridCollisionClass.COLLISION_SOLID
 						)
 					)
 				then
-					if gridEntity.CollisionClass == GridCollisionClass.COLLISION_WALL then
+					--if gridEntity.CollisionClass == GridCollisionClass.COLLISION_WALL then
 						player.Velocity = Vector.Zero
 						data.EdithTargetMovementPosition = nil
-
 						if hasMarsEffect then
 							local marsEffect = effects:GetCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)
 							local marsCooldown = marsEffect.Cooldown
 
 							EdithRestored.Game:ShakeScreen(marsCooldown + 10)
 						end
-					end
+					--end
+					data.TriggerMove = false
 				end
 
 				--Check if we can open a door
@@ -242,6 +242,7 @@ local function CheckEdithsCollisionWithSlots(player, data)
 
 	player.Velocity = Vector.Zero
 	data.EdithTargetMovementPosition = nil
+	data.TriggerMove = false
 end
 
 local function EdithJupiterEffect(player, data)
@@ -1327,6 +1328,10 @@ function Player:edith_Stats(player, cacheFlag)
 		end
 	elseif Helpers.IsPlayerEdith(player, false, true) then -- If the player is Tainted Edith ^^
 		Helpers.ChangePepperValue(player)
+	end
+	if cacheFlag == CacheFlag.CACHE_SPEED and Helpers.IsPlayerEdith(player, true, true) 
+	and not EdithRestored.Room():HasCurseMist() then
+		player.MoveSpeed = math.max(0.3, player.MoveSpeed)
 	end
 end
 
