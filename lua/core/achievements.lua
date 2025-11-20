@@ -8,7 +8,7 @@ local achievementRequirements = {
 	[1] = {
 		Condition = function(compType)
 			return pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.BLASTING_BOOTS)
-			and not pgd:Unlocked(EdithRestored.Enums.Achievements.Misc.ROCKET_LACES)
+				and not pgd:Unlocked(EdithRestored.Enums.Achievements.Misc.ROCKET_LACES)
 		end,
 		Achievement = EdithRestored.Enums.Achievements.Misc.ROCKET_LACES,
 	},
@@ -31,7 +31,9 @@ end)
 
 local function UnlockEdith(doUnlock, ach, force)
 	if doUnlock then
-		if EdithRestored.Enums.Achievements.Unlocks.Characters[EdithRestored.Enums.Achievements.Characters.EDITH].Condition() then
+		if
+			EdithRestored.Enums.Achievements.Unlocks.Characters[EdithRestored.Enums.Achievements.Characters.EDITH].Condition()
+		then
 			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH, force)
 		end
 	end
@@ -42,7 +44,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, function(_, slot, 
 	UnlockEdith(selected, EdithRestored.Enums.Achievements.Characters.EDITH_B, true)
 	for _, ach in ipairs(achievementRequirements) do
 		if ach.Condition() then
-			Isaac.ExecuteCommand("achievement "..ach.Achievement)
+			Isaac.ExecuteCommand("achievement " .. ach.Achievement)
 		end
 	end
 end)
@@ -88,12 +90,27 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mar
 	end
 end)
 
+EdithRestored:AddCallback(ModCallbacks.MC_POST_SLOT_UPDATE, function(_, slot)
+	if
+		slot.SubType == EdithRestored.Enums.PlayerType.EDITH_B
+		and slot:GetSprite():IsEventTriggered("Poof")
+		and EdithRestored.Level():GetCurrentRoomIndex() == 94
+		and EdithRestored.Level():GetStage() == LevelStage.STAGE8
+		and not pgd:Unlocked(EdithRestored.Enums.Achievements.Characters.TAINTED)
+	then
+		Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.TAINTED)
+	end
+end, SlotVariant.HOME_CLOSET_PLAYER)
+
 EdithRestored:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
 	if
 		card == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH
-		and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-		or card == EdithRestored.Enums.Pickups.Cards.CARD_PRUDENCE and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE)
-		or card == EdithRestored.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.REV_PRUDENCE)
+			and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+		or card == EdithRestored.Enums.Pickups.Cards.CARD_PRUDENCE and not pgd:Unlocked(
+			EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE
+		)
+		or card == EdithRestored.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE
+			and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.REV_PRUDENCE)
 	then
 		return 0
 	end

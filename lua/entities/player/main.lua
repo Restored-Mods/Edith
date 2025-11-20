@@ -1337,34 +1337,41 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Player.edith_Stats)
 
---- This should be remade to only took account the first player, afaik, the tainted character in closet will always be the first's
-function Player:Home()
-	for i = 0, EdithRestored.Game:GetNumPlayers() - 1 do
-		local player = Isaac.GetPlayer(i)
-		if
-			Helpers.IsPlayerEdith(player, true, false)
-			and EdithRestored.Level():GetCurrentRoomIndex() == 94
-			and EdithRestored.Level():GetStage() == LevelStage.STAGE8
-			and EdithRestored.Unlocks.Edith.Tainted.Unlock ~= true
-		then
-			for _, entity in ipairs(Isaac.GetRoomEntities()) do
-				if
-					(
-						(entity.Type == EntityType.ENTITY_PICKUP and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE)
-						or (entity.Type == EntityType.ENTITY_SHOPKEEPER)
-					) and EdithRestored.Room():IsFirstVisit()
-				then
-					entity:Remove()
-					local slot = Isaac.Spawn(EntityType.ENTITY_SLOT, 14, 0, entity.Position, Vector.Zero, nil)
-					slot:GetSprite():ReplaceSpritesheet(0, "gfx/characters/costumes/Character_001_Edith_b.png")
-					slot:GetSprite():LoadGraphics()
-				end
-			end
-		end
+local function ChangeSlotSprite(slot)
+	local sprite = slot:GetSprite()
+	if sprite:GetLayer(0):GetSpritesheetPath() ~= "gfx/characters/costumes/Character_001_TaintedRedith.png" then
+		sprite:ReplaceSpritesheet(0, "gfx/characters/costumes/Character_001_TaintedRedith.png")
+		sprite:LoadGraphics()
 	end
 end
 
---EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.Home)
+--- This should be remade to only took account the first player, afaik, the tainted character in closet will always be the first's
+function Player:Home()
+	if
+		IsPureEdith(Isaac.GetPlayer(0))
+		and EdithRestored.Level():GetCurrentRoomIndex() == 94
+		and EdithRestored.Level():GetStage() == LevelStage.STAGE8
+		and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.TAINTED)
+		and EdithRestored.Room():IsFirstVisit()
+		and #Isaac.FindByType(EntityType.ENTITY_SLOT, SlotVariant.HOME_CLOSET_PLAYER) == 0
+	then
+		local tab = Helpers.MergeTables({}, Isaac.FindByType(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE), Isaac.FindByType(EntityType.ENTITY_SHOPKEEPER))
+		if #tab > 0 then
+			local entity = tab[1]
+			entity:Remove()
+			Isaac.Spawn(EntityType.ENTITY_SLOT, SlotVariant.HOME_CLOSET_PLAYER, EdithRestored.Enums.PlayerType.EDITH_B, entity.Position, Vector.Zero, nil)
+		end
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.Home)
+
+---@param slot EntitySlot
+function Player:TaintedSlot(slot)
+	if slot.SubType == EdithRestored.Enums.PlayerType.EDITH_B then
+		ChangeSlotSprite(slot)
+	end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_SLOT_UPDATE, Player.TaintedSlot, SlotVariant.HOME_CLOSET_PLAYER)
 
 function Player:NewRoom()
 	for i = 0, EdithRestored.Game:GetNumPlayers() - 1 do
