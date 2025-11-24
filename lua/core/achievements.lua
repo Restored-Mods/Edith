@@ -4,16 +4,6 @@ local marksA = EdithRestored.Enums.Achievements.Unlocks.ASide
 local marksB = EdithRestored.Enums.Achievements.Unlocks.BSide
 local pgd = Isaac.GetPersistentGameData()
 
-local achievementRequirements = {
-	[1] = {
-		Condition = function(compType)
-			return pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.BLASTING_BOOTS)
-				and not pgd:Unlocked(EdithRestored.Enums.Achievements.Misc.ROCKET_LACES)
-		end,
-		Achievement = EdithRestored.Enums.Achievements.Misc.ROCKET_LACES,
-	},
-}
-
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_RENDER_CUSTOM_CHARACTER_MENU, function(_, id, pos, sprite)
 	if id == EdithRestored.Enums.PlayerType.EDITH then
 		local sprite = EntityConfig.GetPlayer(id):GetModdedMenuBackgroundSprite()
@@ -42,9 +32,9 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, function(_, slot, selected, raw)
 	UnlockEdith(selected, EdithRestored.Enums.Achievements.Characters.EDITH, true)
 	UnlockEdith(selected, EdithRestored.Enums.Achievements.Characters.EDITH_B, true)
-	for _, ach in ipairs(achievementRequirements) do
-		if ach.Condition() then
-			Isaac.ExecuteCommand("achievement " .. ach.Achievement)
+	for ach, data in pairs(EdithRestored.Enums.Achievements.Unlocks.Misc) do
+		if data.Condition() then
+			Helpers.UnlockAchievement(ach)
 		end
 	end
 end)
@@ -52,9 +42,9 @@ end)
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function(_, load)
 	UnlockEdith(true, EdithRestored.Enums.Achievements.Characters.EDITH, true)
 	UnlockEdith(true, EdithRestored.Enums.Achievements.Characters.EDITH_B, true)
-	for _, ach in ipairs(achievementRequirements) do
-		if ach.Condition() then
-			Helpers.UnlockAchievement(ach.Achievement)
+	for ach, data in pairs(EdithRestored.Enums.Achievements.Unlocks.Misc) do
+		if data.Condition() then
+			Helpers.UnlockAchievement(ach)
 		end
 	end
 end)
@@ -83,9 +73,9 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mar
 	if mark == CompletionType.BEAST then
 		Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH)
 	end
-	for _, ach in ipairs(achievementRequirements) do
-		if ach.Condition(mark) then
-			Helpers.UnlockAchievement(ach.Achievement)
+	for ach, data in pairs(EdithRestored.Enums.Achievements.Unlocks.Misc) do
+		if data.Condition() then
+			Helpers.UnlockAchievement(ach)
 		end
 	end
 end)

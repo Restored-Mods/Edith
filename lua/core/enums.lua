@@ -384,7 +384,7 @@ Enums.Achievements.Unlocks = {
 			end,
 			ExtraData = function(elem)
 				ImGui.SetHelpmarker(elem, "Unlocks Electrifier")
-			end
+			end,
 		},
 		[Enums.Achievements.CompletionMarks.REV_PRUDENCE] = {
 			Name = "Ultra Greedier",
@@ -428,6 +428,14 @@ Enums.Achievements.Unlocks = {
 				if mark > 0 and not pgd:Unlocked(Enums.Achievements.Misc.ROCKET_LACES) then
 					Isaac.ExecuteCommand("achievement " .. Enums.Achievements.Misc.ROCKET_LACES)
 				end
+			end,
+		},
+	},
+	Misc = {
+		[Enums.Achievements.Misc.ROCKET_LACES] = {
+			Condition = function()
+				return pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.BLASTING_BOOTS)
+					and not pgd:Unlocked(EdithRestored.Enums.Achievements.Misc.ROCKET_LACES)
 			end,
 		},
 	},
