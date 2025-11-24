@@ -651,7 +651,6 @@ function Player:ChargeBarRender(player)
 		EdithRestored.Room():WorldToScreenPosition(player.Position)
 	)
 end
-
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Player.ChargeBarRender, 0)
 
 function Player:StompRadiusRender()
@@ -1266,7 +1265,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, Player.RocketTarget)
 ---@param cd integer
 ---@return boolean?
 function Player:DamageHandling(entity, amount, flags, source, cd)
-	if entity and entity:ToPlayer() and Helpers.IsPlayerEdith(entity:ToPlayer(), true, false) then
+	if entity and entity:ToPlayer() and Helpers.IsPlayerEdith(entity:ToPlayer(), true, true) then
 		local player = entity:ToPlayer()
 		local data = EdithRestored:GetData(player)
 		if flags & DamageFlag.DAMAGE_PITFALL > 0 then
@@ -1277,6 +1276,7 @@ function Player:DamageHandling(entity, amount, flags, source, cd)
 		data.HTJ = nil
 		data.PostLandingKill = nil
 		data.Landed = nil
+		player.Velocity = Vector.Zero
 	end
 end
 
@@ -1455,6 +1455,9 @@ function Player:OnNPCCollision(entity, collider)
 	local data = EdithRestored:GetData(player)
 	if not data.EdithTargetMovementPosition then return end
 
+	if entity.Type == EntityType.ENTITY_FIREPLACE and data.SlideCounter < (5 / player.MoveSpeed) then
+		return
+	end
 	player.Velocity = Vector.Zero
 	data.EdithTargetMovementPosition = nil
 end
