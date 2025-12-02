@@ -1,3 +1,4 @@
+---@class ModReference
 EdithRestored = RegisterMod("Edith", 1)
 
 --#region mod error message, thanks Mr. Fly6
