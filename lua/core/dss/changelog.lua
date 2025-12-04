@@ -18,7 +18,7 @@ to achievement
 
 - having minimum 1.0 movement speed
 during curse of the darkness without
-red hood]], {"edith", "restored", "", "v1.1.0", "update"}, true, true)
+red hood]], {"edith", "restored", "", "v1.1.0", "update"})
 
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.0.2", [[{{FSIZE2}}changes
 - salt shaker wisp tear damage
@@ -45,4 +45,4 @@ DeadSeaScrollsMenu.AddChangelog(modname, "v1.0.0", [[{FSIZE3}edith restored
 the beast.
 14 unlocks for edith's completion
 marks.]],
-{"edith", "restored", "", "v1.0.0", "release"}, true, true)
+{"edith", "restored", "", "v1.0.0", "release"})
