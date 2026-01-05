@@ -1,6 +1,7 @@
 local Helpers = EdithRestored.Helpers
 local sfx = SFXManager()
 
+
 local SlideColors = {
 	Water = {
 		[BackdropType.CORPSE3] = Color(1, 0.2, 0.2),
@@ -13,6 +14,15 @@ local SlideColors = {
 		[BackdropType.CORPSE2] = Color(0, 0, 0, 1, 0.55, 0.57, 0.55),
 		Default = Color.Default
 	}
+}
+
+local HoodColorList = {
+	[SkinColor.SKIN_WHITE] = "",
+	[SkinColor.SKIN_BLACK] = "_black",
+	[SkinColor.SKIN_BLUE] = "_blue",
+	[SkinColor.SKIN_RED] = "_red",
+	[SkinColor.SKIN_GREEN] = "_green",
+	[SkinColor.SKIN_GREY] = "_grey",
 }
 
 local Chap4Backdrops = {
@@ -547,7 +557,6 @@ end
 function Player:LoadUpdate(isLoading)
 	for _, player in ipairs(Helpers.GetPlayers()) do
 		player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_SPEED, true)
-		Helpers.ChangeSprite(player, true)
 	end
 	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH) then
 		EdithRestored.Game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_GNAWED_LEAF)
@@ -692,7 +701,6 @@ function Player:OnInitPlayer(player)
 		local mySprite = player:GetSprite()
 		mySprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
 		mySprite:Update()
-		Helpers.ChangeSprite(player)
 	elseif Helpers.IsPlayerEdith(player, false, true) then -- Apply different costume for her tainted variant
 		if Helpers.IsPlayerEdith(player, false, true) then
 			player:ChangePlayerType(EdithRestored.Enums.PlayerType.EDITH)
@@ -701,7 +709,6 @@ function Player:OnInitPlayer(player)
 		local mySprite = player:GetSprite()
 		mySprite:Load(EdithRestored.Enums.PlayerSprites.EDITH_B, true)
 		mySprite:LoadGraphics()
-		Helpers.ChangeSprite(player, true)
 		player:SetPocketActiveItem(
 			EdithRestored.Enums.CollectibleType.COLLECTIBLE_THE_CHISEL,
 			ActiveSlot.SLOT_POCKET,
@@ -734,7 +741,6 @@ function Player:OnUpdatePlayer(player)
 			end
 		end
 		local sprite = player:GetSprite()
-		Helpers.ChangeSprite(player)
 		local edithTarget = data.EdithJumpTarget
 		if not player:IsDead() and not player:HasCurseMistEffect() then
 			if sprite:GetAnimation():find("Walk") then
@@ -945,20 +951,6 @@ function Player:OnUpdatePlayer(player)
 	else
 		data.LockBombs = nil
 	end
-	if Helpers.IsPlayerEdith(player, false, true) then -- Apply different costume for her tainted variant
-		if dataP.Pepper == 5 and Helpers.CantMove(player) then
-			player.Velocity = Vector.Zero
-		end
-		local sprite = player:GetSprite()
-		if sprite:IsPlaying("Death") and dataP.Pepper < 5 then
-			if
-				sprite:GetFrame() >= 5 and sprite:GetFrame() <= 9
-			then
-				dataP.Pepper = dataP.Pepper + 1
-				Helpers.ChangeSprite(player, false)
-			end
-		end
-	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Player.OnUpdatePlayer, 0)
 
@@ -976,7 +968,7 @@ function Player:Landing(player, jumpData, inPit)
 		end
 		data.Landed = true
 		data.PostRocketRide = nil
-		--data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
+		--data.TargetLandPos = Helpers.GetEdithTarget(player).Position
 		player.Velocity = Vector.Zero
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
@@ -1215,7 +1207,6 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Player.IFAfterFr
 
 function Player:edith_Stats(player, cacheFlag)
 	if Helpers.IsPlayerEdith(player, true, false) then -- If the player is Edith it will apply her specific stats
-		Helpers.ChangeSprite(player)
 		if cacheFlag == CacheFlag.CACHE_DAMAGE then
 			player.Damage = player.Damage * 1.1
 		end
@@ -1267,7 +1258,6 @@ function Player:NewRoom()
 			data.TrapDoorFall = nil
 			JumpLib:QuitJump(player)
 		end
-		Helpers.ChangeSprite(player)
 
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
@@ -1666,21 +1656,21 @@ EdithRestored:AddCallback(
 	EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant
 )
 
----@param p EntityPlayer
-function Player:AccessToMirrorWorld(p)
-	if not Helpers.IsPlayerEdith(p, true, false) and p:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) then return end
+---@param player EntityPlayer
+function Player:AccessToMirrorWorld(player)
+	if not Helpers.IsPlayerEdith(player, true, false) and player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) then return end
 
 	local dimension = Helpers.InMirrorWorld() and 0 or 1
 
 	for _, Door in ipairs(TSIL.Doors.GetDoorsToRoomIndex(-100)) do
 		if Door.State ~= 1 then goto continue end
-		if p.Position:Distance(Door.Position) > 30 then goto continue end
+		if player.Position:Distance(Door.Position) > 30 then goto continue end
 
 		EdithRestored.Game:StartRoomTransition(
 			EdithRestored.Level():GetCurrentRoomIndex(),
 			Door.Slot % 4,
 			RoomTransitionAnim.FADE_MIRROR,
-			p,
+			player,
 			dimension
 		)
 		EdithRestored.Level().LeaveDoor = Door.Slot
@@ -1760,3 +1750,48 @@ EdithRestored:AddCallback(
 	Player.PreJump,
 	{ type = EntityType.ENTITY_PLAYER, player = EdithRestored.Enums.PlayerType.EDITH }
 )
+
+---@param itemConfigItem ItemConfigItem
+---@param player EntityPlayer
+---@param itemStateOnly boolean
+function Player:ChangePlayerGfx(itemConfigItem, player, itemStateOnly)
+	if not player:IsCoopGhost() then
+		local sprite = player:GetSprite()
+		local edithFile = EdithRestored.Enums.PlayerSprites.EDITH
+		local edithBFile = EdithRestored.Enums.PlayerSprites.EDITH_B
+		if Helpers.IsPlayerEdith(player, true, true) then
+			local animationFile = "gfx/redith"
+			if Helpers.IsPlayerEdith(player, false, true) then
+				animationFile = animationFile.."_b"
+			end
+			animationFile = animationFile..".anm2"
+			if sprite:GetFilename() ~= animationFile then
+				sprite:Load(animationFile, true)
+			end
+			if Helpers.IsPlayerEdith(player, true, false) then
+				if itemConfigItem.ID ~= EdithRestored.Enums.Costumes.EDITH_HOOD and itemConfigItem:IsNull() or 
+				not itemConfigItem:IsNull() then
+					local sprite = player:GetSprite()
+					local bodyColor = player:GetBodyColor()
+					local color = HoodColorList[bodyColor] or ""
+					if EdithRestored.Room():HasCurseMist() then
+						color = "_Human"
+					end
+					Helpers.ChangeHoodSprite(player, "gfx/characters/costumes/Character_001_Redith_Hood" .. color .. ".png")
+					for i = 0, 14 do
+						if i ~= 13 then
+							sprite:ReplaceSpritesheet(i, "gfx/characters/costumes/Character_001_Redith" .. color .. ".png")
+						end
+					end
+					sprite:LoadGraphics()
+				end
+			else
+
+			end
+		elseif sprite:GetFilename() == edithFile or sprite:GetFilename() == edithBFile then
+			sprite:Load("gfx/001.000_Player.anm2", true)
+		end
+	end
+end
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_ADD_COSTUME, CallbackPriority.IMPORTANT, Player.ChangePlayerGfx)
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_REMOVE_COSTUME, CallbackPriority.IMPORTANT, Player.ChangePlayerGfx)
