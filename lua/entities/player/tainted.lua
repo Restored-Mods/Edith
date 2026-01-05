@@ -1,12 +1,11 @@
 local Helpers = EdithRestored.Helpers
-local mod = EdithRestored
 
 local Tainted = {}
 
 ---@param player EntityPlayer
 ---@return boolean
 local function IsTaintedEdith(player)
-    return Helpers.IsPlayerEdith(player, false, true)
+    return Helpers.IsTaintedEdith(player)
 end
 
 ---@param player EntityPlayer
@@ -17,12 +16,12 @@ function Tainted:OnTaintedInit(player)
 	mySprite:Load(EdithRestored.Enums.PlayerSprites.EDITH_B, true)
 	mySprite:Update()
 end
-mod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, Tainted.OnTaintedInit)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, Tainted.OnTaintedInit)
 
 ---@param player EntityPlayer
 function Tainted:OnTaintedUpdate(player)
     if not IsTaintedEdith(player) then return end
-    local data = mod:GetData(player)
+    local data = EdithRestored:GetData(player)
     local baseGridMovement = 5 
     local ctrlIdx = player.ControllerIndex 
 
@@ -42,9 +41,9 @@ function Tainted:OnTaintedUpdate(player)
         data.MovementInput = ButtonAction.ACTION_DOWN
     end
     
-    mod:EdithGridMovement(player, data, 3, 1)
+    EdithRestored:EdithGridMovement(player, data, 3, 1)
 
-    if not mod:IsEdithSliding(data) then
+    if not EdithRestored:IsEdithSliding(data) then
         data.SlideCharge = Helpers.Clamp(data.SlideCharge + 0.5, 0, 100)
     end
 
@@ -58,10 +57,10 @@ function Tainted:OnTaintedUpdate(player)
     end
 
     if data.TriggerMove then
-        mod:EdithGridMovement(player, data, data.Slidespeed, data.MoveGrids, data.MovementInput)
+        EdithRestored:EdithGridMovement(player, data, data.Slidespeed, data.MoveGrids, data.MovementInput)
     end
 end
-mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Tainted.OnTaintedUpdate)
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Tainted.OnTaintedUpdate)
 
 function Tainted:ChargeBarRender(player)
 	local data = EdithRestored:GetData(player)

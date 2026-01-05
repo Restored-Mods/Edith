@@ -1,6 +1,5 @@
 local Helpers = EdithRestored.Helpers
 local sfx = SFXManager()
-local mod = EdithRestored
 
 local SlideColors = {
 	Water = {
@@ -14,6 +13,15 @@ local SlideColors = {
 		[BackdropType.CORPSE2] = Color(0, 0, 0, 1, 0.55, 0.57, 0.55),
 		Default = Color.Default
 	}
+}
+
+local HoodColorList = {
+	[SkinColor.SKIN_WHITE] = "",
+	[SkinColor.SKIN_BLACK] = "_black",
+	[SkinColor.SKIN_BLUE] = "_blue",
+	[SkinColor.SKIN_RED] = "_red",
+	[SkinColor.SKIN_GREEN] = "_green",
+	[SkinColor.SKIN_GREY] = "_grey",
 }
 
 local Chap4Backdrops = {
@@ -32,13 +40,6 @@ local function IsChap4()
 	return Chap4Backdrops[backdrop] or false 
 end
 
-
----@param player EntityPlayer
----@return boolean
-local function IsPureEdith(player)
-	return Helpers.IsPlayerEdith(player, true, false)
-end
-
 if CustomHealthAPI then
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithRestored.Enums.PlayerType.EDITH] = true
 	CustomHealthAPI.PersistentData.CharactersThatCantHaveRedHealth[EdithRestored.Enums.PlayerType.EDITH_B] = true
@@ -51,7 +52,7 @@ if CustomHealthAPI then
 		0,
 		function(player, key)
 			if
-				Helpers.IsPlayerEdith(player, true, true)
+				Helpers.IsPlayerEdith(player)
 				and CustomHealthAPI.Library.GetInfoOfKey(key, "Type") == CustomHealthAPI.Enums.HealthTypes.RED
 			then
 				return false
@@ -77,7 +78,7 @@ end
 ---@param bigJump boolean?
 ---@param outPitfall boolean?
 local function EdithJump(player, pos, force, bigJump, outPitfall)
-	if not (IsPureEdith(player) and getmetatable(pos).__type == "Vector") then return end
+	if not (Helpers.IsPureEdith(player) and getmetatable(pos).__type == "Vector") then return end
 	local data = EdithRestored:GetData(player)
 	local anim = bigJump and "EdithJumpBig" or "EdithJump"
 	if outPitfall then
@@ -383,7 +384,7 @@ local function EdithTriggerSlide(player, data, gridMult, forcedDir)
 	local isPressingUp
 	local isPressingDown
 	local controllerIndex = player.ControllerIndex
-	local allowHolding = IsPureEdith(player) and EdithRestored:GetDefaultFileSave("AllowHolding")
+	local allowHolding = Helpers.IsPureEdith(player) and EdithRestored:GetDefaultFileSave("AllowHolding")
 
 	-- I can't believe this actually works
 	local ActionFunc = allowHolding and Input.IsActionPressed or Input.IsActionTriggered
@@ -393,7 +394,7 @@ local function EdithTriggerSlide(player, data, gridMult, forcedDir)
 	isPressingUp = ActionFunc(ButtonAction.ACTION_UP, controllerIndex)
 	isPressingDown = ActionFunc(ButtonAction.ACTION_DOWN, controllerIndex)
 
-	if IsPureEdith(player) and data.InputBuffer then
+	if Helpers.IsPureEdith(player) and data.InputBuffer then
 		isPressingLeft = isPressingLeft or data.InputBuffer.input == ButtonAction.ACTION_LEFT
 		isPressingRight = isPressingRight or data.InputBuffer.input == ButtonAction.ACTION_RIGHT
 		isPressingUp = isPressingUp or data.InputBuffer.input == ButtonAction.ACTION_UP
@@ -467,7 +468,7 @@ end
 local function EdithSliding(player, data, hasMarsEffect, hasMegaMush, speedBase, firstFrameOfMovement)
 	local effects = player:GetEffects()
 
-	if IsPureEdith(player) and not player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and not EdithRestored.Game:IsPaused() then
+	if Helpers.IsPureEdith(player) and not player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and not EdithRestored.Game:IsPaused() then
 		data.EdithJumpCharge = math.max(0, data.EdithJumpCharge - JumpCharge / 2)
 	end
 
@@ -627,7 +628,6 @@ end
 function Player:LoadUpdate(isLoading)
 	for _, player in ipairs(Helpers.GetPlayers()) do
 		player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_SPEED, true)
-		Helpers.ChangeSprite(player, true)
 	end
 	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH) then
 		EdithRestored.Game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_GNAWED_LEAF)
@@ -639,7 +639,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, Player.LoadUpdate)
 ---@param player EntityPlayer
 function Player:ChargeBarRender(player)
 	local data = EdithRestored:GetData(player)
-	if not IsPureEdith(player) or player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) then return end
+	if not Helpers.IsPureEdith(player) or player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) then return end
 
 	data.EdithJumpCharge = data.EdithJumpCharge or 0
 	data.ChargeBar = data.ChargeBar or Sprite("gfx/chargebar.anm2", true)
@@ -703,7 +703,7 @@ function Player:TargetJumpRender(target)
 
 	if EdithRestored.Game:IsPaused() then return end
 	if not player then return end
-	if not IsPureEdith(player) then return end
+	if not Helpers.IsPureEdith(player) then return end
 
 	local data = EdithRestored:GetData(player)
 	local targetSprite = data.BombStomp and "target_edith_bomb.png" or "target_edith.png"
@@ -730,7 +730,7 @@ EdithRestored:AddCallback(
 function Player:TargetJumpUpdate(target)
 	local player = TSIL.Players.GetPlayerFromEntity(target) ---@cast player EntityPlayer
 
-	if not player or not IsPureEdith(player) then
+	if not player or not Helpers.IsPureEdith(player) then
 		target:Remove()
 		return
 	end
@@ -763,13 +763,12 @@ EdithRestored:AddCallback(
 
 function Player:OnInitPlayer(player)
 	-- If the player is Edith it will apply the hood
-	if not IsPureEdith(player) then return end
+	if not Helpers.IsPureEdith(player) then return end
 	local mySprite = player:GetSprite()
 	mySprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
 	mySprite:Update()
-	Helpers.ChangeSprite(player)
-	-- elseif Helpers.IsPlayerEdith(player, false, true) then -- Apply different costume for her tainted variant
-		-- if Helpers.IsPlayerEdith(player, false, true) then
+	-- elseif Helpers.IsTaintedEdith(player) then -- Apply different costume for her tainted variant
+		-- if Helpers.IsTaintedEdith(player) then
 		-- 	player:ChangePlayerType(EdithRestored.Enums.PlayerType.EDITH)
 		-- end
 		-- goto EdithCheck
@@ -1025,7 +1024,7 @@ end
 
 ---@param player EntityPlayer
 function Player:OnUpdatePlayer(player)
-	if not IsPureEdith(player) then return end
+	if not Helpers.IsPureEdith(player) then return end
 	local dataP = EdithRestored:RunSave(player)
 
 	if not dataP then return end
@@ -1034,8 +1033,6 @@ function Player:OnUpdatePlayer(player)
 	local room = EdithRestored.Room()
 	local jumpData = JumpLib:GetData(player)
 	local isJumping = jumpData.Jumping
-
-	Helpers.ChangeSprite(player)
 
 	if (player:IsDead() or player:HasCurseMistEffect()) then
 		Helpers.RemoveEdithTarget(player)
@@ -1049,7 +1046,7 @@ function Player:OnUpdatePlayer(player)
 	---@diagnostic disable-next-line: undefined-field
 	player:SetGnawedLeafTimer(0)
 	if JumpLib:CanJump(player) then
-		mod:EdithGridMovement(player, data, 5, 1)
+		EdithRestored:EdithGridMovement(player, data, 5, 1)
 	end
 
 	data.EdithJumpCharge = data.EdithJumpCharge or 0
@@ -1084,13 +1081,13 @@ function Player:Landing(player, jumpData, inPit)
 		if data.AfterPitfall == false then
 			data.BombStomp = nil
 		end
-		Helpers.Stomp(player, 1, nil, not data.PostRocketRide and data.BombStomp, Helpers.IsPlayerEdith(player, true, false), {Tooth = true})
+		Helpers.Stomp(player, 1, nil, not data.PostRocketRide and data.BombStomp, Helpers.IsPureEdith(player), {Tooth = true})
 		if data.AfterPitfall == false then
 			data.BombStomp = prevBombStomp
 		end
 		data.Landed = true
 		data.PostRocketRide = nil
-		--data.TargetLandPos = EdithRestored.Helpers.GetEdithTarget(player).Position
+		--data.TargetLandPos = Helpers.GetEdithTarget(player).Position
 		player.Velocity = Vector.Zero
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
@@ -1289,7 +1286,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, Player.DamageHandling
 ---@param cd integer
 ---@return boolean?
 function Player:DamageHandling2(player, amount, flags, source, cd)
-	if not Helpers.IsPlayerEdith(player, true, false) then return end
+	if not Helpers.IsPureEdith(player) then return end
 	local sprite = player:GetSprite()
 	if not (sprite:GetAnimation():match("Edith") and sprite:WasEventTriggered("EdithLanding")) then return end
 	if flags & DamageFlag.DAMAGE_INVINCIBLE > 0 or flags & DamageFlag.DAMAGE_RED_HEARTS > 0 then return end
@@ -1321,15 +1318,14 @@ end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, Player.IFAfterFromJump)
 
 function Player:edith_Stats(player, cacheFlag)
-	if Helpers.IsPlayerEdith(player, true, false) then -- If the player is Edith it will apply her specific stats
-		Helpers.ChangeSprite(player)
+	if Helpers.IsPureEdith(player) then -- If the player is Edith it will apply her specific stats
 		if cacheFlag == CacheFlag.CACHE_DAMAGE then
 			player.Damage = player.Damage * 1.1
 		end
-	elseif Helpers.IsPlayerEdith(player, false, true) then -- If the player is Tainted Edith ^^
+	elseif Helpers.IsTaintedEdith(player) then -- If the player is Tainted Edith ^^
 		Helpers.ChangePepperValue(player)
 	end
-	if cacheFlag == CacheFlag.CACHE_SPEED and Helpers.IsPlayerEdith(player, true, true) 
+	if cacheFlag == CacheFlag.CACHE_SPEED and Helpers.IsPlayerEdith(player) 
 	and not EdithRestored.Room():HasCurseMist() then
 		player.MoveSpeed = math.max(0.3, player.MoveSpeed)
 	end
@@ -1348,7 +1344,7 @@ end
 --- This should be remade to only took account the first player, afaik, the tainted character in closet will always be the first's
 function Player:Home()
 	if
-		IsPureEdith(Isaac.GetPlayer(0))
+		Helpers.IsPureEdith(Isaac.GetPlayer(0))
 		and EdithRestored.Level():GetCurrentRoomIndex() == 94
 		and EdithRestored.Level():GetStage() == LevelStage.STAGE8
 		and not Isaac.GetPersistentGameData():Unlocked(EdithRestored.Enums.Achievements.Characters.TAINTED)
@@ -1379,14 +1375,13 @@ function Player:NewRoom()
 		local data = EdithRestored:GetData(player)
 		--No need to check for edith here because for other players its gonna be nil anyways
 		data.EdithTargetMovementPosition = nil
-		if Helpers.IsPlayerEdith(player, true, false) then
+		if Helpers.IsPureEdith(player) then
 			player.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 			player.GridCollisionClass = player.CanFly and EntityGridCollisionClass.GRIDCOLL_WALLS
 				or EntityGridCollisionClass.GRIDCOLL_GROUND
 			data.TrapDoorFall = nil
 			JumpLib:QuitJump(player)
 		end
-		Helpers.ChangeSprite(player)
 
 		Helpers.RemoveEdithTarget(player)
 		data.TargetJumpPos = nil
@@ -1406,7 +1401,7 @@ function Player:OnCollectibleCollission(_, collider)
 	local player = collider:ToPlayer() 
 
 	if not player then return end
-	if not Helpers.IsPlayerEdith(player, true, false) then return end
+	if not Helpers.IsPureEdith(player) then return end
 
 	local data = EdithRestored:GetData(player)
 	if not data.EdithTargetMovementPosition then return end
@@ -1426,7 +1421,7 @@ function Player:OnMegaChestCollision(_, collider)
 	local player = collider:ToPlayer()
 
 	if not player then return end
-	if not Helpers.IsPlayerEdith(player, true, false) then return end
+	if not Helpers.IsPureEdith(player) then return end
 
 	local data = EdithRestored:GetData(player)
 	if not data.EdithTargetMovementPosition then return end
@@ -1447,7 +1442,7 @@ function Player:OnNPCCollision(entity, collider)
 	local player = collider:ToPlayer()
 
 	if not player then return end
-	if not Helpers.IsPlayerEdith(player, true, false) then return end
+	if not Helpers.IsPureEdith(player) then return end
 
 	--We can only push enemies with less than 10 mass (arbitrary value, requires testing)
 	if entity.Mass < 10 then return end
@@ -1508,7 +1503,7 @@ function Player:OnEdithFireTear(tear)
 	local player = TSIL.Players.GetPlayerFromEntity(tear)
 
 	if not player then return end
-	if not Helpers.IsPlayerEdith(player, true, false) or player:HasCurseMistEffect() or TearsToNotChange(tear) then return end
+	if not Helpers.IsPureEdith(player) or player:HasCurseMistEffect() or TearsToNotChange(tear) then return end
 
 	ChangeToEdithTear(tear)
 	tear.Scale = tear.Scale * 0.9
@@ -1551,7 +1546,7 @@ function Player:EdithMovement(entity, hook, button)
 	local player = entity:ToPlayer()
 
 	if not player then return end
-	if not Helpers.IsPlayerEdith(player, true, true) then return end
+	if not Helpers.IsPlayerEdith(player) then return end
 	if player:GetEffects():HasCollectibleEffect(CollectibleType.COLLECTIBLE_MEGA_MUSH) or player:HasCurseMistEffect() then return end
 
 	local OnlyStomps = EdithRestored:GetDefaultFileSave("OnlyStomps")
@@ -1578,7 +1573,7 @@ function Player:PreUsePony(item, _, player)
 	if item ~= CollectibleType.COLLECTIBLE_PONY and item ~= CollectibleType.COLLECTIBLE_WHITE_PONY then
 		return
 	end
-	if not Helpers.IsPlayerEdith(player, true, false) then
+	if not Helpers.IsPureEdith(player) then
 		return
 	end
 
@@ -1618,7 +1613,7 @@ function Player:OnMontezumaLaserUpdate(laser)
 	local player = laser.SpawnerEntity:ToPlayer()
 	local data = EdithRestored:GetData(player)
 
-	if not Helpers.IsPlayerEdith(player, true, false) then
+	if not Helpers.IsPureEdith(player) then
 		laser.Visible = true
 		return
 	end
@@ -1759,21 +1754,21 @@ EdithRestored:AddCallback(
 	EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant
 )
 
----@param p EntityPlayer
-function Player:AccessToMirrorWorld(p)
-	if not Helpers.IsPlayerEdith(p, true, false) and p:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) then return end
+---@param player EntityPlayer
+function Player:AccessToMirrorWorld(player)
+	if not Helpers.IsPureEdith(player) and player:GetEffects():HasNullEffect(NullItemID.ID_LOST_CURSE) then return end
 
 	local dimension = Helpers.InMirrorWorld() and 0 or 1
 
 	for _, Door in ipairs(TSIL.Doors.GetDoorsToRoomIndex(-100)) do
 		if Door.State ~= 1 then goto continue end
-		if p.Position:Distance(Door.Position) > 30 then goto continue end
+		if player.Position:Distance(Door.Position) > 30 then goto continue end
 
 		EdithRestored.Game:StartRoomTransition(
 			EdithRestored.Level():GetCurrentRoomIndex(),
 			Door.Slot % 4,
 			RoomTransitionAnim.FADE_MIRROR,
-			p,
+			player,
 			dimension
 		)
 		EdithRestored.Level().LeaveDoor = Door.Slot
@@ -1854,3 +1849,48 @@ EdithRestored:AddCallback(
 	Player.PreJump,
 	{ type = EntityType.ENTITY_PLAYER, player = EdithRestored.Enums.PlayerType.EDITH }
 )
+
+---@param itemConfigItem ItemConfigItem
+---@param player EntityPlayer
+---@param itemStateOnly boolean
+function Player:ChangePlayerGfx(itemConfigItem, player, itemStateOnly)
+	if not player:IsCoopGhost() then
+		local sprite = player:GetSprite()
+		local edithFile = EdithRestored.Enums.PlayerSprites.EDITH
+		local edithBFile = EdithRestored.Enums.PlayerSprites.EDITH_B
+		if Helpers.IsPlayerEdith(player) then
+			local animationFile = "gfx/redith"
+			if Helpers.IsTaintedEdith(player) then
+				animationFile = animationFile.."_b"
+			end
+			animationFile = animationFile..".anm2"
+			if sprite:GetFilename() ~= animationFile then
+				sprite:Load(animationFile, true)
+			end
+			if Helpers.IsPureEdith(player) then
+				if itemConfigItem.ID ~= EdithRestored.Enums.Costumes.EDITH_HOOD and itemConfigItem:IsNull() or 
+				not itemConfigItem:IsNull() then
+					local sprite = player:GetSprite()
+					local bodyColor = player:GetBodyColor()
+					local color = HoodColorList[bodyColor] or ""
+					if EdithRestored.Room():HasCurseMist() then
+						color = "_Human"
+					end
+					Helpers.ChangeHoodSprite(player, "gfx/characters/costumes/Character_001_Redith_Hood" .. color .. ".png")
+					for i = 0, 14 do
+						if i ~= 13 then
+							sprite:ReplaceSpritesheet(i, "gfx/characters/costumes/Character_001_Redith" .. color .. ".png")
+						end
+					end
+					sprite:LoadGraphics()
+				end
+			else
+
+			end
+		elseif sprite:GetFilename() == edithFile or sprite:GetFilename() == edithBFile then
+			sprite:Load("gfx/001.000_Player.anm2", true)
+		end
+	end
+end
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_ADD_COSTUME, CallbackPriority.IMPORTANT, Player.ChangePlayerGfx)
+EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_REMOVE_COSTUME, CallbackPriority.IMPORTANT, Player.ChangePlayerGfx)

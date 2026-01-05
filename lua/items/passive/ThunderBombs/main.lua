@@ -216,7 +216,7 @@ function ThunderBombs:TryPlaceBomb(player)
 		and DoChargeThunderBomb(player) then
 			local bombButton = Input.IsActionTriggered(ButtonAction.ACTION_BOMB, player.ControllerIndex)
 			local data = EdithRestored:GetData(player)
-			if bombButton and not (Helpers.IsPlayerEdith(player, true, false) and data.LockBombs) then
+			if bombButton and not (Helpers.IsPureEdith(player) and data.LockBombs) then
 				local charge = GetFullThunderBombCharge(player)
 				local placeBomb = false
 				local usedCharges = 3

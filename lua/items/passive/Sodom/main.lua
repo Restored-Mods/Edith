@@ -33,12 +33,12 @@ function Sodom:DontLookBack(player)
         data.SodomFireCountdown = data.SodomFireCountdown or 30
         data.SodomEdithResetPause = data.SodomEdithResetPause or 0
         if not Helpers.VectorEquals(player:GetMovementVector(), Vector.Zero)
-        or Helpers.IsPlayerEdith(player, true, false) and data.EdithTargetMovementPosition
+        or Helpers.IsPureEdith(player) and data.EdithTargetMovementPosition
         and not Helpers.VectorEquals(player.Velocity, Vector.Zero) then
             data.SodomFireCountdown = data.SodomFireCountdown - 1
-            data.SodomEdithResetPause = Helpers.IsPlayerEdith(player, true, false) and 10 or 0
+            data.SodomEdithResetPause = Helpers.IsPureEdith(player) and 10 or 0
             if data.SodomFireCountdown <= 0 then
-                local vel = Helpers.IsPlayerEdith(player, true, false) and player.Velocity:Normalized() or player:GetMovementVector()
+                local vel = Helpers.IsPureEdith(player) and player.Velocity:Normalized() or player:GetMovementVector()
                 SpawnSodomFlame(player.Position, vel * -10, player, 30)
                 data.SodomFireCountdown = 30
             end

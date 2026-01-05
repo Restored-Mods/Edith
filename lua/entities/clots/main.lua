@@ -6,7 +6,7 @@ function EdithClots:Movement(clot)
     local player = clot.Parent or clot.SpawnerEntity
     if not player or not player:ToPlayer() or Helpers.IsMenuing() then return end
     player = player:ToPlayer()
-    if not Helpers.IsPlayerEdith(player, true, false) then return end
+    if not Helpers.IsPureEdith(player) then return end
     local velocityVectorX = Input.GetActionValue(ButtonAction.ACTION_RIGHT, player.ControllerIndex) - Input.GetActionValue(ButtonAction.ACTION_LEFT, player.ControllerIndex)
     local velocityVectorY = Input.GetActionValue(ButtonAction.ACTION_DOWN, player.ControllerIndex) - Input.GetActionValue(ButtonAction.ACTION_UP, player.ControllerIndex)
     local mirrorMul = Helpers.InMirrorWorld() and -1 or 1

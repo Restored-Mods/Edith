@@ -36,7 +36,7 @@ function LotBaby:Update(familiar)
     local fireDir = player:GetFireDirection()
     local tearcd = math.ceil(10 / (player:GetTrinketMultiplier(TrinketType.TRINKET_FORGOTTEN_LULLABY) + 1))
     local bffBonus = player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 1 or 0
-    local edithBonus = Helpers.IsPlayerEdith(player, true, false) and 1 or 0
+    local edithBonus = Helpers.IsPureEdith(player) and 1 or 0
     familiar.FireCooldown = math.max(0, math.min(familiar.FireCooldown - 1, tearcd))
     local sprite = familiar:GetSprite()
     local data = EdithRestored:GetData(familiar)

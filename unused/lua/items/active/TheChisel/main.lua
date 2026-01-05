@@ -82,7 +82,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Chisel.PepperLevel
 function Chisel:Chisel_CacheEval(player, cacheFlag)
 	local data = Helpers.GetPersistentEntityData(player)
 	local sprite = player:GetSprite()
-	if Helpers.IsPlayerEdith(player, false, true) then
+	if Helpers.IsTaintedEdith(player) then
 		Helpers.ChangePepperValue(player)
 		Helpers.ChangeSprite(player)
 		-- Pepper Stats
@@ -98,7 +98,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Chisel.Chisel_CacheEva
 
 function Chisel:HasBirthright(player)
 	local data = Helpers.GetPersistentEntityData(player)
-	if Helpers.IsPlayerEdith(player, false, true) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) then
+	if Helpers.IsTaintedEdith(player) and player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) then
 		for _, enemiesBR in pairs(Isaac.FindInRadius(player.Position, 20*data.Pepper)) do
 			if enemiesBR:IsVulnerableEnemy() and enemiesBR:IsActiveEnemy() and data.Pepper < 5 and EntityRef(enemiesBR).IsCharmed == false then
 				enemiesBR:AddSlowing(EntityRef(player), 1, 0.5, Color.Default)
@@ -177,7 +177,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, Chisel.TEdithPepp
 function Chisel:PreProjectileCollision(projectile, collider, low)
 	if collider and collider:ToPlayer() then
 		local player = collider:ToPlayer()
-		if Helpers.IsPlayerEdith(player, false, true) then
+		if Helpers.IsTaintedEdith(player) then
 			local dataP = Helpers.GetPersistentEntityData(player)
 			if TSIL.Random.GetRandomInt(1, 100) <= dataP.Pepper * 12 then			
 				projectile.Velocity = projectile.Velocity * -1
