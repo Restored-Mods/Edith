@@ -712,7 +712,7 @@ local function UpdateTogglesMenu(show)
             if ImGui.ElementExists("edithMenuToggles"..t) then
                 ImGui.RemoveElement("edithMenuToggles"..t)
             end
-            break
+            goto continue
         end
         if not ImGui.ElementExists("edithMenuToggles"..t) then
             ImGui.AddElement("EdithRestored", "edithMenuToggles"..t, ImGuiElement.MenuItem, "\u{f05e} "..t.." Toggles")
@@ -738,6 +738,7 @@ local function UpdateTogglesMenu(show)
                 )
             end
         end
+        ::continue::
     end
 end
 

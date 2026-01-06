@@ -22,9 +22,10 @@ end)
 local function UnlockEdith(doUnlock, ach, force)
 	if doUnlock then
 		if
-			EdithRestored.Enums.Achievements.Unlocks.Characters[EdithRestored.Enums.Achievements.Characters.EDITH].Condition()
+			EdithRestored.Enums.Achievements.Unlocks.Characters[ach]
+			and EdithRestored.Enums.Achievements.Unlocks.Characters[ach].Condition()
 		then
-			Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH, force)
+			Helpers.UnlockAchievement(ach, force)
 		end
 	end
 end
