@@ -4,11 +4,11 @@
 	<!-- Red Hood -->
 	<costume id="6" anm2path="red_hood.anm2" type="passive" />
 	<!-- Shrapnel Bombs -->
-	<costume id="9" anm2path="shrapnel_bombs.anm2" type="passive" />
+	<costume id="9" anm2path="shrapnel_bombs.anm2" type="passive" hasSkinAlt="true"/>
 	<!-- Gorgon Mask -->
 	<costume id="1" anm2path="gorgon_mask.anm2" type="none" />
 	<!-- Sodom -->
-	<costume id="1" anm2path="costume_sodom.anm2" type="passive" />
+	<costume id="1" anm2path="costume_sodom.anm2" type="passive" hasSkinAlt="true"/>
 	<!-- Lithium Salts -->
 	<costume id="0" anm2path="lithium_salts.anm2" type="passive" />
 	<!-- Thunder Bombs -->

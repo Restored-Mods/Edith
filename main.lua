@@ -66,7 +66,6 @@ include("lua.core.globals")
 include("lua.helpers.Helpers")
 include("lua.core.achievements")
 include("lua.core.dss.deadseascrolls")
-include("lua.core.dss.imgui")
 include("lua.core.BlockDisabledItems")
 
 --entities

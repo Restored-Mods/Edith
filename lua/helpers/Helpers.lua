@@ -229,7 +229,7 @@ function Helpers.GetEnemiesInRadius(position, radius, allEnemies, noBosses, igno
 					enemy:Morph(EntityType.ENTITY_ATTACKFLY,0,0,-1)
 				end]]
 				--if not (Helpers.HereticBattle(enemy) or Helpers.IsTurret(enemy) and not includeTurrets) then
-					table.insert(enemies, enemy)
+				table.insert(enemies, enemy)
 				--end
 			end
 		end
@@ -504,6 +504,12 @@ function Helpers.ChangePepperValue(player, amount)
 end
 
 ---@param player EntityPlayer
+---@param sprite string
+function Helpers.ChangeHoodSprite(player, sprite)
+	player:ReplaceCostumeSprite(Isaac.GetItemConfig():GetNullItem(EdithRestored.Enums.Costumes.EDITH_HOOD), sprite, 5)
+end
+
+---@param player EntityPlayer
 ---@param loading boolean?
 function Helpers.ChangeSprite(player, loading)
 	local data = EdithRestored:RunSave(player)
@@ -511,65 +517,9 @@ function Helpers.ChangeSprite(player, loading)
 	if Helpers.IsPlayerEdith(player, true, false) then
 		if sprite:GetFilename() ~= EdithRestored.Enums.PlayerSprites.EDITH and not player:IsCoopGhost() then
 			sprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
-			sprite:Update()
-		end
-		local changeCostume = data.MistCurse
-		local human = ""
-		if player:HasCurseMistEffect() and not data.MistCurse then
-			data.MistCurse = true
-		elseif not player:HasCurseMistEffect() and data.MistCurse then
-			data.MistCurse = nil
-		end
-		if data.MistCurse then
-			human = "_Human"
-		end
-
-		if changeCostume ~= data.MistCurse then
-			for i = 0, 14 do
-				if i ~= 13 then
-					sprite:ReplaceSpritesheet(i, "gfx/characters/costumes/Character_001_Redith" .. human .. ".png")
-				end
-			end
-			local hoodSprite = "gfx/characters/costumes/Character_001_Redith_Hood" .. human .. ".png"
-			player:ReplaceCostumeSprite(
-				Isaac.GetItemConfig():GetNullItem(EdithRestored.Enums.Costumes.EDITH_HOOD),
-				hoodSprite,
-				5
-			)
-			sprite:LoadGraphics()
 		end
 	elseif Helpers.IsPlayerEdith(player, false, true) then
-		if sprite:GetFilename() ~= EdithRestored.Enums.PlayerSprites.EDITH_B and not player:IsCoopGhost() then
-			sprite:Load(EdithRestored.Enums.PlayerSprites.EDITH, true)
-			sprite:Update()
-		end
-		Helpers.ChangePepperValue(player)
-		if data.Pepper == 0 then
-			sprite:ReplaceSpritesheet(1, "gfx/characters/costumes/tedith_phase1.png")
-			sprite:LoadGraphics()
-		end
-		if data.Pepper < 6 and (data.Pepper ~= data.PrevPepper or loading) then
-			local hairSprite = "gfx/characters/costumes/tedithhair_phase"
-			if data.Pepper < 3 then
-				hairSprite = hairSprite .. "1"
-			else
-				hairSprite = hairSprite .. tostring(data.Pepper + 1)
-			end
-			--spritesheet stuff
-			for i = 0, 14 do
-				if i ~= 13 then
-					sprite:ReplaceSpritesheet(i, "gfx/characters/costumes/tedith_phase" .. (data.Pepper + 1) .. ".png")
-				end
-			end
-			sprite:LoadGraphics()
-			hairSprite = hairSprite .. ".png"
-			player:ReplaceCostumeSprite(
-				Isaac.GetItemConfig():GetNullItem(EdithRestored.Enums.Costumes.EDITH_B_HAIR),
-				hairSprite,
-				5
-			)
-			data.PrevPepper = data.Pepper
-		end
+		-- TODO code new logic when done
 	elseif
 		sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH
 		or sprite:GetFilename() == EdithRestored.Enums.PlayerSprites.EDITH_B
@@ -1382,13 +1332,7 @@ function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallb
 			end
 		end
 
-		EdithRestored.Game:BombExplosionEffects(
-			stompPosition,
-			bombDamage,
-			player:GetBombFlags(),
-			Color.Default,
-			player
-		)
+		EdithRestored.Game:BombExplosionEffects(stompPosition, bombDamage, player:GetBombFlags(), Color.Default, player)
 
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
 			local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SCATTER_BOMBS)
@@ -1490,8 +1434,9 @@ function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallb
 		else
 			local poof
 			if not chap4 then
-				poof = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 1, stompPosition, Vector.Zero, player)
-					:ToEffect()
+				poof =
+					Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 1, stompPosition, Vector.Zero, player)
+						:ToEffect()
 			else
 				poof = Isaac.Spawn(1000, 16, 3, stompPosition, Vector.Zero, nil):ToEffect()
 				if bdType == 13 then
