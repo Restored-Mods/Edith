@@ -672,7 +672,6 @@ local function ReOrederItems(t)
 	RemoveTogglesItems(t)
 	for _, itemConf in pairs(orderedTable) do
 		local elemName = "edithRestoredToggles"..t..string.gsub(itemConf.Name, " ", "")
-		print(elemName)
 		if itemConf.AchievementID == -1 or pgd:Unlocked(itemConf.AchievementID) then
 			i = i + 1
 			ImGui.AddCheckbox(
