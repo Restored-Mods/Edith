@@ -209,6 +209,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.MOMS_HEART },
 			Name = "Mom's Heart",
 			Difficulty = 1,
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALTY_BABY)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MOMS_HEART) > 0
@@ -218,6 +219,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.ISAAC },
 			Name = "Isaac",
 			Difficulty = 1,
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALT_SHAKER)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ISAAC) > 0
@@ -227,6 +229,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.SATAN },
 			Name = "Satan",
 			Difficulty = 1,
+			Type = "Trinket",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.CHUNK_OF_AMBER)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.SATAN) > 0
@@ -236,6 +239,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.BOSS_RUSH },
 			Name = "Boss Rush",
 			Difficulty = 1,
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.RED_HOOD)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BOSS_RUSH) > 0
@@ -245,6 +249,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.BLUE_BABY },
 			Name = "Blue Baby",
 			Difficulty = 1,
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.THUNDER_BOMBS)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BLUE_BABY) > 0
@@ -254,6 +259,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.LAMB },
 			Name = "Lamb",
 			Difficulty = 1,
+			Type = "Trinket",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SMELLING_SALTS)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.LAMB) > 0
@@ -263,6 +269,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.MEGA_SATAN },
 			Name = "Mega Satan",
 			Difficulty = 1,
+			Type = "Trinket",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALT_ROCK)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MEGA_SATAN) > 0
@@ -272,6 +279,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.HUSH },
 			Name = "Hush",
 			Difficulty = 1,
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.BLASTING_BOOTS)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.HUSH) > 0
@@ -290,6 +298,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.ULTRA_GREED },
 			Name = "Ultra Greed",
 			Difficulty = 1,
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SALT_PAWNS)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ULTRA_GREED) > 0
@@ -309,6 +318,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.ULTRA_GREEDIER },
 			Name = "Ultra Greedier",
 			Difficulty = 2,
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.GORGON_MASK)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.ULTRA_GREEDIER) > 1
@@ -329,6 +339,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.DELIRIUM },
 			Name = "Delirium",
 			Difficulty = 1,
+			Type = "Trinket",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.LITHIUM)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.DELIRIUM) > 0
@@ -338,6 +349,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.MOTHER },
 			Name = "Mother",
 			Difficulty = 1,
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SHRAPNEL_BOMBS)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.MOTHER) > 0
@@ -347,6 +359,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.BEAST },
 			Name = "Beast",
 			Difficulty = 1,
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SODOM)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BEAST) > 0
@@ -354,6 +367,7 @@ Enums.Achievements.Unlocks = {
 		},
 		[Enums.Achievements.CompletionMarks.SOUL_EDITH] = {
 			Name = "All Marks",
+			Type = "Card",
 			Condition = function()
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SOUL_EDITH)
 					and Isaac.AllMarksFilled(Enums.PlayerType.EDITH) == 2
@@ -363,6 +377,7 @@ Enums.Achievements.Unlocks = {
 	Challenges = {
         [Enums.Achievements.Challenges.PEPPERMINT] = {
             Name = "Rocket Laces",
+			Type = "Item",
             Condition = function()
                 return not pgd:Unlocked(Enums.Achievements.Challenges.PEPPERMINT)
             end,

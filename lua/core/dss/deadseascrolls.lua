@@ -134,7 +134,6 @@ end
 local function ShowTogglesButton(t)
 	local isTrinket = t:lower() == "trinkets"
 	local lookupTable = isTrinket and EdithRestored.Enums.TrinketType or EdithRestored.Enums.CollectibleType
-	local itemConfig = Isaac.GetItemConfig()
 	for name, id in pairs(lookupTable) do
 		local itemConf = isTrinket and itemConfig:GetTrinket(id) or itemConfig:GetCollectible(id)
 		if itemConf then
@@ -683,7 +682,7 @@ local function ReOrederItems(t)
 					for indexItem, disabledItem in pairs(disabledItems) do
 						if lookupTable[indexItem] == itemConf.ID then
 							if val then
-								lookupTable[indexItem] = nil
+								disabledItems[indexItem] = nil
 								itemConf.Hidden = false
 								if itemConf:IsTrinket() then
 									EdithRestored.Helpers:AddTrinketToPool(itemConf.ID)
@@ -721,6 +720,7 @@ local function ReOrederItems(t)
 end
 
 local function UpdateTogglesMenu(show)
+	print(show)
     for _, t in ipairs({"Items", "Trinkets"}) do
         if not ShowTogglesButton(t) then
             if ImGui.ElementExists("edithWindowToggles"..t) then
@@ -1394,15 +1394,19 @@ local function InitImGuiMenu()
 					if data.Function then
 						data.Function(index)
 					end
-					UpdateTogglesMenu()
+					UpdateTogglesMenu(EdithRestored.SaveManager.Utility.IsDataInitialized() and Isaac.IsInGame())
 				end, { "Locked", "Unlocked" }, 0, true)
 				ImGui.AddCallback(prefix .. data.Name, ImGuiCallback.Render, function()
 					ImGui.UpdateData(prefix .. data.Name, ImGuiData.Value, pgd:Unlocked(ach) and 1 or 0)
 				end)
 
-				SetHelpMarker(EdithRestored.Enums.CollectibleType, itemConfig.GetCollectible, ach, prefix .. data.Name)
-				SetHelpMarker(EdithRestored.Enums.TrinketType, itemConfig.GetTrinket, ach, prefix .. data.Name)
-				SetHelpMarker(EdithRestored.Enums.Pickups.Cards, itemConfig.GetCard, ach, prefix .. data.Name)
+				if data.Type == "Item" then
+					SetHelpMarker(EdithRestored.Enums.CollectibleType, itemConfig.GetCollectible, ach, prefix .. data.Name)
+				elseif data.Type == "Trinket" then
+					SetHelpMarker(EdithRestored.Enums.TrinketType, itemConfig.GetTrinket, ach, prefix .. data.Name)
+				elseif data.Type == "Card" then
+					SetHelpMarker(EdithRestored.Enums.Pickups.Cards, itemConfig.GetCard, ach, prefix .. data.Name)
+				end
 				if data.ExtraData then
 					data.ExtraData(prefix .. data.Name)
 				end
@@ -1426,7 +1430,7 @@ local function InitImGuiMenu()
 			end
 			Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
 		end
-		UpdateTogglesMenu()
+		UpdateTogglesMenu(EdithRestored.SaveManager.Utility.IsDataInitialized() and Isaac.IsInGame())
 	end, { "Locked", "Unlocked" }, 0, true)
 
 	ImGui.AddCallback("edithMarksAAll", ImGuiCallback.Render, function()
@@ -1460,16 +1464,20 @@ local function InitImGuiMenu()
 			if val.Function then
 				val.Function(index)
 			end
-			UpdateTogglesMenu()
+			UpdateTogglesMenu(EdithRestored.SaveManager.Utility.IsDataInitialized() and Isaac.IsInGame())
 		end, { "Locked", "Unlocked" }, 0, true)
 
 		ImGui.AddCallback("edithChallenge" .. val.Name, ImGuiCallback.Render, function()
 			ImGui.UpdateData("edithChallenge" .. val.Name, ImGuiData.Value, pgd:Unlocked(key) and 1 or 0)
 		end)
 
-		SetHelpMarker(EdithRestored.Enums.CollectibleType, itemConfig.GetCollectible, key, "edithChallenge" .. val.Name)
-		SetHelpMarker(EdithRestored.Enums.TrinketType, itemConfig.GetTrinket, key, "edithChallenge" .. val.Name)
-		SetHelpMarker(EdithRestored.Enums.Pickups.Cards, itemConfig.GetCard, key, "edithChallenge" .. val.Name)
+		if val.Type == "Item" then
+			SetHelpMarker(EdithRestored.Enums.CollectibleType, itemConfig.GetCollectible, key, "edithChallenge" .. val.Name)
+		elseif val.Type == "Trinket" then
+			SetHelpMarker(EdithRestored.Enums.TrinketType, itemConfig.GetTrinket, key, "edithChallenge" .. val.Name)
+		elseif val.Type == "Card" then
+			SetHelpMarker(EdithRestored.Enums.Pickups.Cards, itemConfig.GetCard, key, "edithChallenge" .. val.Name)
+		end
 		if val.ExtraData then
 			val.ExtraData("edithChallenge" .. val.Name)
 		end
@@ -1480,13 +1488,13 @@ local function InitImGuiMenu()
 end
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_MARK_GET, function()
-	UpdateTogglesMenu(Isaac.IsInGame())
+	UpdateTogglesMenu(EdithRestored.SaveManager.Utility.IsDataInitialized())
 end, EdithRestored.Enums.PlayerType.EDITH)
 
 ---@param cmd string
 EdithRestored:AddCallback(ModCallbacks.MC_EXECUTE_CMD, function(_, cmd, args)
 	if string.lower(cmd):match("achievement") == "achievement" then
-		UpdateTogglesMenu(Isaac.IsInGame())
+		UpdateTogglesMenu(EdithRestored.SaveManager.Utility.IsDataInitialized() and Isaac.IsInGame())
 	end
 end, EdithRestored.Enums.PlayerType.EDITH)
 
@@ -1510,7 +1518,7 @@ EdithRestored:AddPriorityCallback(ModCallbacks.MC_MAIN_MENU_RENDER, CallbackPrio
 
 ---@param completion CompletionType
 EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, completion)
-	UpdateTogglesMenu(Isaac.IsInGame())
+	UpdateTogglesMenu(EdithRestored.SaveManager.Utility.IsDataInitialized() and Isaac.IsInGame())
 end)
 
 EdithRestored:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, 1000, function()
