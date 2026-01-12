@@ -339,7 +339,7 @@ Enums.Achievements.Unlocks = {
 			Marks = { CompletionType.DELIRIUM },
 			Name = "Delirium",
 			Difficulty = 1,
-			Type = "Trinket",
+			Type = "Item",
 			Condition = function(mark)
 				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.LITHIUM)
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.DELIRIUM) > 0
