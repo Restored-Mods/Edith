@@ -11,6 +11,7 @@ local BREAK_LINE = { str = "", fsize = 1, nosel = true }
 local orderedItems = {}
 local orderedTrinkets = {}
 local itemConfig = Isaac.GetItemConfig()
+local itemPool = EdithRestored.Game:GetItemPool()
 
 for _, blacklist in ipairs({
 	{
@@ -257,6 +258,10 @@ local function InitDisableMenu(t)
 					if lookupTable[indexItem] == itemConf.ID then
 						if var == 1 then
 							disabledItems[indexItem] = nil
+							itemConf.Hidden = false
+							if itemConf:IsTrinket() then
+								EdithRestored.Helpers:AddTrinketToPool(itemConf.ID)
+							end
 						end
 						break
 					end
@@ -264,6 +269,10 @@ local function InitDisableMenu(t)
 
 				if var == 2 then
 					disabledItems[enumFunc(itemConf.ID)] = true
+					itemConf.Hidden = true
+					if itemConf:IsTrinket() then
+						itemPool:RemoveTrinket(itemConf.ID)
+					end
 				end
 				EdithRestored.SaveManager.Save()
 			end,
@@ -663,6 +672,7 @@ local function ReOrederItems(t)
 	RemoveTogglesItems(t)
 	for _, itemConf in pairs(orderedTable) do
 		local elemName = "edithRestoredToggles"..t..string.gsub(itemConf.Name, " ", "")
+		print(elemName)
 		if itemConf.AchievementID == -1 or pgd:Unlocked(itemConf.AchievementID) then
 			i = i + 1
 			ImGui.AddCheckbox(
@@ -675,6 +685,10 @@ local function ReOrederItems(t)
 						if lookupTable[indexItem] == itemConf.ID then
 							if val then
 								lookupTable[indexItem] = nil
+								itemConf.Hidden = false
+								if itemConf:IsTrinket() then
+									EdithRestored.Helpers:AddTrinketToPool(itemConf.ID)
+								end
 							end
 							break
 						end
@@ -682,6 +696,10 @@ local function ReOrederItems(t)
 
 					if not val then
                         disabledItems[enumFunc(itemConf.ID)] = true
+						itemConf.Hidden = true
+						if itemConf:IsTrinket() then
+							itemPool:RemoveTrinket(itemConf.ID)
+						end
 					end
 					EdithRestored.SaveManager.Save()
 				end,

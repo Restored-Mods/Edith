@@ -961,12 +961,12 @@ local function FillWithRandomItemsTrinkets(player, pickerItem, pickerTrinket, co
 	local hasItem = false
 	if col_trink > 0 then
 		if isItem then
-			if col_trink <= (Isaac.GetItemConfig():GetCollectibles().Size - 1) then
+			if col_trink <= (Helpers.GetMaxCollectibleID()) then
 				rng = player:GetCollectibleRNG(col_trink)
 				hasItem = player:HasCollectible(col_trink)
 			end
 		else
-			if col_trink <= (Isaac.GetItemConfig():GetTrinkets().Size - 1) then
+			if col_trink <= (Helpers.GetMaxTrinketID()) then
 				rng = player:GetTrinketRNG(col_trink)
 				hasItem = player:HasTrinket(col_trink)
 			end
@@ -1615,6 +1615,28 @@ function Helpers.IsChallenge(id)
 		id = Isaac.GetChallengeIdByName(id)
 	end
 	return Isaac.GetChallenge() == id
+end
+
+---@param trinketID TrinketType | integer
+function Helpers.AddTrinketToPool(trinketID)
+	local trinketsNotInPool = {}
+	local trinketsSize = Helpers.GetMaxTrinketID()
+	local itemConfig = Isaac.GetItemConfig()
+	local itemPool = EdithRestored.Game:GetItemPool()
+	for i = 1, trinketsSize do
+		if i ~= trinketID then
+			local trinketConf = itemConfig:GetTrinket(i)
+			if trinketConf and trinketConf:IsTrinket() then
+				if not itemPool:HasTrinket(i) then
+					trinketsNotInPool[i] = false
+				end
+			end
+		end
+	end
+	itemPool:ResetTrinkets()
+	for id, notInPool in pairs(trinketsNotInPool) do
+		itemPool:RemoveTrinket(id)
+	end
 end
 
 EdithRestored.Helpers = Helpers
