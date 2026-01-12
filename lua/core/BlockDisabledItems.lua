@@ -1,21 +1,46 @@
 local BlockDisabledItems = {}
+local Helpers = EdithRestored.Helpers
 
+local itemPool = EdithRestored.Game:GetItemPool()
+local itemConfig = Isaac.GetItemConfig()
+
+local lookupTables = {
+    ["DisabledItems"] = {Table = EdithRestored.Enums.CollectibleType, Config = itemConfig.GetCollectible},
+    ["DisabledTrinkets"] = {Table = EdithRestored.Enums.TrinketType, Config = itemConfig.GetTrinket},
+}
 
 function BlockDisabledItems:OnGameStart(isContinue)
-    if isContinue then return end
-
-    local itemPool = Game():GetItemPool()
-
-    for indexItem, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledItems")) do
-        if EdithRestored.Enums.CollectibleType[indexItem] then
-            itemPool:RemoveCollectible(EdithRestored.Enums.CollectibleType[indexItem])
+    local trinketsNotInPool = {}
+	local trinketsSize = Helpers.GetMaxTrinketID()
+	for i = 1, trinketsSize do
+        local trinketConf = itemConfig:GetTrinket(i)
+        if trinketConf and trinketConf:IsTrinket() then
+            if not itemPool:HasTrinket(i) then
+                trinketsNotInPool[i] = true
+            end
+        end
+	end
+	itemPool:ResetTrinkets()
+    for disableTable, lookup in pairs(lookupTables) do
+        for index, item in pairs(lookup.Table) do
+            local itemConf = lookup.Config(itemConfig, item)
+            if itemConf then
+                itemConf.Hidden = false
+            end
+        end
+        for index, disabled in pairs(EdithRestored:GetDefaultFileSave(disableTable)) do
+            if lookup.Table[index] then
+                local itemConf = lookup.Config(itemConfig, lookup.Table[index])
+                itemConf.Hidden = true
+                if itemConf:IsTrinket() then
+                    trinketsNotInPool[lookup.Table[index]] = true
+                end
+            end
         end
     end
-    for indexItem, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledTrinkets")) do
-        if EdithRestored.Enums.TrinketType[indexItem] then
-            itemPool:RemoveTrinket(EdithRestored.Enums.TrinketType[indexItem])
-        end
-    end
+    for id, notInPool in pairs(trinketsNotInPool) do
+		itemPool:RemoveTrinket(id)
+	end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, BlockDisabledItems.OnGameStart)
 
@@ -26,7 +51,7 @@ function BlockDisabledItems:PostGetCollectible(selectedItem, poolType, decrease,
 
     local isDisabledItem = false
 
-    for indexItem, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledItems")) do
+    for indexItem, disabledItem in pairs(EdithRestored:GetDefaultFileSave("DisabledItems")) do
         if selectedItem == EdithRestored.Enums.CollectibleType[indexItem] then
             isDisabledItem = true
             break
@@ -35,10 +60,7 @@ function BlockDisabledItems:PostGetCollectible(selectedItem, poolType, decrease,
 
     if not isDisabledItem then return end
 
-    local itemPool = Game():GetItemPool()
-
-    local rng = RNG()
-    rng:SetSeed(seed, 35)
+    local rng = RNG(seed, 35)
 
     isDisablingItem = true
     local newItem = itemPool:GetCollectible(poolType, decrease, rng:Next() * 1000)
@@ -47,47 +69,3 @@ function BlockDisabledItems:PostGetCollectible(selectedItem, poolType, decrease,
     return newItem
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GET_COLLECTIBLE, BlockDisabledItems.PostGetCollectible)
-
-function BlockDisabledItems:GetTrinket(selectedTrinket, rng)
-    if isDisablingItem then return end
-
-    local isDisabledItem = false
-
-    for indexItem, disabledItem in ipairs(EdithRestored:GetDefaultFileSave("DisabledTrinkets")) do
-        if selectedTrinket == EdithRestored.Enums.TrinketType[indexItem] then
-            isDisabledItem = true
-            break
-        end
-    end
-
-    if not isDisabledItem then return end
-
-    local itemPool = Game():GetItemPool()
-
-    isDisablingItem = true
-    local newItem = itemPool:GetTrinket(true)
-    isDisablingItem = false
-
-    return newItem
-end
-EdithRestored:AddCallback(ModCallbacks.MC_GET_TRINKET, BlockDisabledItems.GetTrinket)
-
-local firstBlacklistTrinket = EdithRestored.Enums.TrinketType.TRINKET_SALT_ROCK
-local lastBlacklistTrinket = EdithRestored.Enums.TrinketType.TRINKET_PEPPER_GRINDER
-
----@param trinket EntityPickup
-function BlockDisabledItems:RerollDisabledTrinkets(trinket)
-    if trinket.SubType >= firstBlacklistTrinket and trinket.SubType <= lastBlacklistTrinket then
-        for disabledIndex, disabledItem in pairs(EdithRestored:GetDefaultFileSave("DisabledTrinkets")) do
-            if trinket.SubType == EdithRestored.Enums.TrinketType[disabledIndex] then
-                if trinket:GetSprite():IsPlaying("Appear") or trinket:IsShopItem() then
-                    trinket:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, 0, true, true)
-                else
-                    trinket:Remove()
-                end
-                break
-            end
-        end
-    end
-end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, BlockDisabledItems.RerollDisabledTrinkets, PickupVariant.PICKUP_TRINKET)
