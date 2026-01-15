@@ -720,7 +720,6 @@ local function ReOrederItems(t)
 end
 
 local function UpdateTogglesMenu(show)
-	print(show)
     for _, t in ipairs({"Items", "Trinkets"}) do
         if not ShowTogglesButton(t) then
             if ImGui.ElementExists("edithWindowToggles"..t) then
