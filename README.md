@@ -23,11 +23,11 @@ Pressing the swap key (Control on keyboard) will toggle Edith's stomp to consume
 ![](https://i.imgur.com/PlLhZLK.gif)
 
 ## Caution!
-**![REPENTOGON](url=https://repentogon.com) is required for this mod to function. It will NOT work without it!**
+**![REPENTOGON+](url=https://repentogon.com) is required for this mod to function. It will NOT work without it!**
 
 
 ## Contributors
-BrakeDude, Pandora, Akad, Sillst, fly_6, im_tem, Thicco Catto, Kotry, Aceolotl, Yarik the Human, watchmeojo, We Strvn, sipher nil, lesser_star, vor_kakisha, michael8587, Skelej64, King MPHS, Pinchalin, Firework, lucia, TheReturnofGarnk and John Sorrow
+BrakeDude, Pandora, Akad, Sillst, fly_6, im_tem, Thicco Catto, Kotry, Aceolotl, Yarik the Human, watchmeojo, We Strvn, sipher nil, lesser_star, vor_kakisha, michael8587, Skelej64, King MPHS, Pinchalin, Firework, lucia, TheReturnofGarnk, game.pule, and John Sorrow
 
 ## Special thanks to
 **Public Entertainment Networked Interactive Software** - For the original Antibirth mod as well as the content and concepts that this mod builds off of</br>
