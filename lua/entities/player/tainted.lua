@@ -67,6 +67,11 @@ function Tainted:OnTaintedUpdate(player)
         pepperCreep.Color = Color(0, 0, 0)
         pepperCreep:SetTimeout(150)
     elseif not EdithRestored:IsEdithSliding(data) and data.EdithTargetMovementDirection then
+        if data.RamState and data.ExtraIFrames > 0 then
+            print(data.ExtraIFrames)
+            player:SetMinDamageCooldown(30 + data.ExtraIFrames)
+        end
+        data.ExtraIFrames = 0
         data.IsInPepper = false
         data.RamState = false
         data.RamGlowCounter = 0
@@ -140,8 +145,11 @@ function Tainted:OnDashCollidingWithEnemy(player, collider)
     if not data.RamState then return end
     if not EdithRestored:IsEdithSliding(data) then return end
 
-    collider:TakeDamage(player.Damage * 3, 0, EntityRef(player), 0)
+    collider:TakeDamage(player.Damage * 5, 0, EntityRef(player), 0)
     sfx:Play(SoundEffect.SOUND_MEATY_DEATHS)
+
+    data.ExtraIFrames = data.ExtraIFrames or 0
+    data.ExtraIFrames = data.ExtraIFrames + 5
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_COLLISION, Tainted.OnDashCollidingWithEnemy)
 
