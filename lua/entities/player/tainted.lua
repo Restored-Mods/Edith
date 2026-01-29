@@ -53,41 +53,38 @@ function Tainted:OnTaintedUpdate(player)
         data.MovementInput = ButtonAction.ACTION_DOWN
     end
 
-    print(data.EdithTargetMovementDirection)
+    data.ShouldConsumeBomb = data.ShouldConsumeBomb or false
+
+    if Input.IsActionTriggered(ButtonAction.ACTION_DROP, ctrlIdx) then
+        data.ShouldConsumeBomb = not data.ShouldConsumeBomb
+    end
     
     --- Spawn pepper creep in the tile Edith is moving from
     if data.SlideCounter == 1 then
         local pepperCreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant, EdithRestored.Enums.Entities.PEPPER_CREEP.SubType, player.Position, Vector.Zero, player):ToEffect() ---@cast pepperCreep EntityEffect
-        
+
         pepperCreep.Color = Color(0, 0, 0)
         pepperCreep:SetTimeout(150)
     elseif not EdithRestored:IsEdithSliding(data) and data.EdithTargetMovementDirection then
         data.IsInPepper = false
+        data.RamState = false
     end
-    
-    local speed = data.IsInPepper and 6 or 3
 
-    EdithRestored:EdithGridMovement(player, data, speed, 1)
+    data.RamState = data.RamState or false
 
-    if not EdithRestored:IsEdithSliding(data) then
+    if not EdithRestored:IsEdithSliding(data) and not data.RamState then
         data.SlideCharge = Helpers.Clamp(data.SlideCharge + 0.5, 0, 100)
     end
-    
-    if data.SlideCharge > 0 then
-        if data.MovementInput and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) then
-            data.TriggerMove = true
-            data.MoveGrids = math.ceil(baseGridMovement * (data.SlideCharge / 100)) 
-            data.Slidespeed = 10 + data.MoveGrids
-            data.SlideCharge = 0
-        end
-    end
-    
-    if data.TriggerMove then
-        -- data.EdithTargetMovementDirection = MoveVex
-        EdithRestored:EdithGridMovement(player, data, data.Slidespeed, data.MoveGrids, data.MovementInput, MoveVex)
+
+    if data.SlideCharge >= 100 and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) then
+        data.RamState = true
+        data.SlideCharge = 0
     end
 
-    print(data.IsInPepper)
+    local speed = (data.IsInPepper and 6 or 3) + (data.RamState and 10 or 0)
+    local grids = data.RamState and 5 or 1
+
+    EdithRestored:EdithGridMovement(player, data, speed, grids)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Tainted.OnTaintedUpdate)
 
