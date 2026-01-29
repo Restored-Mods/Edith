@@ -29,6 +29,11 @@ Enums.Entities = {
 		Variant = Isaac.GetEntityVariantByName("Salt Creep"),
 		SubType = Isaac.GetEntitySubTypeByName("Salt Creep"),
 	},
+	PEPPER_CREEP = {
+		Type = Isaac.GetEntityTypeByName("Pepper Creep"),
+		Variant = Isaac.GetEntityVariantByName("Pepper Creep"),
+		SubType = Isaac.GetEntitySubTypeByName("Pepper Creep"),
+	},
 	PEPPERMINT = {
 		Type = Isaac.GetEntityTypeByName("Peppermint Cloud"),
 		Variant = Isaac.GetEntityVariantByName("Peppermint Cloud"),
