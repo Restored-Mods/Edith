@@ -53,20 +53,26 @@ function Tainted:OnTaintedUpdate(player)
         data.MovementInput = ButtonAction.ACTION_DOWN
     end
 
-    EdithRestored:EdithGridMovement(player, data, 3, 1, nil, Vector(1, 1))
-
+    print(data.EdithTargetMovementDirection)
+    
     --- Spawn pepper creep in the tile Edith is moving from
     if data.SlideCounter == 1 then
         local pepperCreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant, EdithRestored.Enums.Entities.PEPPER_CREEP.SubType, player.Position, Vector.Zero, player):ToEffect() ---@cast pepperCreep EntityEffect
-
+        
         pepperCreep.Color = Color(0, 0, 0)
         pepperCreep:SetTimeout(150)
+    elseif not EdithRestored:IsEdithSliding(data) and data.EdithTargetMovementDirection then
+        data.IsInPepper = false
     end
+    
+    local speed = data.IsInPepper and 6 or 3
+
+    EdithRestored:EdithGridMovement(player, data, speed, 1)
 
     if not EdithRestored:IsEdithSliding(data) then
         data.SlideCharge = Helpers.Clamp(data.SlideCharge + 0.5, 0, 100)
     end
-
+    
     if data.SlideCharge > 0 then
         if data.MovementInput and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) then
             data.TriggerMove = true
@@ -75,11 +81,13 @@ function Tainted:OnTaintedUpdate(player)
             data.SlideCharge = 0
         end
     end
-
+    
     if data.TriggerMove then
-        data.EdithTargetMovementDirection = MoveVex
+        -- data.EdithTargetMovementDirection = MoveVex
         EdithRestored:EdithGridMovement(player, data, data.Slidespeed, data.MoveGrids, data.MovementInput, MoveVex)
     end
+
+    print(data.IsInPepper)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Tainted.OnTaintedUpdate)
 
@@ -100,3 +108,18 @@ function Tainted:ChargeBarRender(player)
 	)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Tainted.ChargeBarRender, 0)
+
+---@param effect EntityEffect
+EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, function(_, effect)
+    if effect.SubType ~= EdithRestored.Enums.Entities.PEPPER_CREEP.SubType then return end
+
+    for _, ent in ipairs(Isaac.FindInRadius(effect.Position, 20 * effect.SpriteScale.X, EntityPartition.PLAYER)) do
+        
+        local player = ent:ToPlayer() ---@cast player EntityPlayer
+        local data = EdithRestored:GetData(player)
+        
+        if EdithRestored:IsEdithSliding(data) then goto continue end
+        data.IsInPepper = true
+        ::continue::
+    end
+end, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant)
