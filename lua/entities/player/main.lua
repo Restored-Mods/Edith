@@ -377,8 +377,7 @@ end
 
 ---@param player EntityPlayer
 ---@param data table
-local function EdithTriggerSlide(player, data, gridMult, forcedDir)
-
+local function EdithTriggerSlide(player, data, gridMult, forcedDir, forcedVec)
 	local isPressingLeft
 	local isPressingRight
 	local isPressingUp
@@ -459,7 +458,12 @@ local function EdithTriggerSlide(player, data, gridMult, forcedDir)
 	EdithJupiterEffect(player, data)
 
 	data.EdithTargetMovementPosition = targetMovementPosition
-	data.EdithTargetMovementDirection = targetMovementDirection
+
+	if forcedVec then
+		data.EdithTargetMovementDirection = forcedVec
+	else
+		data.EdithTargetMovementDirection = targetMovementDirection
+	end
 
 	-- data.PreLastEdithPosition = nil
 	-- data.LastEdithPosition = nil
@@ -587,7 +591,7 @@ function EdithRestored:IsEdithSliding(data)
 end
 
 ---@param player EntityPlayer
-function EdithRestored:EdithGridMovement(player, data, speedBase, gridMult, forcedDir)
+function EdithRestored:EdithGridMovement(player, data, speedBase, gridMult, forcedDir, forcedVec)
 	local firstFrameOfMovement = false
 	local MovementPos = data.EdithTargetMovementPosition
 	local effects = player:GetEffects()
@@ -611,7 +615,7 @@ function EdithRestored:EdithGridMovement(player, data, speedBase, gridMult, forc
 	firstFrameOfMovement = data.SlideCounter == 1
 
 	if (not MovementPos and Helpers.CanMove(player) and not hasMegaMush) then
-		EdithTriggerSlide(player, data, gridMult, forcedDir)
+		EdithTriggerSlide(player, data, gridMult, forcedDir, forcedVec)
 	end
 
 	if MovementPos then
@@ -1442,7 +1446,7 @@ function Player:OnNPCCollision(entity, collider)
 	local player = collider:ToPlayer()
 
 	if not player then return end
-	if not Helpers.IsPureEdith(player) then return end
+	if not (Helpers.IsPureEdith(player) or Helpers.IsTaintedEdith(player)) then return end
 
 	--We can only push enemies with less than 10 mass (arbitrary value, requires testing)
 	if entity.Mass < 10 then return end

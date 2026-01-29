@@ -1,6 +1,7 @@
 local Helpers = EdithRestored.Helpers
 local game = Game()
 local Tainted = {}
+local sfx = SFXManager()
 
 ---@param player EntityPlayer
 ---@return boolean
@@ -68,17 +69,20 @@ function Tainted:OnTaintedUpdate(player)
     elseif not EdithRestored:IsEdithSliding(data) and data.EdithTargetMovementDirection then
         data.IsInPepper = false
         data.RamState = false
+        data.RamGlowCounter = 0
     end
 
     data.RamState = data.RamState or false
 
     if not EdithRestored:IsEdithSliding(data) and not data.RamState then
-        data.SlideCharge = Helpers.Clamp(data.SlideCharge + 0.5, 0, 100)
+        data.SlideCharge = Helpers.Clamp(data.SlideCharge + 2, 0, 100)
     end
 
     if data.SlideCharge >= 100 and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) then
         data.RamState = true
         data.SlideCharge = 0
+        sfx:Play(SoundEffect.SOUND_STONE_IMPACT)
+        player:SetColor(Color(2, 2, 2), 5, 100, true, false)
     end
 
     local speed = (data.IsInPepper and 6 or 3) + (data.RamState and 10 or 0)
@@ -105,6 +109,51 @@ function Tainted:ChargeBarRender(player)
 	)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, Tainted.ChargeBarRender, 0)
+
+---@param player EntityPlayer
+function Tainted:OnPEffectUpdate(player)
+    local data = EdithRestored:GetData(player)
+
+    if not IsTaintedEdith(player) then return end
+    if not data.RamState then return end
+    if EdithRestored:IsEdithSliding(data) then return end
+
+    data.RamGlowCounter = data.RamGlowCounter or 0
+    data.RamGlowCounter = math.min(data.RamGlowCounter + 1, 15)
+
+    if data.RamGlowCounter == 15 then
+        sfx:Play(SoundEffect.SOUND_STONE_IMPACT, 0.25, 0, false, 2)
+        player:SetColor(Color(2, 2, 2), 5, 100, true, false)
+        data.RamGlowCounter = 0
+    end
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, Tainted.OnPEffectUpdate)
+
+---@param player EntityPlayer
+---@param collider Entity
+function Tainted:OnDashCollidingWithEnemy(player, collider)
+    if not IsTaintedEdith(player) then return end
+    if not collider:ToNPC() then return end
+
+    local data = EdithRestored:GetData(player)
+
+    if not data.RamState then return end
+    if not EdithRestored:IsEdithSliding(data) then return end
+
+    collider:TakeDamage(player.Damage * 3, 0, EntityRef(player), 0)
+    sfx:Play(SoundEffect.SOUND_MEATY_DEATHS)
+end
+EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_COLLISION, Tainted.OnDashCollidingWithEnemy)
+
+function Tainted:NegateDashDamage(player)
+    local data = EdithRestored:GetData(player)
+
+    if not EdithRestored:IsEdithSliding(data) then return end
+    if not data.RamState then return end
+    -- if player.Velocity:Length() <= 0.01 then return end
+    return false
+end
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, Tainted.NegateDashDamage)
 
 ---@param effect EntityEffect
 EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, function(_, effect)
