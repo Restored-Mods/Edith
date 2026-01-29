@@ -1,5 +1,5 @@
 local Helpers = EdithRestored.Helpers
-
+local game = Game()
 local Tainted = {}
 
 ---@param player EntityPlayer
@@ -31,6 +31,18 @@ function Tainted:OnTaintedUpdate(player)
     data.StaticSlideCharge = data.StaticSlideCharge or 0
     data.MoveGrids = data.MoveGrids or 0
 
+    local input = {
+        left = Input.GetActionValue(ButtonAction.ACTION_SHOOTLEFT, ctrlIdx),
+        right = Input.GetActionValue(ButtonAction.ACTION_SHOOTRIGHT, ctrlIdx),
+        up = Input.GetActionValue(ButtonAction.ACTION_SHOOTUP, ctrlIdx),
+        down = Input.GetActionValue(ButtonAction.ACTION_SHOOTDOWN, ctrlIdx)
+    }
+
+    local VecX = ((input.left > 0.3 and -input.left) or (input.right > 0.3 and input.right) or 0) * (game:GetRoom():IsMirrorWorld() and -1 or 1) 
+    local VecY = ((input.up > 0.3 and -input.up) or (input.down > 0.3 and input.down) or 0)
+
+    local MoveVex = Vector(VecX, VecY):Normalized()
+
     if Input.IsActionPressed(ButtonAction.ACTION_SHOOTLEFT, ctrlIdx) then
         data.MovementInput = ButtonAction.ACTION_LEFT
     elseif Input.IsActionPressed(ButtonAction.ACTION_SHOOTRIGHT, ctrlIdx) then
@@ -40,8 +52,16 @@ function Tainted:OnTaintedUpdate(player)
     elseif Input.IsActionPressed(ButtonAction.ACTION_SHOOTDOWN, ctrlIdx) then
         data.MovementInput = ButtonAction.ACTION_DOWN
     end
-    
-    EdithRestored:EdithGridMovement(player, data, 3, 1)
+
+    EdithRestored:EdithGridMovement(player, data, 3, 1, nil, Vector(1, 1))
+
+    --- Spawn pepper creep in the tile Edith is moving from
+    if data.SlideCounter == 1 then
+        local pepperCreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant, EdithRestored.Enums.Entities.PEPPER_CREEP.SubType, player.Position, Vector.Zero, player):ToEffect() ---@cast pepperCreep EntityEffect
+
+        pepperCreep.Color = Color(0, 0, 0)
+        pepperCreep:SetTimeout(150)
+    end
 
     if not EdithRestored:IsEdithSliding(data) then
         data.SlideCharge = Helpers.Clamp(data.SlideCharge + 0.5, 0, 100)
@@ -57,7 +77,8 @@ function Tainted:OnTaintedUpdate(player)
     end
 
     if data.TriggerMove then
-        EdithRestored:EdithGridMovement(player, data, data.Slidespeed, data.MoveGrids, data.MovementInput)
+        data.EdithTargetMovementDirection = MoveVex
+        EdithRestored:EdithGridMovement(player, data, data.Slidespeed, data.MoveGrids, data.MovementInput, MoveVex)
     end
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Tainted.OnTaintedUpdate)
