@@ -306,6 +306,7 @@ local function EdithSlideEffects(player, directionStuff)
 	local bdType = EdithRestored.Room():GetBackdropType()
 	local chap4 = IsChap4()
 	local slideSound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or EdithRestored.Enums.SFX.Edith.ROCK_SLIDE
+	local slideVolume = chap4 and 0.3 or 1
 	local HasWater = EdithRestored.Room():HasWater()
 	local variant = HasWater and EffectVariant.BIG_SPLASH or (
 		chap4 and EffectVariant.POOF02 or EdithRestored.Enums.Entities.CUSTOM_DUST_CLOUD.Variant
@@ -337,7 +338,7 @@ local function EdithSlideEffects(player, directionStuff)
 		slideGFX.Color = (tableColorTarget[bdType] or tableColorTarget.Default)
 	end
 
-	sfx:Play(slideSound)
+	sfx:Play(slideSound, slideVolume)
 	EdithRestored.Game:ShakeScreen(1)
 
 	-- local rockParticleVelocity = Vector(0, 0)

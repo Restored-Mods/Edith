@@ -46,7 +46,7 @@ BrakeDude, Pandora, Akad, Sillst, fly_6, im_tem, Thicco Catto, Kotry, Aceolotl, 
 https://discord.gg/BYGmAhgG8k
 
 </description>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <visibility>Public</visibility>
     <tag id="Lua"/>
     <tag id="Items"/>
@@ -56,6 +56,7 @@ https://discord.gg/BYGmAhgG8k
     <tag id="Pickups"/>
     <tag id="Player Characters"/>
     <tag id="Familiars"/>
+    <tag id="Challenges"/>
     <tag id="Tweaks"/>
     <tag id="Graphics"/>
 </metadata>
