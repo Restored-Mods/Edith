@@ -1,5 +1,13 @@
 local modname = "Edith Restored"
 
+DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.0", [[{{FSIZE2}}added
+- unique item costumes for
+edith
+
+{{FSIZE2}}changes
+- lowered slide sound volume
+in chapter 4 stages]], {"edith", "restored", "", "v1.2.0", "update"}, true, true)
+
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.1.0", [[{{FSIZE2}}added
 - rocket laces challenge
 
