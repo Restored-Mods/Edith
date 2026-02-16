@@ -1,7 +1,4 @@
-EdithRestored:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function ()
-    if not FiendFolio then
-        return
-    end
+EdithRestored:AddModCompat("FiendFolio", function ()
     local referenceItems = { --Code refferenced from https://steamcommunity.com/sharedfiles/filedetails/?id=3281491787&searchtext=d.edith--
         Passives = {
             { ID = EdithRestored.Enums.CollectibleType.COLLECTIBLE_RED_HOOD,    Reference = "Little Red Riding Hood" },

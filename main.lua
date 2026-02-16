@@ -106,10 +106,7 @@ include("lua.items.cards.PrudenceReverse.main")
 include("lua.challenges.rocket_laces")
 
 --mod compatibility
-include("lua.mod_compat.eid.eid")
-include("lua.mod_compat.encyclopedia.encyclopedia")
-include("lua.mod_compat.MiniMapiItems.MiniMapiItems")
-include("lua.mod_compat.fiendfolio.main")
+include("lua.mod_compat.main")
 
 --misc
 include("lua.items.funny")
