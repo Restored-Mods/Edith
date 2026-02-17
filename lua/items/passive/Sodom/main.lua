@@ -30,7 +30,7 @@ end
 function Sodom:DontLookBack(player)
     if player:HasCollectible(EdithRestored.Enums.CollectibleType.COLLECTIBLE_SODOM) then
         local data = EdithRestored:GetData(player)
-        data.SodomFireCountdown = data.SodomFireCountdown or 30
+        data.SodomFireCountdown = data.SodomFireCountdown or 20
         data.SodomEdithResetPause = data.SodomEdithResetPause or 0
         if not Helpers.VectorEquals(player:GetMovementVector(), Vector.Zero)
         or Helpers.IsPureEdith(player) and data.EdithTargetMovementPosition
@@ -39,11 +39,11 @@ function Sodom:DontLookBack(player)
             data.SodomEdithResetPause = Helpers.IsPureEdith(player) and 10 or 0
             if data.SodomFireCountdown <= 0 then
                 local vel = Helpers.IsPureEdith(player) and player.Velocity:Normalized() or player:GetMovementVector()
-                SpawnSodomFlame(player.Position, vel * -10, player, 30)
-                data.SodomFireCountdown = 30
+                SpawnSodomFlame(player.Position, vel * -1, player, 50)
+                data.SodomFireCountdown = 20
             end
         elseif data.SodomEdithResetPause == 0 then
-            data.SodomFireCountdown = 30
+            data.SodomFireCountdown = 20
         else
             data.SodomEdithResetPause = math.max(data.SodomEdithResetPause - 1, 0)
         end
