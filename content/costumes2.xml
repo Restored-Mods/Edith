@@ -1,20 +1,20 @@
 <costumes anm2root="gfx/characters/">
+	<!-- Lithium Salts -->
+	<costume id="0" anm2path="lithium_salts.anm2" type="passive" />
+	<!-- Sodom -->
+	<costume id="1" anm2path="costume_sodom.anm2" type="passive" hasSkinAlt="true"/>
 	<!-- Blasting Boots -->
 	<costume id="2" anm2path="blasting_boots.anm2" type="passive" />
+	<!-- Thunder Bombs -->
+	<costume id="3" anm2path="thunder_bombs.anm2" type="passive" hasOverlay="true" />
 	<!-- Red Hood -->
 	<costume id="6" anm2path="red_hood.anm2" type="passive" />
 	<!-- Shrapnel Bombs -->
 	<costume id="9" anm2path="shrapnel_bombs.anm2" type="passive" hasSkinAlt="true"/>
-	<!-- Gorgon Mask -->
-	<costume id="1" anm2path="gorgon_mask.anm2" type="none" />
-	<!-- Sodom -->
-	<costume id="1" anm2path="costume_sodom.anm2" type="passive" hasSkinAlt="true"/>
-	<!-- Lithium Salts -->
-	<costume id="0" anm2path="lithium_salts.anm2" type="passive" />
-	<!-- Thunder Bombs -->
-	<costume id="3" anm2path="thunder_bombs.anm2" type="passive" hasOverlay="true" />
 	<!-- Peppermint -->
 	<costume id="10" anm2path="peppermint_rm.anm2" type="passive" hasSkinAlt="true" />
+	<!-- Gorgon Mask -->
+	<costume id="1" anm2path="gorgon_mask.anm2" type="none" />
 	<!-- Edith Hood -->
 	<costume id="150" anm2path="Character_001_Redith_Hood.anm2" type="none" priority="99" />
 
