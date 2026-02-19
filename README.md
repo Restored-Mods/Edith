@@ -5,6 +5,7 @@ The unused secret character from Antibirth has been restored and improved, with 
 ## Features
 **1 new character** unlocked by defeating The Beast.
 **14 unlocks** for Edith's completion marks.
+Custom costumes for nearly every item.
 
 ## Restored Edith
 
