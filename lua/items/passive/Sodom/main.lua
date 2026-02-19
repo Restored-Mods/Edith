@@ -4,7 +4,7 @@ local Helpers = EdithRestored.Helpers
 local function SetOnFire(enemy, player, damage)
     if Helpers.IsEnemy(enemy) then
         damage = damage or 3.5
-        enemy:AddBurn(EntityRef(player), 90, damage * 0.8)
+        enemy:AddBurn(EntityRef(player), 45, damage * 0.8)
         if type(EdithRestored:GetData(enemy).ExplodeInFlames) ~= "boolean" then
             EdithRestored:GetData(enemy).ExplodeInFlames = true
         end
@@ -54,9 +54,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, Sodom.DontLookBack
 ---@param npc EntityNPC
 function Sodom:NPCOnFireUpdate(npc)
     local data = EdithRestored:GetData(npc)
-    if data.ExplodeInFlames and not npc:HasEntityFlags(EntityFlag.FLAG_BURN) then
-        data.ExplodeInFlames = false
-    end
+    data.ExplodeInFlames = data.ExplodeInFlames and npc:HasEntityFlags(EntityFlag.FLAG_BURN)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_NPC_UPDATE, Sodom.NPCOnFireUpdate)
 
@@ -70,10 +68,10 @@ function Sodom:AcumulateFire(ent, damage, flags, source, cd)
     if source.Entity and source.Type == EntityType.ENTITY_EFFECT and source.Variant == EffectVariant.RED_CANDLE_FLAME then
         local fireData = EdithRestored:GetData(source.Entity)
         if fireData.SodomFire then
-            if not data.AlreadySodomFlameHit then
-                data.AlreadySodomFlameHit = true
+            --if not data.AlreadySodomFlameHit then
+                --data.AlreadySodomFlameHit = true
                 SetOnFire(ent, source.Entity.SpawnerEntity and source.Entity.SpawnerEntity:ToPlayer() or GetRandomPlayerWithSodom(), source.Entity.CollisionDamage)
-            end
+            --end
             return {Damage = 0.001, DamageFlags = flags, DamageCountdown = cd}
         end
     end
