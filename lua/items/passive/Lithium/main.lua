@@ -96,7 +96,8 @@ function Lithium:OnPillUse(pillEffect, player, flags, pillColor)
         effects:AddNullEffect(EdithRestored.Enums.NullItems.LITHIUM_FALSEPHD, true, uses)
     end
 
-    if player:HasCollectible(CollectibleType.COLLECTIBLE_PHD) then
+    if player:HasCollectible(CollectibleType.COLLECTIBLE_PHD)
+    or player:HasCollectible(CollectibleType.COLLECTIBLE_LUCKY_FOOT) or player:HasCollectible(CollectibleType.COLLECTIBLE_VIRGO) then
         player:AnimateHappy()
         return
     end
