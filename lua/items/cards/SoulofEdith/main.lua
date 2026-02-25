@@ -145,6 +145,12 @@ local function GetPosition(player, statue)
 	return finalPos
 end
 
+local function RemoveJumps(player)
+	local data = EdithRestored:GetData(player)
+	data.Statue = nil
+	data.StartPosition = nil
+end
+
 ---@param player EntityPlayer
 ---@param statue EntityEffect
 local function JumpInit(player, statue)
@@ -152,9 +158,8 @@ local function JumpInit(player, statue)
 	local statueData = EdithRestored:GetData(statue)
 	data.StartPosition = data.StartPosition or player.Position
 	if statueData.StoneJumps <= 0 then
+		RemoveJumps(player)
 		statueData.StoneJumps = nil
-		data.Statue = nil
-		data.StartPosition = nil
 		statue:Remove()
 		return
 	end
@@ -277,8 +282,8 @@ EdithRestored:AddCallback(
 )
 
 function SoulOfEdith:NewRoom()
-	for i = 0, EdithRestored.Game:GetNumPlayers() - 1 do
-		local player = Isaac.GetPlayer(i)
+	for _, player in ipairs(PlayerManager.GetPlayers()) do
+		RemoveJumps(player)
 		player:AddCacheFlags(CacheFlag.CACHE_COLOR, true)
 	end
 end
