@@ -319,7 +319,7 @@ EdithRestored:AddModCompat("EID", function()
 		FALSEPHD_IFRAME_INCREASE_AMOUNT = 5,
 	}
 
-	local lithiumEN = "#{{ArrowDown}} Decreases one random stat#{{ArrowUp}} IFRAME_INCREASE_AMOUNT invinsibility frames"
+	local lithiumEN = "#{{ArrowDown}} Decreases one random stat#{{ArrowUp}} IFRAME_INCREASE_AMOUNT invincibility frames"
 	local lithiumRU =
 		"#{{ArrowDown}} Уменьшает случайную характеристику#{{ArrowUp}} IFRAME_INCREASE_AMOUNT кадров неуязвимости"
 

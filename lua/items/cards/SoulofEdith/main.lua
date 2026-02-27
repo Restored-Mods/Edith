@@ -98,33 +98,36 @@ local function GetPosition(player, statue)
 	local poops = Helpers.Filter(grids, function(index, poop)
 		return poop:GetType() == GridEntityType.GRID_POOP and poop.State < 1000
 	end)
-    local shopKeepers = Isaac.FindByType(EntityType.ENTITY_SHOPKEEPER)
-	local destrGrids = Helpers.MergeTables(skullRocks, doors, ssRocks, tintedRocks, statues, rocks, fires, poops, shopKeepers)
+	local shopKeepers = Isaac.FindByType(EntityType.ENTITY_SHOPKEEPER)
+	local destrGrids =
+		Helpers.MergeTables(skullRocks, doors, ssRocks, tintedRocks, statues, rocks, fires, poops, shopKeepers)
 
-    local antiInfLoop = 0
-    local chosen = false
+	local antiInfLoop = 0
+	local chosen = false
 	repeat
 		if #enemies > 0 then
 			finalPos = enemies[rng:RandomInt(1, #enemies)].Position
-            chosen = true
+			chosen = true
 		end
 		antiInfLoop = antiInfLoop + 1
-	until antiInfLoop >= 100 or player.CanFly or EdithRestored.Room():GetGridCollisionAtPos(finalPos) ~= GridCollisionClass.COLLISION_PIT and chosen
-    if antiInfLoop >= 100 then
-        antiInfLoop = 0
-        while
-            antiInfLoop < 100
-            and not player.CanFly
-            and EdithRestored.Room():GetGridCollisionAtPos(finalPos) ~= GridCollisionClass.COLLISION_PIT
-        do
-            if #destrGrids > 0 then
-                finalPos = destrGrids[rng:RandomInt(1, #destrGrids)].Position
-            else
-                finalPos = EdithRestored.Room():GetRandomPosition(20)
-            end
-            antiInfLoop = antiInfLoop + 1
-        end
-    end
+	until antiInfLoop >= 100
+		or player.CanFly
+		or EdithRestored.Room():GetGridCollisionAtPos(finalPos) ~= GridCollisionClass.COLLISION_PIT and chosen
+	if antiInfLoop >= 100 then
+		antiInfLoop = 0
+		while
+			antiInfLoop < 100
+			and not player.CanFly
+			and EdithRestored.Room():GetGridCollisionAtPos(finalPos) ~= GridCollisionClass.COLLISION_PIT
+		do
+			if #destrGrids > 0 then
+				finalPos = destrGrids[rng:RandomInt(1, #destrGrids)].Position
+			else
+				finalPos = EdithRestored.Room():GetRandomPosition(20)
+			end
+			antiInfLoop = antiInfLoop + 1
+		end
+	end
 
 	if data.StoneJumps == 1 then
 		finalPos = GetAntiSoftLockPosition(
@@ -138,8 +141,7 @@ local function GetPosition(player, statue)
 		EdithRestored.Room():GetGridCollisionAtPos(finalPos) == GridCollisionClass.COLLISION_PIT
 		and not player.CanFly
 	do
-		finalPos = EdithRestored.Room()
-			:GetRandomPosition(20)
+		finalPos = EdithRestored.Room():GetRandomPosition(20)
 	end
 	data.StartPosition = nil
 	return finalPos
@@ -249,7 +251,7 @@ function SoulOfEdith:Landing(player, jumpData, inPit)
 		local statueData = EdithRestored:GetData(data.Statue)
 		if statueData.StoneJumps then
 			statueData.StoneJumps = math.max(statueData.StoneJumps - 1, 0)
-			Helpers.Stomp(player, 1, statueData.StoneJumps == 0, nil, nil, {Tooth = true})
+			Helpers.Stomp(player, 1, statueData.StoneJumps == 0, nil, nil, { Tooth = true })
 			if statueData.StoneJumps == 0 then
 				SFXManager():Play(SoundEffect.SOUND_STONE_IMPACT)
 				player:AddCollectibleEffect(CollectibleType.COLLECTIBLE_BOOK_OF_SHADOWS, false, 45, true)
