@@ -48,6 +48,11 @@ Enums.Entities = {
 		Variant = Isaac.GetEntityVariantByName("Werewolf Swipe"),
 		SubType = 0,
 	},
+	SODOM_FIRE = {
+		Type = Isaac.GetEntityTypeByName("Sodom Fire"),
+		Variant = Isaac.GetEntityVariantByName("Sodom Fire"),
+		SubType = 0,
+	},
 }
 
 Enums.Familiars = {
