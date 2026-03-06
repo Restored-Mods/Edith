@@ -1,5 +1,28 @@
 local modname = "Edith Restored"
 
+
+DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.2", [[{{FSIZE2}}changes
+- changed sodom fire trail. now fire
+ spawns more often when moving, hits
+ more than 1 time but doesn't block
+ projectiles and has almost no 
+ opposite movement velocity
+
+{{FSIZE2}}fixes
+- fixed pisces costumes not having
+correct face for edith
+
+- fixed lithium salt not negating stat
+downs with phd and virgo
+- fixed salt pawns not doing damage with
+bffs!
+- fixed player's controls being disabled
+when changing room during soul of edith
+effect]], {"edith", "restored", "", "v1.2.2", "update"}, false, false)
+
+DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.1", [[{{FSIZE2}}fixed
+- encyclopedia errors]], {"edith", "restored", "", "v1.2.1", "update"}, true, true)
+
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.0", [[{{FSIZE2}}added
 - unique item costumes for
 edith
