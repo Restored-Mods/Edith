@@ -1327,8 +1327,8 @@ function Player:edith_Stats(player, cacheFlag)
 		if cacheFlag == CacheFlag.CACHE_DAMAGE then
 			player.Damage = player.Damage * 1.1
 		end
-	elseif Helpers.IsTaintedEdith(player) then -- If the player is Tainted Edith ^^
-		Helpers.ChangePepperValue(player)
+	--elseif Helpers.IsTaintedEdith(player) then -- If the player is Tainted Edith ^^
+	--	Helpers.ChangePepperValue(player)
 	end
 	if cacheFlag == CacheFlag.CACHE_SPEED and Helpers.IsPlayerEdith(player) 
 	and not EdithRestored.Room():HasCurseMist() then
@@ -1364,7 +1364,7 @@ function Player:Home()
 		end
 	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.Home)
+--EdithRestored:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Player.Home)
 
 ---@param slot EntitySlot
 function Player:TaintedSlot(slot)
@@ -1372,7 +1372,7 @@ function Player:TaintedSlot(slot)
 		ChangeSlotSprite(slot)
 	end
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_SLOT_UPDATE, Player.TaintedSlot, SlotVariant.HOME_CLOSET_PLAYER)
+--EdithRestored:AddCallback(ModCallbacks.MC_POST_SLOT_UPDATE, Player.TaintedSlot, SlotVariant.HOME_CLOSET_PLAYER)
 
 function Player:NewRoom()
 	for i = 0, EdithRestored.Game:GetNumPlayers() - 1 do
@@ -1447,7 +1447,7 @@ function Player:OnNPCCollision(entity, collider)
 	local player = collider:ToPlayer()
 
 	if not player then return end
-	if not (Helpers.IsPureEdith(player) or Helpers.IsTaintedEdith(player)) then return end
+	if not (Helpers.IsPureEdith(player) --[[or Helpers.IsTaintedEdith(player)]]) then return end
 
 	--We can only push enemies with less than 10 mass (arbitrary value, requires testing)
 	if entity.Mass < 10 then return end

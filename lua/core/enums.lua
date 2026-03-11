@@ -4,11 +4,11 @@ local pgd = Isaac.GetPersistentGameData()
 Enums.MouseClick = { LEFT = 0, RIGHT = 1, WHEEL = 2, BACK = 3, FORWARD = 4 }
 
 Enums.Entities = {
-	FALLING_CHISEL = {
+	--[[FALLING_CHISEL = {
 		Type = Isaac.GetEntityTypeByName("The Chisel"),
 		Variant = Isaac.GetEntityVariantByName("The Chisel"),
 		SubType = 0,
-	},
+	},]]
 	SALT_STATUE = {
 		Type = Isaac.GetEntityTypeByName("Salt Statue"),
 		Variant = Isaac.GetEntityVariantByName("Salt Statue"),
@@ -61,11 +61,6 @@ Enums.Familiars = {
 		Variant = Isaac.GetEntityVariantByName("​Salty Baby"),
 		SubType = 0,
 	},
-	LOT_BABY = {
-		Type = Isaac.GetEntityTypeByName("Lot Baby"),
-		Variant = Isaac.GetEntityVariantByName("Lot Baby"),
-		SubType = Isaac.GetEntitySubTypeByName("Lot Baby"),
-	},
 	SALT_PAWNS = {
 		Type = Isaac.GetEntityTypeByName("Salt Pawns"),
 		Variant = Isaac.GetEntityVariantByName("Salt Pawns"),
@@ -73,17 +68,17 @@ Enums.Familiars = {
 	},
 }
 
-Enums.Slots = {
+--[[Enums.Slots = {
 	ELECTRIFIER = {
 		Type = Isaac.GetEntityTypeByName("Electrifier Machine"),
 		Variant = Isaac.GetEntityVariantByName("Electrifier Machine"),
 		SubType = Isaac.GetEntitySubTypeByName("Electrifier Machine"),
 	},
-}
+}]]
 
 Enums.PlayerType = {
 	EDITH = Isaac.GetPlayerTypeByName("Redith", false),
-	EDITH_B = Isaac.GetPlayerTypeByName("Redith", true),
+	--EDITH_B = Isaac.GetPlayerTypeByName("Redith", true),
 }
 
 Enums.CollectibleType = {
@@ -92,7 +87,6 @@ Enums.CollectibleType = {
 	COLLECTIBLE_SODOM = Isaac.GetItemIdByName("​Sodom"),
 	COLLECTIBLE_BLASTING_BOOTS = Isaac.GetItemIdByName("Blasting Boots"),
 	COLLECTIBLE_THUNDER_BOMBS = Isaac.GetItemIdByName("​Thunder Bombs"),
-	--COLLECTIBLE_LOT_BABY = Isaac.GetItemIdByName("Lot Baby"),
 	COLLECTIBLE_SALTY_BABY = Isaac.GetItemIdByName("​Salty Baby"),
 	COLLECTIBLE_SALT_PAWNS = Isaac.GetItemIdByName("Salt Pawns"),
 	COLLECTIBLE_SALT_SHAKER = Isaac.GetItemIdByName("​Salt Shaker"),
@@ -119,8 +113,8 @@ Enums.NullItems = {
 
 Enums.Pickups = {
 	Cards = {
-		CARD_PRUDENCE = Isaac.GetCardIdByName("Prudence"),
-		CARD_REVERSE_PRUDENCE = Isaac.GetCardIdByName("Prudence?"),
+		--CARD_PRUDENCE = Isaac.GetCardIdByName("Prudence"),
+		--CARD_REVERSE_PRUDENCE = Isaac.GetCardIdByName("Prudence?"),
 		CARD_SOUL_EDITH = Isaac.GetCardIdByName("Soul of Edith"),
 	},
 	Pills = {
@@ -135,7 +129,7 @@ Enums.Pickups = {
 Enums.SFX = {
 	Cards = {
 		--CARD_PRUDENCE = Isaac.GetSoundIdByName("Prudence"),
-		CARD_REVERSE_PRUDENCE = Isaac.GetSoundIdByName("Reverse Prudence"),
+		--CARD_REVERSE_PRUDENCE = Isaac.GetSoundIdByName("Reverse Prudence"),
 		CARD_SOUL_EDITH = Isaac.GetSoundIdByName("Soul Of Edith"),
 	},
 	SaltShaker = {
@@ -151,7 +145,7 @@ Enums.SFX = {
 Enums.GFX = {
 	Cards = {
 		--CARD_PRUDENCE = "Prudence.png",
-		CARD_REVERSE_PRUDENCE = "PrudenceReverse.png",
+		--CARD_REVERSE_PRUDENCE = "PrudenceReverse.png",
 		CARD_SOUL_EDITH = "SoulOfEdith.png",
 	},
 }
@@ -159,12 +153,12 @@ Enums.GFX = {
 -- Costumes
 Enums.Costumes = {
 	EDITH_HOOD = Isaac.GetCostumeIdByPath("gfx/characters/Character_001_Redith_Hood.anm2"),
-	EDITH_B_HAIR = Isaac.GetCostumeIdByPath("gfx/characters/Character_001_Edith_b_Hood.anm2"),
+	--EDITH_B_HAIR = Isaac.GetCostumeIdByPath("gfx/characters/Character_001_Edith_b_Hood.anm2"),
 }
 
 Enums.PlayerSprites = {
 	EDITH = "gfx/Redith.anm2",
-	EDITH_B = "gfx/Redith_b.anm2",
+	--EDITH_B = "gfx/Redith_b.anm2",
 }
 
 Enums.Callbacks = {
@@ -194,7 +188,7 @@ Enums.Challenges = {
 Enums.Achievements = {}
 Enums.Achievements.Characters = {
 	EDITH = Isaac.GetAchievementIdByName("Edith"),
-	TAINTED = Isaac.GetAchievementIdByName("Tainted Edith (Restored Edith)"),
+	--TAINTED = Isaac.GetAchievementIdByName("Tainted Edith (Restored Edith)"),
 }
 Enums.Achievements.CompletionMarks = {
 	-- A-side Unlocks
@@ -211,12 +205,12 @@ Enums.Achievements.CompletionMarks = {
 	SHRAPNEL_BOMBS = Isaac.GetAchievementIdByName("Shrapnel Bombs"),
 	SODOM = Isaac.GetAchievementIdByName("​Sodom"),
 	SALT_ROCK = Isaac.GetAchievementIdByName("Salt Rock"),
-	PRUDENCE = Isaac.GetAchievementIdByName("Prudence"),
+	--PRUDENCE = Isaac.GetAchievementIdByName("Prudence"),
 	-- B-side Unlocks
 	SOUL_EDITH = Isaac.GetAchievementIdByName("Soul of Edith"),
-	REV_PRUDENCE = Isaac.GetAchievementIdByName("Reverse Prudence"),
-	ELECTRIFIER = Isaac.GetAchievementIdByName("Electrifier"),
-	PEPPER_GRINDER = Isaac.GetAchievementIdByName("Pepper Grinder"),
+	--REV_PRUDENCE = Isaac.GetAchievementIdByName("Reverse Prudence"),
+	--ELECTRIFIER = Isaac.GetAchievementIdByName("Electrifier"),
+	--PEPPER_GRINDER = Isaac.GetAchievementIdByName("Pepper Grinder"),
 }
 Enums.Achievements.Misc = {
 	ROCKET_LACES = Isaac.GetAchievementIdByName("Rocket Laces"),
@@ -388,16 +382,16 @@ Enums.Achievements.Unlocks = {
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH, CompletionType.BEAST) > 0
 			end,
 		},
-		[Enums.Achievements.CompletionMarks.PRUDENCE] = {
+		[Enums.Achievements.CompletionMarks.SOUL_EDITH] = {
 			Name = "All Marks",
 			Type = "Card",
 			Condition = function()
-				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.PRUDENCE)
+				return not pgd:Unlocked(Enums.Achievements.CompletionMarks.SOUL_EDITH)
 					and Isaac.AllMarksFilled(Enums.PlayerType.EDITH) == 2
 			end,
 		},
 	},
-	BSide = {
+	--[[BSide = {
 		[Enums.Achievements.CompletionMarks.ELECTRIFIER] = {
 			Name = "Mega Satan",
 			Difficulty = 2,
@@ -444,7 +438,7 @@ Enums.Achievements.Unlocks = {
 					and Isaac.GetCompletionMark(Enums.PlayerType.EDITH_B, CompletionType.LAMB) > 1
 			end,
 		},
-	},
+	},]]
 	Challenges = {
 		[Enums.Achievements.Challenges.PEPPERMINT] = {
 			Name = "Rocket Laces",

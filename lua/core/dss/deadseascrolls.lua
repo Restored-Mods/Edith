@@ -1332,7 +1332,7 @@ local function InitImGuiMenu()
 	end
 
 	local marksA = EdithRestored.Enums.Achievements.Unlocks.ASide
-	local marksB = EdithRestored.Enums.Achievements.Unlocks.BSide
+	--local marksB = EdithRestored.Enums.Achievements.Unlocks.BSide
 
 	local challenges = EdithRestored.Enums.Achievements.Unlocks.Challenges
 
@@ -1369,12 +1369,12 @@ local function InitImGuiMenu()
 	ImGui.AddTabBar("edithWindowUnlocks", "edithMarks")
 	--#region Edith unlocks
 	ImGui.AddTab("edithMarks", "edithUnlocksA", "Edith")
-	ImGui.AddTab("edithMarks", "edithUnlocksB", "Tainted Edith")
+	--ImGui.AddTab("edithMarks", "edithUnlocksB", "Tainted Edith")
 
 	if ImGui.ElementExists("edithMarksBTainted") then
 		ImGui.RemoveElement("edithMarksBTainted")
 	end
-	ImGui.AddCombobox("edithUnlocksB", "edithMarksBTainted", "Tainted Edith", function(index, val)
+	--[[ImGui.AddCombobox("edithUnlocksB", "edithMarksBTainted", "Tainted Edith", function(index, val)
 		if index == 1 then
 			UnLockAchievementA(EdithRestored.Enums.Achievements.Characters.TAINTED)
 		else
@@ -1388,12 +1388,12 @@ local function InitImGuiMenu()
 			ImGuiData.Value,
 			pgd:Unlocked(EdithRestored.Enums.Achievements.Characters.TAINTED) and 1 or 0
 		)
-	end)
+	end)]]
 
-	for tab, prefix in pairs({ ["edithUnlocksA"] = "edithMarksA", ["edithUnlocksB"] = "edithMarksB" }) do
-		local pType = prefix == "edithMarksA" and EdithRestored.Enums.PlayerType.EDITH
-			or EdithRestored.Enums.PlayerType.EDITH_B
-		local achievements = prefix == "edithMarksA" and marksA or marksB
+	for tab, prefix in pairs({ ["edithUnlocksA"] = "edithMarksA", --[["edithUnlocksB"] = "edithMarksB"]] }) do
+		local pType = EdithRestored.Enums.PlayerType.EDITH--prefix == "edithMarksA" and EdithRestored.Enums.PlayerType.EDITH
+			--or EdithRestored.Enums.PlayerType.EDITH_B
+		local achievements = marksA--prefix == "edithMarksA" and marksA or marksB
 		for ach, data in pairs(achievements) do
 			if data.Name ~= nil and data.Difficulty ~= nil and ach > 0 then
 				if ImGui.ElementExists(prefix .. data.Name) then
@@ -1439,8 +1439,8 @@ local function InitImGuiMenu()
 
 	ImGui.AddCombobox("edithUnlocksA", "edithMarksAAll", "All Marks", function(index, val)
 		if index < 1 then
-			Isaac.ExecuteCommand("lockachievement " .. EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE)
-		elseif not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE) then
+			Isaac.ExecuteCommand("lockachievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
+		elseif not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH) then
 			for key, val in pairs(marksA) do
 				if not pgd:Unlocked(key) then
 					Isaac.ExecuteCommand("achievement " .. key)
@@ -1449,17 +1449,17 @@ local function InitImGuiMenu()
 					Isaac.SetCompletionMark(EdithRestored.Enums.PlayerType.EDITH, mark, 2)
 				end
 			end
-			Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE)
+			Isaac.ExecuteCommand("achievement " .. EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
 		end
 		UpdateTogglesMenu(EdithRestored.SaveManager.Utility.IsDataInitialized() and Isaac.IsInGame())
 	end, { "Locked", "Unlocked" }, 0, true)
 
 	ImGui.AddCallback("edithMarksAAll", ImGuiCallback.Render, function()
-		local unlocked = pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE)
+		local unlocked = pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
 		ImGui.UpdateData("edithMarksAAll", ImGuiData.Value, unlocked and 1 or 0)
 	end)
 
-	local cardConf = itemConfig:GetCard(EdithRestored.Enums.Pickups.Cards.CARD_PRUDENCE)
+	local cardConf = itemConfig:GetCard(EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH)
 	if cardConf then
 		ImGui.SetHelpmarker("edithMarksAAll", "Unlocks " .. RemoveZeroWidthSpace(cardConf.Name))
 	end

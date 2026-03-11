@@ -21,7 +21,7 @@ when changing room during soul of edith
 effect]], {"edith", "restored", "", "v1.2.2", "update"}, false, false)
 
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.1", [[{{FSIZE2}}fixed
-- encyclopedia errors]], {"edith", "restored", "", "v1.2.1", "update"}, true, true)
+- encyclopedia errors]], {"edith", "restored", "", "v1.2.1", "update"}, false, false)
 
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.0", [[{{FSIZE2}}added
 - unique item costumes for

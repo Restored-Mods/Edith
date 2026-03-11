@@ -32,7 +32,7 @@ end
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_SAVESLOT_LOAD, function(_, slot, selected, raw)
 	UnlockEdith(selected, EdithRestored.Enums.Achievements.Characters.EDITH, true)
-	UnlockEdith(selected, EdithRestored.Enums.Achievements.Characters.EDITH_B, true)
+	--UnlockEdith(selected, EdithRestored.Enums.Achievements.Characters.EDITH_B, true)
 	for ach, data in pairs(EdithRestored.Enums.Achievements.Unlocks.Misc) do
 		if data.Condition() then
 			Helpers.UnlockAchievement(ach)
@@ -42,7 +42,7 @@ end)
 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function(_, load)
 	UnlockEdith(true, EdithRestored.Enums.Achievements.Characters.EDITH, true)
-	UnlockEdith(true, EdithRestored.Enums.Achievements.Characters.EDITH_B, true)
+	--UnlockEdith(true, EdithRestored.Enums.Achievements.Characters.EDITH_B, true)
 	for ach, data in pairs(EdithRestored.Enums.Achievements.Unlocks.Misc) do
 		if data.Condition() then
 			Helpers.UnlockAchievement(ach)
@@ -64,13 +64,13 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mar
 			end
 		end
 	end
-	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH_B) then
+	--[[if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH_B) then
 		for ach_mark, data in pairs(marksB) do
 			if data.Condition() then
 				Helpers.UnlockAchievement(ach_mark)
 			end
 		end
-	end
+	end]]
 	if mark == CompletionType.BEAST then
 		Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.EDITH)
 	end
@@ -81,7 +81,7 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_COMPLETION_EVENT, function(_, mar
 	end
 end)
 
-EdithRestored:AddCallback(ModCallbacks.MC_POST_SLOT_UPDATE, function(_, slot)
+--[[EdithRestored:AddCallback(ModCallbacks.MC_POST_SLOT_UPDATE, function(_, slot)
 	if
 		slot.SubType == EdithRestored.Enums.PlayerType.EDITH_B
 		and slot:GetSprite():IsEventTriggered("Poof")
@@ -91,17 +91,17 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_SLOT_UPDATE, function(_, slot)
 	then
 		Helpers.UnlockAchievement(EdithRestored.Enums.Achievements.Characters.TAINTED)
 	end
-end, SlotVariant.HOME_CLOSET_PLAYER)
+end, SlotVariant.HOME_CLOSET_PLAYER)]]
 
 EdithRestored:AddCallback(ModCallbacks.MC_GET_CARD, function(_, rng, card, playing, runes, onlyrunes)
 	if
 		card == EdithRestored.Enums.Pickups.Cards.CARD_SOUL_EDITH
 			and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.SOUL_EDITH)
-		or card == EdithRestored.Enums.Pickups.Cards.CARD_PRUDENCE and not pgd:Unlocked(
+		--[[or card == EdithRestored.Enums.Pickups.Cards.CARD_PRUDENCE and not pgd:Unlocked(
 			EdithRestored.Enums.Achievements.CompletionMarks.PRUDENCE
 		)
 		or card == EdithRestored.Enums.Pickups.Cards.CARD_REVERSE_PRUDENCE
-			and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.REV_PRUDENCE)
+			and not pgd:Unlocked(EdithRestored.Enums.Achievements.CompletionMarks.REV_PRUDENCE)]]
 	then
 		return 0
 	end

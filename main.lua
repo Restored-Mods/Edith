@@ -70,9 +70,9 @@ include("lua.core.BlockDisabledItems")
 
 --entities
 include("lua.entities.player.main")
-include("lua.entities.player.tainted")
+--include("lua.entities.player.tainted")
 include("lua.entities.clots.main")
-include("lua.entities.slots.main")
+--include("lua.entities.slots.main")
 
 --items
 --active
@@ -99,8 +99,8 @@ include("lua.items.trinkets.ChunkOfAmber.main")
 
 -- cards
 include("lua.items.cards.SoulOfEdith.main")
-include("lua.items.cards.Prudence.main")
-include("lua.items.cards.PrudenceReverse.main")
+--include("lua.items.cards.Prudence.main")
+--include("lua.items.cards.PrudenceReverse.main")
 
 -- challenges
 include("lua.challenges.rocket_laces")
@@ -121,11 +121,11 @@ if StageAPI and StageAPI.Loaded then
 		NoShake = true,
 	})
 
-	StageAPI.AddPlayerGraphicsInfo(EdithRestored.Enums.PlayerType.EDITH_B, {
+	--[[StageAPI.AddPlayerGraphicsInfo(EdithRestored.Enums.PlayerType.EDITH_B, {
         Name = "gfx/ui/boss/playername_Edith.png",
         Portrait = "gfx/ui/boss/playerportrait_Edith_B.png",
         NoShake = true
-    })
+    })]]
 end
 
 EdithRestored:Log("Edith Restored loaded.")
