@@ -1,5 +1,7 @@
 local modname = "Edith Restored"
 
+DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.3", [[{{FSIZE2}}fixes
+- fixed minimapi icons]], {"edith", "restored", "", "v1.2.3", "update"}, false, false)
 
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.2", [[{{FSIZE2}}changes
 - changed sodom fire trail. now fire
