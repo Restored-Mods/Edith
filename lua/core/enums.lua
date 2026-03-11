@@ -78,7 +78,7 @@ Enums.Familiars = {
 
 Enums.PlayerType = {
 	EDITH = Isaac.GetPlayerTypeByName("Redith", false),
-	--EDITH_B = Isaac.GetPlayerTypeByName("Redith", true),
+	EDITH_B = Isaac.GetPlayerTypeByName("Redith", true),
 }
 
 Enums.CollectibleType = {
@@ -188,7 +188,7 @@ Enums.Challenges = {
 Enums.Achievements = {}
 Enums.Achievements.Characters = {
 	EDITH = Isaac.GetAchievementIdByName("Edith"),
-	--TAINTED = Isaac.GetAchievementIdByName("Tainted Edith (Restored Edith)"),
+	TAINTED = Isaac.GetAchievementIdByName("Tainted Edith (Restored Edith)"),
 }
 Enums.Achievements.CompletionMarks = {
 	-- A-side Unlocks
