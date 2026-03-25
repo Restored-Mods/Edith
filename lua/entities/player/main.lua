@@ -195,7 +195,7 @@ local function CheckEdithsCollisionWithGrid(player, data)
 							local marsEffect = effects:GetCollectibleEffect(CollectibleType.COLLECTIBLE_MARS)
 							local marsCooldown = marsEffect.Cooldown
 
-							EdithRestored.Game:ShakeScreen(marsCooldown + 10)
+							Game():ShakeScreen(marsCooldown + 10)
 						end
 					--end
 					data.TriggerMove = false
@@ -339,7 +339,7 @@ local function EdithSlideEffects(player, directionStuff)
 	end
 
 	sfx:Play(slideSound, slideVolume)
-	EdithRestored.Game:ShakeScreen(1)
+	Game():ShakeScreen(1)
 
 	-- local rockParticleVelocity = Vector(0, 0)
 
@@ -473,7 +473,7 @@ end
 local function EdithSliding(player, data, hasMarsEffect, hasMegaMush, speedBase, firstFrameOfMovement)
 	local effects = player:GetEffects()
 
-	if Helpers.IsPureEdith(player) and not player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and not EdithRestored.Game:IsPaused() then
+	if Helpers.IsPureEdith(player) and not player:HasCollectible(CollectibleType.COLLECTIBLE_BIRTHRIGHT) and not Game():IsPaused() then
 		data.EdithJumpCharge = math.max(0, data.EdithJumpCharge - JumpCharge / 2)
 	end
 
@@ -635,7 +635,7 @@ function Player:LoadUpdate(isLoading)
 		player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_SPEED, true)
 	end
 	if PlayerManager.AnyoneIsPlayerType(EdithRestored.Enums.PlayerType.EDITH) then
-		EdithRestored.Game:GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_GNAWED_LEAF)
+		Game():GetItemPool():RemoveCollectible(CollectibleType.COLLECTIBLE_GNAWED_LEAF)
 	end
 end
 
@@ -706,7 +706,7 @@ function Player:TargetJumpRender(target)
 
 	drawLine(target, player.Position, target.Position, target.Color, sprite:GetFrame() == 1)
 
-	if EdithRestored.Game:IsPaused() then return end
+	if Game():IsPaused() then return end
 	if not player then return end
 	if not Helpers.IsPureEdith(player) then return end
 
@@ -818,8 +818,8 @@ local function ShouldChargeEdithJump(sprite, isJumping)
 	return (sprite:GetAnimation():sub(1, 9) ~= "EdithJump"
 		and not isJumping
 		and not Helpers.IsMenuing()
-		and not EdithRestored.Game:IsPaused()
-		and EdithRestored.Game:GetFrameCount() > 1)
+		and not Game():IsPaused()
+		and Game():GetFrameCount() > 1)
 end	
 
 -- Edith jump's charge manager
@@ -1375,7 +1375,7 @@ end
 --EdithRestored:AddCallback(ModCallbacks.MC_POST_SLOT_UPDATE, Player.TaintedSlot, SlotVariant.HOME_CLOSET_PLAYER)
 
 function Player:NewRoom()
-	for i = 0, EdithRestored.Game:GetNumPlayers() - 1 do
+	for i = 0, Game():GetNumPlayers() - 1 do
 		local player = Isaac.GetPlayer(i)
 		local data = EdithRestored:GetData(player)
 		--No need to check for edith here because for other players its gonna be nil anyways
@@ -1769,7 +1769,7 @@ function Player:AccessToMirrorWorld(player)
 		if Door.State ~= 1 then goto continue end
 		if player.Position:Distance(Door.Position) > 30 then goto continue end
 
-		EdithRestored.Game:StartRoomTransition(
+		Game():StartRoomTransition(
 			EdithRestored.Level():GetCurrentRoomIndex(),
 			Door.Slot % 4,
 			RoomTransitionAnim.FADE_MIRROR,

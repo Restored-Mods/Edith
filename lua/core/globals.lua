@@ -1,12 +1,11 @@
 EdithRestored.HiddenItemManager = include("lua.extraLibs.hidden_item_manager")
 EdithRestored.HiddenItemManager:Init(EdithRestored)
 
-EdithRestored.Game = Game()
 EdithRestored.Room = function()
-	return EdithRestored.Game:GetRoom()
+	return Game():GetRoom()
 end
 EdithRestored.Level = function()
-	return EdithRestored.Game:GetLevel()
+	return Game():GetLevel()
 end
 
 local runData = {

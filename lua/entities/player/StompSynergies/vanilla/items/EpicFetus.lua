@@ -38,7 +38,7 @@ EdithRestored:AddPriorityCallback(
 ---@param isStompPool table
 function EpicFetus:OnStomp(player, stompDamage, bombLanding, forced, isStompPool)
     if bombLanding or player:HasCollectible(CollectibleType.COLLECTIBLE_DR_FETUS) then return end
-    EdithRestored.Game:BombExplosionEffects(player.Position, player.Damage * 5, player.TearFlags, Color.Default, player, 1, true, false)
+    Game():BombExplosionEffects(player.Position, player.Damage * 5, player.TearFlags, Color.Default, player, 1, true, false)
 end
 EdithRestored:AddCallback(
 	EdithRestored.Enums.Callbacks.ON_EDITH_STOMP,

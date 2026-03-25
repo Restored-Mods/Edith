@@ -297,7 +297,7 @@ EdithRestored:AddModCompat("EID", function()
 		if HodlingTab() then
 			player = EID.holdTabPlayer
 		elseif descObj and descObj.Entity then
-			player = EdithRestored.Game:GetNearestPlayer(descObj.Entity.Position)
+			player = Game():GetNearestPlayer(descObj.Entity.Position)
 		end
 		if
 			player
@@ -341,7 +341,7 @@ EdithRestored:AddModCompat("EID", function()
 	end
 
 	local function LithiumCallback(descObj)
-		local player = EdithRestored.Game:GetNearestPlayer(descObj.Entity.Position)
+		local player = Game():GetNearestPlayer(descObj.Entity.Position)
 
 		local horseMul = descObj.ObjSubType > 2048 and 2 or 1
 		if

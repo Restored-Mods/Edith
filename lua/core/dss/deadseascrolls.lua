@@ -11,7 +11,7 @@ local BREAK_LINE = { str = "", fsize = 1, nosel = true }
 local orderedItems = {}
 local orderedTrinkets = {}
 local itemConfig = Isaac.GetItemConfig()
-local itemPool = EdithRestored.Game:GetItemPool()
+local itemPool = Game():GetItemPool()
 
 for _, blacklist in ipairs({
 	{

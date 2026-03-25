@@ -15,9 +15,13 @@
 	<costume id="10" anm2path="peppermint_rm.anm2" type="passive" hasSkinAlt="true" />
 	<!-- Gorgon Mask -->
 	<costume id="1" anm2path="gorgon_mask.anm2" type="none" />
+	<!-- Pre Werewolf -->
+	<costume id="2" anm2path="red_hood_pre_werewolf.anm2" type="none" priority="90" hasSkinAlt="true" />
+	<!-- Werewolf -->
+	<costume id="3" anm2path="red_hood_werewolf.anm2" type="none" priority="99" hasSkinAlt="true" />
+	
 	<!-- Edith Hood -->
 	<costume id="150" anm2path="Character_001_Redith_Hood.anm2" type="none" priority="99" />
-
 
 	<!-- Tainted Edith Hair -->
 	<costume id="151" anm2path="Character_001_Redith_b_Hood.anm2" type="none" />

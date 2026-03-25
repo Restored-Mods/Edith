@@ -1,5 +1,5 @@
 local Lithium = {}
-local itemPool = EdithRestored.Game:GetItemPool()
+local itemPool = Game():GetItemPool()
 
 Lithium.IFRAME_INCREASE_AMOUNT = 20
 Lithium.IFRAME_INCREASE_FALSEPHD_AMOUNT = 5

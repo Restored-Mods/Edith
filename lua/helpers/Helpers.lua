@@ -859,7 +859,7 @@ end
 ---@param force boolean?
 function Helpers.UnlockAchievement(achievement, force) -- from Community Remix
 	if not force then
-		if not EdithRestored.Game:AchievementUnlocksDisallowed() then
+		if not Game():AchievementUnlocksDisallowed() then
 			if not Isaac.GetPersistentGameData():Unlocked(achievement) then
 				Isaac.GetPersistentGameData():TryUnlock(achievement)
 			end
@@ -1345,7 +1345,7 @@ function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallb
 			end
 		end
 
-		EdithRestored.Game:BombExplosionEffects(stompPosition, bombDamage, player:GetBombFlags(), Color.Default, player)
+		Game():BombExplosionEffects(stompPosition, bombDamage, player:GetBombFlags(), Color.Default, player)
 
 		if player:HasCollectible(CollectibleType.COLLECTIBLE_SCATTER_BOMBS) then
 			local rng = player:GetCollectibleRNG(CollectibleType.COLLECTIBLE_SCATTER_BOMBS)
@@ -1357,7 +1357,7 @@ function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallb
 				Isaac.CreateTimer(function()
 					local explosionPosition = Vector.FromAngle(rng:RandomInt(1, 360))
 						:Resized(TSIL.Random.GetRandomFloat(0.1, radius * 1.5, rng))
-					EdithRestored.Game:BombExplosionEffects(
+					Game():BombExplosionEffects(
 						stompPosition + explosionPosition,
 						bombDamage / 2,
 						player:GetBombFlags(),
@@ -1406,7 +1406,7 @@ function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallb
 		if player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) > 0 then
 			for i = 1, player:GetTrinketMultiplier(TrinketType.TRINKET_RING_CAP) do
 				local rng = player:GetTrinketRNG(TrinketType.TRINKET_RING_CAP)
-				EdithRestored.Game:BombExplosionEffects(
+				Game():BombExplosionEffects(
 					stompPosition + Vector.FromAngle(rng:RandomInt(1, 360)):Resized(rng:RandomInt(100) * 0.015),
 					bombDamage,
 					player:GetBombFlags(),
@@ -1418,7 +1418,7 @@ function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallb
 	end
 	--#endregion
 
-	EdithRestored.Game:ShakeScreen(10)
+	Game():ShakeScreen(10)
 
 	local sound = chap4 and SoundEffect.SOUND_MEATY_DEATHS or SoundEffect.SOUND_STONE_IMPACT
 	SFXManager():Play(sound, 1, 0)
@@ -1635,7 +1635,7 @@ function Helpers.AddTrinketToPool(trinketID)
 	local trinketsNotInPool = {}
 	local trinketsSize = Helpers.GetMaxTrinketID()
 	local itemConfig = Isaac.GetItemConfig()
-	local itemPool = EdithRestored.Game:GetItemPool()
+	local itemPool = Game():GetItemPool()
 	for i = 1, trinketsSize do
 		if i ~= trinketID then
 			local trinketConf = itemConfig:GetTrinket(i)
@@ -1650,6 +1650,17 @@ function Helpers.AddTrinketToPool(trinketID)
 	for id, notInPool in pairs(trinketsNotInPool) do
 		itemPool:RemoveTrinket(id)
 	end
+end
+
+---@param id NullItemID
+---@return boolean
+function Helpers.AnyoneHasNullItem(id)
+	for _, player in ipairs(PlayerManager.GetPlayers()) do
+		if player:GetEffects():HasNullEffect(id) then
+			return true
+		end
+	end
+	return false
 end
 
 EdithRestored.Helpers = Helpers
