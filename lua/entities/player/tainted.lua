@@ -161,8 +161,12 @@ function Tainted:OnDashCollidingWithEnemy(player, collider)
     if not data.RamState then return end
     if not EdithRestored:IsEdithSliding(data) then return end
 
-    collider:TakeDamage(player.Damage * 5, 0, EntityRef(player), 0)
+    local damageFormula = player.Damage * 5
+
+    collider:TakeDamage(damageFormula, 0, EntityRef(player), 0)
     sfx:Play(SoundEffect.SOUND_MEATY_DEATHS)
+
+    if collider.HitPoints <= damageFormula then return end
 
     data.ExtraIFrames = data.ExtraIFrames or 0
     data.ExtraIFrames = data.ExtraIFrames + 5
