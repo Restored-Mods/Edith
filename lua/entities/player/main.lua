@@ -591,6 +591,11 @@ function EdithRestored:IsEdithSliding(data)
 	return data.EdithTargetMovementPosition ~= nil
 end
 
+---@param data table
+function EdithRestored:StopSlide(data)
+	data.EdithTargetMovementPosition = nil
+end
+
 ---@param player EntityPlayer
 function EdithRestored:EdithGridMovement(player, data, speedBase, gridMult, forcedDir, forcedVec)
 	local firstFrameOfMovement = false

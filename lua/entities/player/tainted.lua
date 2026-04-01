@@ -23,7 +23,6 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, Tainted.OnTaintedIni
 function Tainted:OnTaintedUpdate(player)
     if not IsTaintedEdith(player) then return end
     local data = EdithRestored:GetData(player)
-    local baseGridMovement = 5 
     local ctrlIdx = player.ControllerIndex 
 
     data.TriggerMove = data.TriggerMove or false
@@ -68,7 +67,6 @@ function Tainted:OnTaintedUpdate(player)
         pepperCreep:SetTimeout(150)
     elseif not EdithRestored:IsEdithSliding(data) and data.EdithTargetMovementDirection then
         if data.RamState and data.ExtraIFrames > 0 then
-            print(data.ExtraIFrames)
             player:SetMinDamageCooldown(30 + data.ExtraIFrames)
         end
         data.ExtraIFrames = 0
@@ -150,6 +148,8 @@ function Tainted:OnDashCollidingWithEnemy(player, collider)
 
     data.ExtraIFrames = data.ExtraIFrames or 0
     data.ExtraIFrames = data.ExtraIFrames + 5
+    data.RamState = false
+    EdithRestored:StopSlide(data)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_COLLISION, Tainted.OnDashCollidingWithEnemy)
 
@@ -177,3 +177,15 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, function(_, effect
         ::continue::
     end
 end, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant)
+
+---@param npc EntityNPC
+---@param source EntityRef
+function Tainted:OnEnemyDeath(npc, source)
+    if source.Type == 0 then return end
+
+    local player = source.Entity:ToPlayer()
+
+    if not player then return end
+    if not IsTaintedEdith(player) then return end
+end 
+EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, Tainted.OnEnemyDeath)
