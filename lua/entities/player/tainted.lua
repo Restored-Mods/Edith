@@ -9,12 +9,24 @@ local function IsTaintedEdith(player)
     return Helpers.IsTaintedEdith(player)
 end
 
+---@param player EntityPlayer
+local function PlayerCanUseBombs(player)
+    return player:GetNumBombs() > 0 or player:HasGoldenBomb()
+end
+
 local function SpawnPepperCreep(entity)
     local pepperCreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant, EdithRestored.Enums.Entities.PEPPER_CREEP.SubType, entity.Position, Vector.Zero, entity):ToEffect() ---@cast pepperCreep EntityEffect
 
     pepperCreep.Color = Color(0, 0, 0)
     pepperCreep:SetTimeout(150)
 end
+
+local function SetDashColor(player, data, isPeffect)
+    local red = data.ShouldConsumeBomb and 0.3 or 0
+    sfx:Play(SoundEffect.SOUND_STONE_IMPACT, 0.25, 0, false, 2)
+    player:SetColor(Color(2, 2, 2, 1, red), 5, 100, true, false)
+    data.RamGlowCounter = 0
+end 
 
 ---@param entity Entity
 ---@param radius number 
@@ -62,8 +74,6 @@ function Tainted:OnTaintedUpdate(player)
     local VecX = ((input.left > 0.3 and -input.left) or (input.right > 0.3 and input.right) or 0) * (game:GetRoom():IsMirrorWorld() and -1 or 1) 
     local VecY = ((input.up > 0.3 and -input.up) or (input.down > 0.3 and input.down) or 0)
 
-    local MoveVex = Vector(VecX, VecY):Normalized()
-
     if Input.IsActionPressed(ButtonAction.ACTION_SHOOTLEFT, ctrlIdx) then
         data.MovementInput = ButtonAction.ACTION_LEFT
     elseif Input.IsActionPressed(ButtonAction.ACTION_SHOOTRIGHT, ctrlIdx) then
@@ -102,8 +112,7 @@ function Tainted:OnTaintedUpdate(player)
     if data.SlideCharge >= 100 and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) then
         data.RamState = true
         data.SlideCharge = 0
-        sfx:Play(SoundEffect.SOUND_STONE_IMPACT)
-        player:SetColor(Color(2, 2, 2), 5, 100, true, false)
+        SetDashColor(player, data)
     end
 
     local speed = (data.IsInPepper and 6 or 3) + (data.RamState and 10 or 0)
@@ -143,8 +152,9 @@ function Tainted:OnPEffectUpdate(player)
     data.RamGlowCounter = math.min(data.RamGlowCounter + 1, 15)
 
     if data.RamGlowCounter == 15 then
+        local red = data.ShouldConsumeBomb and 0.3 or 0
         sfx:Play(SoundEffect.SOUND_STONE_IMPACT, 0.25, 0, false, 2)
-        player:SetColor(Color(2, 2, 2), 5, 100, true, false)
+        player:SetColor(Color(2, 2, 2, 1, red), 5, 100, true, false)
         data.RamGlowCounter = 0
     end
 end
@@ -163,8 +173,11 @@ function Tainted:OnDashCollidingWithEnemy(player, collider)
 
     local damageFormula = player.Damage * 5
 
-    collider:TakeDamage(damageFormula, 0, EntityRef(player), 0)
-    sfx:Play(SoundEffect.SOUND_MEATY_DEATHS)
+    Helpers.Stomp(player, 1, true, data.ShouldConsumeBomb and PlayerCanUseBombs(player), true)
+
+    if data.ShouldConsumeBomb and not player:HasGoldenBomb() then        
+        player:AddBombs(-1)
+    end
 
     if collider.HitPoints <= damageFormula then return end
 
