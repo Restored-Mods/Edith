@@ -71,19 +71,6 @@ function Tainted:OnTaintedUpdate(player)
         down = Input.GetActionValue(ButtonAction.ACTION_SHOOTDOWN, ctrlIdx)
     }
 
-    local VecX = ((input.left > 0.3 and -input.left) or (input.right > 0.3 and input.right) or 0) * (game:GetRoom():IsMirrorWorld() and -1 or 1) 
-    local VecY = ((input.up > 0.3 and -input.up) or (input.down > 0.3 and input.down) or 0)
-
-    if Input.IsActionPressed(ButtonAction.ACTION_SHOOTLEFT, ctrlIdx) then
-        data.MovementInput = ButtonAction.ACTION_LEFT
-    elseif Input.IsActionPressed(ButtonAction.ACTION_SHOOTRIGHT, ctrlIdx) then
-        data.MovementInput = ButtonAction.ACTION_RIGHT
-    elseif Input.IsActionPressed(ButtonAction.ACTION_SHOOTUP, ctrlIdx) then
-        data.MovementInput = ButtonAction.ACTION_UP
-    elseif Input.IsActionPressed(ButtonAction.ACTION_SHOOTDOWN, ctrlIdx) then
-        data.MovementInput = ButtonAction.ACTION_DOWN
-    end
-
     data.ShouldConsumeBomb = data.ShouldConsumeBomb or false
 
     if Input.IsActionTriggered(ButtonAction.ACTION_DROP, ctrlIdx) then
@@ -115,7 +102,7 @@ function Tainted:OnTaintedUpdate(player)
         SetDashColor(player, data)
     end
 
-    local speed = (data.IsInPepper and 6 or 3) + (data.RamState and 10 or 0)
+    local speed = (data.IsInPepper and 10 or 5) + (data.RamState and 10 or 0)
     local grids = data.RamState and 5 or 1
 
     EdithRestored:EdithGridMovement(player, data, speed, grids)
