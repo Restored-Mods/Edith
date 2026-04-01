@@ -9,6 +9,27 @@ local function IsTaintedEdith(player)
     return Helpers.IsTaintedEdith(player)
 end
 
+local function SpawnPepperCreep(entity)
+    local pepperCreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant, EdithRestored.Enums.Entities.PEPPER_CREEP.SubType, entity.Position, Vector.Zero, entity):ToEffect() ---@cast pepperCreep EntityEffect
+
+    pepperCreep.Color = Color(0, 0, 0)
+    pepperCreep:SetTimeout(150)
+end
+
+---@param entity Entity
+---@param radius number 
+local function SpawnPepperOnGridInRadius(entity, radius)
+    local room = game:GetRoom()
+    radius = radius or 10
+    for i = 0, (room:GetGridSize()) do
+		local gridPos = room:GetGridPosition(i)
+        
+        if entity.Position:Distance(gridPos) > radius then goto continue end
+		SpawnPepperCreep(entity)
+		::continue::
+    end
+end
+
 ---@param player EntityPlayer
 function Tainted:OnTaintedInit(player)
     if not IsTaintedEdith(player) then return end
@@ -61,10 +82,7 @@ function Tainted:OnTaintedUpdate(player)
     
     --- Spawn pepper creep in the tile Edith is moving from
     if data.SlideCounter == 1 then
-        local pepperCreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant, EdithRestored.Enums.Entities.PEPPER_CREEP.SubType, player.Position, Vector.Zero, player):ToEffect() ---@cast pepperCreep EntityEffect
-
-        pepperCreep.Color = Color(0, 0, 0)
-        pepperCreep:SetTimeout(150)
+        SpawnPepperCreep(player)
     elseif not EdithRestored:IsEdithSliding(data) and data.EdithTargetMovementDirection then
         if data.RamState and data.ExtraIFrames > 0 then
             player:SetMinDamageCooldown(30 + data.ExtraIFrames)
@@ -183,9 +201,13 @@ end, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant)
 function Tainted:OnEnemyDeath(npc, source)
     if source.Type == 0 then return end
 
-    local player = source.Entity:ToPlayer()
-
+    local player = TSIL.Players.GetPlayerFromEntity(source.Entity) ---@cast player EntityPlayer?
+    
+    -- print(player)
     if not player then return end
     if not IsTaintedEdith(player) then return end
+
+    SpawnPepperOnGridInRadius(npc, 30)
+    print(npc.Size)
 end 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, Tainted.OnEnemyDeath)
