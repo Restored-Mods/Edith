@@ -438,6 +438,7 @@ local function EdithTriggerSlide(player, data, gridMult, forcedDir, forcedVec)
 
 		local ButtomParams = params[forcedDir]
 
+		data.MovementDirection = forcedDir
 		targetMovementPosition = clampedPlayerPos + ButtomParams.GridMove
 		targetMovementDirection = ButtomParams.Direction
 	else
@@ -594,6 +595,7 @@ end
 ---@param data table
 function EdithRestored:StopSlide(data)
 	data.EdithTargetMovementPosition = nil
+	data.EdithTargetMovementDirection = nil
 end
 
 ---@param player EntityPlayer
