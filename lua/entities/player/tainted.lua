@@ -56,6 +56,8 @@ end
 ---@param player EntityPlayer
 ---@param collider Entity
 local function TriggerDashCollision(player, collider)
+    if collider.Type == EntityType.ENTITY_STONEY then return end
+
     local data = EdithRestored:GetData(player)
     local isDashing = IsDashing(data)
 
