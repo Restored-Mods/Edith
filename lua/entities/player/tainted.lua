@@ -89,6 +89,10 @@ function Tainted:OnTaintedInit(player)
     local mySprite = player:GetSprite()
 	mySprite:Load(EdithRestored.Enums.PlayerSprites.EDITH_B, true)
 	mySprite:Update()
+
+    player:AddSoulHearts(-6)
+    player:AddBlackHearts(4)
+    player:AddSoulHearts(2)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, Tainted.OnTaintedInit)
 
