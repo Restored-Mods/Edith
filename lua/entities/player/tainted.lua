@@ -32,12 +32,13 @@ local function SpawnPepperCreep(entity, duration, pos)
     pepperCreep:SetTimeout(duration)
 end
 
-local function SetDashColor(player, data, isPeffect)
+local function SetDashColor(player, data)
     local red = data.ShouldConsumeBomb and 0.3 or 0
     sfx:Play(SoundEffect.SOUND_STONE_IMPACT, 0.25, 0, false, 2)
     player:SetColor(Color(2, 2, 2, 1, red), 5, 100, true, false)
     data.RamGlowCounter = 0
 end 
+
 
 ---@param entity Entity
 ---@param radius number 
@@ -52,6 +53,35 @@ local function SpawnPepperOnGridInRadius(entity, radius)
     end
 end
 
+---@param player EntityPlayer
+---@param collider Entity
+local function TriggerDashCollision(player, collider)
+    local data = EdithRestored:GetData(player)
+    local isDashing = IsDashing(data)
+
+    if not isDashing then return end
+
+    local StompDamageMult = data.IsInPepper and 1.5 or 1
+
+    Helpers.Stomp(player, StompDamageMult, true, IsBombDash(player, data), true)
+
+    sfx:Play(SoundEffect.SOUND_MEATY_DEATHS)
+
+    if data.ShouldConsumeBomb and not player:HasGoldenBomb() then        
+        player:AddBombs(-1)
+    end
+
+    player:SetMinDamageCooldown(30)
+
+    if collider.HitPoints <= data.StompDamage then 
+        SpawnPepperOnGridInRadius(collider, (collider.Size + 15) * 1.5)
+    else
+        data.ExtraIFrames = data.ExtraIFrames or 0
+        data.ExtraIFrames = data.ExtraIFrames + 5
+        data.RamState = false
+        EdithRestored:StopSlide(data)
+    end    
+end
 ---@param player EntityPlayer
 function Tainted:OnTaintedInit(player)
     if not IsTaintedEdith(player) then return end
@@ -101,6 +131,12 @@ function Tainted:OnTaintedUpdate(player)
     end
 
     if IsDashing(data) then
+        local capsule = Capsule(player.Position, Vector.One, 0, 20)
+
+        for _, ent in ipairs(Isaac.FindInCapsule(capsule, EntityPartition.ENEMY)) do
+            TriggerDashCollision(player, ent)
+        end 
+        DebugRenderer.Get(1, true):Capsule(capsule)
         SpawnPepperCreep(player, 150)
     end
 
@@ -155,41 +191,6 @@ function Tainted:OnPEffectUpdate(player)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, Tainted.OnPEffectUpdate)
 
----@param player EntityPlayer
----@param collider Entity
-function Tainted:OnDashCollidingWithEnemy(player, collider)
-    if not IsTaintedEdith(player) then return end
-    if not collider:ToNPC() then return end
-
-    local data = EdithRestored:GetData(player)
-    local isDashing = IsDashing(data)
-
-    if not isDashing then return end
-
-    local StompDamageMult = data.IsInPepper and 1.5 or 1
-
-    Helpers.Stomp(player, StompDamageMult, true, IsBombDash(player, data), true)
-
-    sfx:Play(SoundEffect.SOUND_MEATY_DEATHS)
-
-    if data.ShouldConsumeBomb and not player:HasGoldenBomb() then        
-        player:AddBombs(-1)
-    end
-
-    player:SetMinDamageCooldown(30)
-
-    if collider.HitPoints <= data.StompDamage then 
-        SpawnPepperOnGridInRadius(collider, (collider.Size + 15) * 1.5)
-    else
-        data.ExtraIFrames = data.ExtraIFrames or 0
-        data.ExtraIFrames = data.ExtraIFrames + 5
-        data.RamState = false
-        EdithRestored:StopSlide(data)
-    end
-
-end
-EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, Tainted.OnDashCollidingWithEnemy)
-
 function Tainted:NegateDashDamage(player)
     local data = EdithRestored:GetData(player)
 
@@ -221,7 +222,6 @@ function Tainted:OnEnemyDeath(npc, source)
 
     local player = TSIL.Players.GetPlayerFromEntity(source.Entity) ---@cast player EntityPlayer?
 
-    -- print(player)
     if not player then return end
     if not IsTaintedEdith(player) then return end
     local data = EdithRestored:GetData(player)
