@@ -14,6 +14,10 @@ local function PlayerCanUseBombs(player)
     return player:GetNumBombs() > 0 or player:HasGoldenBomb()
 end
 
+local function IsBombDash(player, data)
+    return data.ShouldConsumeBomb and PlayerCanUseBombs(player)
+end
+
 ---@param entity Entity
 ---@param duration integer
 local function SpawnPepperCreep(entity, duration)
@@ -65,13 +69,6 @@ function Tainted:OnTaintedUpdate(player)
     data.Slidespeed = data.Slidespeed or 0
     data.StaticSlideCharge = data.StaticSlideCharge or 0
     data.MoveGrids = data.MoveGrids or 0
-
-    local input = {
-        left = Input.GetActionValue(ButtonAction.ACTION_SHOOTLEFT, ctrlIdx),
-        right = Input.GetActionValue(ButtonAction.ACTION_SHOOTRIGHT, ctrlIdx),
-        up = Input.GetActionValue(ButtonAction.ACTION_SHOOTUP, ctrlIdx),
-        down = Input.GetActionValue(ButtonAction.ACTION_SHOOTDOWN, ctrlIdx)
-    }
 
     data.ShouldConsumeBomb = data.ShouldConsumeBomb or false
     data.ExtraIFrames = data.ExtraIFrames or 0
@@ -164,7 +161,7 @@ function Tainted:OnDashCollidingWithEnemy(player, collider)
 
     local StompDamageMult = data.IsInPepper and 1.5 or 1
 
-    Helpers.Stomp(player, StompDamageMult, true, data.ShouldConsumeBomb and PlayerCanUseBombs(player), true)
+    Helpers.Stomp(player, StompDamageMult, true, IsBombDash(player, data), true)
 
     sfx:Play(SoundEffect.SOUND_MEATY_DEATHS)
 
