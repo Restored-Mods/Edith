@@ -1242,6 +1242,7 @@ function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallb
 				if doProptosis then
 					newDamage = newDamage * (1.5 - stompPosition:Distance(enemy.Position) / radius)
 				end
+				EdithRestored:GetData(player).StompDamage = newDamage
 				enemy:TakeDamage(
 					newDamage,
 					DamageFlag.DAMAGE_CRUSH | DamageFlag.DAMAGE_EXPLOSION,
@@ -1253,6 +1254,7 @@ function Helpers.Stomp(player, multiplier, force, doBombStomp, triggerStompCallb
 				enemy:Die()
 			end
 		end
+
 		for i = 0, room:GetGridSize() - 1 do
 			local grid = room:GetGridEntity(i)
 			if grid then
