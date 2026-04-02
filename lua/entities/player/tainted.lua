@@ -14,11 +14,13 @@ local function PlayerCanUseBombs(player)
     return player:GetNumBombs() > 0 or player:HasGoldenBomb()
 end
 
-local function SpawnPepperCreep(entity)
+---@param entity Entity
+---@param duration integer
+local function SpawnPepperCreep(entity, duration)
     local pepperCreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant, EdithRestored.Enums.Entities.PEPPER_CREEP.SubType, entity.Position, Vector.Zero, entity):ToEffect() ---@cast pepperCreep EntityEffect
 
     pepperCreep.Color = Color(0, 0, 0)
-    pepperCreep:SetTimeout(150)
+    pepperCreep:SetTimeout(duration)
 end
 
 local function SetDashColor(player, data, isPeffect)
@@ -37,7 +39,7 @@ local function SpawnPepperOnGridInRadius(entity, radius)
 		local gridPos = room:GetGridPosition(i)
         
         if entity.Position:Distance(gridPos) > radius then goto continue end
-		SpawnPepperCreep(entity)
+		SpawnPepperCreep(entity, 150)
 		::continue::
     end
 end
@@ -72,6 +74,7 @@ function Tainted:OnTaintedUpdate(player)
     }
 
     data.ShouldConsumeBomb = data.ShouldConsumeBomb or false
+    data.ExtraIFrames = data.ExtraIFrames or 0
 
     if Input.IsActionTriggered(ButtonAction.ACTION_DROP, ctrlIdx) then
         data.ShouldConsumeBomb = not data.ShouldConsumeBomb
@@ -79,7 +82,7 @@ function Tainted:OnTaintedUpdate(player)
     
     --- Spawn pepper creep in the tile Edith is moving from
     if data.SlideCounter == 1 then
-        SpawnPepperCreep(player)
+        SpawnPepperCreep(player, 150)
     elseif not EdithRestored:IsEdithSliding(data) and data.EdithTargetMovementDirection then
         if data.RamState and data.ExtraIFrames > 0 then
             player:SetMinDamageCooldown(30 + data.ExtraIFrames)
@@ -92,8 +95,9 @@ function Tainted:OnTaintedUpdate(player)
 
     data.RamState = data.RamState or false
 
-    if not EdithRestored:IsEdithSliding(data) and not data.RamState then
-        data.SlideCharge = Helpers.Clamp(data.SlideCharge + 2, 0, 100)
+    if not data.RamState then
+        local ChargeAdd = EdithRestored:IsEdithSliding(data) and 1 or 2       
+        data.SlideCharge = Helpers.Clamp(data.SlideCharge + ChargeAdd, 0, 100)
     end
 
     if data.SlideCharge >= 100 and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) then
@@ -158,22 +162,22 @@ function Tainted:OnDashCollidingWithEnemy(player, collider)
     if not data.RamState then return end
     if not EdithRestored:IsEdithSliding(data) then return end
 
-    local damageFormula = player.Damage * 5
-
     Helpers.Stomp(player, 1, true, data.ShouldConsumeBomb and PlayerCanUseBombs(player), true)
 
     if data.ShouldConsumeBomb and not player:HasGoldenBomb() then        
         player:AddBombs(-1)
     end
 
-    if collider.HitPoints <= damageFormula then return end
+    player:SetMinDamageCooldown(30)
+
+    if collider.HitPoints <= data.StompDamage then return end
 
     data.ExtraIFrames = data.ExtraIFrames or 0
     data.ExtraIFrames = data.ExtraIFrames + 5
     data.RamState = false
     EdithRestored:StopSlide(data)
 end
-EdithRestored:AddCallback(ModCallbacks.MC_POST_PLAYER_COLLISION, Tainted.OnDashCollidingWithEnemy)
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, Tainted.OnDashCollidingWithEnemy)
 
 function Tainted:NegateDashDamage(player)
     local data = EdithRestored:GetData(player)
