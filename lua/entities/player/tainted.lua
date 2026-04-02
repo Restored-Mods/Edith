@@ -69,7 +69,6 @@ function Tainted:OnTaintedUpdate(player)
     data.Slidespeed = data.Slidespeed or 0
     data.StaticSlideCharge = data.StaticSlideCharge or 0
     data.MoveGrids = data.MoveGrids or 0
-
     data.ShouldConsumeBomb = data.ShouldConsumeBomb or false
     data.ExtraIFrames = data.ExtraIFrames or 0
 
@@ -95,6 +94,10 @@ function Tainted:OnTaintedUpdate(player)
     if not data.RamState then
         local ChargeAdd = EdithRestored:IsEdithSliding(data) and 1 or 2       
         data.SlideCharge = Helpers.Clamp(data.SlideCharge + ChargeAdd, 0, 100)
+    end
+
+    if EdithRestored:IsEdithSliding(data) and data.RamState then
+        SpawnPepperCreep(player, 150)
     end
 
     if data.SlideCharge >= 100 and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) then
