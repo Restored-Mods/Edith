@@ -162,7 +162,11 @@ function Tainted:OnDashCollidingWithEnemy(player, collider)
     if not data.RamState then return end
     if not EdithRestored:IsEdithSliding(data) then return end
 
-    Helpers.Stomp(player, 1, true, data.ShouldConsumeBomb and PlayerCanUseBombs(player), true)
+    local StompDamageMult = data.IsInPepper and 1.5 or 1
+
+    Helpers.Stomp(player, StompDamageMult, true, data.ShouldConsumeBomb and PlayerCanUseBombs(player), true)
+
+    sfx:Play(SoundEffect.SOUND_MEATY_DEATHS)
 
     if data.ShouldConsumeBomb and not player:HasGoldenBomb() then        
         player:AddBombs(-1)
@@ -184,7 +188,6 @@ function Tainted:NegateDashDamage(player)
 
     if not EdithRestored:IsEdithSliding(data) then return end
     if not data.RamState then return end
-    -- if player.Velocity:Length() <= 0.01 then return end
     return false
 end
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, Tainted.NegateDashDamage)
