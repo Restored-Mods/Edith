@@ -136,7 +136,6 @@ function Tainted:OnTaintedUpdate(player)
         for _, ent in ipairs(Isaac.FindInCapsule(capsule, EntityPartition.ENEMY)) do
             TriggerDashCollision(player, ent)
         end 
-        DebugRenderer.Get(1, true):Capsule(capsule)
         SpawnPepperCreep(player, 150)
     end
 
