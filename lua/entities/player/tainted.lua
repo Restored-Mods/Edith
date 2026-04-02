@@ -18,10 +18,15 @@ local function IsBombDash(player, data)
     return data.ShouldConsumeBomb and PlayerCanUseBombs(player)
 end
 
+local function IsDashing(data)
+    return EdithRestored:IsEdithSliding(data) and data.RamState
+end 
+
 ---@param entity Entity
 ---@param duration integer
-local function SpawnPepperCreep(entity, duration)
-    local pepperCreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant, EdithRestored.Enums.Entities.PEPPER_CREEP.SubType, entity.Position, Vector.Zero, entity):ToEffect() ---@cast pepperCreep EntityEffect
+---@param pos? Vector
+local function SpawnPepperCreep(entity, duration, pos)
+    local pepperCreep = Isaac.Spawn(EntityType.ENTITY_EFFECT, EdithRestored.Enums.Entities.PEPPER_CREEP.Variant, EdithRestored.Enums.Entities.PEPPER_CREEP.SubType, pos or entity.Position, Vector.Zero, entity):ToEffect() ---@cast pepperCreep EntityEffect
 
     pepperCreep.Color = Color(0, 0, 0)
     pepperCreep:SetTimeout(duration)
@@ -41,9 +46,8 @@ local function SpawnPepperOnGridInRadius(entity, radius)
     radius = radius or 10
     for i = 0, (room:GetGridSize()) do
 		local gridPos = room:GetGridPosition(i)
-        
-        if entity.Position:Distance(gridPos) > radius then goto continue end
-		SpawnPepperCreep(entity, 150)
+        if entity.Position:Distance(gridPos) > radius then goto continue end        
+        SpawnPepperCreep(entity, 150, gridPos)
 		::continue::
     end
 end
@@ -96,7 +100,7 @@ function Tainted:OnTaintedUpdate(player)
         data.SlideCharge = Helpers.Clamp(data.SlideCharge + ChargeAdd, 0, 100)
     end
 
-    if EdithRestored:IsEdithSliding(data) and data.RamState then
+    if IsDashing(data) then
         SpawnPepperCreep(player, 150)
     end
 
@@ -158,9 +162,9 @@ function Tainted:OnDashCollidingWithEnemy(player, collider)
     if not collider:ToNPC() then return end
 
     local data = EdithRestored:GetData(player)
+    local isDashing = IsDashing(data)
 
-    if not data.RamState then return end
-    if not EdithRestored:IsEdithSliding(data) then return end
+    if not isDashing then return end
 
     local StompDamageMult = data.IsInPepper and 1.5 or 1
 
@@ -174,12 +178,15 @@ function Tainted:OnDashCollidingWithEnemy(player, collider)
 
     player:SetMinDamageCooldown(30)
 
-    if collider.HitPoints <= data.StompDamage then return end
+    if collider.HitPoints <= data.StompDamage then 
+        SpawnPepperOnGridInRadius(collider, (collider.Size + 15) * 1.5)
+    else
+        data.ExtraIFrames = data.ExtraIFrames or 0
+        data.ExtraIFrames = data.ExtraIFrames + 5
+        data.RamState = false
+        EdithRestored:StopSlide(data)
+    end
 
-    data.ExtraIFrames = data.ExtraIFrames or 0
-    data.ExtraIFrames = data.ExtraIFrames + 5
-    data.RamState = false
-    EdithRestored:StopSlide(data)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, Tainted.OnDashCollidingWithEnemy)
 
@@ -213,12 +220,13 @@ function Tainted:OnEnemyDeath(npc, source)
     if source.Type == 0 then return end
 
     local player = TSIL.Players.GetPlayerFromEntity(source.Entity) ---@cast player EntityPlayer?
-    
+
     -- print(player)
     if not player then return end
     if not IsTaintedEdith(player) then return end
+    local data = EdithRestored:GetData(player)
 
-    SpawnPepperOnGridInRadius(npc, 30)
-    print(npc.Size)
+    if IsDashing(data) then return end
+    SpawnPepperOnGridInRadius(npc, npc.Size + 15)
 end 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, Tainted.OnEnemyDeath)
