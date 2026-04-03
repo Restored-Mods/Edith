@@ -23,6 +23,14 @@ local function IsDashing(data)
     return EdithRestored:IsEdithSliding(data) and data.RamState
 end 
 
+---@param player EntityPlayer
+---@param data table
+local function GetRemainingGrids(player, data)
+    if not EdithRestored:IsEdithSliding(data) then return 0 end
+
+    return math.ceil(player.Position:Distance(data.EdithTargetMovementPosition) / 40)
+end
+
 local OppositeDirectionActions = {
     [ButtonAction.ACTION_UP] = ButtonAction.ACTION_DOWN,
     [Direction.DOWN] = ButtonAction.ACTION_UP,
@@ -61,6 +69,24 @@ local function SpawnPepperOnGridInRadius(entity, radius)
     end
 end
 
+---@param data table
+---@param slides number
+function EdithRestored:AddExtraTilesToSlide(data, slides)
+    local moveDir = TSIL.Vector.VectorToDirection(data.EdithTargetMovementDirection) --[[@as Direction]]
+	local mirrorWorldReverser = Helpers.InMirrorWorld() and -1 or 1
+	local gridMove = 40 * Helpers.Round(slides, 0)
+	local params = {
+		[Direction.LEFT] = Vector(-gridMove, 0) * mirrorWorldReverser,
+		[Direction.RIGHT] = Vector(gridMove, 0) * mirrorWorldReverser,
+		[Direction.UP] = Vector(0, -gridMove),
+		[Direction.DOWN] = Vector(0, gridMove),
+	}
+
+	local ButtomParams = params[moveDir]
+
+    data.EdithTargetMovementPosition = data.EdithTargetMovementPosition + ButtomParams
+end
+
 ---@param player EntityPlayer
 ---@param collider? Entity
 local function TriggerDashCollision(player, collider)
@@ -71,8 +97,6 @@ local function TriggerDashCollision(player, collider)
 
     local StompDamageMult = data.IsInPepper and 1.5 or 1
 
-    Helpers.Stomp(player, StompDamageMult, true, IsBombDash(player, data), true)
-
     sfx:Play(SoundEffect.SOUND_MEATY_DEATHS)
 
     if data.ShouldConsumeBomb and not player:HasGoldenBomb() then        
@@ -82,22 +106,38 @@ local function TriggerDashCollision(player, collider)
     player:SetMinDamageCooldown(30)
 
     if not collider then return end 
+
+    local ptrHash = GetPtrHash(collider)
+
+    if data.SlideHitBlacklist[ptrHash] == true then return end
+
+    Helpers.Stomp(player, StompDamageMult, true, IsBombDash(player, data), true)
+
     if collider.Type == EntityType.ENTITY_STONEY then return end
 
+    data.SlideHitBlacklist[ptrHash] = true
+
     if collider.HitPoints <= data.StompDamage then 
-        SpawnPepperOnGridInRadius(collider --[[@as Entity]], (collider.Size + 15) * 1.5)
+        SpawnPepperOnGridInRadius(collider, (collider.Size + 15) * 1.5)
     else
         data.ExtraIFrames = data.ExtraIFrames or 0
         data.ExtraIFrames = data.ExtraIFrames + 5
-        data.RamState = false
-        EdithRestored:StopSlide(data)
+    
+        if GetRemainingGrids(player, data) <= 2 then
+            EdithRestored:AddExtraTilesToSlide(data, 1)
+        else
+            data.RamState = false
+            EdithRestored:StopSlide(data)
+        end
     end
+
 end
 
 local function isPressingOppositeDashDirectionKey(player, data)
+    if not data.EdithTargetMovementDirection then return end
+
     local moveDir = TSIL.Vector.VectorToDirection(data.EdithTargetMovementDirection)
 
-    -- print(moveDir)
     for dir, key in pairs(OppositeDirectionActions) do
         if moveDir ~= dir then goto continue end
         if not Input.IsActionTriggered(key, player.ControllerIndex) then goto continue end
@@ -105,13 +145,18 @@ local function isPressingOppositeDashDirectionKey(player, data)
         EdithRestored:StopSlide(data)
         data.RamState = false
         data.StoppedDash = true
-        -- data.SlideCounter = 0
-    
-        -- print(Input.IsActionTriggered(key, player.ControllerIndex))
 
         ::continue::
     end
 end 
+
+---@param player EntityPlayer
+---@param data table
+local function IsSlideFinished(player, data)
+    if not data.EdithTargetMovementPosition then return false end
+
+    return data.SlideCounter ~= 0 and TSIL.Vector.VectorFuzzyEquals(player.Position, data.SlideTarget, 2.1)
+end
 
 ---@param player EntityPlayer
 function Tainted:OnTaintedInit(player)
@@ -140,11 +185,22 @@ function Tainted:OnTaintedUpdate(player)
     data.MoveGrids = data.MoveGrids or 0
     data.ShouldConsumeBomb = data.ShouldConsumeBomb or false
     data.ExtraIFrames = data.ExtraIFrames or 0
+    data.SlideHitBlacklist = data.SlideHitBlacklist or {} 
+    data.SlideTarget = data.SlideTarget or data.EdithTargetMovementPosition
 
     if Input.IsActionTriggered(ButtonAction.ACTION_DROP, ctrlIdx) then
         data.ShouldConsumeBomb = not data.ShouldConsumeBomb
     end
-    
+
+    if data.EdithTargetMovementPosition ~= nil then
+        data.SlideTarget = data.EdithTargetMovementPosition
+    end
+
+    if IsDashing(data) and IsSlideFinished(player, data) then
+        data.SlideHitBlacklist = {}
+        player:SetMinDamageCooldown(30)
+    end
+
     --- Spawn pepper creep in the tile Edith is moving from
     if data.SlideCounter == 1 then
         SpawnPepperCreep(player, 150)
@@ -164,30 +220,6 @@ function Tainted:OnTaintedUpdate(player)
         local ChargeAdd = EdithRestored:IsEdithSliding(data) and 1 or 2       
         data.SlideCharge = Helpers.Clamp(data.SlideCharge + ChargeAdd, 0, 100)
     end
-
-    -- print(data)
-
-    for k, v in pairs(data) do
-        print(k, v)
-    end
-    print("=======================")
-
-    -- if data.EdithTargetMovementDirection then
-    --     print(TSIL.Vector.VectorToDirection(data.EdithTargetMovementDirection))
-    -- end
-
-    -- print(player:GetMovementVector())
-
-    -- print(data.MovementDirection)
-
-    -- print(data.InputBuffer.input)`
-    -- if EdithRestored:IsEdithSliding(data) then
-    --     for dir, key in pairs(OppositeDirectionActions) do
-    --         print()
-    --     end
-    -- end
-
-    -- print(data.EdithTargetMovementDirection)
 
     if IsDashing(data) then
         local capsule = Capsule(player.Position, Vector.One, 0, 20)

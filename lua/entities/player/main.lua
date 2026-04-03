@@ -596,6 +596,7 @@ end
 function EdithRestored:StopSlide(data)
 	data.EdithTargetMovementPosition = nil
 	data.EdithTargetMovementDirection = nil
+	data.SlideHitBlacklist = {}
 end
 
 ---@param player EntityPlayer
