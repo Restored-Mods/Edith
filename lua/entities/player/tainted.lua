@@ -204,6 +204,10 @@ function Tainted:OnTaintedUpdate(player)
     --- Spawn pepper creep in the tile Edith is moving from
     if data.SlideCounter == 1 then
         SpawnPepperCreep(player, 150)
+
+        if IsDashing(data) then
+            sfx:Play(SoundEffect.SOUND_SHELLGAME)
+        end
     elseif not EdithRestored:IsEdithSliding(data) and data.EdithTargetMovementDirection then
         if data.RamState and data.ExtraIFrames > 0 then
             player:SetMinDamageCooldown(30 + data.ExtraIFrames)
