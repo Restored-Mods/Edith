@@ -394,7 +394,7 @@ local function EdithTriggerSlide(player, data, gridMult, forcedDir, forcedVec)
 	isPressingUp = ActionFunc(ButtonAction.ACTION_UP, controllerIndex)
 	isPressingDown = ActionFunc(ButtonAction.ACTION_DOWN, controllerIndex)
 
-	if Helpers.IsPureEdith(player) and data.InputBuffer then
+	if data.InputBuffer then
 		isPressingLeft = isPressingLeft or data.InputBuffer.input == ButtonAction.ACTION_LEFT
 		isPressingRight = isPressingRight or data.InputBuffer.input == ButtonAction.ACTION_RIGHT
 		isPressingUp = isPressingUp or data.InputBuffer.input == ButtonAction.ACTION_UP
