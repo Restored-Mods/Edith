@@ -344,6 +344,7 @@ function Tainted:OnDashGridCollision(player, index, grid)
     if not IsTaintedEdith(player) then return end
     if not grid then return end
 
-    TriggerDashCollision(player)
+    player:SetMinDamageCooldown(30)
+    -- TriggerDashCollision(player)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_PLAYER_GRID_COLLISION, Tainted.OnDashGridCollision)
