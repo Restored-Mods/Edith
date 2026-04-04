@@ -239,6 +239,7 @@ function Tainted:OnTaintedUpdate(player)
     if data.SlideCharge >= 100 and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) and not EdithRestored:IsEdithSliding(data) then
         data.RamState = true
         data.SlideCharge = 0
+        sfx:Play(SoundEffect.SOUND_STONE_IMPACT)
         SetDashColor(player, data)
     end
 
