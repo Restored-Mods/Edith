@@ -236,7 +236,7 @@ function Tainted:OnTaintedUpdate(player)
         isPressingOppositeDashDirectionKey(player, data)
     end
 
-    if data.SlideCharge >= 100 and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) then
+    if data.SlideCharge >= 100 and Input.IsActionTriggered(ButtonAction.ACTION_BOMB, ctrlIdx) and not EdithRestored:IsEdithSliding(data) then
         data.RamState = true
         data.SlideCharge = 0
         SetDashColor(player, data)
