@@ -343,8 +343,31 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, Tainted.OnEnemyDeath
 function Tainted:OnDashGridCollision(player, index, grid)
     if not IsTaintedEdith(player) then return end
     if not grid then return end
+    
+    local data = EdithRestored:GetData(player)
+    
+    print(IsDashing(data))
+
+    -- if not IsDashing(data) then return end
+
+    if grid:ToPoop() then
+        grid:Destroy()
+    end
 
     player:SetMinDamageCooldown(30)
     -- TriggerDashCollision(player)
 end
 EdithRestored:AddCallback(ModCallbacks.MC_PLAYER_GRID_COLLISION, Tainted.OnDashGridCollision)
+
+---@param pickup EntityPickup
+---@param collider Entity
+function Tainted:OnCollectibleCollision(pickup, collider)
+    local player = collider:ToPlayer()
+
+    if not player then return end
+
+    local data = EdithRestored:GetData(player)
+
+    EdithRestored:StopSlide(data)
+end
+EdithRestored:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, Tainted.OnCollectibleCollision, PickupVariant.PICKUP_COLLECTIBLE)
