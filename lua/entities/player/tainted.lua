@@ -343,12 +343,8 @@ EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, Tainted.OnEnemyDeath
 function Tainted:OnDashGridCollision(player, index, grid)
     if not IsTaintedEdith(player) then return end
     if not grid then return end
-    
-    local data = EdithRestored:GetData(player)
-    
-    print(IsDashing(data))
 
-    -- if not IsDashing(data) then return end
+    local data = EdithRestored:GetData(player)
 
     if grid:ToPoop() then
         grid:Destroy()

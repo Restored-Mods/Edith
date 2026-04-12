@@ -159,7 +159,7 @@ Enums.Costumes = {
 
 Enums.PlayerSprites = {
 	EDITH = "gfx/Redith.anm2",
-	--EDITH_B = "gfx/Redith_b.anm2",
+	EDITH_B = "gfx/Redith_b.anm2",
 }
 
 Enums.Callbacks = {
