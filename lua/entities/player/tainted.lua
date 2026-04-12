@@ -118,7 +118,7 @@ local function TriggerDashCollision(player, collider)
     data.SlideHitBlacklist[ptrHash] = true
 
     if collider.HitPoints <= data.StompDamage then 
-        SpawnPepperOnGridInRadius(collider, (collider.Size + 15) * 1.5)
+        SpawnPepperOnGridInRadius(collider, (collider.Size + 30) * 1.5)
     else
         data.ExtraIFrames = data.ExtraIFrames or 0
         data.ExtraIFrames = data.ExtraIFrames + 5
@@ -333,7 +333,7 @@ function Tainted:OnEnemyDeath(npc, source)
     local data = EdithRestored:GetData(player)
 
     if IsDashing(data) then return end
-    SpawnPepperOnGridInRadius(npc, npc.Size + 15)
+    SpawnPepperOnGridInRadius(npc, npc.Size + 30)
 end 
 EdithRestored:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, Tainted.OnEnemyDeath)
 
