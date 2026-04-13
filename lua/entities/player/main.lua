@@ -1463,6 +1463,10 @@ function Player:OnNPCCollision(entity, collider)
 	local data = EdithRestored:GetData(player)
 	if not data.EdithTargetMovementPosition then return end
 
+	if entity.Type == EntityType.ENTITY_SHOPKEEPER then
+		return
+	end
+
 	if entity.Type == EntityType.ENTITY_FIREPLACE and data.SlideCounter < (5 / player.MoveSpeed) then
 		return
 	end
