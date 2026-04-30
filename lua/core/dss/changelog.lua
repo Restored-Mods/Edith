@@ -1,6 +1,9 @@
 local modname = "Edith Restored"
 
-DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.4", [[{{FSIZE2}}fixes
+DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.4", [[{{FSIZE2}}changes
+- changed smelling salts sprite
+
+{{FSIZE2}}fixes
 - fixed eid errors on launch]], {"edith", "restored", "", "v1.2.4", "update"}, false, false)
 
 DeadSeaScrollsMenu.AddChangelog(modname, "v1.2.3", [[{{FSIZE2}}fixes
